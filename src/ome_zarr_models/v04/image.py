@@ -1,15 +1,32 @@
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
-from typing import Any, Literal
-
-from ome_zarr_models.zarr_models.v2 import Group
+from dataclasses import dataclass, fields
+from typing import Any, Literal, Self, get_args
 
 AxisType = Literal["time", "space", "channel"]
 
 
+class ToFromJSON:
+    @classmethod
+    def from_json(cls, json: dict) -> Self:
+        attributes = {}
+        for field in fields(cls):
+            if isinstance(field.type, ToFromJSON):
+                attributes[field.name] = field.from_json(json[field.name])
+            # TODO: fix this crime against programming:
+            elif str(field.type).startswith("collections.abc.Sequence"):
+                attributes[field.name] = []
+                item_type = get_args(field.type)[0]
+                for v in json[field.name]:
+                    attributes[field.name].append(item_type.from_json(v))
+            else:
+                attributes[field.name] = json[field.name]
+
+        return cls(**attributes)
+
+
 # TODO: decide if slots is future-proof w.r.t. dynamic data like OMERO
 @dataclass(frozen=True, slots=True, kw_only=True)
-class Axis:
+class Axis(ToFromJSON):
     """
     A single axis.
 
@@ -31,7 +48,7 @@ class Axis:
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
-class ScaleTransform:
+class ScaleTransform(ToFromJSON):
     """
     An scale transform.
 
@@ -50,7 +67,7 @@ class ScaleTransform:
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
-class TranslationTransform:
+class TranslationTransform(ToFromJSON):
     """
     A translation transform.
 
@@ -69,7 +86,22 @@ class TranslationTransform:
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
-class Dataset:
+class Dataset(ToFromJSON):
+    """
+    A single dataset.
+
+    Parameters
+    ----------
+    path :
+        Path to dataset.
+    coordinateTransformations :
+        Coordinate transformations for dataset.
+
+    References
+    ----------
+    https://ngff.openmicroscopy.org/0.4/index.html#multiscale-md
+    """
+
     path: str
     coordinateTransformations: (
         tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform | str]
@@ -77,9 +109,9 @@ class Dataset:
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
-class MultiscaleMetadata:
+class MultiscaleMetadata(ToFromJSON):
     """
-    A dataclass representing metadata in v0.4 of the OME-NGFF specification.
+    Multiscale metadata.
 
     Attributes
     ----------
@@ -108,11 +140,17 @@ class MultiscaleMetadata:
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
-class MultiscaleGroupAttributes:
+class MultiscaleMetadatas(ToFromJSON):
+    """
+    A set of multiscale images.
+
+    Attributes
+    ----------
+    multiscales
+
+    References
+    ----------
+    https://ngff.openmicroscopy.org/0.4/index.html#multiscale-md
+    """
+
     multiscales: Sequence[MultiscaleMetadata]
-    omero: Any
-
-
-@dataclass(frozen=True, slots=True, kw_only=True)
-class MultiscaleGroup(Group):
-    attributes: MultiscaleGroupAttributes
