@@ -1,5 +1,5 @@
 [project]
-name = "ome-zarr-models-py"
+name = "ome-zarr-models"
 version = "0.1.0"
 description = "Data models for OME-Zarr"
 readme = "README.md"
