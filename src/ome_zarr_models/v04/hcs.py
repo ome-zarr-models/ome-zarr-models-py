@@ -4,12 +4,13 @@ from typing import Any, Literal
 
 from ome_zarr_models.zarr_models.v2 import Group
 
-    
+
 ######################
-# 
+#
 # Well models metadata
 #
 ######################
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class WellImage:
@@ -18,12 +19,14 @@ class WellImage:
     acquisition: int
     path: str
 
+
 @dataclass(frozen=True, slots=True, kw_only=True)
 class WellMetadata:
     """See https://ngff.openmicroscopy.org/0.4/#well-md."""
 
     images: Sequence[WellImage]
     version: str | None = None
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class WellGroup(Group):
@@ -33,6 +36,7 @@ class WellGroup(Group):
 ######################
 # Plate models
 ######################
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class Acquisition:
@@ -46,6 +50,7 @@ class Acquisition:
     starttime: int | None = None
     endtime: int | None = None
 
+
 @dataclass(frozen=True, slots=True, kw_only=True)
 class Well:
     """See https://ngff.openmicroscopy.org/0.4/#plate-md."""
@@ -53,6 +58,7 @@ class Well:
     path: str
     rowIndex: int
     columnIndex: int
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class Column:
@@ -79,6 +85,7 @@ class PlateMetadata:
     acquisitions: Sequence[Acquisition] | None = None
     field_count: int | None = None
     name: str | None = None
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class PlateGroup(Group):
