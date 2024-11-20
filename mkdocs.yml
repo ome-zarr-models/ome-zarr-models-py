@@ -1,1 +1,8 @@
-site_name: My Docs
+site_name: ome-zarr-models
+
+plugins:
+  - mkdocstrings
+
+nav:
+  - index.md
+  - api.md
