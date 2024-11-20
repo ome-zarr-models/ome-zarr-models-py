@@ -1,27 +1,17 @@
+from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass, fields
-from typing import Any, Literal, Self, get_args
+from dataclasses import dataclass
+from typing import Any, Literal, Self
 
 AxisType = Literal["time", "space", "channel"]
 
 
-class ToFromJSON:
-    @classmethod
-    def from_json(cls, json: dict) -> Self:
-        attributes = {}
-        for field in fields(cls):
-            if isinstance(field.type, ToFromJSON):
-                attributes[field.name] = field.from_json(json[field.name])
-            # TODO: fix this crime against programming:
-            elif str(field.type).startswith("collections.abc.Sequence"):
-                attributes[field.name] = []
-                item_type = get_args(field.type)[0]
-                for v in json[field.name]:
-                    attributes[field.name].append(item_type.from_json(v))
-            else:
-                attributes[field.name] = json[field.name]
+class ToFromJSON(ABC):
+    """A class that can serialise to and from JSON."""
 
-        return cls(**attributes)
+    @classmethod
+    @abstractmethod
+    def _from_json(cls, json: dict) -> Self: ...
 
 
 # TODO: decide if slots is future-proof w.r.t. dynamic data like OMERO
@@ -46,6 +36,13 @@ class Axis(ToFromJSON):
     # TODO: decide how to handle SHOULD fields, e.g. by raising a warning
     unit: str | None = None
 
+    @classmethod
+    def _from_json(cls, json: dict) -> Self:
+        name = json["name"]
+        type_ = json.get("type", None)
+        unit = json.get("unit", None)
+        return cls(name=name, type=type_, unit=unit)
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class ScaleTransform(ToFromJSON):
@@ -65,6 +62,10 @@ class ScaleTransform(ToFromJSON):
     type: Literal["scale"]
     scale: Sequence[float]
 
+    @classmethod
+    def _from_json(cls, json: dict) -> Self:
+        return cls(type="scale", scale=json["scale"])
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class TranslationTransform(ToFromJSON):
@@ -83,6 +84,10 @@ class TranslationTransform(ToFromJSON):
 
     type: Literal["translation"]
     translation: Sequence[float]
+
+    @classmethod
+    def _from_json(cls, json: dict) -> Self:
+        return cls(type="translation", translation=json["translation"])
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -107,6 +112,21 @@ class Dataset(ToFromJSON):
         tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform | str]
     )
 
+    @classmethod
+    def _from_json(cls, json) -> Self:
+        path = json["path"]
+        transforms_json = json["coordinateTransformations"]
+        transforms: (
+            tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform | str]
+        )
+        transforms = (ScaleTransform._from_json(transforms_json[0]),)
+        if len(transforms_json) == 2:
+            transforms = (
+                transforms[0],
+                TranslationTransform._from_json(transforms_json[1]),
+            )
+        return cls(path=path, coordinateTransformations=transforms)
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class MultiscaleMetadata(ToFromJSON):
@@ -130,13 +150,28 @@ class MultiscaleMetadata(ToFromJSON):
         | tuple[Axis, Axis, Axis, Axis, Axis]
     )
     datasets: Sequence[Dataset]
-    coordinateTransformations: (
-        tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform | str] | None
-    )
     name: Any | None = None
-    version: Any = None
+    version: Any | None = None
     metadata: Mapping[str, Any] | None = None
     type: Any | None = None
+
+    @classmethod
+    def _from_json(cls, json: dict) -> Self:
+        axes = tuple(Axis._from_json(v) for v in json["axes"])
+        datasets = [Dataset._from_json(v) for v in json["datasets"]]
+        name = json.get("name", None)
+        version = json.get("version", None)
+        metadata = json.get("metadata", None)
+        type_ = json.get("type", None)
+
+        return cls(
+            axes=axes,
+            datasets=datasets,
+            name=name,
+            version=version,
+            metadata=metadata,
+            type=type_,
+        )
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -154,3 +189,10 @@ class MultiscaleMetadatas(ToFromJSON):
     """
 
     multiscales: Sequence[MultiscaleMetadata]
+
+    @classmethod
+    def _from_json(cls, json: dict) -> Self:
+        multiscales = [
+            MultiscaleMetadata._from_json(val) for val in json["multiscales"]
+        ]
+        return cls(multiscales=multiscales)
