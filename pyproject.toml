@@ -28,12 +28,7 @@ docs = [
     "mkdocs-material",
     "mkdocs-jupyter",
 ]
-dev = [
-    "jupyter[notebook]>=1.1.1",
-    "jupytext>=1.16.4",
-]
-
-dev = ["ruff", "pre-commit"]
+dev = ["jupyter[notebook]>=1.1.1", "jupytext>=1.16.4", "ruff", "pre-commit"]
 
 [tool.uv]
 default-groups = ["docs", "dev"]

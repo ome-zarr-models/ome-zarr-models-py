@@ -22,12 +22,10 @@ class ScaleTransform:
     scale: Sequence[float]
 
 
-
 @dataclass(frozen=True, slots=True, kw_only=True)
 class TranslationTransform:
     type: Literal["translation"]
     translation: Sequence[float]
-
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -65,12 +63,10 @@ class MultiscaleMetadata:
     type: Any | None = None
 
 
-
 @dataclass(frozen=True, slots=True, kw_only=True)
 class MultiscaleGroupAttributes:
     multiscales: Sequence[MultiscaleMetadata]
     omero: Any
-
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
