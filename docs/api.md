@@ -1,3 +1,3 @@
 # API reference
 
-::: ome_zarr_models.v04.image
+- [Version 0.4](api/v04.md)
