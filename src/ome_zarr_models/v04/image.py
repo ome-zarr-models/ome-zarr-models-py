@@ -7,7 +7,8 @@ from ome_zarr_models_py.zarr_models.v2 import Group
 
 AxisType = Literal["time", "space", "channel"]
 
-# TODO: decide if slots is future-proof w.r.t. dynamic data like OMERO 
+
+# TODO: decide if slots is future-proof w.r.t. dynamic data like OMERO
 @dataclass(frozen=True, slots=True, kw_only=True)
 class Axis:
     type: AxisType | Any | None = None
@@ -15,43 +16,63 @@ class Axis:
     # TODO: decide how to handle SHOULD fields, e.g. by raising a warning
     unit: str | None = None
 
+
 @dataclass(frozen=True, slots=True, kw_only=True)
 class ScaleTransform:
     type: Literal["scale"]
     scale: Sequence[float]
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class TranslationTransform:
     type: Literal["translation"]
     translation: Sequence[float]
 
+
 @dataclass(frozen=True, slots=True, kw_only=True)
 class Dataset:
     path: str
-    coordinateTransformations: tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform | str]
+    coordinateTransformations: (
+        tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform | str]
+    )
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class MultiscaleMetadata:
     """
-    Link to the spec
+    A dataclass representing metadata in v0.4 of the OME-NGFF specification.
 
     Attributes
     ----------
-    axes : Sequence[Axis], Must be between 2 and 5, 
+    axes : Sequence[Axis], Must be between 2 and 5,
     ...
+
+    References
+    ----------
+    https://ngff.openmicroscopy.org/0.4/
     """
-    axes: tuple[Axis,Axis] | tuple[Axis,Axis,Axis] | tuple[Axis,Axis,Axis,Axis] | tuple[Axis,Axis,Axis,Axis,Axis]
+
+    axes: (
+        tuple[Axis, Axis]
+        | tuple[Axis, Axis, Axis]
+        | tuple[Axis, Axis, Axis, Axis]
+        | tuple[Axis, Axis, Axis, Axis, Axis]
+    )
     datasets: Sequence[Dataset]
-    coordinateTransformations: tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform | str] | None
+    coordinateTransformations: (
+        tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform | str] | None
+    )
     name: Any | None = None
     version: Any = None
     metadata: Mapping[str, Any] | None = None
     type: Any | None = None
 
+
 @dataclass(frozen=True, slots=True, kw_only=True)
 class MultiscaleGroupAttributes:
     multiscales: Sequence[MultiscaleMetadata]
     omero: Any
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class MultiscaleGroup(Group):
