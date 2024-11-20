@@ -3,7 +3,7 @@ from typing import Any, Mapping, Sequence
 
 from typing import Literal
 
-from ome_zarr_models_py.zarr_models.v2 import Group
+from ome_zarr_models.zarr_models.v2 import Group
 
 AxisType = Literal["time", "space", "channel"]
 
