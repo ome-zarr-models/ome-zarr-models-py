@@ -4,6 +4,7 @@ theme:
   name: material
 
 plugins:
+  - mkdocs-jupyter
   - mkdocstrings:
       handlers:
         python:
@@ -11,5 +12,5 @@ plugins:
             docstring_style: numpy
 
 nav:
-  - index.md
+  - Tutorial: tutorial.py
   - api.md
