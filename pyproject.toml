@@ -7,7 +7,7 @@ requires-python = ">=3.10"
 dependencies = []
 
 [project.optional-dependencies]
-docs = ["mkdocs>=1.6.1", "mkdocstrings-python>=1.12.2"]
+docs = ["mkdocs>=1.6.1", "mkdocstrings-python>=1.12.2", "mkdocs-material"]
 
 [tool.hatch.version]
 source = "vcs"
@@ -17,7 +17,7 @@ requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [dependency-groups]
-docs = ["mkdocs>=1.6.1", "mkdocstrings-python>=1.12.2"]
+docs = ["mkdocs>=1.6.1", "mkdocstrings-python>=1.12.2", "mkdocs-material"]
 
 [tool.uv]
 default-groups = ["docs"]

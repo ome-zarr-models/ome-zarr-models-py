@@ -1,4 +1,7 @@
 site_name: ome-zarr-models
+site_url: https://ome-zarr-models-py.readthedocs.io
+theme:
+  name: material
 
 plugins:
   - mkdocstrings:
