@@ -1,0 +1,11 @@
+[project]
+name = "ome-zarr-models-py"
+version = "0.1.0"
+description = "Data models for OME-Zarr"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
