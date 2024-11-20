@@ -44,8 +44,8 @@ class MultiscaleMetadata:
 
     Attributes
     ----------
-    axes : Sequence[Axis], Must be between 2 and 5,
-    ...
+    axes : Sequence[Axis]
+        Must be between 2 and 5 items.
 
     References
     ----------
