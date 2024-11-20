@@ -2,7 +2,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any, Literal
 
-from ome_zarr_models_py.zarr_models.v2 import Group
+from ome_zarr_models.zarr_models.v2 import Group
 
 AxisType = Literal["time", "space", "channel"]
 
@@ -22,10 +22,12 @@ class ScaleTransform:
     scale: Sequence[float]
 
 
+
 @dataclass(frozen=True, slots=True, kw_only=True)
 class TranslationTransform:
     type: Literal["translation"]
     translation: Sequence[float]
+
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -39,7 +41,7 @@ class Dataset:
 @dataclass(frozen=True, slots=True, kw_only=True)
 class MultiscaleMetadata:
     """
-    Link to the spec
+    A dataclass representing metadata in v0.4 of the OME-NGFF specification.
 
     Attributes
     ----------
@@ -63,10 +65,12 @@ class MultiscaleMetadata:
     type: Any | None = None
 
 
+
 @dataclass(frozen=True, slots=True, kw_only=True)
 class MultiscaleGroupAttributes:
     multiscales: Sequence[MultiscaleMetadata]
     omero: Any
+
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
