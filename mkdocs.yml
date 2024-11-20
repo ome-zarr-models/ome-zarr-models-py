@@ -1,7 +1,11 @@
 site_name: ome-zarr-models
 
 plugins:
-  - mkdocstrings
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: numpy
 
 nav:
   - index.md
