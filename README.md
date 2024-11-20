@@ -9,3 +9,11 @@ It is designed with the following guiding principles:
 - Data operations are out of scope
 
 This aims to be a reference implementation of the OME-zarr specification.
+
+## Development
+
+To install development dependencies, run `uv sync`.
+
+### Building the docs locally
+
+Run `mkdocs serve`, and open up the URL that your terminal prints.
