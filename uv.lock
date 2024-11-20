@@ -169,11 +169,15 @@ source = { editable = "." }
 dev = [
     { name = "mkdocs" },
 ]
+docs = [
+    { name = "mkdocs" },
+]
 
 [package.metadata]
 
 [package.metadata.requires-dev]
 dev = [{ name = "mkdocs", specifier = ">=1.6.1" }]
+docs = [{ name = "mkdocs", specifier = ">=1.6.1" }]
 
 [[package]]
 name = "packaging"
