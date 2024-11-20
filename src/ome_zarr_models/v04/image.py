@@ -10,20 +10,60 @@ AxisType = Literal["time", "space", "channel"]
 # TODO: decide if slots is future-proof w.r.t. dynamic data like OMERO
 @dataclass(frozen=True, slots=True, kw_only=True)
 class Axis:
-    type: AxisType | Any | None = None
+    """
+    A single axis.
+
+    Parameters
+    ----------
+    name : Axis name.
+    type : Axis type.
+    unit : Axis unit.
+
+    References
+    ----------
+    https://ngff.openmicroscopy.org/0.4/index.html#axes-md
+    """
+
     name: str
+    type: AxisType | Any | None = None
     # TODO: decide how to handle SHOULD fields, e.g. by raising a warning
     unit: str | None = None
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class ScaleTransform:
+    """
+    An scale transform.
+
+    Parameters
+    ----------
+    type : Transform type.
+    scale : Scale factor.
+
+    References
+    ----------
+    https://ngff.openmicroscopy.org/0.4/index.html#trafo-md
+    """
+
     type: Literal["scale"]
     scale: Sequence[float]
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class TranslationTransform:
+    """
+    A translation transform.
+
+    Parameters
+    ----------
+    type : Transform type.
+    translation : Translation vector.
+
+    References
+    ----------
+    https://ngff.openmicroscopy.org/0.4/index.html#trafo-md
+    """
+
     type: Literal["translation"]
     translation: Sequence[float]
 
