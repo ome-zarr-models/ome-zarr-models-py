@@ -3,6 +3,7 @@ from pathlib import Path
 
 from ome_zarr_models.v04.image import (
     Axis,
+    CoordinateTransforms,
     Dataset,
     MultiscaleMetadata,
     MultiscaleMetadatas,
@@ -29,37 +30,40 @@ def test_multiscale_metadata():
                 datasets=[
                     Dataset(
                         path="0",
-                        coordinateTransformations=(
-                            ScaleTransform(
+                        coordinateTransformations=CoordinateTransforms(
+                            scale=ScaleTransform(
                                 type="scale", scale=[1.0, 1.0, 0.5, 0.5, 0.5]
                             ),
+                            translation=None,
                         ),
                     ),
                     Dataset(
                         path="1",
-                        coordinateTransformations=(
-                            ScaleTransform(
+                        coordinateTransformations=CoordinateTransforms(
+                            scale=ScaleTransform(
                                 type="scale", scale=[1.0, 1.0, 1.0, 1.0, 1.0]
                             ),
+                            translation=None,
                         ),
                     ),
                     Dataset(
                         path="2",
-                        coordinateTransformations=(
-                            ScaleTransform(
+                        coordinateTransformations=CoordinateTransforms(
+                            scale=ScaleTransform(
                                 type="scale", scale=[1.0, 1.0, 2.0, 2.0, 2.0]
                             ),
+                            translation=None,
                         ),
                     ),
                 ],
+                coordinateTransformations=CoordinateTransforms(
+                    scale=ScaleTransform(type="scale", scale=[0.1, 1.0, 1.0, 1.0, 1.0]),
+                    translation=None,
+                ),
                 name="example",
                 version="0.4",
                 metadata={
-                    "description": (
-                        "the fields in metadata depend on the downscaling "
-                        "implementation. Here, the parameters passed to "
-                        "the skimage function are given"
-                    ),
+                    "description": "the fields in metadata depend on the downscaling implementation. Here, the parameters passed to the skimage function are given",
                     "method": "skimage.transform.pyramid_gaussian",
                     "version": "0.16.1",
                     "args": "[true]",

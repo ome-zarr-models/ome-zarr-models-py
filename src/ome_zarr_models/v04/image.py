@@ -91,6 +91,29 @@ class TranslationTransform(ToFromJSON):
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
+class CoordinateTransforms:
+    """
+    A class to represent allowed coordinate transforms.
+
+    References
+    ----------
+    https://ngff.openmicroscopy.org/0.4/index.html#trafo-md
+    """
+
+    scale: ScaleTransform
+    translation: TranslationTransform | None
+
+    @classmethod
+    def _from_json(cls, json: list):
+        scale = ScaleTransform._from_json(json[0])
+        if len(json) == 2:
+            translation = TranslationTransform._from_json(json[1])
+        else:
+            translation = None
+        return cls(scale=scale, translation=translation)
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
 class Dataset(ToFromJSON):
     """
     A single dataset.
@@ -108,23 +131,12 @@ class Dataset(ToFromJSON):
     """
 
     path: str
-    coordinateTransformations: (
-        tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform | str]
-    )
+    coordinateTransformations: CoordinateTransforms
 
     @classmethod
     def _from_json(cls, json) -> Self:
         path = json["path"]
-        transforms_json = json["coordinateTransformations"]
-        transforms: (
-            tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform | str]
-        )
-        transforms = (ScaleTransform._from_json(transforms_json[0]),)
-        if len(transforms_json) == 2:
-            transforms = (
-                transforms[0],
-                TranslationTransform._from_json(transforms_json[1]),
-            )
+        transforms = CoordinateTransforms._from_json(json["coordinateTransformations"])
         return cls(path=path, coordinateTransformations=transforms)
 
 
@@ -150,6 +162,7 @@ class MultiscaleMetadata(ToFromJSON):
         | tuple[Axis, Axis, Axis, Axis, Axis]
     )
     datasets: Sequence[Dataset]
+    coordinateTransformations: CoordinateTransforms | None = None
     name: Any | None = None
     version: Any | None = None
     metadata: Mapping[str, Any] | None = None
@@ -159,6 +172,12 @@ class MultiscaleMetadata(ToFromJSON):
     def _from_json(cls, json: dict) -> Self:
         axes = tuple(Axis._from_json(v) for v in json["axes"])
         datasets = [Dataset._from_json(v) for v in json["datasets"]]
+        if json["coordinateTransformations"] is None:
+            transforms = None
+        else:
+            transforms = CoordinateTransforms._from_json(
+                json["coordinateTransformations"]
+            )
         name = json.get("name", None)
         version = json.get("version", None)
         metadata = json.get("metadata", None)
@@ -167,6 +186,7 @@ class MultiscaleMetadata(ToFromJSON):
         return cls(
             axes=axes,
             datasets=datasets,
+            coordinateTransformations=transforms,
             name=name,
             version=version,
             metadata=metadata,
