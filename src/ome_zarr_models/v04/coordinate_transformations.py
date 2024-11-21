@@ -1,4 +1,5 @@
-from typing import Literal
+from typing import Iterable, Literal, Sequence
+from typing_extensions import Self
 
 from pydantic import Field
 
@@ -26,8 +27,21 @@ class VectorScale(Base):
     """
 
     type: Literal["scale"]
-    scale: list[float] = Field(..., min_length=2)
+    scale: list[float]
 
+    @classmethod
+    def build(cls, data: Iterable[float]) -> Self:
+        """
+        Create a VectorScale from an iterable of floats.
+        """
+        return cls(
+            type='scale', 
+            scale=tuple(data)
+            )
+
+    @property
+    def ndim(self) -> int:
+        return len(self.scale)
 
 class PathScale(Base):
     """
@@ -54,8 +68,20 @@ class VectorTranslation(Base):
     """
 
     type: Literal["translation"]
-    translation: list[float] = Field(..., min_length=2)
+    translation: list[float]
 
+    @classmethod
+    def build(cls, data: Iterable[float]) -> Self:
+        """
+        Create a VectorTranslation from an iterable of floats.
+        """
+        return cls(
+            type='translation', 
+            translation=tuple(data)
+            )
+    @property
+    def ndim(self) -> int:
+        return len(self.translation)
 
 class PathTranslation(Base):
     """
@@ -69,3 +95,33 @@ class PathTranslation(Base):
 
     type: Literal["translation"]
     translation: str
+
+def ndim(
+    transform: VectorScale | VectorTranslation
+) -> int:
+    """
+    Get the dimensionality of a scale or translation transform.
+    """
+    if hasattr(transform, "scale"):
+        return len(transform.scale)
+    elif hasattr(transform, "translation"):
+        return len(transform.translation)
+    else:
+        msg = f"Cannot infer the dimensionality of {type(transform)}"
+        raise TypeError(msg)
+    
+def build_transforms(
+    scale: Sequence[float], 
+    translation: Sequence[float] | None
+) -> tuple[VectorScale] | tuple[VectorScale, VectorTranslation]:
+    """
+    Create a `VectorScale` and optionally a `VectorTranslation` from a scale and a translation
+    parameter.
+    """
+
+    vec_scale = VectorScale.build(scale)
+    if translation is None:
+        return (vec_scale,)
+    else:
+        vec_trans = VectorTranslation.build(translation)
+        return vec_scale, vec_trans
