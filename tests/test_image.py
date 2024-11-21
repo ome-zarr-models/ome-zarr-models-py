@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from ome_zarr_models.v04.image import (
+from ome_zarr_models.v04.models.image import (
     Axis,
     CoordinateTransforms,
     Dataset,
