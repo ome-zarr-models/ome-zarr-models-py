@@ -11,14 +11,11 @@ class AcquisitionInPlate(FrozenBase):
     See https://ngff.openmicroscopy.org/0.4/#plate-md.
     """
 
-    id: int = Field(
-        description="A unique identifier within the context of the plate"
-    )
+    id: int = Field(description="A unique identifier within the context of the plate")
     maximumfieldcount: int | None = Field(
         None,
         description=(
-            "Int indicating the maximum number of fields of view for the "
-            "acquisition"
+            "Int indicating the maximum number of fields of view for the " "acquisition"
         ),
     )
     name: str | None = Field(
@@ -75,9 +72,7 @@ class Plate(FrozenBase):
     name: str | None = None
     rows: list[RowInPlate]
     # version will become required in 0.5
-    version: str | None = Field(
-        None, description="The version of the specification"
-    )
+    version: str | None = Field(None, description="The version of the specification")
     wells: list[WellInPlate]
 
 

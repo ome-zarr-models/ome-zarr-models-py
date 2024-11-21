@@ -24,9 +24,7 @@ class ImageInWell(FrozenBase):
     acquisition: int | None = Field(
         None, description="A unique identifier within the context of the plate"
     )
-    path: str = Field(
-        ..., description="The path for this field of view subgroup"
-    )
+    path: str = Field(..., description="The path for this field of view subgroup")
 
 
 class Well(FrozenBase):
@@ -39,9 +37,7 @@ class Well(FrozenBase):
     images: list[ImageInWell] = Field(
         ..., description="The images included in this well", min_length=1
     )
-    version: str | None = Field(
-        None, description="The version of the specification"
-    )
+    version: str | None = Field(None, description="The version of the specification")
     _check_unique = field_validator("images")(unique_items_validator)
 
 

@@ -2,7 +2,12 @@ from typing import Any
 from ome_zarr_models.zarr_models.base import FrozenBase
 from ome_zarr_models.zarr_models.utils import unique_items_validator
 from ome_zarr_models.v04.v04.axes import Axis
-from ome_zarr_models.v04.models.coordinate_transformations import PathScale, PathTranslation, VectorScale, VectorTranslation
+from ome_zarr_models.v04.models.coordinate_transformations import (
+    PathScale,
+    PathTranslation,
+    VectorScale,
+    VectorTranslation,
+)
 
 
 from pydantic import Field, field_validator
@@ -15,10 +20,14 @@ class Dataset(FrozenBase):
 
     See https://ngff.openmicroscopy.org/0.4/#multiscale-md
     """
-    # TODO: validate that path resolves to an actual zarr array 
+
+    # TODO: validate that path resolves to an actual zarr array
     path: str
     # TODO: validate that transforms are consistent w.r.t dimensionality
-    coordinateTransformations: tuple[VectorScale | PathScale] | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation]
+    coordinateTransformations: (
+        tuple[VectorScale | PathScale]
+        | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation]
+    )
 
 
 class Multiscale(FrozenBase):
@@ -33,7 +42,11 @@ class Multiscale(FrozenBase):
     # TODO: validate correctness of axes
     # TODO: validate uniqueness of axes
     axes: list[Axis] = Field(..., max_length=5, min_length=2)
-    coordinateTransformations: tuple[VectorScale | PathScale] | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation] | None = None
+    coordinateTransformations: (
+        tuple[VectorScale | PathScale]
+        | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation]
+        | None
+    ) = None
     metadata: Any = None
     name: Any | None = None
     type: Any = None

@@ -5,8 +5,10 @@ from typing import Annotated, Counter, Hashable, Iterable, Literal
 from pydantic import AfterValidator, Field, model_validator
 from ome_zarr_models.v04.models.multiscales import MultiscaleGroupAttrs
 from ome_zarr_models.zarr_models.base import FrozenBase
+
 ConInt = Annotated[int, Field(strict=True, ge=0, le=255)]
 RGBA = tuple[ConInt, ConInt, ConInt, ConInt]
+
 
 def duplicates(values: Iterable[Hashable]) -> dict[Hashable, int]:
     """
@@ -16,6 +18,7 @@ def duplicates(values: Iterable[Hashable]) -> dict[Hashable, int]:
     """
     counts = Counter(values)
     return {k: v for k, v in counts.items() if v > 1}
+
 
 class Color(FrozenBase):
     """
