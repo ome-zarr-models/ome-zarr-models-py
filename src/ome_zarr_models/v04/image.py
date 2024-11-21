@@ -1,52 +1,111 @@
-from dataclasses import Field, dataclass, asdict, field
-from typing import Any, Mapping, Sequence
-
-from typing import Literal
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass, field
+from typing import Any, Literal
 
 from ome_zarr_models.zarr_models.v2 import Group
 
 AxisType = Literal["time", "space", "channel"]
 
-# TODO: decide if slots is future-proof w.r.t. dynamic data like OMERO 
+
+# TODO: decide if slots is future-proof w.r.t. dynamic data like OMERO
 @dataclass(frozen=True, slots=True, kw_only=True)
 class Axis:
-    type: AxisType | Any | None = None
+    """
+    A single axis.
+
+    Parameters
+    ----------
+    name : Axis name.
+    type : Axis type.
+    unit : Axis unit.
+
+    References
+    ----------
+    https://ngff.openmicroscopy.org/0.4/index.html#axes-md
+    """
+
     name: str
+    type: AxisType | Any | None = None
     # TODO: decide how to handle SHOULD fields, e.g. by raising a warning
     unit: str | None = None
 
+
 @dataclass(frozen=True, slots=True, kw_only=True)
 class ScaleTransform:
+    """
+    An scale transform.
+
+    Parameters
+    ----------
+    type : Transform type.
+    scale : Scale factor.
+
+    References
+    ----------
+    https://ngff.openmicroscopy.org/0.4/index.html#trafo-md
+    """
+
     type: Literal["scale"] = field(default="scale", init=False)
     scale: Sequence[float]
 
+
 @dataclass(frozen=True, slots=True, kw_only=True)
 class TranslationTransform:
+    """
+    A translation transform.
+
+    Parameters
+    ----------
+    type : Transform type.
+    translation : Translation vector.
+
+    References
+    ----------
+    https://ngff.openmicroscopy.org/0.4/index.html#trafo-md
+    """
+
     type: Literal["translation"] = field(default="translation", init=False)
     translation: Sequence[float]
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class Dataset:
     path: str
-    coordinateTransformations: tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform | str]
+    coordinateTransformations: (
+        tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform | str]
+    )
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class MultiscaleMetadata:
     """
-    Link to the spec
+    A dataclass representing metadata in v0.4 of the OME-NGFF specification.
 
     Attributes
     ----------
-    axes : Sequence[Axis], Must be between 2 and 5, 
-    ...
+    axes : Sequence[Axis]
+        Must be between 2 and 5,
+
+    References
+    ----------
+    https://ngff.openmicroscopy.org/0.4/index.html#multiscale-md
     """
-    axes: tuple[Axis,Axis] | tuple[Axis,Axis,Axis] | tuple[Axis,Axis,Axis,Axis] | tuple[Axis,Axis,Axis,Axis,Axis]
+
+    axes: (
+        tuple[Axis, Axis]
+        | tuple[Axis, Axis, Axis]
+        | tuple[Axis, Axis, Axis, Axis]
+        | tuple[Axis, Axis, Axis, Axis, Axis]
+    )
     datasets: Sequence[Dataset]
-    coordinateTransformations: tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform | str] | None
+    coordinateTransformations: (
+        tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform | str] | None
+    )
     name: Any | None = None
     version: Any = None
     metadata: Mapping[str, Any] | None = None
     type: Any | None = None
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class ChannelWindow:
@@ -71,6 +130,7 @@ class Omero:
 class MultiscaleGroupAttributes:
     multiscales: Sequence[MultiscaleMetadata]
     omero: Any = None
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class MultiscaleGroup(Group):

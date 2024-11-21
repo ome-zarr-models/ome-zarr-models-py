@@ -1,6 +1,6 @@
 [project]
 name = "ome-zarr-models"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Data models for OME-Zarr"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -9,14 +9,65 @@ dependencies = [    "jsonschema>=4.23.0",
     "requests>=2.32.3",
     "typing_extensions"]
 
+[project.optional-dependencies]
+docs = [
+    "mkdocs>=1.6.1",
+    "mkdocstrings-python>=1.12.2",
+    "mkdocs-material",
+    "mkdocs-jupyter",
+]
+
+[tool.hatch.version]
+source = "vcs"
+
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [dependency-groups]
-test = [
-    "jsonschema>=4.23.0",
-    "pytest>=8.3.3",
-    "requests>=2.32.3",
-    "typing_extensions"
+docs = [
+    "mkdocs>=1.6.1",
+    "mkdocstrings-python>=1.12.2",
+    "mkdocs-material",
+    "mkdocs-jupyter",
 ]
+dev = ["jupyter[notebook]>=1.1.1", "jupytext>=1.16.4", "ruff", "pre-commit"]
+
+[tool.uv]
+default-groups = ["docs", "dev"]
+
+# Ruff configuration for linting and formatting
+# https://docs.astral.sh/ruff
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+src = ["src"]
+
+[tool.ruff.lint]
+pydocstyle = { convention = "numpy" }
+select = [
+    "E",    # style errors
+    "W",    # style warnings
+    "F",    # flakes
+    "D",    # pydocstyle
+    "D417", # Missing argument descriptions in Docstrings
+    "I",    # isort
+    "UP",   # pyupgrade
+    "C4",   # flake8-comprehensions
+    "B",    # flake8-bugbear
+    "A001", # flake8-builtins
+    "RUF",  # ruff-specific rules
+    "TCH",  # flake8-type-checking
+    "TID",  # flake8-tidy-imports
+]
+ignore = [
+    "D401", # First line should be in imperative mood (remove to opt in)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = ["D", "S"]
+
+# https://docs.astral.sh/ruff/formatter/
+[tool.ruff.format]
+docstring-code-format = true
+skip-magic-trailing-comma = false # default is false
