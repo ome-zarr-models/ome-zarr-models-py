@@ -77,7 +77,7 @@ multiscales_meta[0].datasets[0].coordinateTransformations = VectorTranslation(
 
 zarr_arr = ome_zarr_image.group[multiscales_meta[0].datasets[-1].path]
 pprint(zarr_arr)
-view(zarr_arr)
+view(zarr_arr[0, :, :, :])
 
 # ## Not using validation
 #
