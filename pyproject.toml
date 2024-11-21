@@ -3,8 +3,8 @@ name = "ome-zarr-models"
 dynamic = ["version"]
 description = "Data models for OME-Zarr"
 readme = "README.md"
-requires-python = ">=3.10"
-dependencies = []
+requires-python = ">=3.11"
+dependencies = ["zarr"]
 
 [project.optional-dependencies]
 docs = [
@@ -40,7 +40,7 @@ dev = [
 
 test = ["pytest"]
 
-pydantic=["pydantic"]
+pydantic=["pydantic", "pydantic-zarr"]
 
 [tool.uv]
 default-groups = ["docs", "dev", "pydantic", "test"]
