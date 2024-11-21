@@ -1,8 +1,7 @@
-from ome_zarr_models.base import Base
-from ome_zarr_models.utils import unique_items_validator
-
-
 from pydantic import Field, field_validator
+
+from ome_zarr_models.base import Base
+from ome_zarr_models.utils import _unique_items_validator
 
 
 class ImageInWell(Base):
@@ -38,7 +37,7 @@ class Well(Base):
         ..., description="The images included in this well", min_length=1
     )
     version: str | None = Field(None, description="The version of the specification")
-    _check_unique = field_validator("images")(unique_items_validator)
+    _check_unique = field_validator("images")(_unique_items_validator)
 
 
 class NgffWellMeta(Base):
@@ -57,11 +56,13 @@ class NgffWellMeta(Base):
         Runs on the well zarr attributes and loads the relative paths in the
         well.
 
-        Returns:
+        Returns
+        -------
             Dictionary with `(acquisition index: [image_path])` key/value
             pairs.
 
-        Raises:
+        Raises
+        ------
             ValueError:
                 If an element of `self.well.images` has no `acquisition`
                     attribute.

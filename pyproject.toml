@@ -12,7 +12,11 @@ docs = [
     "mkdocstrings-python>=1.12.2",
     "mkdocs-material",
     "mkdocs-jupyter",
+    "gcsfs",
+    "rich",
+    "zarr<3",
 ]
+pydantic = ["pydantic"]
 
 [tool.hatch.version]
 source = "vcs"
@@ -28,6 +32,7 @@ docs = [
     "mkdocs-material",
     "mkdocs-jupyter",
     "gcsfs",
+    "rich",
     "zarr<3",
 ]
 dev = [
@@ -40,7 +45,11 @@ dev = [
 
 test = ["pytest"]
 
+<<<<<<< HEAD
 pydantic=["pydantic", "pydantic-zarr"]
+=======
+pydantic = ["pydantic"]
+>>>>>>> af24bf18dc0a5faa9f48eb6c33bbdb900c158dbe
 
 [tool.uv]
 default-groups = ["docs", "dev", "pydantic", "test"]

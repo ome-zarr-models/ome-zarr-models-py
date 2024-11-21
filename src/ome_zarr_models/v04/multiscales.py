@@ -1,6 +1,9 @@
 from typing import Any
+
+from pydantic import Field, field_validator
+
 from ome_zarr_models.base import Base
-from ome_zarr_models.utils import unique_items_validator
+from ome_zarr_models.utils import _unique_items_validator
 from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.coordinate_transformations import (
     PathScale,
@@ -8,9 +11,6 @@ from ome_zarr_models.v04.coordinate_transformations import (
     VectorScale,
     VectorTranslation,
 )
-
-
-from pydantic import Field, field_validator
 from ome_zarr_models.v04.omero import Omero
 
 
@@ -50,7 +50,7 @@ class Multiscale(Base):
     metadata: Any = None
     name: Any | None = None
     type: Any = None
-    _check_unique = field_validator("axes")(unique_items_validator)
+    _check_unique = field_validator("axes")(_unique_items_validator)
 
 
 class MultiscaleGroupAttrs(Base):
@@ -66,4 +66,4 @@ class MultiscaleGroupAttrs(Base):
         min_length=1,
     )
     omero: Omero | None = None
-    _check_unique = field_validator("multiscales")(unique_items_validator)
+    _check_unique = field_validator("multiscales")(_unique_items_validator)
