@@ -16,6 +16,7 @@ docs = [
     "rich",
     "zarr<3",
 ]
+pydantic = ["pydantic"]
 
 [tool.hatch.version]
 source = "vcs"
