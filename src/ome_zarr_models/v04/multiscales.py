@@ -1,8 +1,8 @@
 from typing import Any
 from ome_zarr_models.base import Base
 from ome_zarr_models.utils import unique_items_validator
-from ome_zarr_models.v04.models.axes import Axis
-from ome_zarr_models.v04.models.coordinate_transformations import (
+from ome_zarr_models.v04.axes import Axis
+from ome_zarr_models.v04.coordinate_transformations import (
     PathScale,
     PathTranslation,
     VectorScale,
@@ -11,7 +11,7 @@ from ome_zarr_models.v04.models.coordinate_transformations import (
 
 
 from pydantic import Field, field_validator
-from ome_zarr_models.v04.models.omero import Omero
+from ome_zarr_models.v04.omero import Omero
 
 
 class Dataset(Base):

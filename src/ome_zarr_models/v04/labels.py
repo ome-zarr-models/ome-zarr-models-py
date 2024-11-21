@@ -3,7 +3,7 @@ from __future__ import annotations
 import warnings
 from typing import Annotated, Counter, Hashable, Iterable, Literal
 from pydantic import AfterValidator, Field, model_validator
-from ome_zarr_models.v04.models.multiscales import MultiscaleGroupAttrs
+from ome_zarr_models.v04.multiscales import MultiscaleGroupAttrs
 from ome_zarr_models.base import Base
 
 ConInt = Annotated[int, Field(strict=True, ge=0, le=255)]
