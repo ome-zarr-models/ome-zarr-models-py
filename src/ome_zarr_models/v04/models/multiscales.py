@@ -1,3 +1,4 @@
+from typing import Any
 from ome_zarr_models.zarr_models.base import FrozenBase
 from ome_zarr_models.zarr_models.utils import unique_items_validator
 from ome_zarr_models.v04.v04.axes import Axis
@@ -5,7 +6,6 @@ from ome_zarr_models.v04.models.coordinate_transformations import PathScale, Pat
 
 
 from pydantic import Field, field_validator
-
 from ome_zarr_models.v04.models.omero import Omero
 
 
@@ -28,36 +28,16 @@ class Multiscale(FrozenBase):
     See https://ngff.openmicroscopy.org/0.4/#multiscale-md.
     """
 
-    name: str | None = None
     datasets: list[Dataset] = Field(..., min_length=1)
-    version: str | None = None
+    version: Any | None = None
+    # TODO: validate correctness of axes
+    # TODO: validate uniqueness of axes
     axes: list[Axis] = Field(..., max_length=5, min_length=2)
-    coordinateTransformations: Optional[
-        list[
-            Union[
-                PathScale,
-                VectorTranslation,
-            ]
-        ]
-    ] = None
+    coordinateTransformations: tuple[VectorScale | PathScale] | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation] | None = None
+    metadata: Any = None
+    name: Any | None = None
+    type: Any = None
     _check_unique = field_validator("axes")(unique_items_validator)
-
-    @field_validator("coordinateTransformations", mode="after")
-    @classmethod
-    def _no_global_coordinateTransformations(
-        cls, v: list | None
-    ) -> list | None:
-        """
-        Fail if Multiscale has a (global) coordinateTransformations attribute.
-        """
-        if v is None:
-            return v
-        else:
-            raise NotImplementedError(
-                "Global coordinateTransformations at the multiscales "
-                "level are not currently supported in the fractal-tasks-core "
-                "model for the NGFF multiscale."
-            )
 
 
 class MultiscaleGroupAttrs(FrozenBase):
