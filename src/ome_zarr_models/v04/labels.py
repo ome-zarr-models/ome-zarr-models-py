@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 import warnings
-from typing import Annotated, Counter, Hashable, Iterable, Literal
+from collections import Counter
+from collections.abc import Hashable, Iterable
+from typing import Annotated, Literal
+
 from pydantic import AfterValidator, Field, model_validator
-from ome_zarr_models.v04.multiscales import MultiscaleGroupAttrs
+
 from ome_zarr_models.base import Base
+from ome_zarr_models.v04.multiscales import MultiscaleGroupAttrs
 
 ConInt = Annotated[int, Field(strict=True, ge=0, le=255)]
 RGBA = tuple[ConInt, ConInt, ConInt, ConInt]
@@ -41,7 +45,7 @@ class Property(Base):
 def parse_colors(colors: list[Color] | None) -> list[Color] | None:
     if colors is None:
         msg = (
-            f"The field `colors` is `None`. Version 0.4 of"
+            "The field `colors` is `None`. Version 0.4 of"
             "the OME-NGFF spec states that `colors` should be a list of label descriptors."
         )
         warnings.warn(msg, stacklevel=1)
@@ -60,8 +64,8 @@ def parse_colors(colors: list[Color] | None) -> list[Color] | None:
 def parse_version(version: Literal["0.4"] | None) -> Literal["0.4"] | None:
     if version is None:
         _ = (
-            f"The `version` attribute is `None`. Version 0.4 of "
-            f"the OME-NGFF spec states that `version` should either be unset or the string 0.4"
+            "The `version` attribute is `None`. Version 0.4 of "
+            "the OME-NGFF spec states that `version` should either be unset or the string 0.4"
         )
     return version
 

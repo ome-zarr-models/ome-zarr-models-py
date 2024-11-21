@@ -1,10 +1,8 @@
-from ome_zarr_models.base import Base
-
+from typing import Literal
 
 from pydantic import Field
 
-
-from typing import Literal
+from ome_zarr_models.base import Base
 
 
 class Identity(Base):

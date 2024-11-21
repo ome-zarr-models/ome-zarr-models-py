@@ -1,4 +1,7 @@
 from typing import Any
+
+from pydantic import Field, field_validator
+
 from ome_zarr_models.base import Base
 from ome_zarr_models.utils import unique_items_validator
 from ome_zarr_models.v04.axes import Axis
@@ -8,9 +11,6 @@ from ome_zarr_models.v04.coordinate_transformations import (
     VectorScale,
     VectorTranslation,
 )
-
-
-from pydantic import Field, field_validator
 from ome_zarr_models.v04.omero import Omero
 
 

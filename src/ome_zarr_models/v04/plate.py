@@ -1,7 +1,6 @@
-from ome_zarr_models.base import Base
-
-
 from pydantic import Field
+
+from ome_zarr_models.base import Base
 
 
 class AcquisitionInPlate(Base):

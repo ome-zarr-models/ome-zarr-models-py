@@ -25,7 +25,7 @@ def dataclass_to_pydantic(dataclass_type: type) -> type[pydantic.BaseModel]:
     """
     if not is_dataclass(dataclass_type):
         raise TypeError(f"{dataclass_type} is not a dataclass")
-    
+
     field_definitions = {}
     for _field in fields(dataclass_type):
         if _field.default is not MISSING:
@@ -37,7 +37,7 @@ def dataclass_to_pydantic(dataclass_type: type) -> type[pydantic.BaseModel]:
         else:
             # No default value
             field_definitions[_field.name] = (_field.type, Ellipsis)
-    
+
 <<<<<<< HEAD
     return create_model(dataclass_type.__name__, **field_definitions)
 =======
