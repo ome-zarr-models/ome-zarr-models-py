@@ -50,30 +50,3 @@ class NgffWellMeta(FrozenBase):
 
     well: Well | None = None
 
-    def get_acquisition_paths(self) -> dict[int, list[str]]:
-        """
-        Create mapping from acquisition indices to corresponding paths.
-
-        Runs on the well zarr attributes and loads the relative paths in the
-        well.
-
-        Returns:
-            Dictionary with `(acquisition index: [image_path])` key/value
-            pairs.
-
-        Raises:
-            ValueError:
-                If an element of `self.well.images` has no `acquisition`
-                    attribute.
-        """
-        acquisition_dict = {}
-        for image in self.well.images:
-            if image.acquisition is None:
-                raise ValueError(
-                    "Cannot get acquisition paths for Zarr files without "
-                    "'acquisition' metadata at the well level"
-                )
-            if image.acquisition not in acquisition_dict:
-                acquisition_dict[image.acquisition] = []
-            acquisition_dict[image.acquisition].append(image.path)
-        return acquisition_dict
