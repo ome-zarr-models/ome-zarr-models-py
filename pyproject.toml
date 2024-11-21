@@ -28,7 +28,13 @@ docs = [
     "mkdocs-material",
     "mkdocs-jupyter",
 ]
-dev = ["jupyter[notebook]>=1.1.1", "jupytext>=1.16.4", "ruff", "pre-commit"]
+dev = [
+    "jupyter[notebook]>=1.1.1",
+    "jupytext>=1.16.4",
+    "ruff",
+    "pre-commit",
+    "pytest>=8.3.3",
+]
 
 test = ["pytest"]
 
