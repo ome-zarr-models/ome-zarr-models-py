@@ -9,7 +9,7 @@ TMembers = TypeVar("TMembers", bound=Union["Group", "Array"])
 
 
 @dataclass(kw_only=True, slots=True, frozen=True)
-class Group(Generic[TAttr, "TMembers"]):
+class Group(Generic[TAttr, TMembers]):
     attributes: TAttr
     members: Mapping[str, Group | Array]
 
