@@ -11,7 +11,6 @@ def _unique_items_validator(values: list[T]) -> list[T]:
             raise ValueError(f"Non-unique values in {values}.")
     return values
 
-
 def dataclass_to_pydantic(dataclass_type: type) -> type[pydantic.BaseModel]:
     """Convert a dataclass to a Pydantic model.
 
@@ -39,4 +38,8 @@ def dataclass_to_pydantic(dataclass_type: type) -> type[pydantic.BaseModel]:
             # No default value
             field_definitions[_field.name] = (_field.type, Ellipsis)
     
+<<<<<<< HEAD
     return create_model(dataclass_type.__name__, **field_definitions)
+=======
+    return create_model(dataclass_type.__name__, **field_definitions)
+>>>>>>> 470f4f1a33aef4ecf2ebf0906c912a3621c8957b

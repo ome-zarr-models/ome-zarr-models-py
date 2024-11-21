@@ -27,6 +27,8 @@ docs = [
     "mkdocstrings-python>=1.12.2",
     "mkdocs-material",
     "mkdocs-jupyter",
+    "gcsfs",
+    "zarr<3",
 ]
 dev = [
     "jupyter[notebook]>=1.1.1",
