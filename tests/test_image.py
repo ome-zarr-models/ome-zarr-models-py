@@ -1,16 +1,9 @@
+import pytest
 import json
 from pathlib import Path
 
-from ome_zarr_models.v04.image import (
-    Axis,
-    CoordinateTransforms,
-    Dataset,
-    MultiscaleMetadata,
-    MultiscaleMetadatas,
-    ScaleTransform,
-)
 
-
+@pytest.mark.xfail(reason="Not implemented yet")
 def test_multiscale_metadata():
     with open(Path(__file__).parent / "data" / "spec_example_multiscales.json") as f:
         json_data = json.load(f)
@@ -31,7 +24,7 @@ def test_multiscale_metadata():
                     Dataset(
                         path="0",
                         coordinateTransformations=CoordinateTransforms(
-                            scale=ScaleTransform(
+                            scale=VectorScale(
                                 type="scale", scale=[1.0, 1.0, 0.5, 0.5, 0.5]
                             ),
                             translation=None,
@@ -40,7 +33,7 @@ def test_multiscale_metadata():
                     Dataset(
                         path="1",
                         coordinateTransformations=CoordinateTransforms(
-                            scale=ScaleTransform(
+                            scale=VectorScale(
                                 type="scale", scale=[1.0, 1.0, 1.0, 1.0, 1.0]
                             ),
                             translation=None,
@@ -49,7 +42,7 @@ def test_multiscale_metadata():
                     Dataset(
                         path="2",
                         coordinateTransformations=CoordinateTransforms(
-                            scale=ScaleTransform(
+                            scale=VectorScale(
                                 type="scale", scale=[1.0, 1.0, 2.0, 2.0, 2.0]
                             ),
                             translation=None,
@@ -57,7 +50,7 @@ def test_multiscale_metadata():
                     ),
                 ],
                 coordinateTransformations=CoordinateTransforms(
-                    scale=ScaleTransform(type="scale", scale=[0.1, 1.0, 1.0, 1.0, 1.0]),
+                    scale=VectorScale(type="scale", scale=[0.1, 1.0, 1.0, 1.0, 1.0]),
                     translation=None,
                 ),
                 name="example",

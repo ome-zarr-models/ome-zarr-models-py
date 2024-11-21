@@ -38,8 +38,12 @@ dev = [
     "pytest>=8.3.3",
 ]
 
+test = ["pytest"]
+
+pydantic=["pydantic"]
+
 [tool.uv]
-default-groups = ["docs", "dev"]
+default-groups = ["docs", "dev", "pydantic", "test"]
 
 # Ruff configuration for linting and formatting
 # https://docs.astral.sh/ruff
