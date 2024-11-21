@@ -9,8 +9,13 @@ class Image:
         self.group = group
         self._attrs = MultiscaleGroupAttrs(**group.attrs.asdict())
 
+    @property
     def multiscales(self) -> list[Multiscale]:
         return self._attrs.multiscales
 
+    @property
     def omero(self) -> Omero | None:
         return self._attrs.omero
+
+    def save_attrs(self) -> None:
+        self.group.attrs.put(self._attrs.model_dump_json())
