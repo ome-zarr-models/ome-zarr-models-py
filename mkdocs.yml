@@ -4,7 +4,9 @@ theme:
   name: material
 
 plugins:
-  - mkdocs-jupyter
+  - mkdocs-jupyter:
+      execute: true
+      allow_errors: true
   - mkdocstrings:
       handlers:
         python:
