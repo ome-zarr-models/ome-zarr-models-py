@@ -4,8 +4,19 @@ version = "0.1.0"
 description = "Data models for OME-Zarr"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [    "jsonschema>=4.23.0",
+    "pytest>=8.3.3",
+    "requests>=2.32.3",
+    "typing_extensions"]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[dependency-groups]
+test = [
+    "jsonschema>=4.23.0",
+    "pytest>=8.3.3",
+    "requests>=2.32.3",
+    "typing_extensions"
+]
