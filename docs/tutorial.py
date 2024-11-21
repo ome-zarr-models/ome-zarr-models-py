@@ -1,7 +1,8 @@
 # # Tutorial
 
-# ## Creating
-#
+from rich.pretty import pprint
+
+
 import gcsfs
 import zarr
 import zarr.storage
@@ -26,40 +27,30 @@ group = zarr.open_group(
 
 ome_zarr_image = Image(group)
 
-# Oh no, it failed! One of the key goals of this package is to eagerly validate
-# metadata, so you can realise it's wrong.
+# Oh no, it failed! One of the key goals of this package is to eagerly validatemetadata, so you can realise it's wrong.
 #
 # Lets try that again, but with some valid OME-zarr data
+
 group = zarr.open("https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0062A/6001240.zarr")
 ome_zarr_image = Image(group)
-print(ome_zarr_image)
+pprint(ome_zarr_image)
 
 # This image contains both the zarr group, and a model of the multiscales metadata
+
 multiscales_meta = ome_zarr_image.multiscales
-print(multiscales_meta)
+pprint(multiscales_meta)
 
 # ## Updating models
 #
-# All the fields in the models can be updated in place.
-# When you do this, any validation on the individual field
-# you are updating will take place.
+# All the fields in the models can be updated in place. When you do this, any validation on the individual field you are updating will take place.
 #
 # For example, there is no name for the first multiscales entry, so lets add it
+
 multiscales_meta[0].name = "The first multiscales entry"
-print(multiscales_meta)
+pprint(multiscales_meta)
 
+# One constraint in the OME-zarr spec is that the coordiante transforms have to be a scale, or a scale then tranlsation (strictly in that order). So if we try and make a transformation just a translation, it will raise an error.
 
-# If you try to do something invalid it raises an error:
-multiscales_meta[0].name = ["I", "am", "not", "a", "string"]
-print(multiscales_meta)
-
-# But hold on, this isn't an error! This is because the OME-zarr spec
-# allows name to be any type, so this is allowed.
-#
-# One constraint in the OME-zarr spec is that the coordiante transforms
-# have to be a scale, or a scale then tranlsation (strictly in that order)
-# So if we try and make a transformation just a translation, it will
-# raise an error
 multiscales_meta[0].datasets[0].coordinateTransformations = VectorTranslation(
     type="translation", translation=[1, 2, 3]
 )
@@ -70,18 +61,24 @@ multiscales_meta[0].datasets[0].coordinateTransformations = VectorTranslation(
 
 # ## Writing metadata
 #
-# To save the metadata after editing, we can use the ``save_attrs()`` method:
+# To save the metadata after editing, we can use the ``save_attrs()`` method.
+# TODO: Use a local file for testing that we have write access to, so we
+# can demonstrate this.
+#
 
-ome_zarr_image.save_attrs()
+# +
+# ome_zarr_image.save_attrs()
+# -
 
 # ## Accessing data
 #
-# Although these models do not handle reading or writing data,
-# they do expose the zarr arrays.
+# Although these models do not handle reading or writing data, they do expose the zarr arrays.
+
 zarr_arr = ome_zarr_image.group[multiscales_meta[0].datasets[0].path]
-print(zarr_arr)
+pprint(zarr_arr)
 
 # ## Not using validation
 #
-# If you *really* want to create models that are not validated against
-# the OME-zarr specifciation, you can use the ``model_construct`` method on the models.
+# If you want to create models that are not validated against the OME-zarr specifciation, you can use the ``model_construct`` method on the models.
+
+
