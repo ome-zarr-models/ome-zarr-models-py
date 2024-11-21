@@ -4,7 +4,7 @@ import warnings
 from typing import Annotated, Counter, Hashable, Iterable, Literal
 from pydantic import AfterValidator, Field, model_validator
 from ome_zarr_models.v04.models.multiscales import MultiscaleGroupAttrs
-from ome_zarr_models.zarr_models.base import FrozenBase
+from ome_zarr_models.base import Base
 
 ConInt = Annotated[int, Field(strict=True, ge=0, le=255)]
 RGBA = tuple[ConInt, ConInt, ConInt, ConInt]
@@ -20,7 +20,7 @@ def duplicates(values: Iterable[Hashable]) -> dict[Hashable, int]:
     return {k: v for k, v in counts.items() if v > 1}
 
 
-class Color(FrozenBase):
+class Color(Base):
     """
     A label value and RGBA as defined in https://ngff.openmicroscopy.org/0.4/#label-md
     """
@@ -29,12 +29,12 @@ class Color(FrozenBase):
     rgba: RGBA | None
 
 
-class Source(FrozenBase):
+class Source(Base):
     # TODO: add validation that this path resolves to something
     image: str | None = "../../"
 
 
-class Property(FrozenBase):
+class Property(Base):
     label_value: int = Field(..., serialization_alias="label-value")
 
 
@@ -86,7 +86,7 @@ def parse_imagelabel(model: ImageLabel) -> ImageLabel:
     return model
 
 
-class ImageLabel(FrozenBase):
+class ImageLabel(Base):
     """
     image-label metadata.
     See https://ngff.openmicroscopy.org/0.4/#label-md

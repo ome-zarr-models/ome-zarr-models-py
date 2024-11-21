@@ -1,7 +1,7 @@
 from typing import Any
-from ome_zarr_models.zarr_models.base import FrozenBase
-from ome_zarr_models.zarr_models.utils import unique_items_validator
-from ome_zarr_models.v04.v04.axes import Axis
+from ome_zarr_models.base import Base
+from ome_zarr_models.utils import unique_items_validator
+from ome_zarr_models.v04.models.axes import Axis
 from ome_zarr_models.v04.models.coordinate_transformations import (
     PathScale,
     PathTranslation,
@@ -14,7 +14,7 @@ from pydantic import Field, field_validator
 from ome_zarr_models.v04.models.omero import Omero
 
 
-class Dataset(FrozenBase):
+class Dataset(Base):
     """
     Model for an element of `Multiscale.datasets`.
 
@@ -30,7 +30,7 @@ class Dataset(FrozenBase):
     )
 
 
-class Multiscale(FrozenBase):
+class Multiscale(Base):
     """
     Model for an element of `NgffImageMeta.multiscales`.
 
@@ -53,7 +53,7 @@ class Multiscale(FrozenBase):
     _check_unique = field_validator("axes")(unique_items_validator)
 
 
-class MultiscaleGroupAttrs(FrozenBase):
+class MultiscaleGroupAttrs(Base):
     """
     Model for the metadata of a NGFF image.
 

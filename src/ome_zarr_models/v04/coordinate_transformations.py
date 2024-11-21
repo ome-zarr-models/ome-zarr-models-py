@@ -6,16 +6,13 @@ from pydantic import Field
 
 from typing import Literal
 
-
 class Identity(Base):
     """
     Model for an identity transformation.
 
-    See https://ngff.openmicroscopy.org/0.4/#trafo-md
+    See https://ngff.openmicroscopy.org/0.4/#trafo-md    
     """
-
     type: Literal["identity"]
-
 
 class VectorScale(Base):
     """
@@ -30,7 +27,6 @@ class VectorScale(Base):
     type: Literal["scale"]
     scale: list[float] = Field(..., min_length=2)
 
-
 class PathScale(Base):
     """
     Model for a scale transformation parametrized by a path.
@@ -44,7 +40,6 @@ class PathScale(Base):
     type: Literal["scale"]
     path: str
 
-
 class VectorTranslation(Base):
     """
     Model for a translation transformation parametrized by a vector of numbers.
@@ -57,7 +52,6 @@ class VectorTranslation(Base):
 
     type: Literal["translation"]
     translation: list[float] = Field(..., min_length=2)
-
 
 class PathTranslation(Base):
     """
