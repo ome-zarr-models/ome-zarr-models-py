@@ -12,5 +12,4 @@ This package is designed with the following guiding principles:
 - A separate object for each version of the OME-zarr specification
 - Data operations are out of scope
 
-When adhering to the OME-zarr specification conflicts with usability, we choose adherence to the specification.
-If you can think of an improvement to make this more usable that conflicts the specification, then we encourage you to suggest changes to the specifciation.
+We are trying to make this as usable and useful as possible while still complying with the OME-zarr specification.
