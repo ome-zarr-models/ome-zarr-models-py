@@ -117,7 +117,3 @@ class GroupAttrs(MultiscaleGroupAttrs):
     """
 
     image_label: Annotated[ImageLabel, Field(..., serialization_alias="image-label")]
-
-
-class Group(MultiscaleGroup):
-    attributes: GroupAttrs
