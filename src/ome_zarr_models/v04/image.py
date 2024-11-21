@@ -129,7 +129,7 @@ class Omero:
 @dataclass(frozen=True, slots=True, kw_only=True)
 class MultiscaleGroupAttributes:
     multiscales: Sequence[MultiscaleMetadata]
-    omero: Any = None
+    omero: Omero | None = None
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
