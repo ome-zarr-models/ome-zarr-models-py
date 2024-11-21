@@ -1,8 +1,7 @@
+from pydantic import Field, field_validator
+
 from ome_zarr_models.base import Base
 from ome_zarr_models.utils import unique_items_validator
-
-
-from pydantic import Field, field_validator
 
 
 class ImageInWell(Base):
@@ -57,11 +56,13 @@ class NgffWellMeta(Base):
         Runs on the well zarr attributes and loads the relative paths in the
         well.
 
-        Returns:
+        Returns
+        -------
             Dictionary with `(acquisition index: [image_path])` key/value
             pairs.
 
-        Raises:
+        Raises
+        ------
             ValueError:
                 If an element of `self.well.images` has no `acquisition`
                     attribute.

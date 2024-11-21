@@ -11,8 +11,8 @@ from ome_zarr_models.v04.models
 # TODO: example of
 
 import gcsfs
-import zarr.storage
 import zarr
+import zarr.storage
 
 bucket = "ucl-hip-ct-35a68e99feaae8932b1d44da0358940b"
 fs = gcsfs.GCSFileSystem(project=bucket, token="anon", access="read_only")
