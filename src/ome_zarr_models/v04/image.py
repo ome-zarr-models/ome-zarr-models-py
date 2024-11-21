@@ -1,5 +1,5 @@
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Literal
 
 from ome_zarr_models.zarr_models.v2 import Group
@@ -45,7 +45,7 @@ class ScaleTransform:
     https://ngff.openmicroscopy.org/0.4/index.html#trafo-md
     """
 
-    type: Literal["scale"]
+    type: Literal["scale"] = field(default="scale", init=False)
     scale: Sequence[float]
 
 
@@ -64,7 +64,7 @@ class TranslationTransform:
     https://ngff.openmicroscopy.org/0.4/index.html#trafo-md
     """
 
-    type: Literal["translation"]
+    type: Literal["translation"] = field(default="translation", init=False)
     translation: Sequence[float]
 
 
@@ -108,9 +108,28 @@ class MultiscaleMetadata:
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
+class ChannelWindow:
+    end: float
+    max: float
+    min: float
+    start: float
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class Channel:
+    window: ChannelWindow
+    label: str | None = None
+    family: str | None = None
+    color: str | None = None
+    active: bool | None = None
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class Omero:
+    channels: Sequence[Channel]
+
+@dataclass(frozen=True, slots=True, kw_only=True)
 class MultiscaleGroupAttributes:
     multiscales: Sequence[MultiscaleMetadata]
-    omero: Any
+    omero: Any = None
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
