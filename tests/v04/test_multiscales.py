@@ -360,29 +360,26 @@ def test_from_arrays(
     paths = tuple(path_pattern.format(idx) for idx in range(len(arrays)))
     scales = tuple((2**idx,) * ndim for idx in range(len(arrays)))
     translations = tuple(
-        (t,) * ndim
-        for t in accumulate(
-            [(2 ** (idx - 1)) for idx in range(len(arrays))], operator.add
-        )
+        (((2 ** idx) - 1) / 2,) * ndim for idx in range(len(arrays))
     )
-
-    all_axes = tuple(
-        [
-            Axis(
-                name="x",
-                type="space",
-            ),
-            Axis(name="y", type="space"),
-            Axis(name="z", type="space"),
-            Axis(name="t", type="time"),
-            Axis(name="c", type="barf"),
-        ]
-    )
+    all_axes = {
+            'x': Axis(name="x", type="space"),
+            'y': Axis(name="y", type="space"),
+            'z': Axis(name="z", type="space"),
+            't': Axis(name="t", type="time"),
+            'c': Axis(name="c", type="barf"),
+    }
     # spatial axes have to come last
-    if ndim in (2, 3):
-        axes = all_axes[:ndim]
-    else:
-        axes = tuple([*all_axes[4:], *all_axes[:3]])
+    match ndim:
+        case 2:
+            axes = all_axes['x'], all_axes['y']
+        case 3:
+            axes = all_axes['x'], all_axes['y'], all_axes['z']
+        case 4:
+            axes = all_axes['t'], all_axes['z'], all_axes['y'], all_axes['x']
+        case 5:
+            axes = all_axes['t'], all_axes['c'], all_axes['z'], all_axes['y'], all_axes['x']
+
     chunks_arg: tuple[tuple[int, ...], ...] | tuple[int, ...] | Literal["auto"]
     if chunks == "auto":
         chunks_arg = chunks
@@ -429,10 +426,7 @@ def test_from_arrays(
         assert chunks_expected[idx] == array_model.chunks
         assert group.attributes.multiscales[0].datasets[
             idx
-        ].coordinateTransformations == (
-            VectorScale(scale=scales[idx]),
-            VectorTranslation(translation=translations[idx]),
-        )
+        ].coordinateTransformations == _build_transforms(scale=scales[idx], translation=translations[idx])
 
 
 @pytest.mark.parametrize("name", [None, "foo"])
@@ -549,7 +543,7 @@ def test_from_zarr_missing_metadata(
         MultiscaleGroup.from_zarr(group)
 
 
-@pytest.mark.parametrize("store", ["memory"])
+@pytest.mark.parametrize("store", ["memory"], indirect=True)
 def test_from_zarr_missing_array(store: Literal["memory"]
 ) -> None:
     """

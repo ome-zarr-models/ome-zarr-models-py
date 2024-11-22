@@ -1,20 +1,19 @@
 from __future__ import annotations
-<<<<<<< HEAD
-from collections import Counter
-from typing import Annotated, Any, Iterable, Literal, Sequence, get_args
-from typing_extensions import Self
-from ome_zarr_models.zarr_utils import get_path, normalize_chunks
-=======
+
+from typing import Annotated, Any, Iterable, Literal, Self, cast, get_args, TYPE_CHECKING
+if TYPE_CHECKING:
+    import numpy.typing as npt
 
 from collections import Counter
 from collections.abc import Sequence
-from typing import Annotated, Any, get_args
 
+
+from ome_zarr_models.zarr_utils import get_path, normalize_chunks
 import zarr
->>>>>>> fbf92313de85ad55c8b229555111984674f959f8
 from pydantic import AfterValidator, Field, model_validator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
-
+import numpy as np
+from numcodecs.abc import Codec
 from ome_zarr_models.base import Base
 from ome_zarr_models.utils import duplicates
 from ome_zarr_models.v04.axes import Axis, AxisType
@@ -451,7 +450,7 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
             metadata=metadata,
             axes=tuple(axes),
             datasets=tuple(
-                create_dataset(path=path, scale=scale, translation=translation)
+                Dataset.build(path=path, scale=scale, translation=translation)
                 for path, scale, translation in zip(paths, scales, translations)
             ),
             coordinateTransformations=None,
@@ -476,7 +475,7 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
         chunks: tuple[int, ...]
         | tuple[tuple[int, ...], ...]
         | Literal["auto"] = "auto",
-        compressor: Codec = DEFAULT_COMPRESSOR,
+        compressor: Codec = "auto",
         fill_value: Any = 0,
         order: Literal["C", "F"] = "C",
     ) -> Self:
@@ -540,13 +539,13 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
             for key, shape, cnks in zip(paths, shapes, chunks_normalized)
         }
 
-        multimeta = MultiscaleMetadata(
+        multimeta = Multiscale(
             name=name,
             type=type,
             metadata=metadata,
             axes=tuple(axes),
             datasets=tuple(
-                create_dataset(path=path, scale=scale, translation=translation)
+                Dataset.build(path=path, scale=scale, translation=translation)
                 for path, scale, translation in zip(paths, scales, translations)
             ),
             coordinateTransformations=None,
@@ -556,7 +555,7 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
             attributes=MultiscaleGroupAttrs(multiscales=(multimeta,)),
         )
 
-    _check_datasets_exist = model_validator(mode="after")(check_datasets_exist)
+    _check_datasets_exist = model_validator(mode="after")(_check_datasets_exist)
     
 
     @model_validator(mode="after")
@@ -580,12 +579,8 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
                     tforms += multiscale.coordinateTransformations
 
                 for tform in tforms:
-                    if hasattr(tform, "scale") or hasattr(tform, "translation"):
-                        tform = cast(
-                            tx.VectorScale | tx.VectorTranslation,
-                            tform,
-                        )
-                        if (tform_ndim := tx.ndim(tform)) != arr_ndim:
+                    if hasattr(tform, "scale") or hasattr(tform, "translation") and not hasattr(tform, 'path'):
+                        if (tform_ndim := _ndim(tform)) != arr_ndim:
                             msg = (
                                 f"Transform {tform} has dimensionality {tform_ndim}, "
                                 "which does not match the dimensionality of the array "
