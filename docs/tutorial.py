@@ -1,11 +1,8 @@
 # # Tutorial
 
-from rich.pretty import pprint
-
-
-import gcsfs
 import zarr
 import zarr.storage
+from rich.pretty import pprint
 
 from ome_zarr_models.v04 import Image
 from ome_zarr_models.v04.coordinate_transformations import (
@@ -16,20 +13,6 @@ from ome_zarr_models.v04.coordinate_transformations import (
 #
 # We can create an Image model from a zarr group, that points to an
 # OME-zarr dataset:
-
-# Setup zarr group from a remote store
-bucket = "ucl-hip-ct-35a68e99feaae8932b1d44da0358940b"
-fs = gcsfs.GCSFileSystem(project=bucket, token="anon", access="read_only")
-store = zarr.storage.FSStore(url=bucket, fs=fs)
-group = zarr.open_group(
-    store=store, path="S-20-28/heart/25.27um_complete-organ_bm05.ome.zarr"
-)
-
-ome_zarr_image = Image(group)
-
-# Oh no, it failed! One of the key goals of this package is to eagerly validatemetadata, so you can realise it's wrong.
-#
-# Lets try that again, but with some valid OME-zarr data
 
 group = zarr.open("https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0062A/6001240.zarr")
 ome_zarr_image = Image(group)
@@ -80,5 +63,3 @@ pprint(zarr_arr)
 # ## Not using validation
 #
 # If you want to create models that are not validated against the OME-zarr specifciation, you can use the ``model_construct`` method on the models.
-
-
