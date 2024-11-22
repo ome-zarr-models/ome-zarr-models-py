@@ -315,9 +315,8 @@ def test_from_zarr_missing_metadata(
     group = group_model.to_zarr(store, path="test")
     store_path = store.path if hasattr(store, "path") else ""
     match = (
-        "Failed to find mandatory `multiscales` key in the attributes "
-        "of the Zarr group at "
-        f"{store}://{store_path}://{group.path}."
+        "Failed to find mandatory `multiscales` key in the attributes of the "
+        f"Zarr group at {store}://{store_path}://{group.path}."
     )
     with pytest.raises(KeyError, match=match):
         MultiscaleGroup.from_zarr(group)

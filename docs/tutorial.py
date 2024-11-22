@@ -25,14 +25,17 @@ pprint(multiscales_meta)
 
 # ## Updating models
 #
-# All the fields in the models can be updated in place. When you do this, any validation on the individual field you are updating will take place.
+# All the fields in the models can be updated in place. When you do this, any
+# validation on the individual field you are updating will take place.
 #
 # For example, there is no name for the first multiscales entry, so lets add it
 
 multiscales_meta[0].name = "The first multiscales entry"
 pprint(multiscales_meta)
 
-# One constraint in the OME-zarr spec is that the coordiante transforms have to be a scale, or a scale then tranlsation (strictly in that order). So if we try and make a transformation just a translation, it will raise an error.
+# One constraint in the OME-zarr spec is that the coordiante transforms have to be a
+# scale, or a scale then tranlsation (strictly in that order). So if we try and make a
+# transformation just a translation, it will raise an error.
 
 multiscales_meta[0].datasets[0].coordinateTransformations = VectorTranslation(
     type="translation", translation=[1, 2, 3]
@@ -44,11 +47,13 @@ multiscales_meta[0].datasets[0].coordinateTransformations = VectorTranslation(
 
 # ## Accessing data
 #
-# Although these models do not handle reading or writing data, they do expose the zarr arrays.
+# Although these models do not handle reading or writing data, they do expose the zarr
+# arrays.
 
 zarr_arr = ome_zarr_image.group[multiscales_meta[0].datasets[0].path]
 pprint(zarr_arr)
 
 # ## Not using validation
 #
-# If you want to create models that are not validated against the OME-zarr specifciation, you can use the ``model_construct`` method on the models.
+# If you want to create models that are not validated against the OME-zarr
+# specifciation, you can use the ``model_construct`` method on the models.

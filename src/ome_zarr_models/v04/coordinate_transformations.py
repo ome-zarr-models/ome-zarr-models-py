@@ -1,11 +1,13 @@
 from __future__ import annotations
 
-from collections.abc import Iterable, Sequence
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 from typing_extensions import Self
 
 from ome_zarr_models.base import Base
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Sequence
 
 __all__ = [
     "Identity",
@@ -51,6 +53,9 @@ class VectorScale(Base):
 
     @property
     def ndim(self) -> int:
+        """
+        Number of dimensions.
+        """
         return len(self.scale)
 
 
@@ -90,6 +95,9 @@ class VectorTranslation(Base):
 
     @property
     def ndim(self) -> int:
+        """
+        Number of dimensions.
+        """
         return len(self.translation)
 
 
@@ -123,8 +131,8 @@ def _build_transforms(
     scale: Sequence[float], translation: Sequence[float] | None
 ) -> tuple[VectorScale] | tuple[VectorScale, VectorTranslation]:
     """
-    Create a `VectorScale` and optionally a `VectorTranslation` from a scale and a translation
-    parameter.
+    Create a `VectorScale` and optionally a `VectorTranslation` from a scale and a
+    translation parameter.
     """
     vec_scale = VectorScale.build(scale)
     if translation is None:

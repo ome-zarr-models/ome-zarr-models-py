@@ -7,4 +7,8 @@ class Base(pydantic.BaseModel):
     """
 
     class Config:
+        """
+        Pydantic config.
+        """
+
         validate_assignment = True
