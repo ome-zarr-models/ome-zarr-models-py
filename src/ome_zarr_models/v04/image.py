@@ -29,9 +29,3 @@ class Image:
         Returns `None` if no omero metadata is present in the OME-zarr image.
         """
         return self._attrs.omero
-
-    def save_attrs(self) -> None:
-        """
-        Put the current metadata in this object into the zarr Group.
-        """
-        self.group.attrs.put(self._attrs.model_dump_json())
