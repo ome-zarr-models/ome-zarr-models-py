@@ -310,8 +310,41 @@ def _check_datasets_exist(data: MultiscaleGroup) -> MultiscaleGroup:
                 raise ValueError(msg)
     return data
 
+def _check_array_ndim(data: MultiscaleGroup) -> MultiscaleGroup:
+    """
+    Check that all the arrays referenced by the `multiscales` metadata have dimensionality consistent with the
+    `coordinateTransformations` metadata.
+    """
+    multimeta = data.attributes.multiscales
+
+    flat_self = data.to_flat()
+
+    # check that each transform has compatible rank
+    for multiscale in multimeta:
+        for dataset in multiscale.datasets:
+            arr: ArraySpec = flat_self["/" + dataset.path.lstrip("/")]
+            arr_ndim = len(arr.shape)
+            tforms = dataset.coordinateTransformations
+
+            if multiscale.coordinateTransformations is not None:
+                tforms += multiscale.coordinateTransformations
+
+            for tform in tforms:
+                if hasattr(tform, "scale") or hasattr(tform, "translation") and not hasattr(tform, 'path'):
+                    if (tform_ndim := _ndim(tform)) != arr_ndim:
+                        msg = (
+                            f"Transform {tform} has dimensionality {tform_ndim}, "
+                            "which does not match the dimensionality of the array "
+                            f"found in this group at {dataset.path} ({arr_ndim}). "
+                            "Transform dimensionality must match array dimensionality."
+                        )
+
+                        raise ValueError(msg)
+    return data
+
 class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
     _check_datasets_exist = model_validator(mode="after")(_check_datasets_exist)
+    _check_array_ndim = model_validator(mode="after")(_check_array_ndim)
     @classmethod
     def from_zarr(cls, node: zarr.Group) -> MultiscaleGroup:
         """
@@ -370,7 +403,7 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
         return cls(**guess_inferred_members.model_dump())
 
     @classmethod
-    def from_arrays(
+    def _from_arrays(
         cls,
         arrays: Sequence[np.ndarray],
         *,
@@ -462,7 +495,7 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
         )
 
     @classmethod
-    def from_array_props(
+    def _from_array_props(
         cls,
         dtype: npt.DTypeLike,
         shapes: Sequence[Sequence[int]],
@@ -559,38 +592,3 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
             members=GroupSpec.from_flat(members_flat).members,
             attributes=MultiscaleGroupAttrs(multiscales=(multimeta,)),
         )
-    
-
-    @model_validator(mode="after")
-    def check_array_ndim(self) -> MultiscaleGroup:
-        """
-        Check that all the arrays referenced by the `multiscales` metadata have dimensionality consistent with the
-        `coordinateTransformations` metadata.
-        """
-        multimeta = self.attributes.multiscales
-
-        flat_self = self.to_flat()
-
-        # check that each transform has compatible rank
-        for multiscale in multimeta:
-            for dataset in multiscale.datasets:
-                arr: ArraySpec = flat_self["/" + dataset.path.lstrip("/")]
-                arr_ndim = len(arr.shape)
-                tforms = dataset.coordinateTransformations
-
-                if multiscale.coordinateTransformations is not None:
-                    tforms += multiscale.coordinateTransformations
-
-                for tform in tforms:
-                    if hasattr(tform, "scale") or hasattr(tform, "translation") and not hasattr(tform, 'path'):
-                        if (tform_ndim := _ndim(tform)) != arr_ndim:
-                            msg = (
-                                f"Transform {tform} has dimensionality {tform_ndim}, "
-                                "which does not match the dimensionality of the array "
-                                f"found in this group at {dataset.path} ({arr_ndim}). "
-                                "Transform dimensionality must match array dimensionality."
-                            )
-
-                            raise ValueError(msg)
-
-        return self

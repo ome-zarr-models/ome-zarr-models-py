@@ -398,7 +398,7 @@ def test_from_arrays(
     else:
         order_expected = order
 
-    group = MultiscaleGroup.from_arrays(
+    group = MultiscaleGroup._from_arrays(
         paths=paths,
         axes=axes,
         arrays=arrays,
@@ -491,7 +491,7 @@ def test_from_array_props(
 
     order_expected = order
 
-    group = MultiscaleGroup.from_array_props(
+    group = MultiscaleGroup._from_array_props(
         dtype=dtype,
         shapes=shapes,
         paths=paths,
@@ -553,7 +553,7 @@ def test_from_zarr_missing_array(store: Literal["memory"]
     arrays = np.zeros((10, 10)), np.zeros((5, 5))
     group_path = "broken"
     arrays_names = ("s0", "s1")
-    group_model = MultiscaleGroup.from_arrays(
+    group_model = MultiscaleGroup._from_arrays(
         arrays=arrays,
         axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
         paths=arrays_names,
