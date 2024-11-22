@@ -27,7 +27,7 @@ from ome_zarr_models.v04.multiscales import (
 from ome_zarr_models.v04.coordinate_transformations import (
     VectorScale,
     VectorTranslation,
-    build_transforms,
+    _build_transforms,
 )
 
 @pytest.fixture
@@ -39,8 +39,8 @@ def default_multiscale() -> Multiscale:
         Axis(name="y", type="space", unit="meter"),
     )
     rank = len(axes)
-    transforms_top = build_transforms(scale=(1,) * rank, translation=None)
-    transforms_dset = build_transforms(scale=(1,) * rank, translation=(0,) * rank)
+    transforms_top = _build_transforms(scale=(1,) * rank, translation=None)
+    transforms_dset = _build_transforms(scale=(1,) * rank, translation=(0,) * rank)
     num_datasets = 3
     datasets = tuple(
         Dataset(
@@ -69,7 +69,7 @@ def test_multiscale_unique_axis_names() -> None:
     datasets = (
         Dataset(
             path="path",
-            coordinateTransformations=build_transforms(
+            coordinateTransformations=_build_transforms(
                 scale = (1,) * rank,
                 translation = (0,) * rank
             ),
@@ -81,7 +81,7 @@ def test_multiscale_unique_axis_names() -> None:
             name="foo",
             axes=axes,
             datasets=datasets,
-            coordinateTransformations=build_transforms(scale=(1, 1), translation=None),
+            coordinateTransformations=_build_transforms(scale=(1, 1), translation=None),
         )
 
 
@@ -102,7 +102,7 @@ def test_multiscale_space_axes_last(axis_types: list[str | None]) -> None:
     datasets = (
         Dataset(
             path="path",
-            coordinateTransformations=build_transforms(
+            coordinateTransformations=_build_transforms(
                 scale = (1,) * rank,
                 translation = (0,) * rank
             ),
@@ -114,7 +114,7 @@ def test_multiscale_space_axes_last(axis_types: list[str | None]) -> None:
             name="foo",
             axes=axes,
             datasets=datasets,
-            coordinateTransformations=build_transforms(scale=(1,) * rank, translation=None)
+            coordinateTransformations=_build_transforms(scale=(1,) * rank, translation=None)
             )
 
 
@@ -127,7 +127,7 @@ def test_multiscale_axis_length(num_axes: int) -> None:
     datasets = (
         Dataset(
             path="path",
-            coordinateTransformations=build_transforms(
+            coordinateTransformations=_build_transforms(
                 scale = (1,) * rank,
                 translation = (0,) * rank
             ),
@@ -138,7 +138,7 @@ def test_multiscale_axis_length(num_axes: int) -> None:
             name="foo",
             axes=axes,
             datasets=datasets,
-            coordinateTransformations=build_transforms(scale=(1,) * rank, translation=None))
+            coordinateTransformations=_build_transforms(scale=(1,) * rank, translation=None))
 
 
 @pytest.mark.parametrize(
@@ -147,7 +147,7 @@ def test_multiscale_axis_length(num_axes: int) -> None:
 def test_transform_invalid_ndims(
     scale: tuple[int, ...], translation: tuple[int, ...]
 ) -> None:
-    tforms = build_transforms(
+    tforms = _build_transforms(
         scale=scale,
         translation=translation,
     )

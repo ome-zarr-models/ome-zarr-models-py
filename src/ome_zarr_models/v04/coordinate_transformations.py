@@ -110,7 +110,7 @@ def ndim(
         msg = f"Cannot infer the dimensionality of {type(transform)}"
         raise TypeError(msg)
     
-def build_transforms(
+def _build_transforms(
     scale: Sequence[float], 
     translation: Sequence[float] | None
 ) -> tuple[VectorScale] | tuple[VectorScale, VectorTranslation]:
