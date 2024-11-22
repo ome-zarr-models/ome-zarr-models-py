@@ -1,5 +1,8 @@
+from enum import Enum
+from typing import Literal
 from ome_zarr_models.base import Base
 
+AxisType = Literal["space", "time", "channel"]
 
 class Axis(Base):
     """

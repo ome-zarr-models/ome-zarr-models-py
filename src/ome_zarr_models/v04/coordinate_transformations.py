@@ -1,9 +1,8 @@
-from typing import Literal
-
-from pydantic import Field
+from __future__ import annotations
+from typing import Iterable, Literal, Sequence
+from typing_extensions import Self
 
 from ome_zarr_models.base import Base
-
 
 class Identity(Base):
     """
@@ -26,7 +25,18 @@ class VectorScale(Base):
     """
 
     type: Literal["scale"]
-    scale: list[float] = Field(..., min_length=2)
+    scale: list[float]
+
+    @classmethod
+    def build(cls, data: Iterable[float]) -> Self:
+        """
+        Create a VectorScale from an iterable of floats.
+        """
+        return cls(type="scale", scale=tuple(data))
+
+    @property
+    def ndim(self) -> int:
+        return len(self.scale)
 
 
 class PathScale(Base):
@@ -54,7 +64,18 @@ class VectorTranslation(Base):
     """
 
     type: Literal["translation"]
-    translation: list[float] = Field(..., min_length=2)
+    translation: list[float]
+
+    @classmethod
+    def build(cls, data: Iterable[float]) -> Self:
+        """
+        Create a VectorTranslation from an iterable of floats.
+        """
+        return cls(type="translation", translation=tuple(data))
+
+    @property
+    def ndim(self) -> int:
+        return len(self.translation)
 
 
 class PathTranslation(Base):
@@ -69,3 +90,31 @@ class PathTranslation(Base):
 
     type: Literal["translation"]
     translation: str
+
+ScaleTransform = VectorScale | PathScale
+TranslationTransform = VectorTranslation | PathTranslation
+VectorTransform = VectorScale | VectorTranslation
+
+
+def ndim(transform: VectorTransform) -> int:
+    """
+    Get the dimensionality of a scale or translation transform. 
+    """
+    return transform.ndim
+
+
+def _build_transforms(
+    scale: Sequence[float], translation: Sequence[float] | None
+) -> tuple[VectorScale] | tuple[VectorScale, VectorTranslation]:
+    """
+    Create a `VectorScale` and optionally a `VectorTranslation` from a scale and a translation
+    parameter.
+    """
+
+    vec_scale = VectorScale.build(scale)
+    if translation is None:
+        return (vec_scale,)
+    else:
+        vec_trans = VectorTranslation.build(translation)
+        return vec_scale, vec_trans
+

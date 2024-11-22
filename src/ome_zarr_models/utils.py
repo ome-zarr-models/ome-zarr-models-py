@@ -2,7 +2,7 @@ import pydantic
 from dataclasses import MISSING, fields, is_dataclass
 from pydantic import create_model
 
-from typing import TypeVar
+from typing import Counter, Hashable, Iterable, TypeVar
 
 T = TypeVar("T")
 
@@ -12,6 +12,16 @@ def _unique_items_validator(values: list[T]) -> list[T]:
         if value in values[ind:]:
             raise ValueError(f"Non-unique values in {values}.")
     return values
+
+
+def duplicates(values: Iterable[Hashable]) -> dict[Hashable, int]:
+    """
+    Takes a sequence of hashable elements and returns a dict where the keys are the
+    elements of the input that occurred at least once, and the values are the
+    frequencies of those elements.
+    """
+    counts = Counter(values)
+    return {k: v for k, v in counts.items() if v > 1}
 
 
 def dataclass_to_pydantic(dataclass_type: type) -> type[pydantic.BaseModel]:
