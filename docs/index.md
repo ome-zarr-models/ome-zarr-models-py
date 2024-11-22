@@ -3,6 +3,17 @@
 This is a Python package that provides a Python object representation of an OME-zarr dataset.
 It aims to be a reference implementation of the OME-zarr specification.
 
+## Installing
+
+Currently this package is only available in the GitHub repo.
+Install it using:
+
+```sh
+pip install git+https://github.com/BioImageTools/ome-zarr-models-py.git@main
+```
+
+When we do a first release, it will be available on PyPI and conda-forge.
+
 ## Design
 
 This package is designed with the following guiding principles:
