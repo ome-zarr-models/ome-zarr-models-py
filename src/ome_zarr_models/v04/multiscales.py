@@ -17,12 +17,12 @@ from ome_zarr_models.v04.coordinate_transformations import (
     _build_transforms,
     _ndim,
 )
+from ome_zarr_models.v04.omero import Omero  # noqa: TCH001
 from ome_zarr_models.zarr_utils import get_path
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
 
-    from ome_zarr_models.v04.omero import Omero
 
 __all__ = ["VALID_NDIM", "Dataset", "Multiscale", "MultiscaleGroup"]
 
