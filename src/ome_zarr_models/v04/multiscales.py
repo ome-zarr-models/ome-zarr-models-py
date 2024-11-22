@@ -208,20 +208,36 @@ class Multiscale(Base):
         return self
 
     @model_validator(mode="after")
-    def validate_axes(self) -> Multiscale:
+    def validate_axes_top_transforms(self) -> Multiscale:
+        """
+        Ensure that the length of the axes matches the dimensionality of the transforms
+        defined in the top-level coordinateTransformations, if present
+        """
+        self_ndim = len(self.axes)
+        if self.coordinateTransformations is not None:
+            for tx in filter(lambda v: isinstance(tx, VectorScale | VectorTranslation), self.coordinateTransformations):
+                if self_ndim != tx.ndim:
+                    msg = (
+                    f"The length of axes ({self_ndim}) does not match the dimensionality of "
+                    f"the {tx.type} transform in coordinateTransformations ({tx.ndim})"
+                    )
+                    raise ValueError(msg)
+        return self
+
+    @model_validator(mode="after")
+    def validate_axes_dataset_transforms(self) -> Multiscale:
         """
         Ensure that the length of the axes matches the dimensionality of the transforms
         """
         self_ndim = len(self.axes)
-        if self.coordinateTransformations is not None:
-            for tx in self.coordinateTransformations:
-                if isinstance(tx, VectorScale | VectorTranslation):
-                    if self_ndim != tx.ndim:
-                        msg = (
-                        f"The length of axes ({self_ndim}) does not match the dimensionality of "
-                        f"the {tx.type} transform in coordinateTransformations ({tx.ndim})"
-                        )
-                        raise ValueError(msg)
+        for ds_idx, ds in enumerate(self.datasets):
+            for tx in filter(lambda v: isinstance(tx, VectorScale | VectorTranslation), ds.coordinateTransformations):
+                if self_ndim != tx.ndim:
+                    msg = (
+                    f"The length of axes ({self_ndim}) does not match the dimensionality of "
+                    f"the {tx.type} transform defined in datasets[{ds_idx}].coordinateTransformations ({tx.ndim})"
+                    )
+                    raise ValueError(msg)
         return self
 
 
@@ -238,7 +254,6 @@ class MultiscaleGroupAttrs(Base):
         min_length=1,
     )
     omero: Omero | None = None
-    _check_unique = field_validator("multiscales")(_unique_items_validator)
 
 
 class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
