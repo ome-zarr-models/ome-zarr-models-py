@@ -99,9 +99,9 @@ def ndim(transform: VectorScale | VectorTranslation) -> int:
     Get the dimensionality of a scale or translation transform.
     """
     if hasattr(transform, "scale"):
-        return len(transform.scale)
+        return transform.ndim
     elif hasattr(transform, "translation"):
-        return len(transform.translation)
+        return transform.ndim
     else:
         msg = f"Cannot infer the dimensionality of {type(transform)}"
         raise TypeError(msg)
