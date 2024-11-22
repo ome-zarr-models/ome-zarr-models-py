@@ -298,35 +298,6 @@ class MultiscaleGroupAttrs(Base):
     omero: Omero | None = None
 
 
-def _check_datasets_exist(data: MultiscaleGroup) -> MultiscaleGroup:
-    """
-    Check that the datasets referenced in the `multiscales` metadata are actually
-    contained in this group.
-    """
-    attrs = data.attributes
-    flattened = data.to_flat()
-
-    for multiscale in attrs.multiscales:
-        for dataset in multiscale.datasets:
-            dpath = "/" + dataset.path.lstrip("/")
-            if dpath in flattened:
-                if not isinstance(flattened[dpath], ArraySpec):
-                    msg = (
-                        f"The node at {dpath} should be an array, "
-                        f"found {type(flattened[dpath])} instead"
-                    )
-                    raise ValueError(msg)
-            else:
-                msg = (
-                    f"Dataset {dataset.path} was specified in multiscale metadata, "
-                    "but no array with that name was found in the hierarchy. "
-                    "All arrays referenced in multiscale metadata must be contained in "
-                    "the group."
-                )
-                raise ValueError(msg)
-    return data
-
-
 def _check_array_ndim(data: MultiscaleGroup) -> MultiscaleGroup:
     """
     Check that all the arrays referenced by the `multiscales` metadata
@@ -358,7 +329,6 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
     A multiscale group.
     """
 
-    _check_datasets_exist = model_validator(mode="after")(_check_datasets_exist)
     _check_array_ndim = model_validator(mode="after")(_check_array_ndim)
 
     @classmethod
