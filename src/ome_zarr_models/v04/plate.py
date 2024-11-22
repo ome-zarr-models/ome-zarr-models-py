@@ -2,6 +2,16 @@ from pydantic import Field
 
 from ome_zarr_models.base import Base
 
+__all__ = [
+    "AcquisitionInPlate",
+    "AcquisitionInPlate",
+    "ColumnInPlate",
+    "WellInPlate",
+    "RowInPlate",
+    "Plate",
+    "NgffPlateMeta",
+]
+
 
 class AcquisitionInPlate(Base):
     """

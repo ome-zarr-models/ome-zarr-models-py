@@ -1,8 +1,10 @@
-import pydantic
+from collections import Counter
+from collections.abc import Hashable, Iterable
 from dataclasses import MISSING, fields, is_dataclass
-from pydantic import create_model
+from typing import TypeVar
 
-from typing import Counter, Hashable, Iterable, TypeVar
+import pydantic
+from pydantic import create_model
 
 T = TypeVar("T")
 

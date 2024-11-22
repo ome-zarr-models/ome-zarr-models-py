@@ -1,8 +1,23 @@
 from __future__ import annotations
-from typing import Iterable, Literal, Sequence
+
+from collections.abc import Iterable, Sequence
+from typing import Literal
+
 from typing_extensions import Self
 
 from ome_zarr_models.base import Base
+
+__all__ = [
+    "Identity",
+    "VectorScale",
+    "PathScale",
+    "VectorTranslation",
+    "PathTranslation",
+    "ScaleTransform",
+    "TranslationTransform",
+    "VectorTransform",
+]
+
 
 class Identity(Base):
     """
@@ -91,14 +106,15 @@ class PathTranslation(Base):
     type: Literal["translation"]
     translation: str
 
+
 ScaleTransform = VectorScale | PathScale
 TranslationTransform = VectorTranslation | PathTranslation
 VectorTransform = VectorScale | VectorTranslation
 
 
-def ndim(transform: VectorTransform) -> int:
+def _ndim(transform: VectorTransform) -> int:
     """
-    Get the dimensionality of a scale or translation transform. 
+    Get the dimensionality of a scale or translation transform.
     """
     return transform.ndim
 
@@ -110,11 +126,9 @@ def _build_transforms(
     Create a `VectorScale` and optionally a `VectorTranslation` from a scale and a translation
     parameter.
     """
-
     vec_scale = VectorScale.build(scale)
     if translation is None:
         return (vec_scale,)
     else:
         vec_trans = VectorTranslation.build(translation)
         return vec_scale, vec_trans
-

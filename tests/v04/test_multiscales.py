@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from typing import Literal
+
     import numpy.typing as npt
     from zarr.storage import FSStore, MemoryStore, NestedDirectoryStore
 
@@ -18,17 +19,16 @@ from pydantic_zarr.v2 import ArraySpec, GroupSpec
 from zarr.util import guess_chunks
 
 from ome_zarr_models.v04.axes import Axis
-from ome_zarr_models.v04.multiscales import (
-    Dataset,
-    Multiscale,
-    MultiscaleGroupAttrs,
-    Multiscale,
-    MultiscaleGroup,
-)
 from ome_zarr_models.v04.coordinate_transformations import (
     VectorScale,
     VectorTranslation,
     _build_transforms,
+)
+from ome_zarr_models.v04.multiscales import (
+    Dataset,
+    Multiscale,
+    MultiscaleGroup,
+    MultiscaleGroupAttrs,
 )
 
 
@@ -215,11 +215,11 @@ def test_validate_axes_top_transforms() -> None:
     axes_rank = 3
     tforms_rank = 2
     msg_expect = (
-            f"The length of axes does not match the dimensionality of "
-            f"the scale transform in coordinateTransformations. "
-            f"Got {axes_rank} axes, but the scale transform has "
-            f"dimensionality {tforms_rank}"
-        )
+        f"The length of axes does not match the dimensionality of "
+        f"the scale transform in coordinateTransformations. "
+        f"Got {axes_rank} axes, but the scale transform has "
+        f"dimensionality {tforms_rank}"
+    )
     with pytest.raises(
         ValidationError,
         match=msg_expect,
@@ -254,7 +254,7 @@ def test_validate_axes_dset_transforms() -> None:
         f"the scale transform in datasets[0].coordinateTransformations. "
         f"Got {axes_rank} axes, but the scale transform has "
         f"dimensionality {tforms_rank}"
-        )
+    )
 
     with pytest.raises(
         ValidationError,

@@ -2,6 +2,8 @@ from pydantic import BaseModel
 
 from ome_zarr_models.base import Base
 
+__all__ = ["Window", "Channel", "Omero"]
+
 
 class Window(Base):
     """

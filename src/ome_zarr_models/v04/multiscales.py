@@ -1,43 +1,48 @@
 from __future__ import annotations
+<<<<<<< HEAD
 from collections import Counter
 from typing import Annotated, Any, Iterable, Literal, Sequence, get_args
 from typing_extensions import Self
 from ome_zarr_models.zarr_utils import get_path, normalize_chunks
+=======
+
+from collections import Counter
+from collections.abc import Sequence
+from typing import Annotated, Any, get_args
+
+import zarr
+>>>>>>> fbf92313de85ad55c8b229555111984674f959f8
 from pydantic import AfterValidator, Field, model_validator
+from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models.base import Base
 from ome_zarr_models.utils import duplicates
 from ome_zarr_models.v04.axes import Axis, AxisType
 from ome_zarr_models.v04.coordinate_transformations import (
-    _build_transforms,
-    ndim,
-    ScaleTransform, 
+    ScaleTransform,
     TranslationTransform,
-    VectorTransform
+    VectorTransform,
+    _build_transforms,
+    _ndim,
 )
 from ome_zarr_models.v04.omero import Omero
-from pydantic_zarr.v2 import ArraySpec, GroupSpec
-import zarr
-from numcodecs.abc import Codec
-import numpy as np
+
+__all__ = ["VALID_NDIM", "Dataset", "Multiscale", "MultiscaleGroup"]
+
 VALID_NDIM = (2, 3, 4, 5)
 
 
 def _ensure_transform_dimensionality(
-    transforms: tuple[ScaleTransform]
-    | tuple[ScaleTransform, TranslationTransform],
-) -> (
-    tuple[ScaleTransform]
-    | tuple[ScaleTransform, TranslationTransform]
-):
+    transforms: tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform],
+) -> tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform]:
     """
-    Ensures that the elements in the input sequence define transformations with 
-    identical dimensionality. If any of the transforms are defined with a path 
-    instead of concrete values, then no validation will be performed and the 
+    Ensures that the elements in the input sequence define transformations with
+    identical dimensionality. If any of the transforms are defined with a path
+    instead of concrete values, then no validation will be performed and the
     transforms will be returned as-is.
     """
     vector_transforms = filter(lambda v: isinstance(v, VectorTransform), transforms)
-    ndims = tuple(map(ndim, vector_transforms))
+    ndims = tuple(map(_ndim, vector_transforms))
     ndims_set = set(ndims)
     if len(ndims_set) > 1:
         msg = (
@@ -49,23 +54,16 @@ def _ensure_transform_dimensionality(
 
 
 def _ensure_scale_translation(
-    transforms: tuple[ScaleTransform]
-    | tuple[ScaleTransform, TranslationTransform],
-) -> (
-    tuple[ScaleTransform]
-    | tuple[ScaleTransform, TranslationTransform]
-):
+    transforms: tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform],
+) -> tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform]:
     """
     Ensures that
     - there are only 1 or 2 transforms.
     - the first element is a scale transformation
     - the second element, if present, is a translation transform
     """
-
-    if len(transforms) not in (1,2):
-        msg = (
-            f"Invalid number of transforms: got {len(transforms)}, expected 1 or 2"
-        )
+    if len(transforms) not in (1, 2):
+        msg = f"Invalid number of transforms: got {len(transforms)}, expected 1 or 2"
         raise ValueError(msg)
 
     maybe_scale = transforms[0]
@@ -166,7 +164,7 @@ class Dataset(Base):
         *, 
         path: str, 
         scale: Iterable[float], 
-        translation: Iterable[float]):
+        translation: Iterable[float] ):
         """
         Construct a `Dataset` from a path, a scale, and a translation.
         """
@@ -175,7 +173,7 @@ class Dataset(Base):
             coordinateTransformations=_build_transforms(scale=scale, translation=translation))
 
 
-def ensure_top_transforms_dimensionality(data: Multiscale) -> Multiscale:
+def _ensure_top_transforms_dimensionality(data: Multiscale) -> Multiscale:
     """
     Ensure that the dimensionality of the top-level coordinateTransformations, if present,
     is consistent with the rest of the model.
@@ -186,6 +184,7 @@ def ensure_top_transforms_dimensionality(data: Multiscale) -> Multiscale:
         _ = _ensure_transform_dimensionality(ctx)
 
     return data
+
 
 def _ensure_axes_top_transforms(data: Multiscale) -> Multiscale:
     """
@@ -208,6 +207,7 @@ def _ensure_axes_top_transforms(data: Multiscale) -> Multiscale:
                 raise ValueError(msg)
     return data
 
+
 def _ensure_axes_dataset_transforms(data) -> Multiscale:
     """
     Ensure that the length of the axes matches the dimensionality of the transforms
@@ -228,6 +228,7 @@ def _ensure_axes_dataset_transforms(data) -> Multiscale:
                 raise ValueError(msg)
     return data
 
+
 class Multiscale(Base):
     """
     Model of an element of `multiscales` metadata.
@@ -244,9 +245,7 @@ class Multiscale(Base):
         AfterValidator(_ensure_axis_types),
     ]
     coordinateTransformations: (
-        tuple[ScaleTransform] | 
-        tuple[ScaleTransform, TranslationTransform] |
-        None
+        tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform] | None
     ) = None
     metadata: Any = None
     name: Any | None = None
@@ -260,10 +259,15 @@ class Multiscale(Base):
         """
         return len(self.axes)
 
-    _ensure_transforms = model_validator(mode="after")(ensure_top_transforms_dimensionality)
-    _ensure_axes_top_transforms = model_validator(mode="after")(_ensure_axes_top_transforms)
-    _ensure_axes_dataset_transforms = model_validator(mode="after")(_ensure_axes_dataset_transforms)
-
+    _ensure_transforms = model_validator(mode="after")(
+        _ensure_top_transforms_dimensionality
+    )
+    _ensure_axes_top_transforms = model_validator(mode="after")(
+        _ensure_axes_top_transforms
+    )
+    _ensure_axes_dataset_transforms = model_validator(mode="after")(
+        _ensure_axes_dataset_transforms
+    )
 
 
 class MultiscaleGroupAttrs(Base):
@@ -315,7 +319,7 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
         multiscales metadata.
 
         Parameters
-        ---------
+        ----------
         node: zarr.Group
             A Zarr group that has valid OME-NGFF multiscale metadata.
 
