@@ -6,7 +6,7 @@ __all__ = [
     "AcquisitionInPlate",
     "AcquisitionInPlate",
     "ColumnInPlate",
-    "c",
+    "WellInPlate",
     "RowInPlate",
     "Plate",
     "NgffPlateMeta",
@@ -36,7 +36,7 @@ class AcquisitionInPlate(Base):
     )
 
 
-class c(Base):
+class WellInPlate(Base):
     """
     Model for an element of `Plate.wells`.
 
