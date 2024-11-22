@@ -13,21 +13,23 @@ from ome_zarr_models.v04.coordinate_transformations import (
     VectorScale,
     VectorTranslation,
     ndim,
+    ScaleTransform, 
+    TranslationTransform,
+    VectorTransform
 )
 from ome_zarr_models.v04.omero import Omero
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 import zarr
 
 VALID_NDIM = (2, 3, 4, 5)
-MAX_NUM_TRANSFORMS = 2
 
 
 def _ensure_transform_dimensionality(
-    transforms: tuple[VectorScale | PathScale]
-    | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation],
+    transforms: tuple[ScaleTransform]
+    | tuple[ScaleTransform, TranslationTransform],
 ) -> (
-    tuple[VectorScale | PathScale]
-    | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation]
+    tuple[ScaleTransform]
+    | tuple[ScaleTransform, TranslationTransform]
 ):
     """
     Ensures that the elements in the input sequence define transformations with 
@@ -35,26 +37,24 @@ def _ensure_transform_dimensionality(
     instead of concrete values, then no validation will be performed and the 
     transforms will be returned as-is.
     """
-    try: 
-        ndims = tuple(map(ndim, transforms))
-        ndims_set = set(ndims)
-        if len(ndims_set) > 1:
-            msg = (
-                "The transforms have inconsistent dimensionality. "
-                f"Got transforms with dimensionality = {ndims}."
-            )
-            raise ValueError(msg)
-        return transforms
-    except TypeError:
-        return transforms
+    vector_transforms = filter(lambda v: isinstance(v, VectorTransform), transforms)
+    ndims = tuple(map(ndim, vector_transforms))
+    ndims_set = set(ndims)
+    if len(ndims_set) > 1:
+        msg = (
+            "The transforms have inconsistent dimensionality. "
+            f"Got transforms with dimensionality = {ndims}."
+        )
+        raise ValueError(msg)
+    return transforms
 
 
 def _ensure_scale_translation(
-    transforms: tuple[VectorScale | PathScale]
-    | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation],
+    transforms: tuple[ScaleTransform]
+    | tuple[ScaleTransform, TranslationTransform],
 ) -> (
-    tuple[VectorScale | PathScale]
-    | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation]
+    tuple[ScaleTransform]
+    | tuple[ScaleTransform, TranslationTransform]
 ):
     """
     Ensures that
@@ -63,8 +63,10 @@ def _ensure_scale_translation(
     - the second element, if present, is a translation transform
     """
 
-    if len(transforms) not in [1, 2]:
-        msg = f"Invalid number of transforms: got {len(transforms)}, expected 1 or 2"
+    if len(transforms) not in (1,2):
+        msg = (
+            f"Invalid number of transforms: got {len(transforms)}, expected 1 or 2"
+        )
         raise ValueError(msg)
 
     maybe_scale = transforms[0]
@@ -74,7 +76,7 @@ def _ensure_scale_translation(
             f"transform. Got {maybe_scale} instead."
         )
         raise ValueError(msg)
-    if len(transforms) == NUM_TX_MAX:
+    if len(transforms) == 2:
         maybe_trans = transforms[1]
         if (maybe_trans.type) != "translation":
             msg = (
@@ -154,8 +156,7 @@ class Dataset(Base):
     path: str
     # TODO: validate that transforms are consistent w.r.t dimensionality
     coordinateTransformations: Annotated[
-        tuple[VectorScale | PathScale]
-        | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation],
+        tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform],
         AfterValidator(_ensure_scale_translation),
         AfterValidator(_ensure_transform_dimensionality),
     ]
@@ -180,7 +181,7 @@ def _ensure_axes_top_transforms(data: Multiscale) -> Multiscale:
     self_ndim = len(data.axes)
     if data.coordinateTransformations is not None:
         for tx in filter(
-            lambda v: isinstance(v, VectorScale | VectorTranslation),
+            lambda v: isinstance(v, VectorTransform),
             data.coordinateTransformations,
         ):
             if self_ndim != tx.ndim:
@@ -200,7 +201,7 @@ def _ensure_axes_dataset_transforms(data) -> Multiscale:
     self_ndim = len(data.axes)
     for ds_idx, ds in enumerate(data.datasets):
         for tx in filter(
-            lambda v: isinstance(v, VectorScale | VectorTranslation),
+            lambda v: isinstance(v, VectorTransform),
             ds.coordinateTransformations,
         ):
             if self_ndim != tx.ndim:
@@ -229,9 +230,9 @@ class Multiscale(Base):
         AfterValidator(_ensure_axis_types),
     ]
     coordinateTransformations: (
-        tuple[VectorScale | PathScale]
-        | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation]
-        | None
+        tuple[ScaleTransform] | 
+        tuple[ScaleTransform, TranslationTransform] |
+        None
     ) = None
     metadata: Any = None
     name: Any | None = None

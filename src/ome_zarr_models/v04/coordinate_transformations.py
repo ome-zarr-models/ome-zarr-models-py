@@ -1,10 +1,8 @@
+from __future__ import annotations
 from typing import Iterable, Literal, Sequence
 from typing_extensions import Self
 
-from pydantic import Field
-
 from ome_zarr_models.base import Base
-
 
 class Identity(Base):
     """
@@ -93,18 +91,16 @@ class PathTranslation(Base):
     type: Literal["translation"]
     translation: str
 
+ScaleTransform = VectorScale | PathScale
+TranslationTransform = VectorTranslation | PathTranslation
+VectorTransform = VectorScale | VectorTranslation
 
-def ndim(transform: VectorScale | VectorTranslation | PathScale | PathTranslation) -> int:
+
+def ndim(transform: VectorTransform) -> int:
     """
     Get the dimensionality of a scale or translation transform. 
-    PathScale and PathTranslation transforms will result in a TypeError
     """
-    match transform:
-        case VectorScale() | VectorTranslation():
-            return transform.ndim
-        case _:
-            msg = f"Cannot infer the dimensionality of {type(transform)}"
-            raise TypeError(msg)
+    return transform.ndim
 
 
 def _build_transforms(
@@ -121,3 +117,4 @@ def _build_transforms(
     else:
         vec_trans = VectorTranslation.build(translation)
         return vec_scale, vec_trans
+
