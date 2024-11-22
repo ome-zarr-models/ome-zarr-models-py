@@ -2,6 +2,7 @@ from typing import Any, Sequence
 from zarr.util import guess_chunks
 import numpy as np
 
+
 def get_path(store: Any) -> str:
     """
     Get a path from a zarr store

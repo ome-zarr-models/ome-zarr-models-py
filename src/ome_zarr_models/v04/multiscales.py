@@ -1,6 +1,16 @@
 from __future__ import annotations
 
-from typing import Annotated, Any, Iterable, Literal, Self, cast, get_args, TYPE_CHECKING
+from typing import (
+    Annotated,
+    Any,
+    Iterable,
+    Literal,
+    Self,
+    cast,
+    get_args,
+    TYPE_CHECKING,
+)
+
 if TYPE_CHECKING:
     import numpy.typing as npt
 
@@ -158,18 +168,16 @@ class Dataset(Base):
     ]
 
     @classmethod
-    def build(
-        cls, 
-        *, 
-        path: str, 
-        scale: Iterable[float], 
-        translation: Iterable[float] ):
+    def build(cls, *, path: str, scale: Iterable[float], translation: Iterable[float]):
         """
         Construct a `Dataset` from a path, a scale, and a translation.
         """
         return cls(
-            path=path, 
-            coordinateTransformations=_build_transforms(scale=scale, translation=translation))
+            path=path,
+            coordinateTransformations=_build_transforms(
+                scale=scale, translation=translation
+            ),
+        )
 
 
 def _ensure_top_transforms_dimensionality(data: Multiscale) -> Multiscale:
@@ -310,6 +318,7 @@ def _check_datasets_exist(data: MultiscaleGroup) -> MultiscaleGroup:
                 raise ValueError(msg)
     return data
 
+
 def _check_array_ndim(data: MultiscaleGroup) -> MultiscaleGroup:
     """
     Check that all the arrays referenced by the `multiscales` metadata have dimensionality consistent with the
@@ -330,7 +339,11 @@ def _check_array_ndim(data: MultiscaleGroup) -> MultiscaleGroup:
                 tforms += multiscale.coordinateTransformations
 
             for tform in tforms:
-                if hasattr(tform, "scale") or hasattr(tform, "translation") and not hasattr(tform, 'path'):
+                if (
+                    hasattr(tform, "scale")
+                    or hasattr(tform, "translation")
+                    and not hasattr(tform, "path")
+                ):
                     if (tform_ndim := _ndim(tform)) != arr_ndim:
                         msg = (
                             f"Transform {tform} has dimensionality {tform_ndim}, "
@@ -342,9 +355,11 @@ def _check_array_ndim(data: MultiscaleGroup) -> MultiscaleGroup:
                         raise ValueError(msg)
     return data
 
+
 class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
     _check_datasets_exist = model_validator(mode="after")(_check_datasets_exist)
     _check_array_ndim = model_validator(mode="after")(_check_array_ndim)
+
     @classmethod
     def from_zarr(cls, node: zarr.Group) -> MultiscaleGroup:
         """
@@ -516,7 +531,7 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
         """
         Create a `MultiscaleGroup` from a dtype and a sequence of shapes.
 
-        The dtype and shapes are used to parametrize `ArraySpec` instances which model the 
+        The dtype and shapes are used to parametrize `ArraySpec` instances which model the
         Zarr arrays that would be created if the `MultiscaleGroup` was stored.
 
         Parameters
