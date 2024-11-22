@@ -12,3 +12,4 @@ class Base(pydantic.BaseModel):
         """
 
         validate_assignment = True
+        extra = "allow"
