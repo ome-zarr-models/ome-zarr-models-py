@@ -13,10 +13,10 @@ plugins:
           paths: [src]
           options:
             docstring_style: numpy
-            parameter_headings: false
+            parameter_headings: true
             show_root_toc_entry: false
             show_object_full_path: true
-            group_by_category: true
+            group_by_category: false
             heading_level: 3
             show_symbol_type_heading: true
 
@@ -24,3 +24,6 @@ nav:
   - Tutorial: tutorial.py
   - API reference:
       - api/v04.md
+
+watch:
+  - src
