@@ -128,7 +128,7 @@ def from_arrays(
         attributes=MultiscaleGroupAttrs(multiscales=(multimeta,)),
     )
 
-def _from_array_props(
+def from_array_props(
     dtype: npt.DTypeLike,
     shapes: Sequence[Sequence[int]],
     paths: Sequence[str],

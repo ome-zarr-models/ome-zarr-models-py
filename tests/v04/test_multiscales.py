@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING, Any
 
-from tests.v04.conftest import from_arrays
+from tests.v04.conftest import from_array_props, from_arrays
 
 if TYPE_CHECKING:
     from typing import Literal
@@ -287,43 +287,29 @@ def test_multiscale_group_datasets_exist(
         MultiscaleGroup(attributes=group_attrs, members=bad_items)
 
 
-def test_multiscale_group_datasets_rank(default_multiscale: Multiscale) -> None:
-    group_attrs = MultiscaleGroupAttrs(multiscales=(default_multiscale,))
-    good_items = {
-        d.path: ArraySpec(
-            shape=(1, 1, 1, 1),
+def test_multiscale_group_datasets_rank() -> None:
+    """
+    Test that creating a MultiscaleGroup with arrays with mismatched shapes raises
+    an exception
+    """
+    true_ndim = 2
+    bad_ndim = 3
+    match =  (
+            f"The multiscale metadata has {true_ndim} axes "
+            "which does not match the dimensionality of the array "
+            f"found in this group at {bad_ndim} ({bad_ndim}). "
+            "The number of axes must match the array dimensionality."
+                )
+    with pytest.raises(ValidationError, match=re.escape(match)):
+        _ = from_array_props(
+            shapes=((10,) * true_ndim, (10,) * bad_ndim),
+            chunks=((1,) * true_ndim, (1,) * bad_ndim),
             dtype="uint8",
-            chunks=(1, 1, 1, 1),
-        )
-        for d in default_multiscale.datasets
-    }
-    MultiscaleGroup(attributes=group_attrs, members=good_items)
-
-    # arrays with varying rank
-    bad_items = {
-        d.path: ArraySpec(
-            shape=(1,) * (idx + 1),
-            dtype="uint8",
-            chunks=(1,) * (idx + 1),
-        )
-        for idx, d in enumerate(default_multiscale.datasets)
-    }
-    match = "Transform dimensionality must match array dimensionality."
-    with pytest.raises(ValidationError, match=match):
-        MultiscaleGroup(attributes=group_attrs, members=bad_items)
-
-    # arrays with rank that doesn't match the transform
-    bad_items = {
-        d.path: ArraySpec(shape=(1,), dtype="uint8", chunks=(1,))
-        for d in default_multiscale.datasets
-    }
-    with pytest.raises(ValidationError, match=match):
-        # arrays with rank that doesn't match the transform
-        bad_items = {
-            d.path: ArraySpec(shape=(1,), dtype="uint8", chunks=(1,))
-            for d in default_multiscale.datasets
-        }
-        MultiscaleGroup(attributes=group_attrs, members=bad_items)
+            paths=(str(true_ndim), str(bad_ndim)),
+            axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
+            scales=((1, 1), (2, 2)),
+            translations=((0, 0), (0.5, 0.5)),
+    )
 
 @pytest.mark.parametrize("store", ["memory"], indirect=True)
 def test_from_zarr_missing_metadata(

@@ -314,38 +314,28 @@ def _check_datasets_exist(data: MultiscaleGroup) -> MultiscaleGroup:
 
 def _check_array_ndim(data: MultiscaleGroup) -> MultiscaleGroup:
     """
-    Check that all the arrays referenced by the `multiscales` metadata have dimensionality consistent with the
-    `coordinateTransformations` metadata.
+    Check that all the arrays referenced by the `multiscales` metadata have dimensionality 
+    consistent with the `coordinateTransformations` metadata.
     """
     multimeta = data.attributes.multiscales
-
     flat_self = data.to_flat()
 
     # check that each transform has compatible rank
     for multiscale in multimeta:
+        multiscale_ndim = len(multiscale.axes)
         for dataset in multiscale.datasets:
             arr: ArraySpec = flat_self["/" + dataset.path.lstrip("/")]
             arr_ndim = len(arr.shape)
-            tforms = dataset.coordinateTransformations
+            
+            if arr_ndim != multiscale_ndim:
+                msg = (
+                    f"The multiscale metadata has {multiscale_ndim} axes "
+                    "which does not match the dimensionality of the array "
+                    f"found in this group at {dataset.path} ({arr_ndim}). "
+                    "The number of axes must match the array dimensionality."
+                )
 
-            if multiscale.coordinateTransformations is not None:
-                tforms += multiscale.coordinateTransformations
-
-            for tform in tforms:
-                if (
-                    hasattr(tform, "scale")
-                    or hasattr(tform, "translation")
-                    and not hasattr(tform, "path")
-                ):
-                    if (tform_ndim := _ndim(tform)) != arr_ndim:
-                        msg = (
-                            f"Transform {tform} has dimensionality {tform_ndim}, "
-                            "which does not match the dimensionality of the array "
-                            f"found in this group at {dataset.path} ({arr_ndim}). "
-                            "Transform dimensionality must match array dimensionality."
-                        )
-
-                        raise ValueError(msg)
+                raise ValueError(msg)
     return data
 
 
