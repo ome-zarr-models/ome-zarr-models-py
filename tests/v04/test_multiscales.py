@@ -65,11 +65,10 @@ def test_multiscale_unique_axis_names() -> None:
     )
     rank = len(axes)
     datasets = (
-        Dataset(
+        Dataset.build(
             path="path",
-            coordinateTransformations=_build_transforms(
-                scale=(1,) * rank, translation=(0,) * rank
-            ),
+            scale=(1,) * rank, 
+            translation=(0,) * rank
         ),
     )
 
@@ -96,11 +95,10 @@ def test_multiscale_space_axes_last(axis_types: list[str | None]) -> None:
     )
     rank = len(axes)
     datasets = (
-        Dataset(
+        Dataset.build(
             path="path",
-            coordinateTransformations=_build_transforms(
-                scale=(1,) * rank, translation=(0,) * rank
-            ),
+            scale=(1,) * rank, 
+            translation=(0,) * rank
         ),
     )
     # TODO: make some axis-specifc exceptions
@@ -121,11 +119,10 @@ def test_multiscale_axis_length(num_axes: int) -> None:
         Axis(name=str(idx), type="space", unit="meter") for idx in range(num_axes)
     )
     datasets = (
-        Dataset(
+        Dataset.build(
             path="path",
-            coordinateTransformations=_build_transforms(
-                scale=(1,) * rank, translation=(0,) * rank
-            ),
+            scale=(1,) * rank, 
+            translation=(0,) * rank
         ),
     )
     with pytest.raises(ValidationError, match="Incorrect number of axes provided"):
@@ -144,15 +141,11 @@ def test_multiscale_axis_length(num_axes: int) -> None:
 def test_transform_invalid_ndims(
     scale: tuple[int, ...], translation: tuple[int, ...]
 ) -> None:
-    tforms = _build_transforms(
-        scale=scale,
-        translation=translation,
-    )
     with pytest.raises(
         ValidationError,
         match="The transforms have inconsistent dimensionality.",
     ):
-        Dataset(path="foo", coordinateTransformations=tforms)
+        Dataset.build(path="foo", scale=scale, translation=translation)
 
 
 @pytest.mark.parametrize(
@@ -235,13 +228,12 @@ def test_validate_axes_top_transforms() -> None:
             name="foo",
             axes=[Axis(name=str(idx), type="space") for idx in range(axes_rank)],
             datasets=(
-                Dataset(
+                Dataset.build(
                     path="foo",
-                    coordinateTransformations=_build_transforms(
-                        scale=(1,) * axes_rank, translation=None
+                    scale=(1,) * axes_rank, 
+                    translation=(0,) * axes_rank
                     ),
                 ),
-            ),
             coordinateTransformations=_build_transforms(
                 scale=(1,) * tforms_rank, translation=None
             ),
@@ -256,9 +248,6 @@ def test_validate_axes_dset_transforms() -> None:
     axes_rank = 3
     tforms_rank = 2
     axes = [Axis(name=str(idx), type="space") for idx in range(axes_rank)]
-    dset_tforms = _build_transforms(
-        scale=(1,) * tforms_rank, translation=(1,) * tforms_rank
-    )
 
     msg_expect = (
         f"The length of axes does not match the dimensionality of "
@@ -274,7 +263,7 @@ def test_validate_axes_dset_transforms() -> None:
         Multiscale(
             name="foo",
             axes=axes,
-            datasets=[Dataset(path="foo", coordinateTransformations=dset_tforms)],
+            datasets=[Dataset.build(path='foo', scale=(1,) * tforms_rank, translation=(0,) * tforms_rank)],
             coordinateTransformations=_build_transforms(
                 scale=(1,) * axes_rank, translation=None
             ),
@@ -312,7 +301,6 @@ def test_multiscale_group_datasets_exist(
         MultiscaleGroup(attributes=group_attrs, members=bad_items)
 
 
-@pytest.mark.skip
 def test_multiscale_group_datasets_rank(default_multiscale: Multiscale) -> None:
     group_attrs = MultiscaleGroupAttrs(multiscales=(default_multiscale,))
     good_items = {
@@ -352,7 +340,6 @@ def test_multiscale_group_datasets_rank(default_multiscale: Multiscale) -> None:
         MultiscaleGroup(attributes=group_attrs, members=bad_items)
 
 
-@pytest.mark.skip
 @pytest.mark.parametrize("name", [None, "foo"])
 @pytest.mark.parametrize("type", [None, "foo"])
 @pytest.mark.parametrize("path_pattern", ["{0}", "s{0}", "foo/{0}"])
@@ -448,7 +435,6 @@ def test_from_arrays(
         )
 
 
-@pytest.mark.skip
 @pytest.mark.parametrize("name", [None, "foo"])
 @pytest.mark.parametrize("type", [None, "foo"])
 @pytest.mark.parametrize("dtype", ["uint8", np.uint8])
@@ -545,17 +531,13 @@ def test_from_array_props(
         )
 
 
-@pytest.mark.skip
 @pytest.mark.parametrize(
-    "store_type", ["memory_store", "fsstore_local", "nested_directory_store"]
+    "store", ["memory"], indirect=True
 )
 def test_from_zarr_missing_metadata(
-    store_type: Literal["memory_store", "fsstore_local", "nested_directory_store"],
+    store: Literal["memory"],
     request: pytest.FixtureRequest,
 ) -> None:
-    store: MemoryStore | NestedDirectoryStore | FSStore = request.getfixturevalue(
-        store_type
-    )
     group_model = GroupSpec()
     group = group_model.to_zarr(store, path="test")
     store_path = store.path if hasattr(store, "path") else ""
@@ -567,21 +549,13 @@ def test_from_zarr_missing_metadata(
         MultiscaleGroup.from_zarr(group)
 
 
-@pytest.mark.skip
-@pytest.mark.parametrize(
-    "store_type", ["memory_store", "fsstore_local", "nested_directory_store"]
-)
-def test_from_zarr_missing_array(
-    store_type: Literal["memory_store", "fsstore_local", "nested_directory_store"],
-    request: pytest.FixtureRequest,
+@pytest.mark.parametrize("store", ["memory"])
+def test_from_zarr_missing_array(store: Literal["memory"]
 ) -> None:
     """
     Test that creating a multiscale Group fails when an expected Zarr array is missing
     or is a group instead of an array
     """
-    store: MemoryStore | NestedDirectoryStore | FSStore = request.getfixturevalue(
-        store_type
-    )
     arrays = np.zeros((10, 10)), np.zeros((5, 5))
     group_path = "broken"
     arrays_names = ("s0", "s1")

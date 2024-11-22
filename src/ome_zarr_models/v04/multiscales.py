@@ -1,17 +1,15 @@
 from __future__ import annotations
 from collections import Counter
-from typing import Annotated, Any, Sequence, get_args
-
+from typing import Annotated, Any, Iterable, Literal, Sequence, get_args
+from typing_extensions import Self
+from ome_zarr_models.zarr_utils import get_path, normalize_chunks
 from pydantic import AfterValidator, Field, model_validator
 
 from ome_zarr_models.base import Base
 from ome_zarr_models.utils import duplicates
 from ome_zarr_models.v04.axes import Axis, AxisType
 from ome_zarr_models.v04.coordinate_transformations import (
-    PathScale,
-    PathTranslation,
-    VectorScale,
-    VectorTranslation,
+    _build_transforms,
     ndim,
     ScaleTransform, 
     TranslationTransform,
@@ -20,7 +18,8 @@ from ome_zarr_models.v04.coordinate_transformations import (
 from ome_zarr_models.v04.omero import Omero
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 import zarr
-
+from numcodecs.abc import Codec
+import numpy as np
 VALID_NDIM = (2, 3, 4, 5)
 
 
@@ -161,6 +160,21 @@ class Dataset(Base):
         AfterValidator(_ensure_transform_dimensionality),
     ]
 
+    @classmethod
+    def build(
+        cls, 
+        *, 
+        path: str, 
+        scale: Iterable[float], 
+        translation: Iterable[float]):
+        """
+        Construct a `Dataset` from a path, a scale, and a translation.
+        """
+        return cls(
+            path=path, 
+            coordinateTransformations=_build_transforms(scale=scale, translation=translation))
+
+
 def ensure_top_transforms_dimensionality(data: Multiscale) -> Multiscale:
     """
     Ensure that the dimensionality of the top-level coordinateTransformations, if present,
@@ -267,6 +281,32 @@ class MultiscaleGroupAttrs(Base):
     omero: Omero | None = None
 
 
+def _check_datasets_exist(data: MultiscaleGroup) -> MultiscaleGroup:
+    """
+    Check that the datasets referenced in the `multiscales` metadata are actually contained in this group.
+    """
+    attrs = data.attributes
+    flattened = data.to_flat()
+
+    for multiscale in attrs.multiscales:
+        for dataset in multiscale.datasets:
+            dpath = "/" + dataset.path.lstrip("/")
+            if dpath in flattened:
+                if not isinstance(flattened[dpath], ArraySpec):
+                    msg = (
+                        f"The node at {dpath} should be an array, "
+                        f"found {type(flattened[dpath])} instead"
+                    )
+                    raise ValueError(msg)
+            else:
+                msg = (
+                    f"Dataset {dataset.path} was specified in multiscale metadata, but no "
+                    "array with that name was found in the hierarchy. "
+                    "All arrays referenced in multiscale metadata must be contained in the group."
+                )
+                raise ValueError(msg)
+    return data
+
 class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
     @classmethod
     def from_zarr(cls, node: zarr.Group) -> MultiscaleGroup:
@@ -285,7 +325,6 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
             A model of the Zarr group.
         """
         # on unlistable storage backends, the members of this group will be {}
-        raise NotImplementedError
         guess = GroupSpec.from_zarr(node, depth=0)
 
         try:
@@ -306,13 +345,13 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
                 try:
                     array = zarr.open_array(store=node.store, path=array_path, mode="r")
                     array_spec = ArraySpec.from_zarr(array)
-                except ArrayNotFoundError as e:
+                except zarr.errors.ArrayNotFoundError as e:
                     msg = (
                         f"Expected to find an array at {array_path}, "
                         "but no array was found there."
                     )
                     raise ValueError(msg) from e
-                except ContainsGroupError as e:
+                except zarr.errors.ContainsGroupError as e:
                     msg = (
                         f"Expected to find an array at {array_path}, "
                         "but a group was found there instead."
@@ -325,3 +364,231 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
             update={"members": members_normalized.members}
         )
         return cls(**guess_inferred_members.model_dump())
+
+    @classmethod
+    def from_arrays(
+        cls,
+        arrays: Sequence[np.ndarray],
+        *,
+        paths: Sequence[str],
+        axes: Sequence[Axis],
+        scales: Sequence[tuple[int | float, ...]],
+        translations: Sequence[tuple[int | float, ...]],
+        name: str | None = None,
+        type: str | None = None,
+        metadata: dict[str, Any] | None = None,
+        chunks: tuple[int, ...]
+        | tuple[tuple[int, ...], ...]
+        | Literal["auto"] = "auto",
+        compressor: Codec | Literal["auto"] = "auto",
+        fill_value: Any = 0,
+        order: Literal["C", "F", "auto"] = "auto",
+    ) -> Self:
+        """
+        Create a `MultiscaleGroup` from a sequence of multiscale arrays and spatial metadata.
+
+        The arrays are used as templates for corresponding `ArraySpec` instances, which model the Zarr arrays that would be created if the `MultiscaleGroup` was stored.
+
+        Parameters
+        ----------
+        paths: Sequence[str]
+            The paths to the arrays.
+        axes: Sequence[Axis]
+            `Axis` objects describing the dimensions of the arrays.
+        arrays: Sequence[ArrayLike] | Sequence[ChunkedArrayLike]
+            A sequence of array-like objects that collectively represent the same image
+            at multiple levels of detail. The attributes of these arrays are used to create `ArraySpec` objects
+            that model Zarr arrays stored in the Zarr group.
+        scales: Sequence[Sequence[int | float]]
+            A scale value for each axis of the array, for each array in `arrays`.
+        translations: Sequence[Sequence[int | float]]
+            A translation value for each axis the array, for each array in `arrays`.
+        name: str | None, default = None
+            A name for the multiscale collection. Optional.
+        type: str | None, default = None
+            A description of the type of multiscale image represented by this group. Optional.
+        metadata: Dict[str, Any] | None, default = None
+            Arbitrary metadata associated with this multiscale collection. Optional.
+        chunks: tuple[int] | tuple[tuple[int, ...]] | Literal["auto"], default = "auto"
+            The chunks for the arrays in this multiscale group.
+            If the string "auto" is provided, each array will have chunks set to the zarr-python default value, which depends on the shape and dtype of the array.
+            If a single sequence of ints is provided, then this defines the chunks for all arrays.
+            If a sequence of sequences of ints is provided, then this defines the chunks for each array.
+        fill_value: Any, default = 0
+            The fill value for the Zarr arrays.
+        compressor: `Codec` | "auto", default = `numcodecs.ZStd`
+            The compressor to use for the arrays. Default is `numcodecs.ZStd`.
+        order: "auto" | "C" | "F"
+            The memory layout used for chunks of Zarr arrays. The default is "auto", which will infer the order from the input arrays, and fall back to "C" if that inference fails.
+        """
+
+        chunks_normalized = normalize_chunks(
+            chunks,
+            shapes=tuple(s.shape for s in arrays),
+            typesizes=tuple(s.dtype.itemsize for s in arrays),
+        )
+
+        members_flat = {
+            "/" + key.lstrip("/"): ArraySpec.from_array(
+                array=arr,
+                chunks=cnks,
+                attributes={},
+                compressor=compressor,
+                filters=None,
+                fill_value=fill_value,
+                order=order,
+            )
+            for key, arr, cnks in zip(paths, arrays, chunks_normalized)
+        }
+
+        multimeta = Multiscale(
+            name=name,
+            type=type,
+            metadata=metadata,
+            axes=tuple(axes),
+            datasets=tuple(
+                create_dataset(path=path, scale=scale, translation=translation)
+                for path, scale, translation in zip(paths, scales, translations)
+            ),
+            coordinateTransformations=None,
+        )
+        return cls(
+            members=GroupSpec.from_flat(members_flat).members,
+            attributes=MultiscaleGroupAttrs(multiscales=(multimeta,)),
+        )
+
+    @classmethod
+    def from_array_props(
+        cls,
+        dtype: npt.DTypeLike,
+        shapes: Sequence[Sequence[int]],
+        paths: Sequence[str],
+        axes: Sequence[Axis],
+        scales: Sequence[tuple[int | float, ...]],
+        translations: Sequence[tuple[int | float, ...]],
+        name: str | None = None,
+        type: str | None = None,
+        metadata: dict[str, Any] | None = None,
+        chunks: tuple[int, ...]
+        | tuple[tuple[int, ...], ...]
+        | Literal["auto"] = "auto",
+        compressor: Codec = DEFAULT_COMPRESSOR,
+        fill_value: Any = 0,
+        order: Literal["C", "F"] = "C",
+    ) -> Self:
+        """
+        Create a `MultiscaleGroup` from a dtype and a sequence of shapes.
+
+        The dtype and shapes are used to parametrize `ArraySpec` instances which model the Zarr arrays that would be created if the `MultiscaleGroup` was stored.
+
+        Parameters
+        ----------
+        dtype: np.dtype[Any]
+            The data type of the arrays.
+        shapes: Seqence[Sequence[str]]
+            The shapes of the arrays.
+        paths: Sequence[str]
+            The paths to the arrays.
+        axes: Sequence[Axis]
+            `Axis` objects describing the dimensions of the arrays.
+        scales: Sequence[Sequence[int | float]]
+            A scale value for each axis of the array, for each shape in `shapes`.
+        translations: Sequence[Sequence[int | float]]
+            A translation value for each axis the array, for each shape in `shapes`.
+        name: str | None, default = None
+            A name for the multiscale collection. Optional.
+        type: str | None, default = None
+            A description of the type of multiscale image represented by this group. Optional.
+        metadata: Dict[str, Any] | None, default = None
+            Arbitrary metadata associated with this multiscale collection. Optional.
+        chunks: tuple[int] | tuple[tuple[int, ...]] | Literal["auto"], default = "auto"
+            The chunks for the arrays in this multiscale group.
+            If the string "auto" is provided, each array will have chunks set to the zarr-python default value, which depends on the shape and dtype of the array.
+            If a single sequence of ints is provided, then this defines the chunks for all arrays.
+            If a sequence of sequences of ints is provided, then this defines the chunks for each array.
+        fill_value: Any, default = 0
+            The fill value for the Zarr arrays.
+        compressor: `Codec`
+            The compressor to use for the arrays. Default is `numcodecs.ZStd`.
+        order: "C" | "F", default = "C"
+            The memory layout used for chunks of Zarr arrays. The default is "C".
+        """
+
+        dtype_normalized = np.dtype(dtype)
+
+        chunks_normalized = normalize_chunks(
+            chunks,
+            shapes=tuple(tuple(s) for s in shapes),
+            typesizes=tuple(dtype_normalized.itemsize for s in shapes),
+        )
+
+        members_flat = {
+            "/" + key.lstrip("/"): ArraySpec(
+                dtype=dtype,
+                shape=shape,
+                chunks=cnks,
+                attributes={},
+                compressor=compressor,
+                filters=None,
+                fill_value=fill_value,
+                order=order,
+            )
+            for key, shape, cnks in zip(paths, shapes, chunks_normalized)
+        }
+
+        multimeta = MultiscaleMetadata(
+            name=name,
+            type=type,
+            metadata=metadata,
+            axes=tuple(axes),
+            datasets=tuple(
+                create_dataset(path=path, scale=scale, translation=translation)
+                for path, scale, translation in zip(paths, scales, translations)
+            ),
+            coordinateTransformations=None,
+        )
+        return cls(
+            members=GroupSpec.from_flat(members_flat).members,
+            attributes=MultiscaleGroupAttrs(multiscales=(multimeta,)),
+        )
+
+    _check_datasets_exist = model_validator(mode="after")(check_datasets_exist)
+    
+
+    @model_validator(mode="after")
+    def check_array_ndim(self) -> MultiscaleGroup:
+        """
+        Check that all the arrays referenced by the `multiscales` metadata have dimensionality consistent with the
+        `coordinateTransformations` metadata.
+        """
+        multimeta = self.attributes.multiscales
+
+        flat_self = self.to_flat()
+
+        # check that each transform has compatible rank
+        for multiscale in multimeta:
+            for dataset in multiscale.datasets:
+                arr: ArraySpec = flat_self["/" + dataset.path.lstrip("/")]
+                arr_ndim = len(arr.shape)
+                tforms = dataset.coordinateTransformations
+
+                if multiscale.coordinateTransformations is not None:
+                    tforms += multiscale.coordinateTransformations
+
+                for tform in tforms:
+                    if hasattr(tform, "scale") or hasattr(tform, "translation"):
+                        tform = cast(
+                            tx.VectorScale | tx.VectorTranslation,
+                            tform,
+                        )
+                        if (tform_ndim := tx.ndim(tform)) != arr_ndim:
+                            msg = (
+                                f"Transform {tform} has dimensionality {tform_ndim}, "
+                                "which does not match the dimensionality of the array "
+                                f"found in this group at {dataset.path} ({arr_ndim}). "
+                                "Transform dimensionality must match array dimensionality."
+                            )
+
+                            raise ValueError(msg)
+
+        return self
