@@ -63,7 +63,7 @@ def ensure_scale_translation(
     - the second element, if present, is a translation transform
     """
 
-    if len(transforms) == 0 or len(transforms) > 2:
+    if len(transforms) not in [1, 2]:
         msg = f"Invalid number of transforms: got {len(transforms)}, expected 1 or 2"
         raise ValueError(msg)
 
