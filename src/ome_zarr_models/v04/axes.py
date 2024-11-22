@@ -1,16 +1,8 @@
 from enum import Enum
+from typing import Literal
 from ome_zarr_models.base import Base
 
-
-class AxisType(str, Enum):
-    """
-    String enum representing the three axis types (`space`, `time`, `channel`) defined in the specification.
-    """
-
-    space = "space"
-    time = "time"
-    channel = "channel"
-
+AxisType = Literal["space", "time", "channel"]
 
 class Axis(Base):
     """

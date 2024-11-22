@@ -1,6 +1,6 @@
 from __future__ import annotations
 from collections import Counter
-from typing import Annotated, Any, Sequence
+from typing import Annotated, Any, Sequence, get_args
 
 from pydantic import AfterValidator, Field, model_validator
 
@@ -134,7 +134,7 @@ def ensure_axis_types(axes: Sequence[Axis]) -> Sequence[Axis]:
         msg = f"Invalid number of channel axes: {num_channels}. Only 1 channel axis is allowed."
         raise ValueError(msg)
 
-    custom_axes = set(axis_types) - set(AxisType._member_names_)
+    custom_axes = set(axis_types) - set(get_args(AxisType))
     if (num_custom := len(custom_axes)) > 1:
         msg = f"Invalid number of custom axes: {num_custom}. Only 1 custom axis is allowed."
         raise ValueError(msg)
