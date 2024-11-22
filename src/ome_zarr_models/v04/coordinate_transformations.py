@@ -1,11 +1,13 @@
 from __future__ import annotations
 
-from collections.abc import Iterable, Sequence
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 from typing_extensions import Self
 
 from ome_zarr_models.base import Base
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Sequence
 
 __all__ = [
     "Identity",

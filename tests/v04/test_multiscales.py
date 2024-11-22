@@ -352,23 +352,21 @@ def test_from_arrays(
         )
     )
 
-    all_axes = tuple(
-        [
-            Axis(
-                name="x",
-                type="space",
-            ),
-            Axis(name="y", type="space"),
-            Axis(name="z", type="space"),
-            Axis(name="t", type="time"),
-            Axis(name="c", type="barf"),
-        ]
+    all_axes = (
+        Axis(
+            name="x",
+            type="space",
+        ),
+        Axis(name="y", type="space"),
+        Axis(name="z", type="space"),
+        Axis(name="t", type="time"),
+        Axis(name="c", type="barf"),
     )
     # spatial axes have to come last
     if ndim in (2, 3):
         axes = all_axes[:ndim]
     else:
-        axes = tuple([*all_axes[4:], *all_axes[:3]])
+        axes = (*all_axes[4:], *all_axes[:3])
     chunks_arg: tuple[tuple[int, ...], ...] | tuple[int, ...] | Literal["auto"]
     if chunks == "auto":
         chunks_arg = chunks
@@ -451,23 +449,21 @@ def test_from_array_props(
         )
     )
 
-    all_axes = tuple(
-        [
-            Axis(
-                name="x",
-                type="space",
-            ),
-            Axis(name="y", type="space"),
-            Axis(name="z", type="space"),
-            Axis(name="t", type="time"),
-            Axis(name="c", type="barf"),
-        ]
+    all_axes = (
+        Axis(
+            name="x",
+            type="space",
+        ),
+        Axis(name="y", type="space"),
+        Axis(name="z", type="space"),
+        Axis(name="t", type="time"),
+        Axis(name="c", type="barf"),
     )
     # spatial axes have to come last
     if ndim in (2, 3):
         axes = all_axes[:ndim]
     else:
-        axes = tuple([*all_axes[4:], *all_axes[:3]])
+        axes = (*all_axes[4:], *all_axes[:3])
     chunks_arg: tuple[tuple[int, ...], ...] | tuple[int, ...] | Literal["auto"]
     if chunks == "auto":
         chunks_arg = chunks

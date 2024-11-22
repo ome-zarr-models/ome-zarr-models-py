@@ -2,13 +2,15 @@ from __future__ import annotations
 
 import warnings
 from collections import Counter
-from collections.abc import Hashable, Iterable
-from typing import Annotated, Literal
+from typing import TYPE_CHECKING, Annotated, Literal
 
 from pydantic import AfterValidator, Field, model_validator
 
 from ome_zarr_models.base import Base
 from ome_zarr_models.v04.multiscales import MultiscaleGroupAttrs
+
+if TYPE_CHECKING:
+    from collections.abc import Hashable, Iterable
 
 __all__ = ["ConInt", "RGBA", "Color", "Source", "Property", "ImageLabel", "GroupAttrs"]
 
