@@ -22,7 +22,7 @@ VALID_NDIM = (2, 3, 4, 5)
 MAX_NUM_TRANSFORMS = 2
 
 
-def ensure_transform_dimensionality(
+def _ensure_transform_dimensionality(
     transforms: tuple[VectorScale | PathScale]
     | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation],
 ) -> (
@@ -49,7 +49,7 @@ def ensure_transform_dimensionality(
         return transforms
 
 
-def ensure_scale_translation(
+def _ensure_scale_translation(
     transforms: tuple[VectorScale | PathScale]
     | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation],
 ) -> (
@@ -86,7 +86,7 @@ def ensure_scale_translation(
     return transforms
 
 
-def ensure_axis_length(axes: Sequence[Axis]) -> Sequence[Axis]:
+def _ensure_axis_length(axes: Sequence[Axis]) -> Sequence[Axis]:
     """
     Ensures that there are between 2 and 5 axes (inclusive)
     """
@@ -96,7 +96,7 @@ def ensure_axis_length(axes: Sequence[Axis]) -> Sequence[Axis]:
     return axes
 
 
-def ensure_axis_names(axes: Sequence[Axis]) -> Sequence[Axis]:
+def _ensure_axis_names(axes: Sequence[Axis]) -> Sequence[Axis]:
     """
     Ensures that the names of the axes are unique.
     """
@@ -107,7 +107,7 @@ def ensure_axis_names(axes: Sequence[Axis]) -> Sequence[Axis]:
     return axes
 
 
-def ensure_axis_types(axes: Sequence[Axis]) -> Sequence[Axis]:
+def _ensure_axis_types(axes: Sequence[Axis]) -> Sequence[Axis]:
     """
     Ensures that the following conditions are true:
 
@@ -156,8 +156,8 @@ class Dataset(Base):
     coordinateTransformations: Annotated[
         tuple[VectorScale | PathScale]
         | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation],
-        AfterValidator(ensure_scale_translation),
-        AfterValidator(ensure_transform_dimensionality),
+        AfterValidator(_ensure_scale_translation),
+        AfterValidator(_ensure_transform_dimensionality),
     ]
 
 def ensure_top_transforms_dimensionality(data: Multiscale) -> Multiscale:
@@ -168,11 +168,11 @@ def ensure_top_transforms_dimensionality(data: Multiscale) -> Multiscale:
     ctx = data.coordinateTransformations
     if ctx is not None:
         # check that the dimensionality of the coordinateTransformations is internally consistent
-        _ = ensure_transform_dimensionality(ctx)
+        _ = _ensure_transform_dimensionality(ctx)
 
     return data
 
-def ensure_axes_top_transforms(data: Multiscale) -> Multiscale:
+def _ensure_axes_top_transforms(data: Multiscale) -> Multiscale:
     """
     Ensure that the length of the axes matches the dimensionality of the transforms
     defined in the top-level coordinateTransformations, if present.
@@ -193,7 +193,7 @@ def ensure_axes_top_transforms(data: Multiscale) -> Multiscale:
                 raise ValueError(msg)
     return data
 
-def ensure_axes_dataset_transforms(data) -> Multiscale:
+def _ensure_axes_dataset_transforms(data) -> Multiscale:
     """
     Ensure that the length of the axes matches the dimensionality of the transforms
     """
@@ -224,9 +224,9 @@ class Multiscale(Base):
     version: Any | None = None
     axes: Annotated[
         tuple[Axis, ...],
-        AfterValidator(ensure_axis_length),
-        AfterValidator(ensure_axis_names),
-        AfterValidator(ensure_axis_types),
+        AfterValidator(_ensure_axis_length),
+        AfterValidator(_ensure_axis_names),
+        AfterValidator(_ensure_axis_types),
     ]
     coordinateTransformations: (
         tuple[VectorScale | PathScale]
@@ -246,8 +246,8 @@ class Multiscale(Base):
         return len(self.axes)
 
     _ensure_transforms = model_validator(mode="after")(ensure_top_transforms_dimensionality)
-    _ensure_axes_top_transforms = model_validator(mode="after")(ensure_axes_top_transforms)
-    _ensure_axes_dataset_transforms = model_validator(mode="after")(ensure_axes_dataset_transforms)
+    _ensure_axes_top_transforms = model_validator(mode="after")(_ensure_axes_top_transforms)
+    _ensure_axes_dataset_transforms = model_validator(mode="after")(_ensure_axes_dataset_transforms)
 
 
 
