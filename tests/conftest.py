@@ -3,7 +3,7 @@ from zarr import MemoryStore
 
 
 @pytest.fixture
-def store(request: pytest.FixtureRequest) -> MemoryStore:
+def store(request: pytest.FixtureRequest) -> Store:
     match request.param:
         case "memory":
             return MemoryStore()
