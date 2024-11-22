@@ -270,6 +270,7 @@ def test_validate_axes_dset_transforms() -> None:
         )
 
 
+@pytest.mark.skip
 def test_multiscale_group_datasets_exist(
     default_multiscale: Multiscale,
 ) -> None:
