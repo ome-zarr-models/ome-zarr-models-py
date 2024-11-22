@@ -64,13 +64,7 @@ def test_multiscale_unique_axis_names() -> None:
         Axis(name="x", type="space", unit="meter"),
     )
     rank = len(axes)
-    datasets = (
-        Dataset.build(
-            path="path",
-            scale=(1,) * rank, 
-            translation=(0,) * rank
-        ),
-    )
+    datasets = (Dataset.build(path="path", scale=(1,) * rank, translation=(0,) * rank),)
 
     with pytest.raises(ValidationError, match="Axis names must be unique."):
         Multiscale(
@@ -94,13 +88,7 @@ def test_multiscale_space_axes_last(axis_types: list[str | None]) -> None:
         for idx, t in enumerate(axis_types)
     )
     rank = len(axes)
-    datasets = (
-        Dataset.build(
-            path="path",
-            scale=(1,) * rank, 
-            translation=(0,) * rank
-        ),
-    )
+    datasets = (Dataset.build(path="path", scale=(1,) * rank, translation=(0,) * rank),)
     # TODO: make some axis-specifc exceptions
     with pytest.raises(ValidationError, match="Space axes must come last."):
         Multiscale(
@@ -118,13 +106,7 @@ def test_multiscale_axis_length(num_axes: int) -> None:
     axes = tuple(
         Axis(name=str(idx), type="space", unit="meter") for idx in range(num_axes)
     )
-    datasets = (
-        Dataset.build(
-            path="path",
-            scale=(1,) * rank, 
-            translation=(0,) * rank
-        ),
-    )
+    datasets = (Dataset.build(path="path", scale=(1,) * rank, translation=(0,) * rank),)
     with pytest.raises(ValidationError, match="Incorrect number of axes provided"):
         Multiscale(
             axes=axes,
@@ -229,11 +211,9 @@ def test_validate_axes_top_transforms() -> None:
             axes=[Axis(name=str(idx), type="space") for idx in range(axes_rank)],
             datasets=(
                 Dataset.build(
-                    path="foo",
-                    scale=(1,) * axes_rank, 
-                    translation=(0,) * axes_rank
-                    ),
+                    path="foo", scale=(1,) * axes_rank, translation=(0,) * axes_rank
                 ),
+            ),
             coordinateTransformations=_build_transforms(
                 scale=(1,) * tforms_rank, translation=None
             ),
@@ -263,7 +243,11 @@ def test_validate_axes_dset_transforms() -> None:
         Multiscale(
             name="foo",
             axes=axes,
-            datasets=[Dataset.build(path='foo', scale=(1,) * tforms_rank, translation=(0,) * tforms_rank)],
+            datasets=[
+                Dataset.build(
+                    path="foo", scale=(1,) * tforms_rank, translation=(0,) * tforms_rank
+                )
+            ],
             coordinateTransformations=_build_transforms(
                 scale=(1,) * axes_rank, translation=None
             ),
