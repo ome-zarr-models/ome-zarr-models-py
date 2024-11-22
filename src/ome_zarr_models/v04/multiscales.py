@@ -2,7 +2,7 @@ from __future__ import annotations
 from collections import Counter
 from typing import Annotated, Any, Sequence
 
-from pydantic import AfterValidator, Field model_validator
+from pydantic import AfterValidator, Field, model_validator
 
 from ome_zarr_models.base import Base
 from ome_zarr_models.utils import duplicates
