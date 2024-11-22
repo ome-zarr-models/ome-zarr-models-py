@@ -3,7 +3,6 @@ import zarr
 from ome_zarr_models.v04.multiscales import Multiscale, MultiscaleGroupAttrs
 from ome_zarr_models.v04.omero import Omero
 
-
 __all__ = ["Image"]
 
 
