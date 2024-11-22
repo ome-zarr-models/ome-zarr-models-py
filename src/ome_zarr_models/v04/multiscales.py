@@ -57,8 +57,10 @@ def ensure_scale_translation(
     | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation]
 ):
     """
-    Ensures that the first element is a scale transformation, the second element,
-    if present, is a translation transform, and that there are only 1 or 2 transforms.
+    Ensures that
+    - there are only 1 or 2 transforms.
+    - the first element is a scale transformation
+    - the second element, if present, is a translation transform
     """
 
     if len(transforms) == 0 or len(transforms) > 2:
