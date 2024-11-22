@@ -9,6 +9,11 @@ __all__ = ["Image"]
 class Image:
     """
     A object representing OME-zarr image.
+
+    Parameters
+    ----------
+    group :
+        zarr Group which contains the image.
     """
 
     def __init__(self, group: zarr.Group):
