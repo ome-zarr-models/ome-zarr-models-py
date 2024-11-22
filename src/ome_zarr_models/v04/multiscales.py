@@ -6,7 +6,6 @@ from typing import (
     Iterable,
     Literal,
     Self,
-    cast,
     get_args,
     TYPE_CHECKING,
 )
