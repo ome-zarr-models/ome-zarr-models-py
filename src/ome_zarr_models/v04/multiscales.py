@@ -19,7 +19,7 @@ from pydantic_zarr.v2 import ArraySpec, GroupSpec
 import zarr
 
 VALID_NDIM = (2, 3, 4, 5)
-NUM_TX_MAX = 2
+MAX_NUM_TRANSFORMS = 2
 
 
 def ensure_transform_dimensionality(
