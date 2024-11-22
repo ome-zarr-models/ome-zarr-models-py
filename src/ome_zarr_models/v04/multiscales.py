@@ -315,12 +315,11 @@ def _check_datasets_exist(data: MultiscaleGroup) -> MultiscaleGroup:
 def _check_array_ndim(data: MultiscaleGroup) -> MultiscaleGroup:
     """
     Check that all the arrays referenced by the `multiscales` metadata have dimensionality 
-    consistent with the `coordinateTransformations` metadata.
+    consistent with the number of axes defined in the metadata.
     """
     multimeta = data.attributes.multiscales
     flat_self = data.to_flat()
 
-    # check that each transform has compatible rank
     for multiscale in multimeta:
         multiscale_ndim = len(multiscale.axes)
         for dataset in multiscale.datasets:
