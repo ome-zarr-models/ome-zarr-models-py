@@ -3,6 +3,8 @@ from pydantic import Field, field_validator
 from ome_zarr_models.base import Base
 from ome_zarr_models.utils import _unique_items_validator
 
+__all__ = ["ImageInWell", "Well", "NgffWellMeta"]
+
 
 class ImageInWell(Base):
     """

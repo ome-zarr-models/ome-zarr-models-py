@@ -10,11 +10,13 @@ from pydantic import AfterValidator, Field, model_validator
 from ome_zarr_models.base import Base
 from ome_zarr_models.v04.multiscales import MultiscaleGroupAttrs
 
+__all__ = ["ConInt", "RGBA", "Color", "Source", "Property", "ImageLabel", "GroupAttrs"]
+
 ConInt = Annotated[int, Field(strict=True, ge=0, le=255)]
 RGBA = tuple[ConInt, ConInt, ConInt, ConInt]
 
 
-def duplicates(values: Iterable[Hashable]) -> dict[Hashable, int]:
+def _duplicates(values: Iterable[Hashable]) -> dict[Hashable, int]:
     """
     Takes a sequence of hashable elements and returns a dict where the keys are the
     elements of the input that occurred at least once, and the values are the
@@ -42,7 +44,7 @@ class Property(Base):
     label_value: int = Field(..., serialization_alias="label-value")
 
 
-def parse_colors(colors: list[Color] | None) -> list[Color] | None:
+def _parse_colors(colors: list[Color] | None) -> list[Color] | None:
     if colors is None:
         msg = (
             "The field `colors` is `None`. Version 0.4 of"
@@ -50,7 +52,7 @@ def parse_colors(colors: list[Color] | None) -> list[Color] | None:
         )
         warnings.warn(msg, stacklevel=1)
     else:
-        dupes = duplicates(x.label_value for x in colors)
+        dupes = _duplicates(x.label_value for x in colors)
         if len(dupes) > 0:
             msg = (
                 f"Duplicated label-value: {tuple(dupes.keys())}."
@@ -61,7 +63,7 @@ def parse_colors(colors: list[Color] | None) -> list[Color] | None:
     return colors
 
 
-def parse_version(version: Literal["0.4"] | None) -> Literal["0.4"] | None:
+def _parse_version(version: Literal["0.4"] | None) -> Literal["0.4"] | None:
     if version is None:
         _ = (
             "The `version` attribute is `None`. Version 0.4 of "
@@ -70,7 +72,7 @@ def parse_version(version: Literal["0.4"] | None) -> Literal["0.4"] | None:
     return version
 
 
-def parse_imagelabel(model: ImageLabel) -> ImageLabel:
+def _parse_imagelabel(model: ImageLabel) -> ImageLabel:
     """
     check that label_values are consistent across properties and colors
     """
@@ -98,14 +100,14 @@ class ImageLabel(Base):
 
     _version: Literal["0.4"]
 
-    version: Annotated[Literal["0.4"] | None, AfterValidator(parse_version)]
-    colors: Annotated[tuple[Color, ...] | None, AfterValidator(parse_colors)] = None
+    version: Annotated[Literal["0.4"] | None, AfterValidator(_parse_version)]
+    colors: Annotated[tuple[Color, ...] | None, AfterValidator(_parse_colors)] = None
     properties: tuple[Property, ...] | None = None
     source: Source | None = None
 
     @model_validator(mode="after")
     def parse_model(self) -> ImageLabel:
-        return parse_imagelabel(self)
+        return _parse_imagelabel(self)
 
 
 class GroupAttrs(MultiscaleGroupAttrs):

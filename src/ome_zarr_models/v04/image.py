@@ -9,15 +9,9 @@ __all__ = ["Image"]
 class Image:
     """
     A object representing OME-zarr image.
-
-    Attributes
-    ----------
-    group :
-        zarr group for the image.
     """
 
     def __init__(self, group: zarr.Group):
-        self.group = group
         self._attrs = MultiscaleGroupAttrs(**group.attrs.asdict())
 
     @property
