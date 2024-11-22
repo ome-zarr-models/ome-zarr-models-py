@@ -65,11 +65,10 @@ def test_multiscale_unique_axis_names() -> None:
     )
     rank = len(axes)
     datasets = (
-        Dataset(
+        Dataset.build(
             path="path",
-            coordinateTransformations=_build_transforms(
-                scale=(1,) * rank, translation=(0,) * rank
-            ),
+            scale=(1,) * rank, 
+            translation=(0,) * rank
         ),
     )
 
@@ -96,11 +95,10 @@ def test_multiscale_space_axes_last(axis_types: list[str | None]) -> None:
     )
     rank = len(axes)
     datasets = (
-        Dataset(
+        Dataset.build(
             path="path",
-            coordinateTransformations=_build_transforms(
-                scale=(1,) * rank, translation=(0,) * rank
-            ),
+            scale=(1,) * rank, 
+            translation=(0,) * rank
         ),
     )
     # TODO: make some axis-specifc exceptions
@@ -121,11 +119,10 @@ def test_multiscale_axis_length(num_axes: int) -> None:
         Axis(name=str(idx), type="space", unit="meter") for idx in range(num_axes)
     )
     datasets = (
-        Dataset(
+        Dataset.build(
             path="path",
-            coordinateTransformations=_build_transforms(
-                scale=(1,) * rank, translation=(0,) * rank
-            ),
+            scale=(1,) * rank, 
+            translation=(0,) * rank
         ),
     )
     with pytest.raises(ValidationError, match="Incorrect number of axes provided"):
@@ -144,15 +141,11 @@ def test_multiscale_axis_length(num_axes: int) -> None:
 def test_transform_invalid_ndims(
     scale: tuple[int, ...], translation: tuple[int, ...]
 ) -> None:
-    tforms = _build_transforms(
-        scale=scale,
-        translation=translation,
-    )
     with pytest.raises(
         ValidationError,
         match="The transforms have inconsistent dimensionality.",
     ):
-        Dataset(path="foo", coordinateTransformations=tforms)
+        Dataset.build(path="foo", scale=scale, translation=translation)
 
 
 @pytest.mark.parametrize(
@@ -235,13 +228,12 @@ def test_validate_axes_top_transforms() -> None:
             name="foo",
             axes=[Axis(name=str(idx), type="space") for idx in range(axes_rank)],
             datasets=(
-                Dataset(
+                Dataset.build(
                     path="foo",
-                    coordinateTransformations=_build_transforms(
-                        scale=(1,) * axes_rank, translation=None
+                    scale=(1,) * axes_rank, 
+                    translation=(0,) * axes_rank
                     ),
                 ),
-            ),
             coordinateTransformations=_build_transforms(
                 scale=(1,) * tforms_rank, translation=None
             ),
@@ -256,9 +248,6 @@ def test_validate_axes_dset_transforms() -> None:
     axes_rank = 3
     tforms_rank = 2
     axes = [Axis(name=str(idx), type="space") for idx in range(axes_rank)]
-    dset_tforms = _build_transforms(
-        scale=(1,) * tforms_rank, translation=(1,) * tforms_rank
-    )
 
     msg_expect = (
         f"The length of axes does not match the dimensionality of "
