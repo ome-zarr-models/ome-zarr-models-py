@@ -30,7 +30,10 @@ def ensure_transform_dimensionality(
     | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation]
 ):
     """
-    Ensures that the elements in the input sequence define transformations with identical dimensionality.
+    Ensures that the elements in the input sequence define transformations with 
+    identical dimensionality. If any of the transforms are defined with a path 
+    instead of concrete values, then no validation will be performed and the 
+    transforms will be returned as-is.
     """
     try: 
         ndims = tuple(map(ndim, transforms))
