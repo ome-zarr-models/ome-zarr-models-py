@@ -148,6 +148,20 @@ class Dataset(Base):
         AfterValidator(_ensure_transform_dimensionality),
     ]
 
+    @classmethod
+    def build(
+        cls, 
+        *, 
+        path: str, 
+        scale: Iterable[float], 
+        translation: Iterable[float] ):
+        """
+        Construct a `Dataset` from a path, a scale, and a translation.
+        """
+        return cls(
+            path=path, 
+            coordinateTransformations=_build_transforms(scale=scale, translation=translation))
+
 
 def ensure_top_transforms_dimensionality(data: Multiscale) -> Multiscale:
     """
