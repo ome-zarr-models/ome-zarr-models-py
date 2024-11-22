@@ -216,7 +216,7 @@ def _ensure_axes_dataset_transforms(data) -> Multiscale:
 
 class Multiscale(Base):
     """
-    Model for an element of `NgffImageMeta.multiscales`.
+    Model of an element of `multiscales` metadata.
 
     See https://ngff.openmicroscopy.org/0.4/#multiscale-md.
     """
