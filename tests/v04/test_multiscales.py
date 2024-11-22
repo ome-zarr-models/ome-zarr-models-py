@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -217,19 +218,22 @@ def test_transform_invalid_second_element(
         Dataset(path="foo", coordinateTransformations=transforms)
 
 def test_transform_axes_length() -> None:
+    """
+    Test that the number of axes must match the dimensionality of the coordinateTransformations
+    """
+    axes_rank = 3
+    tforms_rank = 2
     with pytest.raises(
         ValidationError,
-        match="The number of axes must match the dimensionality of the coordinateTransformations",
+        match=re.escape(f"The length of axes ({axes_rank}) does not match the dimensionality of")
     ):
-        rank = 3
         Multiscale(
             name="foo",
-            axes=[Axis(name="a", type='space'), Axis(name='b', type='space')],
+            axes=[Axis(name=str(idx), type='space') for idx in range(axes_rank)],
             datasets=(
                 Dataset(path="foo", coordinateTransformations=_build_transforms(scale=(1, 1), translation=None)),),
-            coordinateTransformations=_build_transforms(scale=(1,) * rank, translation=None)
+            coordinateTransformations=_build_transforms(scale=(1,) * tforms_rank, translation=None)
             )
-
 
 
 @pytest.mark.skip

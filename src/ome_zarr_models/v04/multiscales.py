@@ -2,7 +2,7 @@ from __future__ import annotations
 from collections import Counter
 from typing import Annotated, Any, Sequence
 
-from pydantic import AfterValidator, Field, field_validator
+from pydantic import AfterValidator, Field, field_validator, model_validator
 
 from ome_zarr_models.base import Base
 from ome_zarr_models.utils import _unique_items_validator, duplicates
@@ -170,6 +170,59 @@ class Multiscale(Base):
     name: Any | None = None
     type: Any = None
 
+    @property
+    def ndim(self) -> int:
+        """
+        Report the dimensionality of the data described by this metadata, which is determined
+        by the length of the axes attribute.
+        """
+        return len(self.axes)
+
+    @model_validator(mode="after")
+    def validate_transforms(self) -> Multiscale:
+        """
+        Ensure that the dimensionality of the top-level coordinateTransformations, if present,
+        is consistent with the rest of the model.
+        """
+        ctx = self.coordinateTransformations
+        if ctx is not None:
+            # check that the dimensionality of the coordinateTransformations is internally consistent
+            _ = ensure_transform_dimensionality(ctx)
+
+            # check that the dimensionality matches the dimensionality of the dataset ctx,
+            # only if the first element is a vector scale transform.
+            if isinstance(ctx[0], VectorScale) and isinstance(self.datasets[0].coordinateTransformations[0], VectorScale):
+                ndim = ctx[0].ndim
+                dset_scale_ndim = self.datasets[0].coordinateTransformations[0].ndim
+                if ndim != dset_scale_ndim:
+                    msg = (
+                        f"Dimensionality of multiscale.coordinateTransformations {ndim} "
+                        "does not match dimensionality of coordinateTransformations defined in"
+                        f"multiscale.datasets ({dset_scale_ndim}) "
+                    )
+                    raise ValueError(msg)
+
+            # if the first element is a path scale transform, then there's nothing we can check
+            else:
+                return self
+        return self
+
+    @model_validator(mode="after")
+    def validate_axes(self) -> Multiscale:
+        """
+        Ensure that the length of the axes matches the dimensionality of the transforms
+        """
+        self_ndim = len(self.axes)
+        if self.coordinateTransformations is not None:
+            for tx in self.coordinateTransformations:
+                if isinstance(tx, VectorScale | VectorTranslation):
+                    if self_ndim != tx.ndim:
+                        msg = (
+                        f"The length of axes ({self_ndim}) does not match the dimensionality of "
+                        f"the {tx.type} transform in coordinateTransformations ({tx.ndim})"
+                        )
+                        raise ValueError(msg)
+        return self
 
 
 class MultiscaleGroupAttrs(Base):
