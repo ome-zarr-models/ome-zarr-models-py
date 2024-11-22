@@ -122,7 +122,7 @@ def _ensure_axis_types(axes: Sequence[Axis]) -> Sequence[Axis]:
     axis_types = [ax.type for ax in axes]
     type_census = Counter(axis_types)
     num_spaces = type_census["space"]
-    if num_spaces < 2 or num_spaces > 3:
+    if num_spaces not in [2, 3]:
         msg = f"Invalid number of space axes: {num_spaces}. Only 2 or 3 space axes are allowed."
         raise ValueError(msg)
 
