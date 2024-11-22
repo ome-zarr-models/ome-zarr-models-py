@@ -76,6 +76,7 @@ select = [
 ]
 ignore = [
     "D401", # First line should be in imperative mood (remove to opt in)
+    "D200", # One line docstring should fit on one line.
 ]
 
 [tool.ruff.lint.per-file-ignores]
