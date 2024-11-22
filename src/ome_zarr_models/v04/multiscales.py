@@ -6,7 +6,7 @@ if TYPE_CHECKING:
 
 from collections import Counter
 from collections.abc import Sequence
-
+import numcodecs
 
 from ome_zarr_models.zarr_utils import get_path, normalize_chunks
 import zarr
@@ -311,6 +311,7 @@ def _check_datasets_exist(data: MultiscaleGroup) -> MultiscaleGroup:
     return data
 
 class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
+    _check_datasets_exist = model_validator(mode="after")(_check_datasets_exist)
     @classmethod
     def from_zarr(cls, node: zarr.Group) -> MultiscaleGroup:
         """
@@ -475,14 +476,15 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
         chunks: tuple[int, ...]
         | tuple[tuple[int, ...], ...]
         | Literal["auto"] = "auto",
-        compressor: Codec = "auto",
+        compressor: Codec | Literal["auto"] = "auto",
         fill_value: Any = 0,
         order: Literal["C", "F"] = "C",
     ) -> Self:
         """
         Create a `MultiscaleGroup` from a dtype and a sequence of shapes.
 
-        The dtype and shapes are used to parametrize `ArraySpec` instances which model the Zarr arrays that would be created if the `MultiscaleGroup` was stored.
+        The dtype and shapes are used to parametrize `ArraySpec` instances which model the 
+        Zarr arrays that would be created if the `MultiscaleGroup` was stored.
 
         Parameters
         ----------
@@ -518,7 +520,10 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
         """
 
         dtype_normalized = np.dtype(dtype)
-
+        if compressor == "auto":
+            compressor_parsed = numcodecs.Zstd(level=3)
+        else:
+            compressor_parsed = compressor
         chunks_normalized = normalize_chunks(
             chunks,
             shapes=tuple(tuple(s) for s in shapes),
@@ -531,7 +536,7 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
                 shape=shape,
                 chunks=cnks,
                 attributes={},
-                compressor=compressor,
+                compressor=compressor_parsed,
                 filters=None,
                 fill_value=fill_value,
                 order=order,
@@ -554,8 +559,6 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
             members=GroupSpec.from_flat(members_flat).members,
             attributes=MultiscaleGroupAttrs(multiscales=(multimeta,)),
         )
-
-    _check_datasets_exist = model_validator(mode="after")(_check_datasets_exist)
     
 
     @model_validator(mode="after")
