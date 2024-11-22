@@ -8,17 +8,11 @@ from tests.v04.conftest import from_array_props, from_arrays
 if TYPE_CHECKING:
     from typing import Literal
 
-    import numpy.typing as npt
-    from zarr.storage import FSStore, MemoryStore, NestedDirectoryStore
-
-import operator
-from itertools import accumulate
 
 import numpy as np
 import pytest
 from pydantic import ValidationError
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
-from zarr.util import guess_chunks
 
 from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.coordinate_transformations import (
@@ -294,12 +288,12 @@ def test_multiscale_group_datasets_rank() -> None:
     """
     true_ndim = 2
     bad_ndim = 3
-    match =  (
-            f"The multiscale metadata has {true_ndim} axes "
-            "which does not match the dimensionality of the array "
-            f"found in this group at {bad_ndim} ({bad_ndim}). "
-            "The number of axes must match the array dimensionality."
-                )
+    match = (
+        f"The multiscale metadata has {true_ndim} axes "
+        "which does not match the dimensionality of the array "
+        f"found in this group at {bad_ndim} ({bad_ndim}). "
+        "The number of axes must match the array dimensionality."
+    )
     with pytest.raises(ValidationError, match=re.escape(match)):
         _ = from_array_props(
             shapes=((10,) * true_ndim, (10,) * bad_ndim),
@@ -309,7 +303,8 @@ def test_multiscale_group_datasets_rank() -> None:
             axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
             scales=((1, 1), (2, 2)),
             translations=((0, 0), (0.5, 0.5)),
-    )
+        )
+
 
 @pytest.mark.parametrize("store", ["memory"], indirect=True)
 def test_from_zarr_missing_metadata(
@@ -320,7 +315,8 @@ def test_from_zarr_missing_metadata(
     group = group_model.to_zarr(store, path="test")
     store_path = store.path if hasattr(store, "path") else ""
     match = (
-        "Failed to find mandatory `multiscales` key in the attributes of the Zarr group at "
+        "Failed to find mandatory `multiscales` key in the attributes "
+        "of the Zarr group at "
         f"{store}://{store_path}://{group.path}."
     )
     with pytest.raises(KeyError, match=match):

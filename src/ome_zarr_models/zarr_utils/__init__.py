@@ -9,5 +9,3 @@ def get_path(store: Any) -> str:
         return store.path
 
     return ""
-
-

@@ -1,14 +1,21 @@
+from collections.abc import Sequence
+from typing import Any, Literal
 
-from typing import Any, Literal, Sequence
-from numcodecs.abc import Codec
-
+import numcodecs
 import numpy as np
 import numpy.typing as npt
-from ome_zarr_models.v04.axes import Axis
-from ome_zarr_models.v04.multiscales import Dataset, Multiscale, MultiscaleGroup, MultiscaleGroupAttrs
+from numcodecs.abc import Codec
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 from zarr.util import guess_chunks
-import numcodecs
+
+from ome_zarr_models.v04.axes import Axis
+from ome_zarr_models.v04.multiscales import (
+    Dataset,
+    Multiscale,
+    MultiscaleGroup,
+    MultiscaleGroupAttrs,
+)
+
 
 def normalize_chunks(
     chunks: Any,
@@ -16,14 +23,17 @@ def normalize_chunks(
     typesizes: tuple[int, ...],
 ) -> tuple[tuple[int, ...], ...]:
     """
-    If chunks is "auto", then use zarr default chunking based on the largest array for all the arrays.
+    If chunks is "auto", then use zarr default chunking based on the
+    largest array for all the arrays.
     If chunks is a sequence of ints, then use those chunks for all arrays.
     If chunks is a sequence of sequences of ints, then use those chunks for each array.
     """
     if chunks == "auto":
         # sort shapes by descending size
         params_sorted_descending = sorted(
-            zip(shapes, typesizes), key=lambda v: np.prod(v[0]), reverse=True
+            zip(shapes, typesizes, strict=False),
+            key=lambda v: np.prod(v[0]),
+            reverse=True,
         )
         return (guess_chunks(*params_sorted_descending[0]),) * len(shapes)
     if isinstance(chunks, Sequence):
@@ -38,6 +48,7 @@ def normalize_chunks(
     msg = f'Input must be a sequence or the string "auto". Got {type(chunks)}'
     raise TypeError(msg)
 
+
 def from_arrays(
     arrays: Sequence[np.ndarray],
     *,
@@ -48,17 +59,18 @@ def from_arrays(
     name: str | None = None,
     type: str | None = None,
     metadata: dict[str, Any] | None = None,
-    chunks: tuple[int, ...]
-    | tuple[tuple[int, ...], ...]
-    | Literal["auto"] = "auto",
+    chunks: tuple[int, ...] | tuple[tuple[int, ...], ...] | Literal["auto"] = "auto",
     compressor: Codec | Literal["auto"] = "auto",
     fill_value: Any = 0,
     order: Literal["C", "F", "auto"] = "auto",
 ) -> MultiscaleGroup:
     """
-    Create a `MultiscaleGroup` from a sequence of multiscale arrays and spatial metadata.
+    Create a `MultiscaleGroup` from a sequence of multiscale arrays
+    and spatial metadata.
 
-    The arrays are used as templates for corresponding `ArraySpec` instances, which model the Zarr arrays that would be created if the `MultiscaleGroup` was stored.
+    The arrays are used as templates for corresponding `ArraySpec` instances,
+    which model the Zarr arrays that would be created if the `MultiscaleGroup`
+    was stored.
 
     Parameters
     ----------
@@ -68,7 +80,8 @@ def from_arrays(
         `Axis` objects describing the dimensions of the arrays.
     arrays: Sequence[ArrayLike] | Sequence[ChunkedArrayLike]
         A sequence of array-like objects that collectively represent the same image
-        at multiple levels of detail. The attributes of these arrays are used to create `ArraySpec` objects
+        at multiple levels of detail.
+        The attributes of these arrays are used to create `ArraySpec` objects
         that model Zarr arrays stored in the Zarr group.
     scales: Sequence[Sequence[int | float]]
         A scale value for each axis of the array, for each array in `arrays`.
@@ -77,20 +90,25 @@ def from_arrays(
     name: str | None, default = None
         A name for the multiscale collection. Optional.
     type: str | None, default = None
-        A description of the type of multiscale image represented by this group. Optional.
+        A description of the type of multiscale image represented by this group.
+        Optional.
     metadata: Dict[str, Any] | None, default = None
         Arbitrary metadata associated with this multiscale collection. Optional.
     chunks: tuple[int] | tuple[tuple[int, ...]] | Literal["auto"], default = "auto"
         The chunks for the arrays in this multiscale group.
-        If the string "auto" is provided, each array will have chunks set to the zarr-python default value, which depends on the shape and dtype of the array.
-        If a single sequence of ints is provided, then this defines the chunks for all arrays.
-        If a sequence of sequences of ints is provided, then this defines the chunks for each array.
+        If the string "auto" is provided, each array will have chunks set to the
+        zarr-python default value, which depends on the shape and dtype of the array.
+        If a single sequence of ints is provided, then this defines the
+        chunks for all arrays. If a sequence of sequences of ints is provided,
+        then this defines the chunks for each array.
     fill_value: Any, default = 0
         The fill value for the Zarr arrays.
     compressor: `Codec` | "auto", default = `numcodecs.ZStd`
         The compressor to use for the arrays. Default is `numcodecs.ZStd`.
     order: "auto" | "C" | "F"
-        The memory layout used for chunks of Zarr arrays. The default is "auto", which will infer the order from the input arrays, and fall back to "C" if that inference fails.
+        The memory layout used for chunks of Zarr arrays.
+        The default is "auto", which will infer the order from the input arrays,
+        and fall back to "C" if that inference fails.
     """
 
     chunks_normalized = normalize_chunks(
@@ -109,7 +127,7 @@ def from_arrays(
             fill_value=fill_value,
             order=order,
         )
-        for key, arr, cnks in zip(paths, arrays, chunks_normalized)
+        for key, arr, cnks in zip(paths, arrays, chunks_normalized, strict=False)
     }
 
     multimeta = Multiscale(
@@ -119,7 +137,9 @@ def from_arrays(
         axes=tuple(axes),
         datasets=tuple(
             Dataset.build(path=path, scale=scale, translation=translation)
-            for path, scale, translation in zip(paths, scales, translations)
+            for path, scale, translation in zip(
+                paths, scales, translations, strict=False
+            )
         ),
         coordinateTransformations=None,
     )
@@ -127,6 +147,7 @@ def from_arrays(
         members=GroupSpec.from_flat(members_flat).members,
         attributes=MultiscaleGroupAttrs(multiscales=(multimeta,)),
     )
+
 
 def from_array_props(
     dtype: npt.DTypeLike,
@@ -138,9 +159,7 @@ def from_array_props(
     name: str | None = None,
     type: str | None = None,
     metadata: dict[str, Any] | None = None,
-    chunks: tuple[int, ...]
-    | tuple[tuple[int, ...], ...]
-    | Literal["auto"] = "auto",
+    chunks: tuple[int, ...] | tuple[tuple[int, ...], ...] | Literal["auto"] = "auto",
     compressor: Codec | Literal["auto"] = "auto",
     fill_value: Any = 0,
     order: Literal["C", "F"] = "C",
@@ -168,14 +187,17 @@ def from_array_props(
     name: str | None, default = None
         A name for the multiscale collection. Optional.
     type: str | None, default = None
-        A description of the type of multiscale image represented by this group. Optional.
+        A description of the type of multiscale image represented by this group.
+        Optional.
     metadata: Dict[str, Any] | None, default = None
         Arbitrary metadata associated with this multiscale collection. Optional.
     chunks: tuple[int] | tuple[tuple[int, ...]] | Literal["auto"], default = "auto"
         The chunks for the arrays in this multiscale group.
-        If the string "auto" is provided, each array will have chunks set to the zarr-python default value, which depends on the shape and dtype of the array.
-        If a single sequence of ints is provided, then this defines the chunks for all arrays.
-        If a sequence of sequences of ints is provided, then this defines the chunks for each array.
+        If the string "auto" is provided, each array will have chunks set to the
+        zarr-python default value, which depends on the shape and dtype of the array.
+        If a single sequence of ints is provided, then this defines the chunks for
+        all arrays. If a sequence of sequences of ints is provided, then this defines
+        the chunks for each array.
     fill_value: Any, default = 0
         The fill value for the Zarr arrays.
     compressor: `Codec`
@@ -206,7 +228,7 @@ def from_array_props(
             fill_value=fill_value,
             order=order,
         )
-        for key, shape, cnks in zip(paths, shapes, chunks_normalized)
+        for key, shape, cnks in zip(paths, shapes, chunks_normalized, strict=False)
     }
 
     multimeta = Multiscale(
@@ -216,7 +238,9 @@ def from_array_props(
         axes=tuple(axes),
         datasets=tuple(
             Dataset.build(path=path, scale=scale, translation=translation)
-            for path, scale, translation in zip(paths, scales, translations)
+            for path, scale, translation in zip(
+                paths, scales, translations, strict=False
+            )
         ),
         coordinateTransformations=None,
     )

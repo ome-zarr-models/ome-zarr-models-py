@@ -1,22 +1,17 @@
 from __future__ import annotations
 
+from collections import Counter
+from collections.abc import Iterable, Sequence
 from typing import (
     Annotated,
     Any,
-    Iterable,
     get_args,
-    TYPE_CHECKING,
 )
 
-from collections import Counter
-from collections.abc import Sequence
-
-from ome_zarr_models.zarr_utils import get_path
 import zarr
 from pydantic import AfterValidator, Field, model_validator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
-import numpy as np
-from numcodecs.abc import Codec
+
 from ome_zarr_models.base import Base
 from ome_zarr_models.utils import duplicates
 from ome_zarr_models.v04.axes import Axis, AxisType
@@ -28,6 +23,7 @@ from ome_zarr_models.v04.coordinate_transformations import (
     _ndim,
 )
 from ome_zarr_models.v04.omero import Omero
+from ome_zarr_models.zarr_utils import get_path
 
 __all__ = ["VALID_NDIM", "Dataset", "Multiscale", "MultiscaleGroup"]
 
@@ -314,7 +310,7 @@ def _check_datasets_exist(data: MultiscaleGroup) -> MultiscaleGroup:
 
 def _check_array_ndim(data: MultiscaleGroup) -> MultiscaleGroup:
     """
-    Check that all the arrays referenced by the `multiscales` metadata have dimensionality 
+    Check that all the arrays referenced by the `multiscales` metadata have dimensionality
     consistent with the number of axes defined in the metadata.
     """
     multimeta = data.attributes.multiscales
@@ -325,7 +321,7 @@ def _check_array_ndim(data: MultiscaleGroup) -> MultiscaleGroup:
         for dataset in multiscale.datasets:
             arr: ArraySpec = flat_self["/" + dataset.path.lstrip("/")]
             arr_ndim = len(arr.shape)
-            
+
             if arr_ndim != multiscale_ndim:
                 msg = (
                     f"The multiscale metadata has {multiscale_ndim} axes "
