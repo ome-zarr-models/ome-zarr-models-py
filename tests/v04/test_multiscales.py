@@ -263,14 +263,13 @@ def test_validate_axes_dset_transforms() -> None:
         Multiscale(
             name="foo",
             axes=axes,
-            datasets=[Dataset(path="foo", coordinateTransformations=dset_tforms)],
+            datasets=[Dataset.build(path='foo', scale=(1,) * tforms_rank, translation=(0,) * tforms_rank)],
             coordinateTransformations=_build_transforms(
                 scale=(1,) * axes_rank, translation=None
             ),
         )
 
 
-@pytest.mark.skip
 def test_multiscale_group_datasets_exist(
     default_multiscale: Multiscale,
 ) -> None:
