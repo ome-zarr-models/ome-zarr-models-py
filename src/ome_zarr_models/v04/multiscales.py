@@ -27,7 +27,7 @@ def ensure_transform_dimensionality(
     """
     Ensures that the elements in the input sequence define transformations with identical dimensionality.
     """
-    if isinstance(transforms[0], PathScale) or isinstance(transforms[1], PathTranslation):
+    if isinstance(transforms[0], PathScale) or (len(transforms) > 1 and isinstance(transforms[1], PathTranslation)):
         # it's not possible to check that the dimensionality of a path transform
         # is the same as the dimensionality of a vector transform
         return transforms
@@ -155,8 +155,6 @@ class Multiscale(Base):
 
     datasets: tuple[Dataset, ...] = Field(..., min_length=1)
     version: Any | None = None
-    # TODO: validate correctness of axes
-    # TODO: validate uniqueness of axes
     axes: Annotated[
         tuple[Axis, ...],
         AfterValidator(ensure_axis_length),

@@ -216,8 +216,23 @@ def test_transform_invalid_second_element(
     ):
         Dataset(path="foo", coordinateTransformations=transforms)
 
+def test_transform_axes_length() -> None:
+    with pytest.raises(
+        ValidationError,
+        match="The number of axes must match the dimensionality of the coordinateTransformations",
+    ):
+        rank = 3
+        Multiscale(
+            name="foo",
+            axes=[Axis(name="a", type='space'), Axis(name='b', type='space')],
+            datasets=(
+                Dataset(path="foo", coordinateTransformations=_build_transforms(scale=(1, 1), translation=None)),),
+            coordinateTransformations=_build_transforms(scale=(1,) * rank, translation=None)
+            )
 
-@pytest.mark.xfail
+
+
+@pytest.mark.skip
 def test_multiscale_group_datasets_exist(
     default_multiscale: Multiscale,
 ) -> None:
