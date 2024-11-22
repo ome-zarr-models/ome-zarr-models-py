@@ -34,14 +34,12 @@ class VectorScale(Base):
         """
         Create a VectorScale from an iterable of floats.
         """
-        return cls(
-            type='scale', 
-            scale=tuple(data)
-            )
+        return cls(type="scale", scale=tuple(data))
 
     @property
     def ndim(self) -> int:
         return len(self.scale)
+
 
 class PathScale(Base):
     """
@@ -75,13 +73,12 @@ class VectorTranslation(Base):
         """
         Create a VectorTranslation from an iterable of floats.
         """
-        return cls(
-            type='translation', 
-            translation=tuple(data)
-            )
+        return cls(type="translation", translation=tuple(data))
+
     @property
     def ndim(self) -> int:
         return len(self.translation)
+
 
 class PathTranslation(Base):
     """
@@ -96,9 +93,8 @@ class PathTranslation(Base):
     type: Literal["translation"]
     translation: str
 
-def ndim(
-    transform: VectorScale | VectorTranslation
-) -> int:
+
+def ndim(transform: VectorScale | VectorTranslation) -> int:
     """
     Get the dimensionality of a scale or translation transform.
     """
@@ -109,10 +105,10 @@ def ndim(
     else:
         msg = f"Cannot infer the dimensionality of {type(transform)}"
         raise TypeError(msg)
-    
+
+
 def _build_transforms(
-    scale: Sequence[float], 
-    translation: Sequence[float] | None
+    scale: Sequence[float], translation: Sequence[float] | None
 ) -> tuple[VectorScale] | tuple[VectorScale, VectorTranslation]:
     """
     Create a `VectorScale` and optionally a `VectorTranslation` from a scale and a translation

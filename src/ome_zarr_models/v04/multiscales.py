@@ -22,16 +22,22 @@ NUM_TX_MAX = 2
 
 
 def ensure_transform_dimensionality(
-    transforms: tuple[VectorScale | PathScale] | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation],
-) -> tuple[VectorScale | PathScale] | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation]:
+    transforms: tuple[VectorScale | PathScale]
+    | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation],
+) -> (
+    tuple[VectorScale | PathScale]
+    | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation]
+):
     """
     Ensures that the elements in the input sequence define transformations with identical dimensionality.
     """
-    if isinstance(transforms[0], PathScale) or (len(transforms) > 1 and isinstance(transforms[1], PathTranslation)):
+    if isinstance(transforms[0], PathScale) or (
+        len(transforms) > 1 and isinstance(transforms[1], PathTranslation)
+    ):
         # it's not possible to check that the dimensionality of a path transform
         # is the same as the dimensionality of a vector transform
         return transforms
-    
+
     ndims = tuple(tx.ndim for tx in transforms)
     ndims_set = set(ndims)
     if len(ndims_set) > 1:
@@ -42,9 +48,14 @@ def ensure_transform_dimensionality(
         raise ValueError(msg)
     return transforms
 
+
 def ensure_scale_translation(
-    transforms: tuple[VectorScale | PathScale] | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation],
-) -> tuple[VectorScale | PathScale] | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation]:
+    transforms: tuple[VectorScale | PathScale]
+    | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation],
+) -> (
+    tuple[VectorScale | PathScale]
+    | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation]
+):
     """
     Ensures that the first element is a scale transformation, the second element,
     if present, is a translation transform, and that there are only 1 or 2 transforms.
@@ -71,6 +82,7 @@ def ensure_scale_translation(
             raise ValueError(msg)
 
     return transforms
+
 
 def ensure_axis_length(axes: Sequence[Axis]) -> Sequence[Axis]:
     """
@@ -128,6 +140,7 @@ def ensure_axis_types(axes: Sequence[Axis]) -> Sequence[Axis]:
         raise ValueError(msg)
     return axes
 
+
 class Dataset(Base):
     """
     Model for an element of `Multiscale.datasets`.
@@ -139,11 +152,11 @@ class Dataset(Base):
     path: str
     # TODO: validate that transforms are consistent w.r.t dimensionality
     coordinateTransformations: Annotated[
-        tuple[VectorScale | PathScale] | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation],
+        tuple[VectorScale | PathScale]
+        | tuple[VectorScale | PathScale, VectorTranslation | PathTranslation],
         AfterValidator(ensure_scale_translation),
         AfterValidator(ensure_transform_dimensionality),
     ]
-
 
 
 class Multiscale(Base):
@@ -191,7 +204,9 @@ class Multiscale(Base):
 
             # check that the dimensionality matches the dimensionality of the dataset ctx,
             # only if the first element is a vector scale transform.
-            if isinstance(ctx[0], VectorScale) and isinstance(self.datasets[0].coordinateTransformations[0], VectorScale):
+            if isinstance(ctx[0], VectorScale) and isinstance(
+                self.datasets[0].coordinateTransformations[0], VectorScale
+            ):
                 ndim = ctx[0].ndim
                 dset_scale_ndim = self.datasets[0].coordinateTransformations[0].ndim
                 if ndim != dset_scale_ndim:
@@ -215,11 +230,14 @@ class Multiscale(Base):
         """
         self_ndim = len(self.axes)
         if self.coordinateTransformations is not None:
-            for tx in filter(lambda v: isinstance(tx, VectorScale | VectorTranslation), self.coordinateTransformations):
+            for tx in filter(
+                lambda v: isinstance(tx, VectorScale | VectorTranslation),
+                self.coordinateTransformations,
+            ):
                 if self_ndim != tx.ndim:
                     msg = (
-                    f"The length of axes ({self_ndim}) does not match the dimensionality of "
-                    f"the {tx.type} transform in coordinateTransformations ({tx.ndim})"
+                        f"The length of axes ({self_ndim}) does not match the dimensionality of "
+                        f"the {tx.type} transform in coordinateTransformations ({tx.ndim})"
                     )
                     raise ValueError(msg)
         return self
@@ -231,11 +249,14 @@ class Multiscale(Base):
         """
         self_ndim = len(self.axes)
         for ds_idx, ds in enumerate(self.datasets):
-            for tx in filter(lambda v: isinstance(tx, VectorScale | VectorTranslation), ds.coordinateTransformations):
+            for tx in filter(
+                lambda v: isinstance(tx, VectorScale | VectorTranslation),
+                ds.coordinateTransformations,
+            ):
                 if self_ndim != tx.ndim:
                     msg = (
-                    f"The length of axes ({self_ndim}) does not match the dimensionality of "
-                    f"the {tx.type} transform defined in datasets[{ds_idx}].coordinateTransformations ({tx.ndim})"
+                        f"The length of axes ({self_ndim}) does not match the dimensionality of "
+                        f"the {tx.type} transform defined in datasets[{ds_idx}].coordinateTransformations ({tx.ndim})"
                     )
                     raise ValueError(msg)
         return self

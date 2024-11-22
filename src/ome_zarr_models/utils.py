@@ -23,6 +23,7 @@ def duplicates(values: Iterable[Hashable]) -> dict[Hashable, int]:
     counts = Counter(values)
     return {k: v for k, v in counts.items() if v > 1}
 
+
 def dataclass_to_pydantic(dataclass_type: type) -> type[pydantic.BaseModel]:
     """Convert a dataclass to a Pydantic model.
 

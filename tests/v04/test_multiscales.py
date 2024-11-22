@@ -23,13 +23,14 @@ from ome_zarr_models.v04.multiscales import (
     Multiscale,
     MultiscaleGroupAttrs,
     Multiscale,
-    MultiscaleGroup
+    MultiscaleGroup,
 )
 from ome_zarr_models.v04.coordinate_transformations import (
     VectorScale,
     VectorTranslation,
     _build_transforms,
 )
+
 
 @pytest.fixture
 def default_multiscale() -> Multiscale:
@@ -44,10 +45,7 @@ def default_multiscale() -> Multiscale:
     transforms_dset = _build_transforms(scale=(1,) * rank, translation=(0,) * rank)
     num_datasets = 3
     datasets = tuple(
-        Dataset(
-            path=f"path{idx}",
-            coordinateTransformations=transforms_dset
-        )
+        Dataset(path=f"path{idx}", coordinateTransformations=transforms_dset)
         for idx in range(num_datasets)
     )
 
@@ -70,8 +68,7 @@ def test_multiscale_unique_axis_names() -> None:
         Dataset(
             path="path",
             coordinateTransformations=_build_transforms(
-                scale = (1,) * rank,
-                translation = (0,) * rank
+                scale=(1,) * rank, translation=(0,) * rank
             ),
         ),
     )
@@ -102,8 +99,7 @@ def test_multiscale_space_axes_last(axis_types: list[str | None]) -> None:
         Dataset(
             path="path",
             coordinateTransformations=_build_transforms(
-                scale = (1,) * rank,
-                translation = (0,) * rank
+                scale=(1,) * rank, translation=(0,) * rank
             ),
         ),
     )
@@ -112,8 +108,10 @@ def test_multiscale_space_axes_last(axis_types: list[str | None]) -> None:
         Multiscale(
             axes=axes,
             datasets=datasets,
-            coordinateTransformations=_build_transforms(scale=(1,) * rank, translation=None)
-            )
+            coordinateTransformations=_build_transforms(
+                scale=(1,) * rank, translation=None
+            ),
+        )
 
 
 @pytest.mark.parametrize("num_axes", [0, 1, 6, 7])
@@ -126,8 +124,7 @@ def test_multiscale_axis_length(num_axes: int) -> None:
         Dataset(
             path="path",
             coordinateTransformations=_build_transforms(
-                scale = (1,) * rank,
-                translation = (0,) * rank
+                scale=(1,) * rank, translation=(0,) * rank
             ),
         ),
     )
@@ -135,7 +132,10 @@ def test_multiscale_axis_length(num_axes: int) -> None:
         Multiscale(
             axes=axes,
             datasets=datasets,
-            coordinateTransformations=_build_transforms(scale=(1,) * rank, translation=None))
+            coordinateTransformations=_build_transforms(
+                scale=(1,) * rank, translation=None
+            ),
+        )
 
 
 @pytest.mark.parametrize(
@@ -213,45 +213,61 @@ def test_transform_invalid_second_element(
     ):
         Dataset(path="foo", coordinateTransformations=transforms)
 
+
 def validate_axes_top_transforms() -> None:
     """
-    Test that the number of axes must match the dimensionality of the 
+    Test that the number of axes must match the dimensionality of the
     top-level coordinateTransformations
     """
     axes_rank = 3
     tforms_rank = 2
     with pytest.raises(
         ValidationError,
-        match=re.escape(f"The length of axes ({axes_rank}) does not match the dimensionality of")
+        match=re.escape(
+            f"The length of axes ({axes_rank}) does not match the dimensionality of"
+        ),
     ):
         Multiscale(
             name="foo",
-            axes=[Axis(name=str(idx), type='space') for idx in range(axes_rank)],
+            axes=[Axis(name=str(idx), type="space") for idx in range(axes_rank)],
             datasets=(
-                Dataset(path="foo", coordinateTransformations=_build_transforms(scale=(1,) * axes_rank, translation=None)),),
-            coordinateTransformations=_build_transforms(scale=(1,) * tforms_rank, translation=None)
-            )
+                Dataset(
+                    path="foo",
+                    coordinateTransformations=_build_transforms(
+                        scale=(1,) * axes_rank, translation=None
+                    ),
+                ),
+            ),
+            coordinateTransformations=_build_transforms(
+                scale=(1,) * tforms_rank, translation=None
+            ),
+        )
 
-@pytest.mark.parametrize('broken_tform', ['scale', 'translation'])
-def validate_axes_top_transforms(broken_tform: Literal['scale', 'translation']) -> None:
+
+@pytest.mark.parametrize("broken_tform", ["scale", "translation"])
+def validate_axes_top_transforms(broken_tform: Literal["scale", "translation"]) -> None:
     """
-    Test that the number of axes must match the dimensionality of the 
+    Test that the number of axes must match the dimensionality of the
     per-dataset coordinateTransformations
     """
     axes_rank = 3
     tforms_rank = 2
-    axes = [Axis(name=str(idx), type='space') for idx in range(axes_rank)]
-    if broken_tform == 'scale':
-        dset_tforms = _build_transforms(scale=(1,) * tforms_rank, translation=(1,) * axes_rank )
-    elif broken_tform == 'translation':
-        dset_tforms = _build_transforms(scale=(1,) * axes_rank, translation=(1,) * tforms_rank)
+    axes = [Axis(name=str(idx), type="space") for idx in range(axes_rank)]
+    if broken_tform == "scale":
+        dset_tforms = _build_transforms(
+            scale=(1,) * tforms_rank, translation=(1,) * axes_rank
+        )
+    elif broken_tform == "translation":
+        dset_tforms = _build_transforms(
+            scale=(1,) * axes_rank, translation=(1,) * tforms_rank
+        )
     else:
-        raise ValueError('Invalid broken_tform')
+        raise ValueError("Invalid broken_tform")
 
     msg_expect = (
-                    f"The length of axes ({axes_rank}) does not match the dimensionality of "
-                    f"the {broken_tform} transform in coordinateTransformations ({tforms_rank})"
-                    )
+        f"The length of axes ({axes_rank}) does not match the dimensionality of "
+        f"the {broken_tform} transform in coordinateTransformations ({tforms_rank})"
+    )
 
     with pytest.raises(
         ValidationError,
@@ -260,10 +276,11 @@ def validate_axes_top_transforms(broken_tform: Literal['scale', 'translation']) 
         Multiscale(
             name="foo",
             axes=axes,
-            datasets=(
-                Dataset(path="foo", coordinateTransformations=dset_tforms)),
-            coordinateTransformations=_build_transforms(scale=(1,) * axes_rank, translation=None)
-            )
+            datasets=(Dataset(path="foo", coordinateTransformations=dset_tforms)),
+            coordinateTransformations=_build_transforms(
+                scale=(1,) * axes_rank, translation=None
+            ),
+        )
 
 
 @pytest.mark.skip
