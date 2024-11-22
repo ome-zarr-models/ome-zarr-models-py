@@ -255,7 +255,7 @@ class MultiscaleGroupAttrs(Base):
     See https://ngff.openmicroscopy.org/0.4/#image-layout.
     """
 
-    multiscales: list[Multiscale] = Field(
+    multiscales: tuple[Multiscale, ...] = Field(
         ...,
         description="The multiscale datasets for this image",
         min_length=1,
