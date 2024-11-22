@@ -4,20 +4,14 @@ from typing import (
     Annotated,
     Any,
     Iterable,
-    Literal,
-    Self,
     get_args,
     TYPE_CHECKING,
 )
 
-if TYPE_CHECKING:
-    import numpy.typing as npt
-
 from collections import Counter
 from collections.abc import Sequence
-import numcodecs
 
-from ome_zarr_models.zarr_utils import get_path, normalize_chunks
+from ome_zarr_models.zarr_utils import get_path
 import zarr
 from pydantic import AfterValidator, Field, model_validator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
