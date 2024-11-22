@@ -94,17 +94,17 @@ class PathTranslation(Base):
     translation: str
 
 
-def ndim(transform: VectorScale | VectorTranslation) -> int:
+def ndim(transform: VectorScale | VectorTranslation | PathScale | PathTranslation) -> int:
     """
-    Get the dimensionality of a scale or translation transform.
+    Get the dimensionality of a scale or translation transform. 
+    PathScale and PathTranslation transforms will result in a TypeError
     """
-    if hasattr(transform, "scale"):
-        return transform.ndim
-    elif hasattr(transform, "translation"):
-        return transform.ndim
-    else:
-        msg = f"Cannot infer the dimensionality of {type(transform)}"
-        raise TypeError(msg)
+    match transform:
+        case VectorScale() | VectorTranslation():
+            return transform.ndim
+        case _:
+            msg = f"Cannot infer the dimensionality of {type(transform)}"
+            raise TypeError(msg)
 
 
 def _build_transforms(

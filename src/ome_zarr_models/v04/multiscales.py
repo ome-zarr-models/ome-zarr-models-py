@@ -12,6 +12,7 @@ from ome_zarr_models.v04.coordinate_transformations import (
     PathTranslation,
     VectorScale,
     VectorTranslation,
+    ndim,
 )
 from ome_zarr_models.v04.omero import Omero
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
@@ -31,22 +32,18 @@ def ensure_transform_dimensionality(
     """
     Ensures that the elements in the input sequence define transformations with identical dimensionality.
     """
-    if isinstance(transforms[0], PathScale) or (
-        len(transforms) > 1 and isinstance(transforms[1], PathTranslation)
-    ):
-        # it's not possible to check that the dimensionality of a path transform
-        # is the same as the dimensionality of a vector transform
+    try: 
+        ndims = tuple(map(ndim, transforms))
+        ndims_set = set(ndims)
+        if len(ndims_set) > 1:
+            msg = (
+                "The transforms have inconsistent dimensionality. "
+                f"Got transforms with dimensionality = {ndims}."
+            )
+            raise ValueError(msg)
         return transforms
-
-    ndims = tuple(tx.ndim for tx in transforms)
-    ndims_set = set(ndims)
-    if len(ndims_set) > 1:
-        msg = (
-            "The transforms have inconsistent dimensionality. "
-            f"Got transforms with dimensionality = {ndims}."
-        )
-        raise ValueError(msg)
-    return transforms
+    except TypeError:
+        return transforms
 
 
 def ensure_scale_translation(
