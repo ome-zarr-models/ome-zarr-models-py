@@ -15,9 +15,11 @@ from ome_zarr_models.v04.coordinate_transformations import (
     ScaleTransform,
     TranslationTransform,
     VectorTransform,
-    ndim,
+    _ndim,
 )
 from ome_zarr_models.v04.omero import Omero
+
+__all__ = ["VALID_NDIM", "Dataset", "Multiscale", "MultiscaleGroup"]
 
 VALID_NDIM = (2, 3, 4, 5)
 
@@ -32,7 +34,7 @@ def _ensure_transform_dimensionality(
     transforms will be returned as-is.
     """
     vector_transforms = filter(lambda v: isinstance(v, VectorTransform), transforms)
-    ndims = tuple(map(ndim, vector_transforms))
+    ndims = tuple(map(_ndim, vector_transforms))
     ndims_set = set(ndims)
     if len(ndims_set) > 1:
         msg = (
@@ -163,7 +165,7 @@ class Dataset(Base):
             coordinateTransformations=_build_transforms(scale=scale, translation=translation))
 
 
-def ensure_top_transforms_dimensionality(data: Multiscale) -> Multiscale:
+def _ensure_top_transforms_dimensionality(data: Multiscale) -> Multiscale:
     """
     Ensure that the dimensionality of the top-level coordinateTransformations, if present,
     is consistent with the rest of the model.
@@ -250,7 +252,7 @@ class Multiscale(Base):
         return len(self.axes)
 
     _ensure_transforms = model_validator(mode="after")(
-        ensure_top_transforms_dimensionality
+        _ensure_top_transforms_dimensionality
     )
     _ensure_axes_top_transforms = model_validator(mode="after")(
         _ensure_axes_top_transforms

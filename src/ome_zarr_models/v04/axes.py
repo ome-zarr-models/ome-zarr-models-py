@@ -2,6 +2,9 @@ from typing import Literal
 
 from ome_zarr_models.base import Base
 
+__all__ = ["AxisType", "Axis"]
+
+
 AxisType = Literal["space", "time", "channel"]
 
 

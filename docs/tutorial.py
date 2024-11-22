@@ -42,17 +42,6 @@ multiscales_meta[0].datasets[0].coordinateTransformations = VectorTranslation(
 # This means validation happens early, allowing you to catch errors
 # before getting too far.
 
-# ## Writing metadata
-#
-# To save the metadata after editing, we can use the ``save_attrs()`` method.
-# TODO: Use a local file for testing that we have write access to, so we
-# can demonstrate this.
-#
-
-# +
-# ome_zarr_image.save_attrs()
-# -
-
 # ## Accessing data
 #
 # Although these models do not handle reading or writing data, they do expose the zarr arrays.

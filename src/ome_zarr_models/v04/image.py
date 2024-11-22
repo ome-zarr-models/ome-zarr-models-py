@@ -10,14 +10,13 @@ class Image:
     """
     A object representing OME-zarr image.
 
-    Attributes
+    Parameters
     ----------
     group :
-        zarr group for the image.
+        zarr Group which contains the image.
     """
 
     def __init__(self, group: zarr.Group):
-        self.group = group
         self._attrs = MultiscaleGroupAttrs(**group.attrs.asdict())
 
     @property
@@ -35,9 +34,3 @@ class Image:
         Returns `None` if no omero metadata is present in the OME-zarr image.
         """
         return self._attrs.omero
-
-    def save_attrs(self) -> None:
-        """
-        Put the current metadata in this object into the zarr Group.
-        """
-        self.group.attrs.put(self._attrs.model_dump_json())

@@ -7,6 +7,17 @@ from typing_extensions import Self
 
 from ome_zarr_models.base import Base
 
+__all__ = [
+    "Identity",
+    "VectorScale",
+    "PathScale",
+    "VectorTranslation",
+    "PathTranslation",
+    "ScaleTransform",
+    "TranslationTransform",
+    "VectorTransform",
+]
+
 
 class Identity(Base):
     """
@@ -101,7 +112,7 @@ TranslationTransform = VectorTranslation | PathTranslation
 VectorTransform = VectorScale | VectorTranslation
 
 
-def ndim(transform: VectorTransform) -> int:
+def _ndim(transform: VectorTransform) -> int:
     """
     Get the dimensionality of a scale or translation transform.
     """
