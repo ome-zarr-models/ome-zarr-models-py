@@ -158,7 +158,7 @@ class Dataset(Base):
         AfterValidator(ensure_transform_dimensionality),
     ]
 
-def validate_transforms(data: Multiscale) -> Multiscale:
+def ensure_top_transforms_dimensionality(data: Multiscale) -> Multiscale:
     """
     Ensure that the dimensionality of the top-level coordinateTransformations, if present,
     is consistent with the rest of the model.
@@ -170,7 +170,7 @@ def validate_transforms(data: Multiscale) -> Multiscale:
 
     return data
 
-def validate_axes_top_transforms(data: Multiscale) -> Multiscale:
+def ensure_axes_top_transforms(data: Multiscale) -> Multiscale:
     """
     Ensure that the length of the axes matches the dimensionality of the transforms
     defined in the top-level coordinateTransformations, if present.
@@ -191,7 +191,7 @@ def validate_axes_top_transforms(data: Multiscale) -> Multiscale:
                 raise ValueError(msg)
     return data
 
-def validate_axes_dataset_transforms(data) -> Multiscale:
+def ensure_axes_dataset_transforms(data) -> Multiscale:
     """
     Ensure that the length of the axes matches the dimensionality of the transforms
     """
@@ -243,9 +243,9 @@ class Multiscale(Base):
         """
         return len(self.axes)
 
-    _validate_transforms = model_validator(mode="after")(validate_transforms)
-    _validate_top_transforms = model_validator(mode="after")(validate_axes_top_transforms)
-    _validate_dataset_transforms = model_validator(mode="after")(validate_axes_dataset_transforms)
+    _ensure_transforms = model_validator(mode="after")(ensure_top_transforms_dimensionality)
+    _ensure_axes_top_transforms = model_validator(mode="after")(ensure_axes_top_transforms)
+    _ensure_axes_dataset_transforms = model_validator(mode="after")(ensure_axes_dataset_transforms)
 
 
 
