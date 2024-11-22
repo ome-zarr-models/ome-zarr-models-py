@@ -298,10 +298,14 @@ class MultiscaleGroupAttrs(Base):
     omero: Omero | None = None
 
 
-def _check_array_ndim(data: MultiscaleGroup) -> MultiscaleGroup:
+def _check_arrays_compatible(data: MultiscaleGroup) -> MultiscaleGroup:
     """
-    Check that all the arrays referenced by the `multiscales` metadata
-    have dimensionality consistent with the number of axes defined in the metadata.
+    Check that all the arrays referenced by the `multiscales` metadata meet the
+    following criteria:
+        - they exist
+        - they are not groups
+        - they have dimensionality consistent with the number of axes defined in the
+          metadata.
     """
     multimeta = data.attributes.multiscales
     flat_self = data.to_flat()
@@ -309,18 +313,30 @@ def _check_array_ndim(data: MultiscaleGroup) -> MultiscaleGroup:
     for multiscale in multimeta:
         multiscale_ndim = len(multiscale.axes)
         for dataset in multiscale.datasets:
-            arr: ArraySpec = flat_self["/" + dataset.path.lstrip("/")]
-            arr_ndim = len(arr.shape)
+            try:
+                maybe_arr: ArraySpec | GroupSpec = flat_self[
+                    "/" + dataset.path.lstrip("/")
+                ]
+                if isinstance(maybe_arr, GroupSpec):
+                    msg = f"The node at {dataset.path} is a group, not an array."
+                    raise ValueError(msg)
+                arr_ndim = len(maybe_arr.shape)
 
-            if arr_ndim != multiscale_ndim:
+                if arr_ndim != multiscale_ndim:
+                    msg = (
+                        f"The multiscale metadata has {multiscale_ndim} axes "
+                        "which does not match the dimensionality of the array "
+                        f"found in this group at {dataset.path} ({arr_ndim}). "
+                        "The number of axes must match the array dimensionality."
+                    )
+
+                    raise ValueError(msg)
+            except KeyError as e:
                 msg = (
-                    f"The multiscale metadata has {multiscale_ndim} axes "
-                    "which does not match the dimensionality of the array "
-                    f"found in this group at {dataset.path} ({arr_ndim}). "
-                    "The number of axes must match the array dimensionality."
+                    f"The multiscale metadata references an array that does not "
+                    f"exist in this group: {dataset.path}"
                 )
-
-                raise ValueError(msg)
+                raise ValueError(msg) from e
     return data
 
 
@@ -329,7 +345,7 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
     A multiscale group.
     """
 
-    _check_array_ndim = model_validator(mode="after")(_check_array_ndim)
+    _check_arrays_compatible = model_validator(mode="after")(_check_arrays_compatible)
 
     @classmethod
     def from_zarr(cls, node: zarr.Group) -> MultiscaleGroup:

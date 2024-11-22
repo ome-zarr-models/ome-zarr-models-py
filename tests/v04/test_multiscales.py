@@ -281,7 +281,7 @@ def test_multiscale_group_datasets_exist(
         MultiscaleGroup(attributes=group_attrs, members=bad_items)
 
 
-def test_multiscale_group_datasets_rank() -> None:
+def test_multiscale_group_datasets_ndim() -> None:
     """
     Test that creating a MultiscaleGroup with arrays with mismatched shapes raises
     an exception
@@ -304,6 +304,58 @@ def test_multiscale_group_datasets_rank() -> None:
             scales=((1, 1), (2, 2)),
             translations=((0, 0), (0.5, 0.5)),
         )
+
+
+def test_multiscale_group_missing_arrays() -> None:
+    """
+    Test that creating a multiscale group fails when an expected Zarr array is missing
+    """
+    arrays = np.zeros((10, 10)), np.zeros((5, 5))
+    array_names = ("s0", "s1")
+    group_model = from_arrays(
+        arrays=arrays,
+        axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
+        paths=array_names,
+        scales=((1, 1), (2, 2)),
+        translations=((0, 0), (0.5, 0.5)),
+    )
+    # remove an array, then re-create the model
+    group_model_broken = group_model.model_copy(
+        update={"members": {array_names[0]: group_model.members[array_names[0]]}}
+    )
+    with pytest.raises(
+        ValidationError,
+        match=(
+            "The multiscale metadata references an array that does "
+            "not exist in this "
+        ),
+    ):
+        MultiscaleGroup(**group_model_broken.model_dump())
+
+
+def test_multiscale_group_ectopic_group() -> None:
+    """
+    Test that creating a multiscale group fails when an expected Zarr array
+    is actually a group
+    """
+    arrays = np.zeros((10, 10)), np.zeros((5, 5))
+    array_names = ("s0", "s1")
+    group_model = from_arrays(
+        arrays=arrays,
+        axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
+        paths=array_names,
+        scales=((1, 1), (2, 2)),
+        translations=((0, 0), (0.5, 0.5)),
+    )
+    # remove an array, then re-create the model
+    group_model_broken = group_model.model_copy(
+        update={"members": {array_names[0]: GroupSpec()}}
+    )
+    with pytest.raises(
+        ValidationError,
+        match=re.escape(f"The node at {array_names[0]} is a group, not an array."),
+    ):
+        MultiscaleGroup(**group_model_broken.model_dump())
 
 
 @pytest.mark.parametrize("store", ["memory"], indirect=True)
@@ -349,6 +401,29 @@ def test_from_zarr_missing_array(store: Literal["memory"]) -> None:
     )
     with pytest.raises(ValueError, match=match):
         MultiscaleGroup.from_zarr(broken_group)
+
+
+@pytest.mark.parametrize("store", ["memory"], indirect=True)
+def test_from_zarr_ectopic_group(store: Literal["memory"]) -> None:
+    """
+    Test that creating a multiscale Group fails when an expected Zarr array is missing
+    or is a group instead of an array
+    """
+    arrays = np.zeros((10, 10)), np.zeros((5, 5))
+    group_path = "broken"
+    arrays_names = ("s0", "s1")
+    group_model = from_arrays(
+        arrays=arrays,
+        axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
+        paths=arrays_names,
+        scales=((1, 1), (2, 2)),
+        translations=((0, 0), (0.5, 0.5)),
+    )
+
+    # make an untyped model, and remove an array before serializing
+    removed_array_path = arrays_names[0]
+    model_dict = group_model.model_dump(exclude={"members": {removed_array_path: True}})
+    broken_group = GroupSpec(**model_dict).to_zarr(store=store, path=group_path)
 
     # put a group where the array should be
     broken_group.create_group(removed_array_path)
