@@ -1,10 +1,8 @@
 from __future__ import annotations
 
 from collections import Counter
-from collections.abc import Sequence
-from typing import Annotated, Any, get_args
+from typing import TYPE_CHECKING, Annotated, Any, get_args
 
-import zarr
 from pydantic import AfterValidator, Field, model_validator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
@@ -15,9 +13,16 @@ from ome_zarr_models.v04.coordinate_transformations import (
     ScaleTransform,
     TranslationTransform,
     VectorTransform,
+    _build_transforms,
     _ndim,
 )
-from ome_zarr_models.v04.omero import Omero
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Sequence
+
+    import zarr
+
+    from ome_zarr_models.v04.omero import Omero
 
 __all__ = ["VALID_NDIM", "Dataset", "Multiscale", "MultiscaleGroup"]
 
@@ -82,7 +87,10 @@ def _ensure_axis_length(axes: Sequence[Axis]) -> Sequence[Axis]:
     Ensures that there are between 2 and 5 axes (inclusive)
     """
     if (len_axes := len(axes)) not in VALID_NDIM:
-        msg = f"Incorrect number of axes provided ({len_axes}). Only 2, 3, 4, or 5 axes are allowed."
+        msg = (
+            f"Incorrect number of axes provided ({len_axes}). "
+            "Only 2, 3, 4, or 5 axes are allowed."
+        )
         raise ValueError(msg)
     return axes
 
@@ -93,7 +101,10 @@ def _ensure_axis_names(axes: Sequence[Axis]) -> Sequence[Axis]:
     """
     name_dupes = duplicates(a.name for a in axes)
     if len(name_dupes) > 0:
-        msg = f"Axis names must be unique. Axis names {tuple(name_dupes.keys())} are repeated."
+        msg = (
+            f"Axis names must be unique. Axis names {tuple(name_dupes.keys())} are "
+            "repeated."
+        )
         raise ValueError(msg)
     return axes
 
@@ -112,7 +123,10 @@ def _ensure_axis_types(axes: Sequence[Axis]) -> Sequence[Axis]:
     type_census = Counter(axis_types)
     num_spaces = type_census["space"]
     if num_spaces not in [2, 3]:
-        msg = f"Invalid number of space axes: {num_spaces}. Only 2 or 3 space axes are allowed."
+        msg = (
+            f"Invalid number of space axes: {num_spaces}. "
+            "Only 2 or 3 space axes are allowed."
+        )
         raise ValueError(msg)
 
     if not all(a == "space" for a in axis_types[-num_spaces:]):
@@ -124,12 +138,18 @@ def _ensure_axis_types(axes: Sequence[Axis]) -> Sequence[Axis]:
         raise ValueError(msg)
 
     if (num_channels := type_census["channel"]) > 1:
-        msg = f"Invalid number of channel axes: {num_channels}. Only 1 channel axis is allowed."
+        msg = (
+            f"Invalid number of channel axes: {num_channels}. "
+            "Only 1 channel axis is allowed."
+        )
         raise ValueError(msg)
 
     custom_axes = set(axis_types) - set(get_args(AxisType))
     if (num_custom := len(custom_axes)) > 1:
-        msg = f"Invalid number of custom axes: {num_custom}. Only 1 custom axis is allowed."
+        msg = (
+            f"Invalid number of custom axes: {num_custom}. "
+            "Only 1 custom axis is allowed."
+        )
         raise ValueError(msg)
     return axes
 
@@ -151,28 +171,27 @@ class Dataset(Base):
     ]
 
     @classmethod
-    def build(
-        cls, 
-        *, 
-        path: str, 
-        scale: Iterable[float], 
-        translation: Iterable[float] ):
+    def build(cls, *, path: str, scale: Iterable[float], translation: Iterable[float]):
         """
         Construct a `Dataset` from a path, a scale, and a translation.
         """
         return cls(
-            path=path, 
-            coordinateTransformations=_build_transforms(scale=scale, translation=translation))
+            path=path,
+            coordinateTransformations=_build_transforms(
+                scale=scale, translation=translation
+            ),
+        )
 
 
 def _ensure_top_transforms_dimensionality(data: Multiscale) -> Multiscale:
     """
-    Ensure that the dimensionality of the top-level coordinateTransformations, if present,
-    is consistent with the rest of the model.
+    Ensure that the dimensionality of the top-level coordinateTransformations,
+    if present, is consistent with the rest of the model.
     """
     ctx = data.coordinateTransformations
     if ctx is not None:
-        # check that the dimensionality of the coordinateTransformations is internally consistent
+        # check that the dimensionality of the coordinateTransformations is
+        # internally consistent
         _ = _ensure_transform_dimensionality(ctx)
 
     return data
@@ -213,7 +232,8 @@ def _ensure_axes_dataset_transforms(data) -> Multiscale:
             if self_ndim != tx.ndim:
                 msg = (
                     f"The length of axes does not match the dimensionality of "
-                    f"the {tx.type} transform in datasets[{ds_idx}].coordinateTransformations. "
+                    f"the {tx.type} transform in "
+                    f"datasets[{ds_idx}].coordinateTransformations. "
                     f"Got {self_ndim} axes, but the {tx.type} transform has "
                     f"dimensionality {tx.ndim}"
                 )
@@ -246,8 +266,9 @@ class Multiscale(Base):
     @property
     def ndim(self) -> int:
         """
-        Report the dimensionality of the data described by this metadata, which is determined
-        by the length of the axes attribute.
+        Dimensionality of the data described by this metadata.
+
+        Determined by the length of the axes attribute.
         """
         return len(self.axes)
 
@@ -278,11 +299,17 @@ class MultiscaleGroupAttrs(Base):
 
 
 class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
+    """
+    A multiscale group.
+    """
+
     @classmethod
     def from_zarr(cls, node: zarr.Group) -> MultiscaleGroup:
         """
-        Create an instance of `Group` from a `node`, a `zarr.Group`. This method discovers Zarr arrays in the hierarchy rooted at `node` by inspecting the OME-NGFF
-        multiscales metadata.
+        Create an instance of `Group` from a `node`, a `zarr.Group`.
+
+        This method discovers Zarr arrays in the hierarchy rooted at `node` by
+        inspecting the OME-NGFF multiscales metadata.
 
         Parameters
         ----------
@@ -296,6 +323,7 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
         """
         # on unlistable storage backends, the members of this group will be {}
         raise NotImplementedError
+        """
         guess = GroupSpec.from_zarr(node, depth=0)
 
         try:
@@ -303,7 +331,8 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
         except KeyError as e:
             store_path = get_path(node.store)
             msg = (
-                "Failed to find mandatory `multiscales` key in the attributes of the Zarr group at "
+                "Failed to find mandatory `multiscales` key in the attributes of the "
+                "Zarr group at "
                 f"{node.store}://{store_path}://{node.path}."
             )
             raise KeyError(msg) from e
@@ -335,3 +364,4 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
             update={"members": members_normalized.members}
         )
         return cls(**guess_inferred_members.model_dump())
+        """

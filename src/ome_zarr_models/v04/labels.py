@@ -2,13 +2,15 @@ from __future__ import annotations
 
 import warnings
 from collections import Counter
-from collections.abc import Hashable, Iterable
-from typing import Annotated, Literal
+from typing import TYPE_CHECKING, Annotated, Literal
 
 from pydantic import AfterValidator, Field, model_validator
 
 from ome_zarr_models.base import Base
 from ome_zarr_models.v04.multiscales import MultiscaleGroupAttrs
+
+if TYPE_CHECKING:
+    from collections.abc import Hashable, Iterable
 
 __all__ = ["ConInt", "RGBA", "Color", "Source", "Property", "ImageLabel", "GroupAttrs"]
 
@@ -28,7 +30,11 @@ def _duplicates(values: Iterable[Hashable]) -> dict[Hashable, int]:
 
 class Color(Base):
     """
-    A label value and RGBA as defined in https://ngff.openmicroscopy.org/0.4/#label-md
+    A label value and RGBA.
+
+    References
+    ----------
+    https://ngff.openmicroscopy.org/0.4/#label-md
     """
 
     label_value: int = Field(..., serialization_alias="label-value")
@@ -36,11 +42,19 @@ class Color(Base):
 
 
 class Source(Base):
+    """
+    Source data for the labels.
+    """
+
     # TODO: add validation that this path resolves to something
     image: str | None = "../../"
 
 
 class Property(Base):
+    """
+    A single property.
+    """
+
     label_value: int = Field(..., serialization_alias="label-value")
 
 
@@ -48,7 +62,8 @@ def _parse_colors(colors: list[Color] | None) -> list[Color] | None:
     if colors is None:
         msg = (
             "The field `colors` is `None`. Version 0.4 of"
-            "the OME-NGFF spec states that `colors` should be a list of label descriptors."
+            "the OME-NGFF spec states that `colors` should be a list of "
+            "label descriptors."
         )
         warnings.warn(msg, stacklevel=1)
     else:
@@ -67,7 +82,8 @@ def _parse_version(version: Literal["0.4"] | None) -> Literal["0.4"] | None:
     if version is None:
         _ = (
             "The `version` attribute is `None`. Version 0.4 of "
-            "the OME-NGFF spec states that `version` should either be unset or the string 0.4"
+            "the OME-NGFF spec states that `version` should either be unset or "
+            "the string 0.4"
         )
     return version
 
@@ -106,7 +122,7 @@ class ImageLabel(Base):
     source: Source | None = None
 
     @model_validator(mode="after")
-    def parse_model(self) -> ImageLabel:
+    def _parse_model(self) -> ImageLabel:
         return _parse_imagelabel(self)
 
 

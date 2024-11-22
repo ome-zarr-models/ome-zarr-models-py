@@ -45,7 +45,7 @@ dev = [
 
 test = ["pytest"]
 
-pydantic=["pydantic", "pydantic-zarr"]
+pydantic = ["pydantic", "pydantic-zarr"]
 
 [tool.uv]
 default-groups = ["docs", "dev", "pydantic", "test"]
@@ -77,6 +77,10 @@ select = [
 ignore = [
     "D401", # First line should be in imperative mood (remove to opt in)
     "D200", # One line docstring should fit on one line.
+    "D205", # 1 blank line required between summary line and description
+    "D400", # First line should end with a period
+    "D100", # Missing docstring in public module
+    "D104", # Missing docstring in public package
 ]
 
 [tool.ruff.lint.per-file-ignores]

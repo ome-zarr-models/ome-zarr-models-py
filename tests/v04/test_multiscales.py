@@ -64,13 +64,7 @@ def test_multiscale_unique_axis_names() -> None:
         Axis(name="x", type="space", unit="meter"),
     )
     rank = len(axes)
-    datasets = (
-        Dataset.build(
-            path="path",
-            scale=(1,) * rank, 
-            translation=(0,) * rank
-        ),
-    )
+    datasets = (Dataset.build(path="path", scale=(1,) * rank, translation=(0,) * rank),)
 
     with pytest.raises(ValidationError, match="Axis names must be unique."):
         Multiscale(
@@ -94,13 +88,7 @@ def test_multiscale_space_axes_last(axis_types: list[str | None]) -> None:
         for idx, t in enumerate(axis_types)
     )
     rank = len(axes)
-    datasets = (
-        Dataset.build(
-            path="path",
-            scale=(1,) * rank, 
-            translation=(0,) * rank
-        ),
-    )
+    datasets = (Dataset.build(path="path", scale=(1,) * rank, translation=(0,) * rank),)
     # TODO: make some axis-specifc exceptions
     with pytest.raises(ValidationError, match="Space axes must come last."):
         Multiscale(
@@ -118,13 +106,7 @@ def test_multiscale_axis_length(num_axes: int) -> None:
     axes = tuple(
         Axis(name=str(idx), type="space", unit="meter") for idx in range(num_axes)
     )
-    datasets = (
-        Dataset.build(
-            path="path",
-            scale=(1,) * rank, 
-            translation=(0,) * rank
-        ),
-    )
+    datasets = (Dataset.build(path="path", scale=(1,) * rank, translation=(0,) * rank),)
     with pytest.raises(ValidationError, match="Incorrect number of axes provided"):
         Multiscale(
             axes=axes,
@@ -229,11 +211,9 @@ def test_validate_axes_top_transforms() -> None:
             axes=[Axis(name=str(idx), type="space") for idx in range(axes_rank)],
             datasets=(
                 Dataset.build(
-                    path="foo",
-                    scale=(1,) * axes_rank, 
-                    translation=(0,) * axes_rank
-                    ),
+                    path="foo", scale=(1,) * axes_rank, translation=(0,) * axes_rank
                 ),
+            ),
             coordinateTransformations=_build_transforms(
                 scale=(1,) * tforms_rank, translation=None
             ),
@@ -263,7 +243,11 @@ def test_validate_axes_dset_transforms() -> None:
         Multiscale(
             name="foo",
             axes=axes,
-            datasets=[Dataset.build(path='foo', scale=(1,) * tforms_rank, translation=(0,) * tforms_rank)],
+            datasets=[
+                Dataset.build(
+                    path="foo", scale=(1,) * tforms_rank, translation=(0,) * tforms_rank
+                )
+            ],
             coordinateTransformations=_build_transforms(
                 scale=(1,) * axes_rank, translation=None
             ),
@@ -368,23 +352,21 @@ def test_from_arrays(
         )
     )
 
-    all_axes = tuple(
-        [
-            Axis(
-                name="x",
-                type="space",
-            ),
-            Axis(name="y", type="space"),
-            Axis(name="z", type="space"),
-            Axis(name="t", type="time"),
-            Axis(name="c", type="barf"),
-        ]
+    all_axes = (
+        Axis(
+            name="x",
+            type="space",
+        ),
+        Axis(name="y", type="space"),
+        Axis(name="z", type="space"),
+        Axis(name="t", type="time"),
+        Axis(name="c", type="barf"),
     )
     # spatial axes have to come last
     if ndim in (2, 3):
         axes = all_axes[:ndim]
     else:
-        axes = tuple([*all_axes[4:], *all_axes[:3]])
+        axes = (*all_axes[4:], *all_axes[:3])
     chunks_arg: tuple[tuple[int, ...], ...] | tuple[int, ...] | Literal["auto"]
     if chunks == "auto":
         chunks_arg = chunks
@@ -467,23 +449,21 @@ def test_from_array_props(
         )
     )
 
-    all_axes = tuple(
-        [
-            Axis(
-                name="x",
-                type="space",
-            ),
-            Axis(name="y", type="space"),
-            Axis(name="z", type="space"),
-            Axis(name="t", type="time"),
-            Axis(name="c", type="barf"),
-        ]
+    all_axes = (
+        Axis(
+            name="x",
+            type="space",
+        ),
+        Axis(name="y", type="space"),
+        Axis(name="z", type="space"),
+        Axis(name="t", type="time"),
+        Axis(name="c", type="barf"),
     )
     # spatial axes have to come last
     if ndim in (2, 3):
         axes = all_axes[:ndim]
     else:
-        axes = tuple([*all_axes[4:], *all_axes[:3]])
+        axes = (*all_axes[4:], *all_axes[:3])
     chunks_arg: tuple[tuple[int, ...], ...] | tuple[int, ...] | Literal["auto"]
     if chunks == "auto":
         chunks_arg = chunks
@@ -549,8 +529,8 @@ def test_from_zarr_missing_metadata(
     group = group_model.to_zarr(store, path="test")
     store_path = store.path if hasattr(store, "path") else ""
     match = (
-        "Failed to find mandatory `multiscales` key in the attributes of the Zarr group at "
-        f"{store}://{store_path}://{group.path}."
+        "Failed to find mandatory `multiscales` key in the attributes of the "
+        f"Zarr group at {store}://{store_path}://{group.path}."
     )
     with pytest.raises(KeyError, match=match):
         MultiscaleGroup.from_zarr(group)
