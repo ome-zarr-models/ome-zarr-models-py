@@ -158,6 +158,58 @@ class Dataset(Base):
         AfterValidator(ensure_transform_dimensionality),
     ]
 
+def validate_transforms(data: Multiscale) -> Multiscale:
+    """
+    Ensure that the dimensionality of the top-level coordinateTransformations, if present,
+    is consistent with the rest of the model.
+    """
+    ctx = data.coordinateTransformations
+    if ctx is not None:
+        # check that the dimensionality of the coordinateTransformations is internally consistent
+        _ = ensure_transform_dimensionality(ctx)
+
+    return data
+
+def validate_axes_top_transforms(data: Multiscale) -> Multiscale:
+    """
+    Ensure that the length of the axes matches the dimensionality of the transforms
+    defined in the top-level coordinateTransformations, if present.
+    """
+    self_ndim = len(data.axes)
+    if data.coordinateTransformations is not None:
+        for tx in filter(
+            lambda v: isinstance(v, VectorScale | VectorTranslation),
+            data.coordinateTransformations,
+        ):
+            if self_ndim != tx.ndim:
+                msg = (
+                    f"The length of axes does not match the dimensionality of "
+                    f"the {tx.type} transform in coordinateTransformations. "
+                    f"Got {self_ndim} axes, but the {tx.type} transform has "
+                    f"dimensionality {tx.ndim}"
+                )
+                raise ValueError(msg)
+    return data
+
+def validate_axes_dataset_transforms(data) -> Multiscale:
+    """
+    Ensure that the length of the axes matches the dimensionality of the transforms
+    """
+    self_ndim = len(data.axes)
+    for ds_idx, ds in enumerate(data.datasets):
+        for tx in filter(
+            lambda v: isinstance(v, VectorScale | VectorTranslation),
+            ds.coordinateTransformations,
+        ):
+            if self_ndim != tx.ndim:
+                msg = (
+                    f"The length of axes does not match the dimensionality of "
+                    f"the {tx.type} transform in datasets[{ds_idx}].coordinateTransformations. "
+                    f"Got {self_ndim} axes, but the {tx.type} transform has "
+                    f"dimensionality {tx.ndim}"
+                )
+                raise ValueError(msg)
+    return data
 
 class Multiscale(Base):
     """
@@ -191,61 +243,10 @@ class Multiscale(Base):
         """
         return len(self.axes)
 
-    @model_validator(mode="after")
-    def validate_transforms(self) -> Multiscale:
-        """
-        Ensure that the dimensionality of the top-level coordinateTransformations, if present,
-        is consistent with the rest of the model.
-        """
-        ctx = self.coordinateTransformations
-        if ctx is not None:
-            # check that the dimensionality of the coordinateTransformations is internally consistent
-            _ = ensure_transform_dimensionality(ctx)
+    _validate_transforms = model_validator(mode="after")(validate_transforms)
+    _validate_top_transforms = model_validator(mode="after")(validate_axes_top_transforms)
+    _validate_dataset_transforms = model_validator(mode="after")(validate_axes_dataset_transforms)
 
-        return self
-
-    @model_validator(mode="after")
-    def validate_axes_top_transforms(self) -> Multiscale:
-        """
-        Ensure that the length of the axes matches the dimensionality of the transforms
-        defined in the top-level coordinateTransformations, if present
-        """
-        self_ndim = len(self.axes)
-        if self.coordinateTransformations is not None:
-            for tx in filter(
-                lambda v: isinstance(v, VectorScale | VectorTranslation),
-                self.coordinateTransformations,
-            ):
-                if self_ndim != tx.ndim:
-                    msg = (
-                        f"The length of axes does not match the dimensionality of "
-                        f"the {tx.type} transform in coordinateTransformations. "
-                        f"Got {self_ndim} axes, but the {tx.type} transform has "
-                        f"dimensionality {tx.ndim}"
-                    )
-                    raise ValueError(msg)
-        return self
-
-    @model_validator(mode="after")
-    def validate_axes_dataset_transforms(self) -> Multiscale:
-        """
-        Ensure that the length of the axes matches the dimensionality of the transforms
-        """
-        self_ndim = len(self.axes)
-        for ds_idx, ds in enumerate(self.datasets):
-            for tx in filter(
-                lambda v: isinstance(v, VectorScale | VectorTranslation),
-                ds.coordinateTransformations,
-            ):
-                if self_ndim != tx.ndim:
-                    msg = (
-                        f"The length of axes does not match the dimensionality of "
-                        f"the {tx.type} transform in datasets[{ds_idx}].coordinateTransformations. "
-                        f"Got {self_ndim} axes, but the {tx.type} transform has "
-                        f"dimensionality {tx.ndim}"
-                    )
-                    raise ValueError(msg)
-        return self
 
 
 class MultiscaleGroupAttrs(Base):
