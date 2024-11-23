@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections import Counter
 from typing import TYPE_CHECKING, Annotated, Any, get_args
 
+import zarr
 from pydantic import AfterValidator, Field, model_validator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
@@ -16,13 +17,12 @@ from ome_zarr_models.v04.coordinate_transformations import (
     _build_transforms,
     _ndim,
 )
+from ome_zarr_models.v04.omero import Omero  # noqa: TCH001
+from ome_zarr_models.zarr_utils import get_path
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
 
-    import zarr
-
-    from ome_zarr_models.v04.omero import Omero
 
 __all__ = ["VALID_NDIM", "Dataset", "Multiscale", "MultiscaleGroup"]
 
@@ -298,10 +298,54 @@ class MultiscaleGroupAttrs(Base):
     omero: Omero | None = None
 
 
+def _check_arrays_compatible(data: MultiscaleGroup) -> MultiscaleGroup:
+    """
+    Check that all the arrays referenced by the `multiscales` metadata meet the
+    following criteria:
+        - they exist
+        - they are not groups
+        - they have dimensionality consistent with the number of axes defined in the
+          metadata.
+    """
+    multimeta = data.attributes.multiscales
+    flat_self = data.to_flat()
+
+    for multiscale in multimeta:
+        multiscale_ndim = len(multiscale.axes)
+        for dataset in multiscale.datasets:
+            try:
+                maybe_arr: ArraySpec | GroupSpec = flat_self[
+                    "/" + dataset.path.lstrip("/")
+                ]
+                if isinstance(maybe_arr, GroupSpec):
+                    msg = f"The node at {dataset.path} is a group, not an array."
+                    raise ValueError(msg)
+                arr_ndim = len(maybe_arr.shape)
+
+                if arr_ndim != multiscale_ndim:
+                    msg = (
+                        f"The multiscale metadata has {multiscale_ndim} axes "
+                        "which does not match the dimensionality of the array "
+                        f"found in this group at {dataset.path} ({arr_ndim}). "
+                        "The number of axes must match the array dimensionality."
+                    )
+
+                    raise ValueError(msg)
+            except KeyError as e:
+                msg = (
+                    f"The multiscale metadata references an array that does not "
+                    f"exist in this group: {dataset.path}"
+                )
+                raise ValueError(msg) from e
+    return data
+
+
 class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
     """
     A multiscale group.
     """
+
+    _check_arrays_compatible = model_validator(mode="after")(_check_arrays_compatible)
 
     @classmethod
     def from_zarr(cls, node: zarr.Group) -> MultiscaleGroup:
@@ -322,8 +366,6 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
             A model of the Zarr group.
         """
         # on unlistable storage backends, the members of this group will be {}
-        raise NotImplementedError
-        """
         guess = GroupSpec.from_zarr(node, depth=0)
 
         try:
@@ -345,13 +387,13 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
                 try:
                     array = zarr.open_array(store=node.store, path=array_path, mode="r")
                     array_spec = ArraySpec.from_zarr(array)
-                except ArrayNotFoundError as e:
+                except zarr.errors.ArrayNotFoundError as e:
                     msg = (
                         f"Expected to find an array at {array_path}, "
                         "but no array was found there."
                     )
                     raise ValueError(msg) from e
-                except ContainsGroupError as e:
+                except zarr.errors.ContainsGroupError as e:
                     msg = (
                         f"Expected to find an array at {array_path}, "
                         "but a group was found there instead."
@@ -364,4 +406,3 @@ class MultiscaleGroup(GroupSpec[MultiscaleGroupAttrs, ArraySpec | GroupSpec]):
             update={"members": members_normalized.members}
         )
         return cls(**guess_inferred_members.model_dump())
-        """

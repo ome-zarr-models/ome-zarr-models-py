@@ -3,20 +3,16 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING, Any
 
+from tests.v04.conftest import from_array_props, from_arrays
+
 if TYPE_CHECKING:
     from typing import Literal
 
-    import numpy.typing as npt
-    from zarr.storage import FSStore, MemoryStore, NestedDirectoryStore
-
-import operator
-from itertools import accumulate
 
 import numpy as np
 import pytest
 from pydantic import ValidationError
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
-from zarr.util import guess_chunks
 
 from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.coordinate_transformations import (
@@ -285,246 +281,88 @@ def test_multiscale_group_datasets_exist(
         MultiscaleGroup(attributes=group_attrs, members=bad_items)
 
 
-@pytest.mark.skip
-def test_multiscale_group_datasets_rank(default_multiscale: Multiscale) -> None:
-    group_attrs = MultiscaleGroupAttrs(multiscales=(default_multiscale,))
-    good_items = {
-        d.path: ArraySpec(
-            shape=(1, 1, 1, 1),
-            dtype="uint8",
-            chunks=(1, 1, 1, 1),
-        )
-        for d in default_multiscale.datasets
-    }
-    MultiscaleGroup(attributes=group_attrs, members=good_items)
-
-    # arrays with varying rank
-    bad_items = {
-        d.path: ArraySpec(
-            shape=(1,) * (idx + 1),
-            dtype="uint8",
-            chunks=(1,) * (idx + 1),
-        )
-        for idx, d in enumerate(default_multiscale.datasets)
-    }
-    match = "Transform dimensionality must match array dimensionality."
-    with pytest.raises(ValidationError, match=match):
-        MultiscaleGroup(attributes=group_attrs, members=bad_items)
-
-    # arrays with rank that doesn't match the transform
-    bad_items = {
-        d.path: ArraySpec(shape=(1,), dtype="uint8", chunks=(1,))
-        for d in default_multiscale.datasets
-    }
-    with pytest.raises(ValidationError, match=match):
-        # arrays with rank that doesn't match the transform
-        bad_items = {
-            d.path: ArraySpec(shape=(1,), dtype="uint8", chunks=(1,))
-            for d in default_multiscale.datasets
-        }
-        MultiscaleGroup(attributes=group_attrs, members=bad_items)
-
-
-@pytest.mark.skip
-@pytest.mark.parametrize("name", [None, "foo"])
-@pytest.mark.parametrize("type", [None, "foo"])
-@pytest.mark.parametrize("path_pattern", ["{0}", "s{0}", "foo/{0}"])
-@pytest.mark.parametrize("metadata", [None, {"foo": 10}])
-@pytest.mark.parametrize("ndim", [2, 3, 4, 5])
-@pytest.mark.parametrize("chunks", ["auto", "tuple", "tuple-of-tuple"])
-@pytest.mark.parametrize("order", ["auto", "C", "F"])
-def test_from_arrays(
-    name: str | None,
-    type: str | None,
-    path_pattern: str,
-    metadata: dict[str, int] | None,
-    ndim: int,
-    chunks: Literal["auto", "tuple", "tuple-of-tuple"],
-    order: Literal["auto", "C", "F"],
-) -> None:
-    arrays = tuple(np.arange(x**ndim).reshape((x,) * ndim) for x in [3, 2, 1])
-    paths = tuple(path_pattern.format(idx) for idx in range(len(arrays)))
-    scales = tuple((2**idx,) * ndim for idx in range(len(arrays)))
-    translations = tuple(
-        (t,) * ndim
-        for t in accumulate(
-            [(2 ** (idx - 1)) for idx in range(len(arrays))], operator.add
-        )
+def test_multiscale_group_datasets_ndim() -> None:
+    """
+    Test that creating a MultiscaleGroup with arrays with mismatched shapes raises
+    an exception
+    """
+    true_ndim = 2
+    bad_ndim = 3
+    match = (
+        f"The multiscale metadata has {true_ndim} axes "
+        "which does not match the dimensionality of the array "
+        f"found in this group at {bad_ndim} ({bad_ndim}). "
+        "The number of axes must match the array dimensionality."
     )
+    with pytest.raises(ValidationError, match=re.escape(match)):
+        _ = from_array_props(
+            shapes=((10,) * true_ndim, (10,) * bad_ndim),
+            chunks=((1,) * true_ndim, (1,) * bad_ndim),
+            dtype="uint8",
+            paths=(str(true_ndim), str(bad_ndim)),
+            axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
+            scales=((1, 1), (2, 2)),
+            translations=((0, 0), (0.5, 0.5)),
+        )
 
-    all_axes = (
-        Axis(
-            name="x",
-            type="space",
-        ),
-        Axis(name="y", type="space"),
-        Axis(name="z", type="space"),
-        Axis(name="t", type="time"),
-        Axis(name="c", type="barf"),
-    )
-    # spatial axes have to come last
-    if ndim in (2, 3):
-        axes = all_axes[:ndim]
-    else:
-        axes = (*all_axes[4:], *all_axes[:3])
-    chunks_arg: tuple[tuple[int, ...], ...] | tuple[int, ...] | Literal["auto"]
-    if chunks == "auto":
-        chunks_arg = chunks
-        chunks_expected = (
-            guess_chunks(arrays[0].shape, arrays[0].dtype.itemsize),
-        ) * len(arrays)
-    elif chunks == "tuple":
-        chunks_arg = (2,) * ndim
-        chunks_expected = (chunks_arg,) * len(arrays)
-    elif chunks == "tuple-of-tuple":
-        chunks_arg = tuple((idx,) * ndim for idx in range(1, len(arrays) + 1))
-        chunks_expected = chunks_arg
 
-    if order == "auto":
-        order_expected = "C"
-    else:
-        order_expected = order
-
-    group = MultiscaleGroup.from_arrays(
-        paths=paths,
-        axes=axes,
+def test_multiscale_group_missing_arrays() -> None:
+    """
+    Test that creating a multiscale group fails when an expected Zarr array is missing
+    """
+    arrays = np.zeros((10, 10)), np.zeros((5, 5))
+    array_names = ("s0", "s1")
+    group_model = from_arrays(
         arrays=arrays,
-        scales=scales,
-        translations=translations,
-        name=name,
-        type=type,
-        metadata=metadata,
-        chunks=chunks_arg,
-        order=order,
+        axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
+        paths=array_names,
+        scales=((1, 1), (2, 2)),
+        translations=((0, 0), (0.5, 0.5)),
     )
-
-    group_flat = group.to_flat()
-
-    assert group.attributes.multiscales[0].name == name
-    assert group.attributes.multiscales[0].type == type
-    assert group.attributes.multiscales[0].metadata == metadata
-    assert group.attributes.multiscales[0].coordinateTransformations is None
-    assert group.attributes.multiscales[0].axes == tuple(axes)
-    for idx, array in enumerate(arrays):
-        array_model: ArraySpec = group_flat["/" + paths[idx]]
-        assert array_model.order == order_expected
-        assert array.shape == array_model.shape
-        assert array.dtype == array_model.dtype
-        assert chunks_expected[idx] == array_model.chunks
-        assert group.attributes.multiscales[0].datasets[
-            idx
-        ].coordinateTransformations == (
-            VectorScale(scale=scales[idx]),
-            VectorTranslation(translation=translations[idx]),
-        )
-
-
-@pytest.mark.skip
-@pytest.mark.parametrize("name", [None, "foo"])
-@pytest.mark.parametrize("type", [None, "foo"])
-@pytest.mark.parametrize("dtype", ["uint8", np.uint8])
-@pytest.mark.parametrize("path_pattern", ["{0}", "s{0}", "foo/{0}"])
-@pytest.mark.parametrize("metadata", [None, {"foo": 10}])
-@pytest.mark.parametrize("ndim", [2, 3, 4, 5])
-@pytest.mark.parametrize("chunks", ["auto", "tuple", "tuple-of-tuple"])
-@pytest.mark.parametrize("order", ["C", "F"])
-def test_from_array_props(
-    name: str | None,
-    dtype: npt.DTypeLike,
-    type: str | None,
-    path_pattern: str,
-    metadata: dict[str, int] | None,
-    ndim: int,
-    chunks: Literal["auto", "tuple", "tuple-of-tuple"],
-    order: Literal["C", "F"],
-) -> None:
-    shapes = tuple((x,) * ndim for x in [3, 2, 1])
-    dtype_normalized = np.dtype(dtype)
-    paths = tuple(path_pattern.format(idx) for idx in range(len(shapes)))
-    scales = tuple((2**idx,) * ndim for idx in range(len(shapes)))
-    translations = tuple(
-        (t,) * ndim
-        for t in accumulate(
-            [(2 ** (idx - 1)) for idx in range(len(shapes))], operator.add
-        )
+    # remove an array, then re-create the model
+    group_model_broken = group_model.model_copy(
+        update={"members": {array_names[0]: group_model.members[array_names[0]]}}
     )
-
-    all_axes = (
-        Axis(
-            name="x",
-            type="space",
+    with pytest.raises(
+        ValidationError,
+        match=(
+            "The multiscale metadata references an array that does "
+            "not exist in this "
         ),
-        Axis(name="y", type="space"),
-        Axis(name="z", type="space"),
-        Axis(name="t", type="time"),
-        Axis(name="c", type="barf"),
+    ):
+        MultiscaleGroup(**group_model_broken.model_dump())
+
+
+def test_multiscale_group_ectopic_group() -> None:
+    """
+    Test that creating a multiscale group fails when an expected Zarr array
+    is actually a group
+    """
+    arrays = np.zeros((10, 10)), np.zeros((5, 5))
+    array_names = ("s0", "s1")
+    group_model = from_arrays(
+        arrays=arrays,
+        axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
+        paths=array_names,
+        scales=((1, 1), (2, 2)),
+        translations=((0, 0), (0.5, 0.5)),
     )
-    # spatial axes have to come last
-    if ndim in (2, 3):
-        axes = all_axes[:ndim]
-    else:
-        axes = (*all_axes[4:], *all_axes[:3])
-    chunks_arg: tuple[tuple[int, ...], ...] | tuple[int, ...] | Literal["auto"]
-    if chunks == "auto":
-        chunks_arg = chunks
-        chunks_expected = (guess_chunks(shapes[0], dtype_normalized.itemsize),) * len(
-            shapes
-        )
-    elif chunks == "tuple":
-        chunks_arg = (2,) * ndim
-        chunks_expected = (chunks_arg,) * len(shapes)
-    elif chunks == "tuple-of-tuple":
-        chunks_arg = tuple((idx,) * ndim for idx in range(1, len(shapes) + 1))
-        chunks_expected = chunks_arg
-
-    order_expected = order
-
-    group = MultiscaleGroup.from_array_props(
-        dtype=dtype,
-        shapes=shapes,
-        paths=paths,
-        axes=axes,
-        scales=scales,
-        translations=translations,
-        name=name,
-        type=type,
-        metadata=metadata,
-        chunks=chunks_arg,
-        order=order,
+    # remove an array, then re-create the model
+    group_model_broken = group_model.model_copy(
+        update={"members": {array_names[0]: GroupSpec()}}
     )
-
-    group_flat = group.to_flat()
-
-    assert group.attributes.multiscales[0].name == name
-    assert group.attributes.multiscales[0].type == type
-    assert group.attributes.multiscales[0].metadata == metadata
-    assert group.attributes.multiscales[0].coordinateTransformations is None
-    assert group.attributes.multiscales[0].axes == tuple(axes)
-    for idx, shape in enumerate(shapes):
-        array_model: ArraySpec = group_flat["/" + paths[idx]]
-        assert array_model.order == order_expected
-        assert shape == array_model.shape
-        assert dtype_normalized == array_model.dtype
-        assert chunks_expected[idx] == array_model.chunks
-        assert group.attributes.multiscales[0].datasets[
-            idx
-        ].coordinateTransformations == (
-            VectorScale(scale=scales[idx]),
-            VectorTranslation(translation=translations[idx]),
-        )
+    with pytest.raises(
+        ValidationError,
+        match=re.escape(f"The node at {array_names[0]} is a group, not an array."),
+    ):
+        MultiscaleGroup(**group_model_broken.model_dump())
 
 
-@pytest.mark.skip
-@pytest.mark.parametrize(
-    "store_type", ["memory_store", "fsstore_local", "nested_directory_store"]
-)
+@pytest.mark.parametrize("store", ["memory"], indirect=True)
 def test_from_zarr_missing_metadata(
-    store_type: Literal["memory_store", "fsstore_local", "nested_directory_store"],
+    store: Literal["memory"],
     request: pytest.FixtureRequest,
 ) -> None:
-    store: MemoryStore | NestedDirectoryStore | FSStore = request.getfixturevalue(
-        store_type
-    )
     group_model = GroupSpec()
     group = group_model.to_zarr(store, path="test")
     store_path = store.path if hasattr(store, "path") else ""
@@ -536,25 +374,16 @@ def test_from_zarr_missing_metadata(
         MultiscaleGroup.from_zarr(group)
 
 
-@pytest.mark.skip
-@pytest.mark.parametrize(
-    "store_type", ["memory_store", "fsstore_local", "nested_directory_store"]
-)
-def test_from_zarr_missing_array(
-    store_type: Literal["memory_store", "fsstore_local", "nested_directory_store"],
-    request: pytest.FixtureRequest,
-) -> None:
+@pytest.mark.parametrize("store", ["memory"], indirect=True)
+def test_from_zarr_missing_array(store: Literal["memory"]) -> None:
     """
     Test that creating a multiscale Group fails when an expected Zarr array is missing
     or is a group instead of an array
     """
-    store: MemoryStore | NestedDirectoryStore | FSStore = request.getfixturevalue(
-        store_type
-    )
     arrays = np.zeros((10, 10)), np.zeros((5, 5))
     group_path = "broken"
     arrays_names = ("s0", "s1")
-    group_model = MultiscaleGroup.from_arrays(
+    group_model = from_arrays(
         arrays=arrays,
         axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
         paths=arrays_names,
@@ -572,6 +401,29 @@ def test_from_zarr_missing_array(
     )
     with pytest.raises(ValueError, match=match):
         MultiscaleGroup.from_zarr(broken_group)
+
+
+@pytest.mark.parametrize("store", ["memory"], indirect=True)
+def test_from_zarr_ectopic_group(store: Literal["memory"]) -> None:
+    """
+    Test that creating a multiscale Group fails when an expected Zarr array is missing
+    or is a group instead of an array
+    """
+    arrays = np.zeros((10, 10)), np.zeros((5, 5))
+    group_path = "broken"
+    arrays_names = ("s0", "s1")
+    group_model = from_arrays(
+        arrays=arrays,
+        axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
+        paths=arrays_names,
+        scales=((1, 1), (2, 2)),
+        translations=((0, 0), (0.5, 0.5)),
+    )
+
+    # make an untyped model, and remove an array before serializing
+    removed_array_path = arrays_names[0]
+    model_dict = group_model.model_dump(exclude={"members": {removed_array_path: True}})
+    broken_group = GroupSpec(**model_dict).to_zarr(store=store, path=group_path)
 
     # put a group where the array should be
     broken_group.create_group(removed_array_path)
