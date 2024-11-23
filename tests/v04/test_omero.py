@@ -8,7 +8,6 @@ def test_load_example_json():
     with open(Path(__file__).parent / "data" / "omero_example.json") as f:
         data = json.load(f)
 
-    print(Omero(**data))
     assert Omero(**data) == Omero(
         channels=[
             Channel(
