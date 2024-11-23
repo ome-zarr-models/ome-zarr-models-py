@@ -174,7 +174,7 @@ def from_array_props(
     ----------
     dtype: np.dtype[Any]
         The data type of the arrays.
-    shapes: Seqence[Sequence[str]]
+    shapes: Sequence[Sequence[str]]
         The shapes of the arrays.
     paths: Sequence[str]
         The paths to the arrays.

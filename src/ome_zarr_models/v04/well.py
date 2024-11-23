@@ -11,7 +11,7 @@ class ImageInWell(Base):
     Model for an element of `Well.images`.
 
     **Note 1:** The NGFF image is defined in a different model
-    (`NgffImageMeta`), while the `Image` model only refere to an item of
+    (`NgffImageMeta`), while the `Image` model only refers to an item of
     `Well.images`.
 
     **Note 2:** We deviate from NGFF specs, since we allow `path` to be an
