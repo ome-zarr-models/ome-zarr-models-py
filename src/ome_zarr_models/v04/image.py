@@ -21,7 +21,9 @@ class Image:
         self._attrs = MultiscaleGroupAttrs(**group.attrs.asdict())
         if "labels" in group:
             if not isinstance(group["labels"], zarr.Group):
-                raise ValidationError("The special group 'labels' is not a zarr group")
+                raise ValidationError(
+                    "Expected 'labels' to be a zarr group, but found an array instead."
+                )
 
     @property
     def multiscales(self) -> list[Multiscale]:
