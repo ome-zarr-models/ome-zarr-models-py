@@ -33,8 +33,8 @@ pprint(multiscales_meta)
 multiscales_meta[0].name = "The first multiscales entry"
 pprint(multiscales_meta)
 
-# One constraint in the OME-zarr spec is that the coordiante transforms have to be a
-# scale, or a scale then tranlsation (strictly in that order). So if we try and make a
+# One constraint in the OME-zarr spec is that the coordinate transforms have to be a
+# scale, or a scale then translation (strictly in that order). So if we try and make a
 # transformation just a translation, it will raise an error.
 
 multiscales_meta[0].datasets[0].coordinateTransformations = VectorTranslation(
