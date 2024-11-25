@@ -4,7 +4,7 @@ from pydantic import StringConstraints
 
 from ome_zarr_models.base import Base
 
-__all__ = ["Window", "Channel", "Omero"]
+__all__ = ["Channel", "Omero", "Window"]
 
 
 class Window(Base):

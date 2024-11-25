@@ -11,13 +11,13 @@ if TYPE_CHECKING:
 
 __all__ = [
     "Identity",
-    "VectorScale",
     "PathScale",
-    "VectorTranslation",
     "PathTranslation",
     "ScaleTransform",
     "TranslationTransform",
+    "VectorScale",
     "VectorTransform",
+    "VectorTranslation",
 ]
 
 

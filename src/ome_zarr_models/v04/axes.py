@@ -3,7 +3,7 @@ from typing import Any, Literal
 
 from ome_zarr_models.base import Base
 
-__all__ = ["AxisType", "Axis", "Axes"]
+__all__ = ["Axes", "Axis", "AxisType"]
 
 
 AxisType = Literal["space", "time", "channel"]
