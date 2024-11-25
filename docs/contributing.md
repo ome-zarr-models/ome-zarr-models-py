@@ -10,9 +10,9 @@ If you think you've found an issue or bug with this package, please report it on
 
 ## Suggesting new features
 
-If you would like a new feature in this pacakge, please open a ticket on [our issue tracker](https://github.com/BioImageTools/ome-zarr-models-py).
+If you would like a new feature in this package, please open a ticket on [our issue tracker](https://github.com/BioImageTools/ome-zarr-models-py).
 We deliberately have a tight scope for this package, to reduce maintenance and development burden increase the overall quality of the package.
-This means we might suggest that your feature would be more suitable in another pacakge.
+This means we might suggest that your feature would be more suitable in another package.
 We will always try to be helpful though so please do not hesitate to open feature requests!
 
 ## Contributing code
