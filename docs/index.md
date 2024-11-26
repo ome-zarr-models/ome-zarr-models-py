@@ -3,8 +3,7 @@
 A Python package that provides a Python object representation of an OME-zarr dataset.
 It aims to be a reference implementation of the OME-zarr specification.
 
-> [!WARNING]
-> This is still under construction!
+> ⚠️ This is still under construction!
 > We welcome feedback, suggestions, and contributions!
 > But beware, this package may change without warning for now
 
