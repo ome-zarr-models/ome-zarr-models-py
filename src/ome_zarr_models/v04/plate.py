@@ -6,10 +6,10 @@ __all__ = [
     "AcquisitionInPlate",
     "AcquisitionInPlate",
     "ColumnInPlate",
-    "WellInPlate",
-    "RowInPlate",
-    "Plate",
     "NgffPlateMeta",
+    "Plate",
+    "RowInPlate",
+    "WellInPlate",
 ]
 
 

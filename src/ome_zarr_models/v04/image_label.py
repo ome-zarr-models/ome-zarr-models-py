@@ -12,7 +12,7 @@ from ome_zarr_models.v04.multiscales import MultiscaleGroupAttrs
 if TYPE_CHECKING:
     from collections.abc import Hashable, Iterable
 
-__all__ = ["ConInt", "RGBA", "Color", "Source", "Property", "ImageLabel", "GroupAttrs"]
+__all__ = ["RGBA", "Color", "ConInt", "GroupAttrs", "ImageLabel", "Property", "Source"]
 
 ConInt = Annotated[int, Field(strict=True, ge=0, le=255)]
 RGBA = tuple[ConInt, ConInt, ConInt, ConInt]
