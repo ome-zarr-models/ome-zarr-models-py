@@ -1,19 +1,15 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Self
+from typing import Self
 
 import zarr.errors
 from pydantic import Field, model_validator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models.base import Base
+from ome_zarr_models.v04.multiscales import Multiscales
 from ome_zarr_models.v04.omero import Omero
 from ome_zarr_models.zarr_utils import get_path
-
-if TYPE_CHECKING:
-    from ome_zarr_models.v04.multiscales import Multiscales
-    from ome_zarr_models.v04.omero import Omero
-
 
 # Image is imported to the `ome_zarr_py.v04` namespace, so not
 # listed here
