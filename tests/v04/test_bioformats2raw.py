@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from ome_zarr_models.v04.bioformats2raw import BioFormats2Raw
+from ome_zarr_models.v04.bioformats2raw import BioFormats2RawAttrs
 from ome_zarr_models.v04.plate import (
     AcquisitionInPlate,
     ColumnInPlate,
@@ -12,9 +12,9 @@ from ome_zarr_models.v04.plate import (
 
 def test_bioformats2raw_exmaple_json():
     with open(Path(__file__).parent / "data" / "bioformats2raw_example.json") as f:
-        model = BioFormats2Raw.model_validate_json(f.read())
+        model = BioFormats2RawAttrs.model_validate_json(f.read())
 
-    assert model == BioFormats2Raw(
+    assert model == BioFormats2RawAttrs(
         bioformats2raw_layout=3,
         plate=Plate(
             acquisitions=[

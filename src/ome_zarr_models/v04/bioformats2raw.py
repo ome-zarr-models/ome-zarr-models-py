@@ -6,7 +6,7 @@ from ome_zarr_models.base import Base
 from ome_zarr_models.v04.plate import Plate
 
 
-class BioFormats2Raw(Base):
+class BioFormats2RawAttrs(Base):
     """
     A bioformats2raw zarr group.
     """
