@@ -18,7 +18,7 @@ __all__ = [
     "Column",
     "Plate",
     "Row",
-    "Well",
+    "WellInPlate",
 ]
 
 
@@ -40,7 +40,7 @@ class Acquisition(Base):
     description: str | None = None
 
 
-class Well(Base):
+class WellInPlate(Base):
     """
     Model for an element of `Plate.wells`.
 
@@ -98,7 +98,7 @@ class Plate(Base):
     rows: list[Row]
     # version will become required in 0.5
     version: str | None = Field(None, description="Version of the plate specification")
-    wells: list[Well]
+    wells: list[WellInPlate]
 
     @model_validator(mode="after")
     def _check_well_paths(self) -> Self:
@@ -121,6 +121,6 @@ class Plate(Base):
             if column not in column_names:
                 errors.append(f"column in well path '{path}' is not in list of columns")
 
-        if len(errors):
+        if len(errors) > 0:
             errors_joined = "\n".join(errors)
             raise ValidationError(f"Error validating plate metadata:\n{errors_joined}")
