@@ -15,6 +15,7 @@ docs = [
     "gcsfs",
     "rich",
     "griffe-pydantic",
+    "matplotlib",
     "zarr<3",
 ]
 pydantic = ["pydantic"]
@@ -36,6 +37,7 @@ docs = [
     "rich",
     "griffe-pydantic",
     "zarr<3",
+    "matplotlib",
 ]
 dev = [
     "jupyter[notebook]>=1.1.1",
