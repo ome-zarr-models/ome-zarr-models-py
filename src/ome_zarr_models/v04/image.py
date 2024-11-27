@@ -14,7 +14,7 @@ from ome_zarr_models.zarr_utils import get_path
 
 # Image is imported to the `ome_zarr_py.v04` namespace, so not
 # listed here
-__all__ = ["ImageAttrs", "Image"]
+__all__ = ["Image", "ImageAttrs"]
 
 
 def _check_arrays_compatible(data: Image) -> Image:
@@ -85,7 +85,12 @@ class _ImageSpec(GroupSpec[ImageAttrs, ArraySpec | GroupSpec]):
 
 class Image:
     """
-    An OME-zarr multiscale dataset.
+    A multiscale zarr group.
+
+    Parameters
+    ----------
+    group :
+        Group to create object from.
     """
 
     def __init__(self, group: zarr.Group) -> None:
