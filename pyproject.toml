@@ -17,6 +17,7 @@ docs = [
     "griffe-pydantic",
     "matplotlib",
     "zarr<3",
+    "pydantic-zarr",
 ]
 pydantic = ["pydantic"]
 
@@ -38,6 +39,7 @@ docs = [
     "griffe-pydantic",
     "zarr<3",
     "matplotlib",
+    "pydantic-zarr",
 ]
 dev = [
     "jupyter[notebook]>=1.1.1",
