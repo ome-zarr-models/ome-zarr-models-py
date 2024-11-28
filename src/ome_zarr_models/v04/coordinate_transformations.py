@@ -1,7 +1,12 @@
+"""
+For reference, see the [coordinate transformations section of the OME-zarr specification](https://ngff.openmicroscopy.org/0.4/#trafo-md).
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal
 
+from pydantic import Field
 from typing_extensions import Self
 
 from ome_zarr_models.base import Base
@@ -23,9 +28,12 @@ __all__ = [
 
 class Identity(Base):
     """
-    Model for an identity transformation.
+    Identity transformation.
 
-    See https://ngff.openmicroscopy.org/0.4/#trafo-md
+    Notes
+    -----
+    Although defined in the specification, it is not allowed
+    to be used anywhere.
     """
 
     type: Literal["identity"]
@@ -33,12 +41,7 @@ class Identity(Base):
 
 class VectorScale(Base):
     """
-    Model for a scale transformation parametrized by a vector of numbers.
-
-    This corresponds to scale-type elements of
-    `Dataset.coordinateTransformations` or
-    `Multiscale.coordinateTransformations`.
-    See https://ngff.openmicroscopy.org/0.4/#trafo-md
+    Scale transformation parametrized by a vector of numbers.
     """
 
     type: Literal["scale"]
@@ -61,12 +64,7 @@ class VectorScale(Base):
 
 class PathScale(Base):
     """
-    Model for a scale transformation parametrized by a path.
-
-    This corresponds to scale-type elements of
-    `Dataset.coordinateTransformations` or
-    `Multiscale.coordinateTransformations`.
-    See https://ngff.openmicroscopy.org/0.4/#trafo-md
+    Scale transformation parametrized by a path.
     """
 
     type: Literal["scale"]
@@ -75,15 +73,10 @@ class PathScale(Base):
 
 class VectorTranslation(Base):
     """
-    Model for a translation transformation parametrized by a vector of numbers.
-
-    This corresponds to translation-type elements of
-    `Dataset.coordinateTransformations` or
-    `Multiscale.coordinateTransformations`.
-    See https://ngff.openmicroscopy.org/0.4/#trafo-md
+    Translation transformation parametrized by a vector of numbers.
     """
 
-    type: Literal["translation"]
+    type: Literal["translation"] = Field(..., description="Type")
     translation: list[float]
 
     @classmethod
@@ -103,12 +96,7 @@ class VectorTranslation(Base):
 
 class PathTranslation(Base):
     """
-    Model for a translation transformation parametrized by a path.
-
-    This corresponds to translation-type elements of
-    `Dataset.coordinateTransformations` or
-    `Multiscale.coordinateTransformations`.
-    See https://ngff.openmicroscopy.org/0.4/#trafo-md
+    Translation transformation parametrized by a path.
     """
 
     type: Literal["translation"]

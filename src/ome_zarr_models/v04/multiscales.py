@@ -1,3 +1,7 @@
+"""
+For reference, see the [multiscales section of the OME-zarr specification](https://ngff.openmicroscopy.org/0.4/#multiscale-md).
+"""
+
 from __future__ import annotations
 
 from collections import Counter
@@ -150,9 +154,7 @@ def _ensure_axis_types(axes: Axes) -> Axes:
 
 class Dataset(Base):
     """
-    Model for an element of `Multiscale.datasets`.
-
-    See https://ngff.openmicroscopy.org/0.4/#multiscale-md
+    An element of Multiscale.datasets.
     """
 
     # TODO: validate that path resolves to an actual zarr array
@@ -183,63 +185,9 @@ class Dataset(Base):
 Datasets = Sequence[Dataset]
 
 
-def _ensure_top_transforms_dimensionality(data: Multiscale) -> Multiscale:
-    """
-    Ensure that the dimensionality of the top-level coordinateTransformations,
-    if present, is consistent with the rest of the model.
-    """
-    ctx = data.coordinateTransformations
-    if ctx is not None:
-        # check that the dimensionality of the coordinateTransformations is
-        # internally consistent
-        _ = _ensure_transform_dimensionality(ctx)
-
-    return data
-
-
-def _ensure_axes_top_transforms(data: Multiscale) -> Multiscale:
-    """
-    Ensure that the length of the axes matches the dimensionality of the transforms
-    defined in the top-level coordinateTransformations, if present.
-    """
-    self_ndim = len(data.axes)
-    if data.coordinateTransformations is not None:
-        for tx in data.coordinateTransformations:
-            if hasattr(tx, "ndim") and self_ndim != tx.ndim:
-                msg = (
-                    f"The length of axes does not match the dimensionality of "
-                    f"the {tx.type} transform in coordinateTransformations. "
-                    f"Got {self_ndim} axes, but the {tx.type} transform has "
-                    f"dimensionality {tx.ndim}"
-                )
-                raise ValueError(msg)
-    return data
-
-
-def _ensure_axes_dataset_transforms(data: Multiscale) -> Multiscale:
-    """
-    Ensure that the length of the axes matches the dimensionality of the transforms
-    """
-    self_ndim = len(data.axes)
-    for ds_idx, ds in enumerate(data.datasets):
-        for tx in ds.coordinateTransformations:
-            if hasattr(tx, "ndim") and self_ndim != tx.ndim:
-                msg = (
-                    f"The length of axes does not match the dimensionality of "
-                    f"the {tx.type} transform in "
-                    f"datasets[{ds_idx}].coordinateTransformations. "
-                    f"Got {self_ndim} axes, but the {tx.type} transform has "
-                    f"dimensionality {tx.ndim}"
-                )
-                raise ValueError(msg)
-    return data
-
-
 class Multiscale(Base):
     """
-    Model of an element of `multiscales` metadata.
-
-    See https://ngff.openmicroscopy.org/0.4/#multiscale-md.
+    An element of multiscales metadata.
     """
 
     axes: Annotated[
@@ -264,15 +212,57 @@ class Multiscale(Base):
         """
         return len(self.axes)
 
-    _ensure_transforms = model_validator(mode="after")(
-        _ensure_top_transforms_dimensionality
-    )
-    _ensure_axes_top_transforms = model_validator(mode="after")(
-        _ensure_axes_top_transforms
-    )
-    _ensure_axes_dataset_transforms = model_validator(mode="after")(
-        _ensure_axes_dataset_transforms
-    )
+    @model_validator(mode="after")
+    def _ensure_top_transforms_dimensionality(self) -> Self:
+        """
+        Ensure that the dimensionality of the top-level coordinateTransformations,
+        if present, is consistent with the rest of the model.
+        """
+        ctx = self.coordinateTransformations
+        if ctx is not None:
+            # check that the dimensionality of the coordinateTransformations is
+            # internally consistent
+            _ = _ensure_transform_dimensionality(ctx)
+
+        return self
+
+    @model_validator(mode="after")
+    def _ensure_axes_top_transforms(data: Multiscale) -> Multiscale:
+        """
+        Ensure that the length of the axes matches the dimensionality of the transforms
+        defined in the top-level coordinateTransformations, if present.
+        """
+        self_ndim = len(data.axes)
+        if data.coordinateTransformations is not None:
+            for tx in data.coordinateTransformations:
+                if hasattr(tx, "ndim") and self_ndim != tx.ndim:
+                    msg = (
+                        f"The length of axes does not match the dimensionality of "
+                        f"the {tx.type} transform in coordinateTransformations. "
+                        f"Got {self_ndim} axes, but the {tx.type} transform has "
+                        f"dimensionality {tx.ndim}"
+                    )
+                    raise ValueError(msg)
+        return data
+
+    @model_validator(mode="after")
+    def _ensure_axes_dataset_transforms(data: Multiscale) -> Multiscale:
+        """
+        Ensure that the length of the axes matches the dimensionality of the transforms
+        """
+        self_ndim = len(data.axes)
+        for ds_idx, ds in enumerate(data.datasets):
+            for tx in ds.coordinateTransformations:
+                if hasattr(tx, "ndim") and self_ndim != tx.ndim:
+                    msg = (
+                        f"The length of axes does not match the dimensionality of "
+                        f"the {tx.type} transform in "
+                        f"datasets[{ds_idx}].coordinateTransformations. "
+                        f"Got {self_ndim} axes, but the {tx.type} transform has "
+                        f"dimensionality {tx.ndim}"
+                    )
+                    raise ValueError(msg)
+        return data
 
 
 Multiscales = Sequence[Multiscale]
