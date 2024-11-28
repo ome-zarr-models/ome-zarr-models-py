@@ -124,3 +124,5 @@ class Plate(Base):
         if len(errors) > 0:
             errors_joined = "\n".join(errors)
             raise ValidationError(f"Error validating plate metadata:\n{errors_joined}")
+
+        return self

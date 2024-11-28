@@ -93,3 +93,11 @@ ignore = [
 [tool.ruff.format]
 docstring-code-format = true
 skip-magic-trailing-comma = false # default is false
+
+[tool.mypy]
+
+strict = true
+
+[[tool.mypy.overrides]]
+module = ["zarr.*", "pydantic_zarr.*"]
+ignore_missing_imports = true

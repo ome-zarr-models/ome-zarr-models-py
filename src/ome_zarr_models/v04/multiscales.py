@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import Counter
 from collections.abc import Sequence
-from typing import TYPE_CHECKING, Annotated, Any, get_args
+from typing import Annotated, Any, Self, get_args
 
 from pydantic import AfterValidator, Field, model_validator
 
@@ -16,10 +16,6 @@ from ome_zarr_models.v04.coordinate_transformations import (
     _build_transforms,
     _ndim,
 )
-
-if TYPE_CHECKING:
-    from collections.abc import Iterable
-
 
 __all__ = ["Dataset", "Multiscale", "Multiscales"]
 
@@ -170,7 +166,9 @@ class Dataset(Base):
     ]
 
     @classmethod
-    def build(cls, *, path: str, scale: Iterable[float], translation: Iterable[float]):
+    def build(
+        cls, *, path: str, scale: Sequence[float], translation: Sequence[float]
+    ) -> Self:
         """
         Construct a `Dataset` from a path, a scale, and a translation.
         """
@@ -206,11 +204,8 @@ def _ensure_axes_top_transforms(data: Multiscale) -> Multiscale:
     """
     self_ndim = len(data.axes)
     if data.coordinateTransformations is not None:
-        for tx in filter(
-            lambda v: isinstance(v, VectorTransform),
-            data.coordinateTransformations,
-        ):
-            if self_ndim != tx.ndim:
+        for tx in data.coordinateTransformations:
+            if hasattr(tx, "ndim") and self_ndim != tx.ndim:
                 msg = (
                     f"The length of axes does not match the dimensionality of "
                     f"the {tx.type} transform in coordinateTransformations. "
@@ -221,17 +216,14 @@ def _ensure_axes_top_transforms(data: Multiscale) -> Multiscale:
     return data
 
 
-def _ensure_axes_dataset_transforms(data) -> Multiscale:
+def _ensure_axes_dataset_transforms(data: Multiscale) -> Multiscale:
     """
     Ensure that the length of the axes matches the dimensionality of the transforms
     """
     self_ndim = len(data.axes)
     for ds_idx, ds in enumerate(data.datasets):
-        for tx in filter(
-            lambda v: isinstance(v, VectorTransform),
-            ds.coordinateTransformations,
-        ):
-            if self_ndim != tx.ndim:
+        for tx in ds.coordinateTransformations:
+            if hasattr(tx, "ndim") and self_ndim != tx.ndim:
                 msg = (
                     f"The length of axes does not match the dimensionality of "
                     f"the {tx.type} transform in "

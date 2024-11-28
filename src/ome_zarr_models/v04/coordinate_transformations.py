@@ -49,7 +49,7 @@ class VectorScale(Base):
         """
         Create a VectorScale from an iterable of floats.
         """
-        return cls(type="scale", scale=tuple(data))
+        return cls(type="scale", scale=list(data))
 
     @property
     def ndim(self) -> int:
@@ -91,7 +91,7 @@ class VectorTranslation(Base):
         """
         Create a VectorTranslation from an iterable of floats.
         """
-        return cls(type="translation", translation=tuple(data))
+        return cls(type="translation", translation=list(data))
 
     @property
     def ndim(self) -> int:
