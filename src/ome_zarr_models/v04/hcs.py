@@ -1,4 +1,4 @@
 class HCS:
     """
-    An object representing an OME-zarr high-content screening dataset.
+    An OME-zarr high-content screening (HCS) dataset.
     """

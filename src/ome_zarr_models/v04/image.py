@@ -75,7 +75,7 @@ class ImageAttrs(Base):
 
 class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec]):
     """
-    A multiscale zarr group.
+    An OME-zarr multiscale dataset.
     """
 
     _check_arrays_compatible = model_validator(mode="after")(_check_arrays_compatible)
@@ -87,7 +87,7 @@ class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec]):
 
         Parameters
         ----------
-        node: zarr.Group
+        node : zarr.Group
             A Zarr group that has valid OME-NGFF image metadata.
         """
         # on unlistable storage backends, the members of this group will be {}
