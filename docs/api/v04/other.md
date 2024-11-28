@@ -1,10 +1,4 @@
-# Version 0.4
-
-## Top level models
-
-::: ome_zarr_models.v04
-
-## Other models
+# Other models
 
 These are models that live further down the hierarchy.
 

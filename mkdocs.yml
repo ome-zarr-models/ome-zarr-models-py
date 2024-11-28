@@ -24,7 +24,9 @@ nav:
   - Tutorial: tutorial.py
   - Contributing: contributing.md
   - API reference:
-      - api/v04.md
+      - v04:
+          - api/v04/top_level.md
+          - api/v04/other.md
 
 watch:
   - src
