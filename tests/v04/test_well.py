@@ -46,3 +46,17 @@ def test_examples_valid(filename: str, model: Well):
         data = json.load(f)
 
     assert Well(**data["well"]) == model
+
+
+def test_get_paths():
+    well = Well(
+        images=[
+            WellImage(path="0", acquisition=1),
+            WellImage(path="1", acquisition=1),
+            WellImage(path="2", acquisition=2),
+            WellImage(path="3", acquisition=2),
+        ],
+        version="0.4",
+    )
+
+    assert well.get_acquisition_paths() == {1: ["0", "1"], 2: ["2", "3"]}
