@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 from pydantic import BaseModel
 
-from ome_zarr_models.v04.well import ImageInWell, Well
+from ome_zarr_models.v04.well import WellImage, Well
 
 
 def check_against_json(json_path: Path, expected_model: BaseModel) -> None:
@@ -21,10 +21,10 @@ def check_against_json(json_path: Path, expected_model: BaseModel) -> None:
             "well_example_1.json",
             Well(
                 images=[
-                    ImageInWell(path="0", acquisition=1),
-                    ImageInWell(path="1", acquisition=1),
-                    ImageInWell(path="2", acquisition=2),
-                    ImageInWell(path="3", acquisition=2),
+                    WellImage(path="0", acquisition=1),
+                    WellImage(path="1", acquisition=1),
+                    WellImage(path="2", acquisition=2),
+                    WellImage(path="3", acquisition=2),
                 ],
                 version="0.4",
             ),
@@ -33,8 +33,8 @@ def check_against_json(json_path: Path, expected_model: BaseModel) -> None:
             "well_example_2.json",
             Well(
                 images=[
-                    ImageInWell(path="0", acquisition=0),
-                    ImageInWell(path="1", acquisition=3),
+                    WellImage(path="0", acquisition=0),
+                    WellImage(path="1", acquisition=3),
                 ],
                 version="0.4",
             ),

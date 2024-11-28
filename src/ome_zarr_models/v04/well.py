@@ -5,10 +5,10 @@ from pydantic import AfterValidator, Field
 from ome_zarr_models.base import Base
 from ome_zarr_models.utils import _AlphaNumericConstraint, _unique_items_validator
 
-__all__ = ["ImageInWell", "Well"]
+__all__ = ["WellImage", "Well"]
 
 
-class ImageInWell(Base):
+class WellImage(Base):
     """
     Model for an element of `Well.images`.
 
@@ -38,5 +38,5 @@ class Well(Base):
     https://ngff.openmicroscopy.org/0.4/#well-md
     """
 
-    images: Annotated[list[ImageInWell], AfterValidator(_unique_items_validator)]
+    images: Annotated[list[WellImage], AfterValidator(_unique_items_validator)]
     version: str | None = Field(None, description="Version of the well specification")
