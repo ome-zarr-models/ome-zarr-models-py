@@ -6,7 +6,6 @@ from pydantic import (
     Field,
     NonNegativeInt,
     PositiveInt,
-    ValidationError,
     model_validator,
 )
 
@@ -35,9 +34,11 @@ class Acquisition(Base):
     name: str | None = None
     maximumfieldcount: PositiveInt | None = Field(
         default=None,
-        description=("Maximum number of fields of view for the acquisition"),
+        description="Maximum number of fields of view for the acquisition",
     )
     description: str | None = None
+    starttime: int | None = None
+    endtime: int | None = None
 
 
 class WellInPlate(Base):
@@ -92,10 +93,10 @@ class Plate(Base):
     acquisitions: list[Acquisition] | None = None
     columns: Annotated[list[Column], AfterValidator(_unique_items_validator)]
     field_count: PositiveInt | None = Field(
-        default=None, description="Maimum number of fields per view across wells"
+        default=None, description="Maximum number of fields per view across wells"
     )
-    name: str | None = None
-    rows: list[Row]
+    name: str | None = Field(default=None, description="Plate name")
+    rows: Annotated[list[Row], AfterValidator(_unique_items_validator)]
     # version will become required in 0.5
     version: str | None = Field(None, description="Version of the plate specification")
     wells: list[WellInPlate]
@@ -117,12 +118,16 @@ class Plate(Base):
 
             row, column = path.split("/")
             if row not in row_names:
-                errors.append(f"row in well path '{path}' is not in list of rows")
+                errors.append(
+                    f"row '{row}' in well path '{path}' is not in list of rows"
+                )
             if column not in column_names:
-                errors.append(f"column in well path '{path}' is not in list of columns")
+                errors.append(
+                    f"column '{column}' in well path '{path}' is not in list of columns"
+                )
 
         if len(errors) > 0:
             errors_joined = "\n".join(errors)
-            raise ValidationError(f"Error validating plate metadata:\n{errors_joined}")
+            raise ValueError(f"Error validating plate metadata:\n{errors_joined}")
 
         return self
