@@ -1,15 +1,13 @@
 {
-  "well": {
-    "images": [
-      {
-        "acquisition": 0,
-        "path": "0"
-      },
-      {
-        "acquisition": 3,
-        "path": "1"
-      }
-    ],
-    "version": "0.4"
-  }
+  "images": [
+    {
+      "acquisition": 0,
+      "path": "0"
+    },
+    {
+      "acquisition": 3,
+      "path": "1"
+    }
+  ],
+  "version": "0.4"
 }

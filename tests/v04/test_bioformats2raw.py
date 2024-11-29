@@ -1,4 +1,4 @@
-from pathlib import Path
+from tests.v04.conftest import read_in_json
 
 from ome_zarr_models.v04.bioformats2raw import BioFormats2RawAttrs
 from ome_zarr_models.v04.plate import (
@@ -10,9 +10,10 @@ from ome_zarr_models.v04.plate import (
 )
 
 
-def test_bioformats2raw_exmaple_json():
-    with open(Path(__file__).parent / "data" / "bioformats2raw_example.json") as f:
-        model = BioFormats2RawAttrs.model_validate_json(f.read())
+def test_bioformats2raw_exmaple_json() -> None:
+    model = read_in_json(
+        json_fname="bioformats2raw_example.json", model_cls=BioFormats2RawAttrs
+    )
 
     assert model == BioFormats2RawAttrs(
         bioformats2raw_layout=3,
