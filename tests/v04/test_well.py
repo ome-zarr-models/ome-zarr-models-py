@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 from pydantic import BaseModel
+from tests.v04.conftest import read_in_json
 
 from ome_zarr_models.v04.well import Well, WellImage
 
@@ -15,7 +16,7 @@ def check_against_json(json_path: Path, expected_model: BaseModel) -> None:
 
 
 @pytest.mark.parametrize(
-    ("filename", "model"),
+    ("filename", "model_expected"),
     [
         (
             "well_example_1.json",
@@ -41,11 +42,9 @@ def check_against_json(json_path: Path, expected_model: BaseModel) -> None:
         ),
     ],
 )
-def test_examples_valid(filename: str, model: Well):
-    with open(Path(__file__).parent / "data" / filename) as f:
-        data = json.load(f)
-
-    assert Well(**data["well"]) == model
+def test_examples_valid(filename: str, model_expected: Well) -> None:
+    model = read_in_json(json_fname=filename, model_cls=Well)
+    assert model == model_expected
 
 
 def test_get_paths():
