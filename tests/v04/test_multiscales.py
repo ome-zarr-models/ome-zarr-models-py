@@ -11,8 +11,8 @@ from tests.v04.conftest import from_array_props, from_arrays
 
 from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.coordinate_transformations import (
-    VectorScale,
-    VectorTranslation,
+    Scale,
+    Translation,
     _build_transforms,
 )
 from ome_zarr_models.v04.image import Image, ImageAttrs
@@ -127,11 +127,11 @@ def test_transform_invalid_ndims(
     "transforms",
     [
         (
-            VectorScale.build((1, 1, 1)),
-            VectorTranslation.build((1, 1, 1)),
-            VectorTranslation.build((1, 1, 1)),
+            Scale.build((1, 1, 1)),
+            Translation.build((1, 1, 1)),
+            Translation.build((1, 1, 1)),
         ),
-        (VectorScale.build((1, 1, 1)),) * 5,
+        (Scale.build((1, 1, 1)),) * 5,
     ],
 )
 def test_transform_invalid_length(
@@ -146,10 +146,10 @@ def test_transform_invalid_length(
 @pytest.mark.parametrize(
     "transforms",
     [
-        (VectorTranslation.build((1, 1, 1)),) * 2,
+        (Translation.build((1, 1, 1)), Translation.build((1, 1, 1))),
         (
-            VectorTranslation.build((1, 1, 1)),
-            VectorScale.build((1, 1, 1)),
+            Translation.build((1, 1, 1)),
+            Scale.build((1, 1, 1)),
         ),
     ],
 )
@@ -158,7 +158,7 @@ def test_transform_invalid_first_element(
 ) -> None:
     with pytest.raises(
         ValidationError,
-        match="Input should be a valid dictionary or instance of VectorScale",
+        match="Input should be a valid dictionary or instance of Scale",
     ):
         Dataset(path="foo", coordinateTransformations=transforms)
 
@@ -167,17 +167,17 @@ def test_transform_invalid_first_element(
     "transforms",
     (
         (
-            VectorScale.build((1, 1, 1)),
-            VectorScale.build((1, 1, 1)),
+            Scale.build((1, 1, 1)),
+            Scale.build((1, 1, 1)),
         ),
     ),
 )
 def test_transform_invalid_second_element(
-    transforms: tuple[VectorScale, VectorScale],
+    transforms: tuple[Scale, Scale],
 ) -> None:
     with pytest.raises(
         ValidationError,
-        match="Input should be a valid dictionary or instance of VectorTranslation",
+        match="Input should be a valid dictionary or instance of Translation",
     ):
         Dataset(path="foo", coordinateTransformations=transforms)
 

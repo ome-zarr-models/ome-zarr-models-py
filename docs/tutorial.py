@@ -6,7 +6,7 @@ from rich.pretty import pprint
 
 from ome_zarr_models.v04 import Image
 from ome_zarr_models.v04.coordinate_transformations import (
-    VectorTranslation,
+    Translation,
 )
 
 # ## Creating models
@@ -37,7 +37,7 @@ pprint(multiscales_meta)
 # scale, or a scale then translation (strictly in that order). So if we try and make a
 # transformation just a translation, it will raise an error.
 
-multiscales_meta[0].datasets[0].coordinateTransformations = VectorTranslation(
+multiscales_meta[0].datasets[0].coordinateTransformations = Translation(
     type="translation", translation=[1, 2, 3]
 )
 

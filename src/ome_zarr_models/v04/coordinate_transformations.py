@@ -16,13 +16,8 @@ if TYPE_CHECKING:
 
 __all__ = [
     "Identity",
-    "PathScale",
-    "PathTranslation",
-    "ScaleTransform",
-    "TranslationTransform",
-    "VectorScale",
-    "VectorTransform",
-    "VectorTranslation",
+    "Scale",
+    "Translation",
 ]
 
 
@@ -47,13 +42,17 @@ class Identity(Transformation):
     type: Literal["identity"]
 
 
-class VectorScale(Transformation):
+class Scale(Transformation):
     """
     Scale transformation parametrized by a vector of numbers.
     """
 
     type: Literal["scale"]
-    scale: list[float]
+    scale: list[float] | str = Field(
+        ...,
+        description="Scale, either as a list of scaling factors "
+        "or a path to such a list in a zarr array",
+    )
 
     @classmethod
     def build(cls, data: Iterable[float]) -> Self:
@@ -67,25 +66,33 @@ class VectorScale(Transformation):
         """
         Number of dimensions.
         """
-        return len(self.scale)
+        if isinstance(self.scale, list):
+            return len(self.scale)
+        else:
+            raise NotImplementedError(
+                "Getting number of dimensions from a binary array path "
+                "is not implemented"
+            )
+
+    @property
+    def is_path_transform(self) -> bool:
+        """
+        Whether this transform is parameterized by a path or not.
+        """
+        return isinstance(self.scale, str)
 
 
-class PathScale(Transformation):
-    """
-    Scale transformation parametrized by a path.
-    """
-
-    type: Literal["scale"]
-    path: str
-
-
-class VectorTranslation(Transformation):
+class Translation(Transformation):
     """
     Translation transformation parametrized by a vector of numbers.
     """
 
     type: Literal["translation"] = Field(..., description="Type")
-    translation: list[float]
+    translation: list[float] | str = Field(
+        ...,
+        description="Translation, either as a 1D translation vector "
+        "or a path to such a vector in a zarr array",
+    )
 
     @classmethod
     def build(cls, data: Iterable[float]) -> Self:
@@ -99,40 +106,32 @@ class VectorTranslation(Transformation):
         """
         Number of dimensions.
         """
-        return len(self.translation)
+        if isinstance(self.translation, list):
+            return len(self.translation)
+        else:
+            raise NotImplementedError(
+                "Getting number of dimensions from a binary array path "
+                "is not implemented"
+            )
 
-
-class PathTranslation(Transformation):
-    """
-    Translation transformation parametrized by a path.
-    """
-
-    type: Literal["translation"]
-    translation: str
-
-
-ScaleTransform = VectorScale | PathScale
-TranslationTransform = VectorTranslation | PathTranslation
-VectorTransform = VectorScale | VectorTranslation
-
-
-def _ndim(transform: VectorTransform) -> int:
-    """
-    Get the dimensionality of a scale or translation transform.
-    """
-    return transform.ndim
+    @property
+    def is_path_transform(self) -> bool:
+        """
+        Whether this transform is parameterized by a path or not.
+        """
+        return isinstance(self.translation, str)
 
 
 def _build_transforms(
     scale: Sequence[float], translation: Sequence[float] | None
-) -> tuple[VectorScale] | tuple[VectorScale, VectorTranslation]:
+) -> tuple[Scale] | tuple[Scale, Translation]:
     """
-    Create a `VectorScale` and optionally a `VectorTranslation` from a scale and a
+    Create a `Scale` and optionally a `Translation` from a scale and a
     translation parameter.
     """
-    vec_scale = VectorScale.build(scale)
+    vec_scale = Scale.build(scale)
     if translation is None:
         return (vec_scale,)
     else:
-        vec_trans = VectorTranslation.build(translation)
+        vec_trans = Translation.build(translation)
         return vec_scale, vec_trans

@@ -14,17 +14,15 @@ from ome_zarr_models.base import Base
 from ome_zarr_models.utils import duplicates
 from ome_zarr_models.v04.axes import Axes, AxisType
 from ome_zarr_models.v04.coordinate_transformations import (
-    ScaleTransform,
-    TranslationTransform,
-    VectorTransform,
+    Scale,
+    Translation,
     _build_transforms,
-    _ndim,
 )
 
 __all__ = ["Dataset", "Multiscale", "Multiscales"]
 
 VALID_NDIM = (2, 3, 4, 5)
-ValidTransform = tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform]
+ValidTransform = tuple[Scale] | tuple[Scale, Translation]
 
 
 def _ensure_transform_dimensionality(
@@ -36,8 +34,8 @@ def _ensure_transform_dimensionality(
     instead of concrete values, then no validation will be performed and the
     transforms will be returned as-is.
     """
-    vector_transforms = filter(lambda v: isinstance(v, VectorTransform), transforms)
-    ndims = tuple(map(_ndim, vector_transforms))
+    vector_transforms = [t for t in transforms if not t.is_path_transform]
+    ndims = [t.ndim for t in vector_transforms]
     ndims_set = set(ndims)
     if len(ndims_set) > 1:
         msg = (
