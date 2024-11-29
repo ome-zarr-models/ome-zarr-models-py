@@ -1,3 +1,7 @@
+"""
+For reference, see the [plate section of the OME-zarr specification](https://ngff.openmicroscopy.org/0.4/index.html#plate-md).
+"""
+
 from collections import Counter
 from typing import Annotated, Self
 
@@ -23,11 +27,7 @@ __all__ = [
 
 class Acquisition(Base):
     """
-    Model a single acquisition.
-
-    References
-    ----------
-    https://ngff.openmicroscopy.org/0.4/#plate-md.
+    A single acquisition.
     """
 
     id: NonNegativeInt = Field(description="A unique identifier.")
@@ -43,11 +43,7 @@ class Acquisition(Base):
 
 class WellInPlate(Base):
     """
-    Model for an element of `Plate.wells`.
-
-    References
-    ----------
-    https://ngff.openmicroscopy.org/0.4/#plate-md
+    A single well within a plate.
     """
 
     # TODO: validate
@@ -59,11 +55,7 @@ class WellInPlate(Base):
 
 class Column(Base):
     """
-    Model for single column.
-
-    References
-    ----------
-    https://ngff.openmicroscopy.org/0.4/#plate-md
+    A single column within a well.
     """
 
     name: Annotated[str, _AlphaNumericConstraint]
@@ -71,11 +63,7 @@ class Column(Base):
 
 class Row(Base):
     """
-    A single row.
-
-    References
-    ----------
-    https://ngff.openmicroscopy.org/0.4/#plate-md
+    A single row within a well.
     """
 
     name: Annotated[str, _AlphaNumericConstraint]
@@ -83,11 +71,7 @@ class Row(Base):
 
 class Plate(Base):
     """
-    Model a single plate.
-
-    References
-    ----------
-    https://ngff.openmicroscopy.org/0.4/#plate-md
+    A single plate.
     """
 
     acquisitions: list[Acquisition] | None = None
