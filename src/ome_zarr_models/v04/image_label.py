@@ -1,5 +1,5 @@
 """
-See https://ngff.openmicroscopy.org/0.4/index.html#label-md
+For reference, see the [image label section of the OME-zarr specification](https://ngff.openmicroscopy.org/0.4/index.html#label-md).
 """
 
 from __future__ import annotations
