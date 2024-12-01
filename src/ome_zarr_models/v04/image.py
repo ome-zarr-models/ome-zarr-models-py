@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from typing import Self
+from typing import Annotated, Self
 
 import zarr.errors
 from pydantic import Field, model_validator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models.base import Base
+from ome_zarr_models.v04.image_label import ImageLabel
 from ome_zarr_models.v04.multiscales import Multiscales
 from ome_zarr_models.v04.omero import Omero
 from ome_zarr_models.zarr_utils import get_path
@@ -71,6 +72,11 @@ class ImageAttrs(Base):
         min_length=1,
     )
     omero: Omero | None = None
+    image_labels: Annotated[
+        ImageLabel | None, Field(..., serialization_alias="image-label")
+    ]
+
+    # TODO: validate: if image_labels is present, multiscales must be present too
 
 
 class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec]):

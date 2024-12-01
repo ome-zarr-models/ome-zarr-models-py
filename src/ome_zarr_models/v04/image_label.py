@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, Annotated, Literal
 from pydantic import AfterValidator, Field, model_validator
 
 from ome_zarr_models.base import Base
-from ome_zarr_models.v04.image import ImageAttrs
 
 if TYPE_CHECKING:
     from collections.abc import Hashable, Iterable
@@ -124,21 +123,3 @@ class ImageLabel(Base):
     @model_validator(mode="after")
     def _parse_model(self) -> ImageLabel:
         return _parse_imagelabel(self)
-
-
-class GroupAttrs(ImageAttrs):
-    """
-    Attributes for a Zarr group that contains `image-label` metadata.
-    Inherits from `v04.multiscales.MultiscaleAttrs`.
-
-    See https://ngff.openmicroscopy.org/0.4/#label-md
-
-    Attributes
-    ----------
-    image_label: `ImageLabel`
-        Image label metadata.
-    multiscales: tuple[v04.multiscales.Multiscales]
-        Multiscale image metadata.
-    """
-
-    image_label: Annotated[ImageLabel, Field(..., serialization_alias="image-label")]
