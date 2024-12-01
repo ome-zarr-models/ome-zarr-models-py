@@ -5,15 +5,12 @@ For reference, see the [image label section of the OME-zarr specification](https
 from __future__ import annotations
 
 import warnings
-from collections import Counter
-from typing import TYPE_CHECKING, Annotated, Literal
+from typing import Annotated, Literal
 
 from pydantic import AfterValidator, Field, model_validator
 
 from ome_zarr_models.base import Base
-
-if TYPE_CHECKING:
-    from collections.abc import Hashable, Iterable
+from ome_zarr_models.utils import duplicates
 
 __all__ = ["RGBA", "Color", "ImageLabel", "Property", "Source", "Uint8"]
 
@@ -21,23 +18,9 @@ Uint8 = Annotated[int, Field(strict=True, ge=0, le=255)]
 RGBA = tuple[Uint8, Uint8, Uint8, Uint8]
 
 
-def _duplicates(values: Iterable[Hashable]) -> dict[Hashable, int]:
-    """
-    Takes a sequence of hashable elements and returns a dict where the keys are the
-    elements of the input that occurred at least once, and the values are the
-    frequencies of those elements.
-    """
-    counts = Counter(values)
-    return {k: v for k, v in counts.items() if v > 1}
-
-
 class Color(Base):
     """
     A label value and RGBA.
-
-    References
-    ----------
-    https://ngff.openmicroscopy.org/0.4/#label-md
     """
 
     label_value: int = Field(..., alias="label-value")
@@ -71,7 +54,7 @@ def _parse_colors(colors: tuple[Color] | None) -> tuple[Color] | None:
         )
         warnings.warn(msg, stacklevel=1)
     else:
-        dupes = _duplicates(x.label_value for x in colors)
+        dupes = duplicates(x.label_value for x in colors)
         if len(dupes) > 0:
             msg = (
                 f"Duplicated label-value: {tuple(dupes.keys())}."
