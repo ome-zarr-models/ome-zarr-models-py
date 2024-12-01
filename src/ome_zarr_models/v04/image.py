@@ -17,7 +17,7 @@ from ome_zarr_models.zarr_utils import get_path
 __all__ = ["Image", "ImageAttrs"]
 
 
-def _check_arrays_compatible(data: Image) -> Image:
+def _check_arrays_compatible(data: _ImageSpec) -> _ImageSpec:
     """
     Check that all the arrays referenced by the `multiscales` metadata meet the
     following criteria:
