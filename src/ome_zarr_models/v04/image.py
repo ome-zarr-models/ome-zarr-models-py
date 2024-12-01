@@ -76,7 +76,9 @@ class ImageAttrs(Base):
         ImageLabel | None, Field(..., serialization_alias="image-label")
     ]
 
-    # TODO: validate: if image_labels is present, multiscales must be present too
+    # TODO: validate:
+    # "image-label groups MUST also contain multiscales metadata and the two "datasets" series
+    #  MUST have the same number of entries."
 
 
 class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec]):

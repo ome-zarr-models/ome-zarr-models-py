@@ -1,3 +1,7 @@
+"""
+See https://ngff.openmicroscopy.org/0.4/index.html#label-md
+"""
+
 from __future__ import annotations
 
 import warnings
@@ -11,10 +15,10 @@ from ome_zarr_models.base import Base
 if TYPE_CHECKING:
     from collections.abc import Hashable, Iterable
 
-__all__ = ["RGBA", "Color", "ConInt", "GroupAttrs", "ImageLabel", "Property", "Source"]
+__all__ = ["RGBA", "Color", "ImageLabel", "Property", "Source", "Uint8"]
 
-ConInt = Annotated[int, Field(strict=True, ge=0, le=255)]
-RGBA = tuple[ConInt, ConInt, ConInt, ConInt]
+Uint8 = Annotated[int, Field(strict=True, ge=0, le=255)]
+RGBA = tuple[Uint8, Uint8, Uint8, Uint8]
 
 
 def _duplicates(values: Iterable[Hashable]) -> dict[Hashable, int]:
@@ -45,8 +49,10 @@ class Source(Base):
     Source data for the labels.
     """
 
-    # TODO: add validation that this path resolves to something
-    image: str | None = "../../"
+    # TODO: add validation that this path resolves to a zarr image group
+    image: str | None = Field(
+        default="../../", description="Relative path to a Zarr group of a key image."
+    )
 
 
 class Property(Base):
@@ -60,8 +66,7 @@ class Property(Base):
 def _parse_colors(colors: list[Color] | None) -> list[Color] | None:
     if colors is None:
         msg = (
-            "The field `colors` is `None`. Version 0.4 of"
-            "the OME-NGFF spec states that `colors` should be a list of "
+            "The field `colors` is `None`.`colors` should be a list of "
             "label descriptors."
         )
         warnings.warn(msg, stacklevel=1)
@@ -75,16 +80,6 @@ def _parse_colors(colors: list[Color] | None) -> list[Color] | None:
             raise ValueError(msg)
 
     return colors
-
-
-def _parse_version(version: Literal["0.4"] | None) -> Literal["0.4"] | None:
-    if version is None:
-        _ = (
-            "The `version` attribute is `None`. Version 0.4 of "
-            "the OME-NGFF spec states that `version` should either be unset or "
-            "the string 0.4"
-        )
-    return version
 
 
 def _parse_imagelabel(model: ImageLabel) -> ImageLabel:
@@ -110,15 +105,14 @@ def _parse_imagelabel(model: ImageLabel) -> ImageLabel:
 class ImageLabel(Base):
     """
     image-label metadata.
-    See https://ngff.openmicroscopy.org/0.4/#label-md
     """
 
-    _version: Literal["0.4"]
-
-    version: Annotated[Literal["0.4"] | None, AfterValidator(_parse_version)]
-    colors: Annotated[tuple[Color, ...] | None, AfterValidator(_parse_colors)] = None
+    # TODO: validate
+    # "All the values under the label-value (of colors) key MUST be unique."
+    colors: Annotated[tuple[Color] | None, AfterValidator(_parse_colors)] = None
     properties: tuple[Property, ...] | None = None
     source: Source | None = None
+    version: Literal["0.4"] | None
 
     @model_validator(mode="after")
     def _parse_model(self) -> ImageLabel:
