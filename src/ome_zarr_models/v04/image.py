@@ -74,7 +74,7 @@ class ImageAttrs(Base):
     omero: Omero | None = None
     image_labels: Annotated[
         ImageLabel | None, Field(..., serialization_alias="image-label")
-    ]
+    ] = None
 
     # TODO: validate:
     # "image-label groups MUST also contain multiscales metadata and the two "datasets" series
