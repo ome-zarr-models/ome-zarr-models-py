@@ -156,15 +156,8 @@ class Image:
         return self._group
 
     @property
-    def multiscales(self) -> Multiscales:
+    def attributes(self) -> ImageAttrs:
         """
-        Multiscales metadata model.
+        Metadata ttributes associated with this image group.
         """
         return self._spec.attributes.multiscales
-
-    @property
-    def omero(self) -> Omero | None:
-        """
-        omero metadata model (if present).
-        """
-        return self._spec.attributes.omero

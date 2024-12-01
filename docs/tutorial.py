@@ -23,7 +23,7 @@ pprint(ome_zarr_image)
 
 # This image contains both the zarr group, and a model of the multiscales metadata
 
-multiscales_meta = ome_zarr_image.multiscales
+multiscales_meta = ome_zarr_image.attributes.multiscales
 pprint(multiscales_meta)
 
 # ## Updating models
@@ -58,7 +58,7 @@ except pydantic.ValidationError as e:
 # arrays.
 
 print(ome_zarr_image.arrays)
-full_res_path = ome_zarr_image.multiscales[0].datasets[0].path
+full_res_path = ome_zarr_image.attributes.multiscales[0].datasets[0].path
 zarr_arr = ome_zarr_image.arrays[full_res_path]
 
 fig, ax = plt.subplots()
