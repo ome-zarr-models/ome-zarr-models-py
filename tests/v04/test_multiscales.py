@@ -15,7 +15,7 @@ from ome_zarr_models.v04.coordinate_transformations import (
     VectorTranslation,
     _build_transforms,
 )
-from ome_zarr_models.v04.image import Image, ImageAttrs
+from ome_zarr_models.v04.image import Image, ImageAttrs, _ImageSpec
 from ome_zarr_models.v04.multiscales import (
     Dataset,
     Multiscale,
@@ -260,7 +260,7 @@ def test_multiscale_group_datasets_exist(
         )
         for d in default_multiscale.datasets
     }
-    Image(attributes=group_attrs, members=good_items)
+    Image._from_spec(_ImageSpec(attributes=group_attrs, members=good_items))
 
     bad_items = {
         d.path + "x": ArraySpec(
@@ -275,7 +275,7 @@ def test_multiscale_group_datasets_exist(
         ValidationError,
         match="array with that name was found in the hierarchy",
     ):
-        Image(attributes=group_attrs, members=bad_items)
+        Image._from_spec(_ImageSpec(attributes=group_attrs, members=bad_items))
 
 
 def test_multiscale_group_datasets_ndim() -> None:
@@ -317,8 +317,8 @@ def test_multiscale_group_missing_arrays() -> None:
         translations=((0, 0), (0.5, 0.5)),
     )
     # remove an array, then re-create the model
-    group_model_broken = group_model.model_copy(
-        update={"members": {array_names[0]: group_model.members[array_names[0]]}}
+    group_model_broken = group_model._spec.model_copy(
+        update={"members": {array_names[0]: group_model._spec.members[array_names[0]]}}
     )
     with pytest.raises(
         ValidationError,
@@ -327,7 +327,7 @@ def test_multiscale_group_missing_arrays() -> None:
             "not exist in this "
         ),
     ):
-        Image(**group_model_broken.model_dump())
+        Image._from_spec(_ImageSpec(**group_model_broken.model_dump()))
 
 
 def test_multiscale_group_ectopic_group() -> None:
@@ -345,14 +345,14 @@ def test_multiscale_group_ectopic_group() -> None:
         translations=((0, 0), (0.5, 0.5)),
     )
     # remove an array, then re-create the model
-    group_model_broken = group_model.model_copy(
+    group_model_broken = group_model._spec.model_copy(
         update={"members": {array_names[0]: GroupSpec()}}
     )
     with pytest.raises(
         ValidationError,
         match=re.escape(f"The node at {array_names[0]} is a group, not an array."),
     ):
-        Image(**group_model_broken.model_dump())
+        Image._from_spec(_ImageSpec(**group_model_broken.model_dump()))
 
 
 @pytest.mark.parametrize("store", ["memory"], indirect=True)
@@ -368,7 +368,7 @@ def test_from_zarr_missing_metadata(
         f"Zarr group at {store}://{store_path}://{group.path}."
     )
     with pytest.raises(KeyError, match=match):
-        Image.from_zarr(group)
+        Image(group)
 
 
 @pytest.mark.parametrize("store", ["memory"], indirect=True)
@@ -390,14 +390,16 @@ def test_from_zarr_missing_array(store: Literal["memory"]) -> None:
 
     # make an untyped model, and remove an array before serializing
     removed_array_path = arrays_names[0]
-    model_dict = group_model.model_dump(exclude={"members": {removed_array_path: True}})
+    model_dict = group_model._spec.model_dump(
+        exclude={"members": {removed_array_path: True}}
+    )
     broken_group = GroupSpec(**model_dict).to_zarr(store=store, path=group_path)
     match = (
         f"Expected to find an array at {group_path}/{removed_array_path}, "
         "but no array was found there."
     )
     with pytest.raises(ValueError, match=match):
-        Image.from_zarr(broken_group)
+        Image(broken_group)
 
 
 @pytest.mark.parametrize("store", ["memory"], indirect=True)
@@ -419,7 +421,9 @@ def test_from_zarr_ectopic_group(store: Literal["memory"]) -> None:
 
     # make an untyped model, and remove an array before serializing
     removed_array_path = arrays_names[0]
-    model_dict = group_model.model_dump(exclude={"members": {removed_array_path: True}})
+    model_dict = group_model._spec.model_dump(
+        exclude={"members": {removed_array_path: True}}
+    )
     broken_group = GroupSpec(**model_dict).to_zarr(store=store, path=group_path)
 
     # put a group where the array should be
@@ -429,7 +433,7 @@ def test_from_zarr_ectopic_group(store: Literal["memory"]) -> None:
         "but a group was found there instead."
     )
     with pytest.raises(ValueError, match=match):
-        Image.from_zarr(broken_group)
+        Image(broken_group)
 
 
 @pytest.mark.skip

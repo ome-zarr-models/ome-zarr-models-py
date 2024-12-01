@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Annotated
+from typing import Annotated, Self
 
 import zarr.errors
 from pydantic import Field, model_validator
@@ -97,7 +97,13 @@ class Image:
         self._spec = self._get_spec(group)
         self._group = group
 
-    def _get_spec(self, node: zarr.Group) -> _ImageSpec:
+    @classmethod
+    def _from_spec(cls, spec: _ImageSpec) -> Self:
+        image = cls(group=None)
+        image._spec = spec
+        return image
+
+    def _get_spec(self, node: zarr.Group) -> _ImageSpec | None:
         """
         Create an instance of an OME-zarr image from a `zarr.Group`.
 
@@ -106,6 +112,8 @@ class Image:
         node : zarr.Group
             A Zarr group that has valid OME-NGFF image metadata.
         """
+        if node is None:
+            return None
         # on unlistable storage backends, the members of this group will be {}
         guess = GroupSpec.from_zarr(node, depth=0)
 

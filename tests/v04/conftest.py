@@ -11,7 +11,7 @@ from zarr.util import guess_chunks
 
 from ome_zarr_models.base import Base
 from ome_zarr_models.v04.axes import Axis
-from ome_zarr_models.v04.image import Image, ImageAttrs
+from ome_zarr_models.v04.image import Image, ImageAttrs, _ImageSpec
 from ome_zarr_models.v04.multiscales import (
     Dataset,
     Multiscale,
@@ -151,9 +151,11 @@ def from_arrays(
         ),
         coordinateTransformations=None,
     )
-    return Image(
-        members=GroupSpec.from_flat(members_flat).members,
-        attributes=ImageAttrs(multiscales=(multimeta,)),
+    return Image._from_spec(
+        _ImageSpec(
+            members=GroupSpec.from_flat(members_flat).members,
+            attributes=ImageAttrs(multiscales=(multimeta,)),
+        )
     )
 
 
@@ -252,7 +254,9 @@ def from_array_props(
         ),
         coordinateTransformations=None,
     )
-    return Image(
-        members=GroupSpec.from_flat(members_flat).members,
-        attributes=ImageAttrs(multiscales=(multimeta,)),
+    return Image._from_spec(
+        _ImageSpec(
+            members=GroupSpec.from_flat(members_flat).members,
+            attributes=ImageAttrs(multiscales=(multimeta,)),
+        )
     )
