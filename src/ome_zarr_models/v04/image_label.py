@@ -40,7 +40,7 @@ class Color(Base):
     https://ngff.openmicroscopy.org/0.4/#label-md
     """
 
-    label_value: int = Field(..., serialization_alias="label-value")
+    label_value: int = Field(..., alias="label-value")
     rgba: RGBA | None
 
 
@@ -60,10 +60,10 @@ class Property(Base):
     A single property.
     """
 
-    label_value: int = Field(..., serialization_alias="label-value")
+    label_value: int = Field(..., alias="label-value")
 
 
-def _parse_colors(colors: list[Color] | None) -> list[Color] | None:
+def _parse_colors(colors: tuple[Color] | None) -> tuple[Color] | None:
     if colors is None:
         msg = (
             "The field `colors` is `None`.`colors` should be a list of "
@@ -109,7 +109,7 @@ class ImageLabel(Base):
 
     # TODO: validate
     # "All the values under the label-value (of colors) key MUST be unique."
-    colors: Annotated[tuple[Color] | None, AfterValidator(_parse_colors)] = None
+    colors: Annotated[tuple[Color, ...] | None, AfterValidator(_parse_colors)] = None
     properties: tuple[Property, ...] | None = None
     source: Source | None = None
     version: Literal["0.4"] | None

@@ -72,13 +72,11 @@ class ImageAttrs(Base):
         min_length=1,
     )
     omero: Omero | None = None
-    image_labels: Annotated[
-        ImageLabel | None, Field(..., serialization_alias="image-label")
-    ] = None
+    image_labels: Annotated[ImageLabel | None, Field(..., alias="image-label")] = None
 
     # TODO: validate:
-    # "image-label groups MUST also contain multiscales metadata and the two "datasets" series
-    #  MUST have the same number of entries."
+    # "image-label groups MUST also contain multiscales metadata and the two "datasets"
+    #  series MUST have the same number of entries."
 
 
 class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec]):
