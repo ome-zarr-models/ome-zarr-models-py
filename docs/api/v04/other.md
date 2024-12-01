@@ -13,3 +13,7 @@ These are models that live further down the hierarchy.
 ## multiscales
 
 ::: ome_zarr_models.v04.multiscales
+
+## multiscales
+
+::: ome_zarr_models.v04.multiscales
