@@ -168,4 +168,4 @@ class Image:
         """
         Metadata ttributes associated with this image group.
         """
-        return self._spec.attributes.multiscales
+        return self._spec.attributes
