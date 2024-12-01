@@ -32,3 +32,10 @@ This package is designed with the following guiding principles:
 - Array reading and writing operations are out of scope
 
 We are trying to make this as usable and useful as possible while still complying with the OME-zarr specification.
+
+## Known issues
+
+- Because of the way this package is structured, it can't currently distinguish
+  between values that are present but set to `null` in saved metadata, and
+  fields that are not present. Any fields set to `None` in the Python objects
+  are currently not written when they are saved back to the JSON metadata using this package.
