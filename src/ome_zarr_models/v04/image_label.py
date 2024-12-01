@@ -49,7 +49,7 @@ class Property(Base):
 def _parse_colors(colors: tuple[Color] | None) -> tuple[Color] | None:
     if colors is None:
         msg = (
-            "The field `colors` is `None`.`colors` should be a list of "
+            "The field `colors` is `None`. `colors` should be a list of "
             "label descriptors."
         )
         warnings.warn(msg, stacklevel=1)
