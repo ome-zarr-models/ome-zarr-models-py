@@ -3,6 +3,10 @@ site_url: https://ome-zarr-models-py.readthedocs.io
 theme:
   name: material
 
+markdown_extensions:
+  - toc:
+      toc_depth: 3
+
 plugins:
   - mkdocs-jupyter:
       execute: false
