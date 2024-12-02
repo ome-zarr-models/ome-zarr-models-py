@@ -18,6 +18,10 @@ These are models that live further down the hierarchy.
 
 ::: ome_zarr_models.v04.multiscales
 
+## image_label
+
+::: ome_zarr_models.v04.image_label
+
 ## omero
 
 ::: ome_zarr_models.v04.omero
