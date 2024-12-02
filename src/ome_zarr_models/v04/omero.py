@@ -1,3 +1,7 @@
+"""
+For reference, see the [omero section of the OME-zarr specification](https://ngff.openmicroscopy.org/0.4/#omero-md).
+"""
+
 from typing import Annotated
 
 from pydantic import StringConstraints
@@ -10,10 +14,6 @@ __all__ = ["Channel", "Omero", "Window"]
 class Window(Base):
     """
     A single window.
-
-    References
-    ----------
-    https://ngff.openmicroscopy.org/0.4/#omero-md.
     """
 
     max: float
@@ -27,11 +27,7 @@ _RGBHexConstraint = StringConstraints(pattern=r"[0-9a-fA-F]{6}")
 
 class Channel(Base):
     """
-    Model for an element of `Omero.channels`.
-
-    References
-    ----------
-    https://ngff.openmicroscopy.org/0.4/#omero-md
+    A single omero channel.
     """
 
     color: Annotated[str, _RGBHexConstraint]
@@ -41,10 +37,6 @@ class Channel(Base):
 class Omero(Base):
     """
     omero model.
-
-    References
-    ----------
-    https://ngff.openmicroscopy.org/0.4/#omero-md
     """
 
     channels: list[Channel]
