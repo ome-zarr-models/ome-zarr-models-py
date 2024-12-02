@@ -39,3 +39,6 @@ We are trying to make this as usable and useful as possible while still complyin
   between values that are present but set to `null` in saved metadata, and
   fields that are not present. Any fields set to `None` in the Python objects
   are currently not written when they are saved back to the JSON metadata using this package.
+- We do not currently validate [`bioformats2raw` metadata](https://ngff.openmicroscopy.org/0.4/index.html#bf2raw)
+  This is because it is transitional, and we have decided to put time into implementing other
+  parts of the specification. We would welcome a pull request to add this functionality though!
