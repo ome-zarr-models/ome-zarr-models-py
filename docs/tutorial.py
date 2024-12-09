@@ -5,7 +5,6 @@ import zarr
 import zarr.storage
 from rich.pretty import pprint
 
-from ome_zarr_models.data import tutorial_data_path
 from ome_zarr_models.v04 import Image
 
 # ## Loading datasets
@@ -15,8 +14,7 @@ from ome_zarr_models.v04 import Image
 # then create an image object from it. This will validate the
 # metadata.
 
-print(f"Data path: {tutorial_data_path}")
-group = zarr.open(tutorial_data_path, mode='r')
+group = zarr.open("https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0062A/6001240.zarr", mode='r')
 ome_zarr_image = Image(group=group)
 pprint(ome_zarr_image)
 
@@ -36,4 +34,6 @@ pprint(metadata.multiscales[0].datasets)
 
 zarr_arr = ome_zarr_image.group[metadata.multiscales[0].datasets[0].path]
 pprint(zarr_arr)
-plt.imshow(zarr_arr, cmap="gray")
+
+# To finish off, lets plot the first z-slice of the first channel of this data:
+plt.imshow(zarr_arr[0, 0, :, :], cmap="gray")
