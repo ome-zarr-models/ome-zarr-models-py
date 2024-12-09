@@ -15,6 +15,7 @@ from ome_zarr_models.v04 import Image
 # then create an image object from it. This will validate the
 # metadata.
 
+print(f"Data path: {tutorial_data_path}")
 group = zarr.open(tutorial_data_path)
 ome_zarr_image = Image(group=group)
 pprint(ome_zarr_image)
