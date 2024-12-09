@@ -1,3 +1,7 @@
+"""
+For reference, see the [well section of the OME-zarr specification](https://ngff.openmicroscopy.org/0.4/#well-md).
+"""
+
 from collections import defaultdict
 from typing import Annotated, Literal
 
@@ -11,11 +15,7 @@ __all__ = ["Well", "WellImage"]
 
 class WellImage(Base):
     """
-    Model for an element of `Well.images`.
-
-    References
-    ----------
-    https://ngff.openmicroscopy.org/0.4/#well-md
+    A single image within a well.
     """
 
     path: Annotated[str, _AlphaNumericConstraint]
@@ -26,11 +26,7 @@ class WellImage(Base):
 
 class Well(Base):
     """
-    Model for `NgffWellMeta.well`.
-
-    References
-    ----------
-    https://ngff.openmicroscopy.org/0.4/#well-md
+    A single well
     """
 
     images: Annotated[list[WellImage], AfterValidator(_unique_items_validator)]
@@ -44,12 +40,13 @@ class Well(Base):
 
         Returns
         -------
-        Dictionary with `(acquisition index: [image_path])` key/value
-        pairs.
+        dict
+            Dictionary with `(acquisition index: [image_path])` key/value
+            pairs.
 
         Raises
         ------
-        ValueError:
+        ValueError
             If an element of `self.well.images` has no `acquisition` attribute.
         """
         acquisition_dict: dict[int, list[str]] = defaultdict(list)

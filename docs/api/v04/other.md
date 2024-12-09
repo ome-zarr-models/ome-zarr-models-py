@@ -17,3 +17,15 @@ These are models that live further down the hierarchy.
 ## plate
 
 ::: ome_zarr_models.v04.plate
+
+## image_label
+
+::: ome_zarr_models.v04.image_label
+
+## omero
+
+::: ome_zarr_models.v04.omero
+
+## well
+
+::: ome_zarr_models.v04.well
