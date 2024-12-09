@@ -44,8 +44,6 @@ We are trying to make this as usable and useful as possible while still complyin
 
 ## Roadmap
 
-This is our draft roadmap.
-
 ### v1
 
 - A working validator for OME-zarr 0.4 datasets.
