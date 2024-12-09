@@ -12,10 +12,6 @@ class Image2(BaseModel):
 
     This is represented by a single zarr Group. To get the OME-zarr
     metadata, use the `.attributes` property.
-
-    To modify the attributes, get a copy of them using the `.attributes`
-    property, modify them, and then set the attributes property with
-    the modified version.
     """
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
@@ -29,6 +25,10 @@ class Image2(BaseModel):
         """
         return ImageAttrs(**self.group.attrs.asdict())
 
+    # TODO: before enabling this setter, check which fields of ImageAttrs
+    # we can change while still keeping a valid data structure
+    # (e.g., we can't just add extra channels without modifying the zarr data)
+    """
     @attributes.setter
     def attributes(self, attrs: ImageAttrs) -> None:
         if not isinstance(attrs, ImageAttrs):
@@ -36,6 +36,7 @@ class Image2(BaseModel):
                 f"attributes must by of type ImageAttrs (got type {type(attrs)})"
             )
         self.group.attrs.put(attrs.model_dump(exclude_none=True))
+    """
 
     @model_validator(mode="after")
     def _check_multiscale_arrays(self) -> Self:
