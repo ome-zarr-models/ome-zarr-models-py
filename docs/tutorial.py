@@ -14,7 +14,9 @@ from ome_zarr_models.v04 import Image
 # then create an image object from it. This will validate the
 # metadata.
 
-group = zarr.open("https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0062A/6001240.zarr", mode='r')
+group = zarr.open(
+    "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0062A/6001240.zarr", mode="r"
+)
 ome_zarr_image = Image(group=group)
 pprint(ome_zarr_image)
 
