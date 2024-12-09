@@ -9,13 +9,14 @@ from pydantic import ValidationError
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 from tests.v04.conftest import from_array_props, from_arrays
 
+from ome_zarr_models.v04._image_old import Image
 from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.coordinate_transformations import (
     VectorScale,
     VectorTranslation,
     _build_transforms,
 )
-from ome_zarr_models.v04.image_old import Image, ImageAttrs
+from ome_zarr_models.v04.image import ImageAttrs
 from ome_zarr_models.v04.multiscales import (
     Dataset,
     Multiscale,
