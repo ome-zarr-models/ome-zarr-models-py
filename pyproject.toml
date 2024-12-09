@@ -15,7 +15,7 @@ docs = [
     "matplotlib",
     "rich",
     "griffe-pydantic",
-    "fsspec",
+    "fsspec[http]",
 ]
 pydantic = ["pydantic"]
 
@@ -35,7 +35,7 @@ docs = [
     "matplotlib",
     "rich",
     "griffe-pydantic",
-    "fsspec",
+    "fsspec[http]",
 ]
 dev = [
     "jupyter[notebook]>=1.1.1",
