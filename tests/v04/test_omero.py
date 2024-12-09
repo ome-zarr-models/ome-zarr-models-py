@@ -1,14 +1,12 @@
-import json
-from pathlib import Path
+from tests.v04.conftest import read_in_json
 
 from ome_zarr_models.v04.omero import Channel, Omero, Window
 
 
-def test_load_example_json():
-    with open(Path(__file__).parent / "data" / "omero_example.json") as f:
-        data = json.load(f)
+def test_load_example_json() -> None:
+    model = read_in_json(json_fname="omero_example.json", model_cls=Omero)
 
-    assert Omero(**data) == Omero(
+    assert model == Omero(
         channels=[
             Channel(
                 color="0000FF",

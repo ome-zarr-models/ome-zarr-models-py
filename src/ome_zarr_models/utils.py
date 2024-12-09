@@ -4,7 +4,7 @@ from dataclasses import MISSING, fields, is_dataclass
 from typing import TypeVar
 
 import pydantic
-from pydantic import create_model
+from pydantic import StringConstraints, create_model
 
 T = TypeVar("T")
 
@@ -12,8 +12,11 @@ T = TypeVar("T")
 def _unique_items_validator(values: list[T]) -> list[T]:
     for ind, value in enumerate(values, start=1):
         if value in values[ind:]:
-            raise ValueError(f"Non-unique values in {values}.")
+            raise ValueError(f"Duplicate values found in {values}.")
     return values
+
+
+_AlphaNumericConstraint = StringConstraints(pattern="^[a-zA-Z0-9]*$")
 
 
 def duplicates(values: Iterable[Hashable]) -> dict[Hashable, int]:

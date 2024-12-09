@@ -1,5 +1,6 @@
 from collections.abc import Sequence
-from typing import Any, Literal
+from pathlib import Path
+from typing import Any, Literal, TypeVar
 
 import numcodecs
 import numpy as np
@@ -8,13 +9,20 @@ from numcodecs.abc import Codec
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 from zarr.util import guess_chunks
 
+from ome_zarr_models.base import Base
 from ome_zarr_models.v04.axes import Axis
+from ome_zarr_models.v04.image import Image, ImageAttrs
 from ome_zarr_models.v04.multiscales import (
     Dataset,
     Multiscale,
-    MultiscaleGroup,
-    MultiscaleGroupAttrs,
 )
+
+T = TypeVar("T", bound=Base)
+
+
+def read_in_json(*, json_fname: str, model_cls: type[T]) -> T:
+    with open(Path(__file__).parent / "data" / json_fname) as f:
+        return model_cls.model_validate_json(f.read())
 
 
 def normalize_chunks(
@@ -63,13 +71,13 @@ def from_arrays(
     compressor: Codec | Literal["auto"] = "auto",
     fill_value: Any = 0,
     order: Literal["C", "F", "auto"] = "auto",
-) -> MultiscaleGroup:
+) -> Image:
     """
-    Create a `MultiscaleGroup` from a sequence of multiscale arrays
+    Create a `Image` from a sequence of multiscale arrays
     and spatial metadata.
 
     The arrays are used as templates for corresponding `ArraySpec` instances,
-    which model the Zarr arrays that would be created if the `MultiscaleGroup`
+    which model the Zarr arrays that would be created if the `Image`
     was stored.
 
     Parameters
@@ -143,9 +151,9 @@ def from_arrays(
         ),
         coordinateTransformations=None,
     )
-    return MultiscaleGroup(
+    return Image(
         members=GroupSpec.from_flat(members_flat).members,
-        attributes=MultiscaleGroupAttrs(multiscales=(multimeta,)),
+        attributes=ImageAttrs(multiscales=(multimeta,)),
     )
 
 
@@ -163,12 +171,12 @@ def from_array_props(
     compressor: Codec | Literal["auto"] = "auto",
     fill_value: Any = 0,
     order: Literal["C", "F"] = "C",
-) -> MultiscaleGroup:
+) -> Image:
     """
-    Create a `MultiscaleGroup` from a dtype and a sequence of shapes.
+    Create a `Image` from a dtype and a sequence of shapes.
 
     The dtype and shapes are used to parametrize `ArraySpec` instances which model the
-    Zarr arrays that would be created if the `MultiscaleGroup` was stored.
+    Zarr arrays that would be created if the `Image` was stored.
 
     Parameters
     ----------
@@ -244,7 +252,7 @@ def from_array_props(
         ),
         coordinateTransformations=None,
     )
-    return MultiscaleGroup(
+    return Image(
         members=GroupSpec.from_flat(members_flat).members,
-        attributes=MultiscaleGroupAttrs(multiscales=(multimeta,)),
+        attributes=ImageAttrs(multiscales=(multimeta,)),
     )

@@ -1,43 +1,29 @@
+"""
+For reference, see the [image label section of the OME-zarr specification](https://ngff.openmicroscopy.org/0.4/index.html#label-md).
+"""
+
 from __future__ import annotations
 
 import warnings
-from collections import Counter
-from typing import TYPE_CHECKING, Annotated, Literal
+from typing import Annotated, Literal
 
 from pydantic import AfterValidator, Field, model_validator
 
 from ome_zarr_models.base import Base
-from ome_zarr_models.v04.multiscales import MultiscaleGroupAttrs
+from ome_zarr_models.utils import duplicates
 
-if TYPE_CHECKING:
-    from collections.abc import Hashable, Iterable
+__all__ = ["RGBA", "Color", "ImageLabel", "Property", "Source", "Uint8"]
 
-__all__ = ["RGBA", "Color", "ConInt", "GroupAttrs", "ImageLabel", "Property", "Source"]
-
-ConInt = Annotated[int, Field(strict=True, ge=0, le=255)]
-RGBA = tuple[ConInt, ConInt, ConInt, ConInt]
-
-
-def _duplicates(values: Iterable[Hashable]) -> dict[Hashable, int]:
-    """
-    Takes a sequence of hashable elements and returns a dict where the keys are the
-    elements of the input that occurred at least once, and the values are the
-    frequencies of those elements.
-    """
-    counts = Counter(values)
-    return {k: v for k, v in counts.items() if v > 1}
+Uint8 = Annotated[int, Field(strict=True, ge=0, le=255)]
+RGBA = tuple[Uint8, Uint8, Uint8, Uint8]
 
 
 class Color(Base):
     """
     A label value and RGBA.
-
-    References
-    ----------
-    https://ngff.openmicroscopy.org/0.4/#label-md
     """
 
-    label_value: int = Field(..., serialization_alias="label-value")
+    label_value: int = Field(..., alias="label-value")
     rgba: RGBA | None
 
 
@@ -46,8 +32,10 @@ class Source(Base):
     Source data for the labels.
     """
 
-    # TODO: add validation that this path resolves to something
-    image: str | None = "../../"
+    # TODO: add validation that this path resolves to a zarr image group
+    image: str | None = Field(
+        default="../../", description="Relative path to a Zarr group of a key image."
+    )
 
 
 class Property(Base):
@@ -55,19 +43,18 @@ class Property(Base):
     A single property.
     """
 
-    label_value: int = Field(..., serialization_alias="label-value")
+    label_value: int = Field(..., alias="label-value")
 
 
-def _parse_colors(colors: list[Color] | None) -> list[Color] | None:
+def _parse_colors(colors: tuple[Color] | None) -> tuple[Color] | None:
     if colors is None:
         msg = (
-            "The field `colors` is `None`. Version 0.4 of"
-            "the OME-NGFF spec states that `colors` should be a list of "
+            "The field `colors` is `None`. `colors` should be a list of "
             "label descriptors."
         )
         warnings.warn(msg, stacklevel=1)
     else:
-        dupes = _duplicates(x.label_value for x in colors)
+        dupes = duplicates(x.label_value for x in colors)
         if len(dupes) > 0:
             msg = (
                 f"Duplicated label-value: {tuple(dupes.keys())}."
@@ -76,16 +63,6 @@ def _parse_colors(colors: list[Color] | None) -> list[Color] | None:
             raise ValueError(msg)
 
     return colors
-
-
-def _parse_version(version: Literal["0.4"] | None) -> Literal["0.4"] | None:
-    if version is None:
-        _ = (
-            "The `version` attribute is `None`. Version 0.4 of "
-            "the OME-NGFF spec states that `version` should either be unset or "
-            "the string 0.4"
-        )
-    return version
 
 
 def _parse_imagelabel(model: ImageLabel) -> ImageLabel:
@@ -111,34 +88,15 @@ def _parse_imagelabel(model: ImageLabel) -> ImageLabel:
 class ImageLabel(Base):
     """
     image-label metadata.
-    See https://ngff.openmicroscopy.org/0.4/#label-md
     """
 
-    _version: Literal["0.4"]
-
-    version: Annotated[Literal["0.4"] | None, AfterValidator(_parse_version)]
+    # TODO: validate
+    # "All the values under the label-value (of colors) key MUST be unique."
     colors: Annotated[tuple[Color, ...] | None, AfterValidator(_parse_colors)] = None
     properties: tuple[Property, ...] | None = None
     source: Source | None = None
+    version: Literal["0.4"] | None
 
     @model_validator(mode="after")
     def _parse_model(self) -> ImageLabel:
         return _parse_imagelabel(self)
-
-
-class GroupAttrs(MultiscaleGroupAttrs):
-    """
-    Attributes for a Zarr group that contains `image-label` metadata.
-    Inherits from `v04.multiscales.MultiscaleAttrs`.
-
-    See https://ngff.openmicroscopy.org/0.4/#label-md
-
-    Attributes
-    ----------
-    image_label: `ImageLabel`
-        Image label metadata.
-    multiscales: tuple[v04.multiscales.Multiscales]
-        Multiscale image metadata.
-    """
-
-    image_label: Annotated[ImageLabel, Field(..., serialization_alias="image-label")]

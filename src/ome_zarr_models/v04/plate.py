@@ -1,95 +1,117 @@
-from pydantic import Field
+"""
+For reference, see the [plate section of the OME-zarr specification](https://ngff.openmicroscopy.org/0.4/index.html#plate-md).
+"""
+
+from collections import Counter
+from typing import Annotated, Self
+
+from pydantic import (
+    AfterValidator,
+    Field,
+    NonNegativeInt,
+    PositiveInt,
+    model_validator,
+)
 
 from ome_zarr_models.base import Base
+from ome_zarr_models.utils import _AlphaNumericConstraint, _unique_items_validator
 
 __all__ = [
-    "AcquisitionInPlate",
-    "AcquisitionInPlate",
-    "ColumnInPlate",
-    "NgffPlateMeta",
+    "Acquisition",
+    "Column",
     "Plate",
-    "RowInPlate",
+    "Row",
     "WellInPlate",
 ]
 
 
-class AcquisitionInPlate(Base):
+class Acquisition(Base):
     """
-    Model for an element of `Plate.acquisitions`.
-
-    See https://ngff.openmicroscopy.org/0.4/#plate-md.
+    A single acquisition.
     """
 
-    id: int = Field(description="A unique identifier within the context of the plate")
-    maximumfieldcount: int | None = Field(
-        None,
-        description=(
-            "Int indicating the maximum number of fields of view for the " "acquisition"
-        ),
+    id: NonNegativeInt = Field(description="A unique identifier.")
+    name: str | None = None
+    maximumfieldcount: PositiveInt | None = Field(
+        default=None,
+        description="Maximum number of fields of view for the acquisition",
     )
-    name: str | None = Field(
-        None, description="a string identifying the name of the acquisition"
-    )
-    description: str | None = Field(
-        None,
-        description="The description of the acquisition",
-    )
+    description: str | None = None
+    starttime: int | None = None
+    endtime: int | None = None
 
 
 class WellInPlate(Base):
     """
-    Model for an element of `Plate.wells`.
-
-    See https://ngff.openmicroscopy.org/0.4/#plate-md.
+    A single well within a plate.
     """
 
+    # TODO: validate
+    # path must be "{name in rows}/{name in columns}"
     path: str
     rowIndex: int
     columnIndex: int
 
 
-class ColumnInPlate(Base):
+class Column(Base):
     """
-    Model for an element of `Plate.columns`.
-
-    See https://ngff.openmicroscopy.org/0.4/#plate-md.
+    A single column within a well.
     """
 
-    name: str
+    name: Annotated[str, _AlphaNumericConstraint]
 
 
-class RowInPlate(Base):
+class Row(Base):
     """
-    Model for an element of `Plate.rows`.
-
-    See https://ngff.openmicroscopy.org/0.4/#plate-md.
+    A single row within a well.
     """
 
-    name: str
+    name: Annotated[str, _AlphaNumericConstraint]
 
 
 class Plate(Base):
     """
-    Model for `NgffPlateMeta.plate`.
-
-    See https://ngff.openmicroscopy.org/0.4/#plate-md.
+    A single plate.
     """
 
-    acquisitions: list[AcquisitionInPlate] | None = None
-    columns: list[ColumnInPlate]
-    field_count: int | None = None
-    name: str | None = None
-    rows: list[RowInPlate]
+    acquisitions: list[Acquisition] | None = None
+    columns: Annotated[list[Column], AfterValidator(_unique_items_validator)]
+    field_count: PositiveInt | None = Field(
+        default=None, description="Maximum number of fields per view across wells"
+    )
+    name: str | None = Field(default=None, description="Plate name")
+    rows: Annotated[list[Row], AfterValidator(_unique_items_validator)]
     # version will become required in 0.5
-    version: str | None = Field(None, description="The version of the specification")
+    version: str | None = Field(None, description="Version of the plate specification")
     wells: list[WellInPlate]
 
+    @model_validator(mode="after")
+    def _check_well_paths(self) -> Self:
+        """
+        Check well paths are valid.
+        """
+        errors = []
+        row_names = {row.name for row in self.rows}
+        column_names = {column.name for column in self.columns}
 
-class NgffPlateMeta(Base):
-    """
-    Model for the metadata of a NGFF plate.
+        for well in self.wells:
+            path = well.path
+            if Counter(path)["/"] != 1:
+                errors.append(f"well path '{path}' does not contain a single '/'")
+                continue
 
-    See https://ngff.openmicroscopy.org/0.4/#plate-md.
-    """
+            row, column = path.split("/")
+            if row not in row_names:
+                errors.append(
+                    f"row '{row}' in well path '{path}' is not in list of rows"
+                )
+            if column not in column_names:
+                errors.append(
+                    f"column '{column}' in well path '{path}' is not in list of columns"
+                )
 
-    plate: Plate
+        if len(errors) > 0:
+            errors_joined = "\n".join(errors)
+            raise ValueError(f"Error validating plate metadata:\n{errors_joined}")
+
+        return self

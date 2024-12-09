@@ -14,6 +14,7 @@ docs = [
     "mkdocs-jupyter",
     "gcsfs",
     "rich",
+    "griffe-pydantic",
     "zarr<3",
 ]
 pydantic = ["pydantic"]
@@ -33,11 +34,13 @@ docs = [
     "mkdocs-jupyter",
     "gcsfs",
     "rich",
+    "griffe-pydantic",
     "zarr<3",
 ]
 dev = [
     "jupyter[notebook]>=1.1.1",
     "jupytext>=1.16.4",
+    "mypy",
     "ruff",
     "pre-commit",
     "pytest>=8.3.3",
@@ -75,12 +78,14 @@ select = [
     "TID",  # flake8-tidy-imports
 ]
 ignore = [
-    "D401", # First line should be in imperative mood (remove to opt in)
-    "D200", # One line docstring should fit on one line.
-    "D205", # 1 blank line required between summary line and description
-    "D400", # First line should end with a period
-    "D100", # Missing docstring in public module
-    "D104", # Missing docstring in public package
+    "D401",  # First line should be in imperative mood (remove to opt in)
+    "D200",  # One line docstring should fit on one line.
+    "D205",  # 1 blank line required between summary line and description
+    "D400",  # First line should end with a period
+    "D100",  # Missing docstring in public module
+    "D104",  # Missing docstring in public package
+    "TC001", # Move application import `...` into a type-checking block. This messes with nested pydantic models
+
 ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -90,3 +95,11 @@ ignore = [
 [tool.ruff.format]
 docstring-code-format = true
 skip-magic-trailing-comma = false # default is false
+
+[tool.mypy]
+
+strict = true
+
+[[tool.mypy.overrides]]
+module = ["zarr.*", "pydantic_zarr.*"]
+ignore_missing_imports = true

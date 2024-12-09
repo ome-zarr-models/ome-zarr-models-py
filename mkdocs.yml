@@ -3,6 +3,10 @@ site_url: https://ome-zarr-models-py.readthedocs.io
 theme:
   name: material
 
+markdown_extensions:
+  - toc:
+      toc_depth: 3
+
 plugins:
   - mkdocs-jupyter:
       execute: false
@@ -11,20 +15,31 @@ plugins:
       handlers:
         python:
           paths: [src]
+          import:
+            - https://docs.python.org/3/objects.inv
+
           options:
             docstring_style: numpy
-            parameter_headings: true
             show_root_toc_entry: false
             show_object_full_path: true
-            group_by_category: false
+            group_by_category: true
             heading_level: 3
             show_symbol_type_heading: true
+            separate_signature: true
+            show_source: false
+            show_signature_annotations: true
+            signature_crossrefs: true
+            extensions:
+              - griffe_pydantic:
+                  schema: false
 
 nav:
   - Tutorial: tutorial.py
   - Contributing: contributing.md
   - API reference:
-      - api/v04.md
+      - v04:
+          - api/v04/top_level.md
+          - api/v04/other.md
 
 watch:
   - src
