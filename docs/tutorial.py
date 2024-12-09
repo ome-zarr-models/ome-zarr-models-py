@@ -16,7 +16,7 @@ from ome_zarr_models.v04 import Image
 # metadata.
 
 print(f"Data path: {tutorial_data_path}")
-group = zarr.open(tutorial_data_path)
+group = zarr.open(tutorial_data_path, mode='r')
 ome_zarr_image = Image(group=group)
 pprint(ome_zarr_image)
 
