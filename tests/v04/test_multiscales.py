@@ -15,7 +15,7 @@ from ome_zarr_models.v04.coordinate_transformations import (
     VectorTranslation,
     _build_transforms,
 )
-from ome_zarr_models.v04.image import Image, ImageAttrs
+from ome_zarr_models.v04.image_old import Image, ImageAttrs
 from ome_zarr_models.v04.multiscales import (
     Dataset,
     Multiscale,

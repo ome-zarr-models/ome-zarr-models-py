@@ -6,7 +6,7 @@ import zarr.storage
 from rich.pretty import pprint
 
 from ome_zarr_models.data import tutorial_data_path
-from ome_zarr_models.v04 import Image2
+from ome_zarr_models.v04 import Image
 
 # ## Loading datasets
 #
@@ -16,7 +16,7 @@ from ome_zarr_models.v04 import Image2
 # metadata.
 
 group = zarr.open(tutorial_data_path)
-ome_zarr_image = Image2(group=group)
+ome_zarr_image = Image(group=group)
 pprint(ome_zarr_image)
 
 # No errors, which means the metadata is valid 🎉
