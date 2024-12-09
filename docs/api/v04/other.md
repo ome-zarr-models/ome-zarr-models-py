@@ -14,9 +14,9 @@ These are models that live further down the hierarchy.
 
 ::: ome_zarr_models.v04.multiscales
 
-## multiscales
+## plate
 
-::: ome_zarr_models.v04.multiscales
+::: ome_zarr_models.v04.plate
 
 ## image_label
 
