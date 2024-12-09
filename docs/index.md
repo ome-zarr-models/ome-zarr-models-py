@@ -1,7 +1,6 @@
 # ome-zarr-models-py
 
-A Python package that provides a Python object representation of an OME-zarr dataset.
-It aims to be a reference implementation of the OME-zarr specification.
+A Python package that provides validation and a Pythonic interface to OME-zarr datasets.
 
 > ⚠️ This is still under construction!
 > We welcome feedback, suggestions, and contributions!
@@ -26,7 +25,7 @@ Developers of this package are active on our [Zulip chat channel](https://images
 
 This package is designed with the following guiding principles:
 
-- Strict adherence to the OME-zarr specification
+- Strict adherence to the OME-zarr specification, with the goal of being a reference implementation
 - A usable set of Python classes for reading and writing and interacting with OME-zarr metadata
 - A separate object for each version of the OME-zarr specification
 - Array reading and writing operations are out of scope
@@ -42,7 +41,7 @@ We are trying to make this as usable and useful as possible while still complyin
 - We do not currently validate [`bioformats2raw` metadata](https://ngff.openmicroscopy.org/0.4/index.html#bf2raw)
   This is because it is transitional, and we have decided to put time into implementing other
   parts of the specification. We would welcome a pull request to add this functionality though!
-  
+
 ## Roadmap
 
 This is our draft roadmap.
