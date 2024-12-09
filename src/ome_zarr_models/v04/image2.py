@@ -24,11 +24,15 @@ class Image2(BaseModel):
 
     @property
     def attributes(self) -> ImageAttrs:
-        print(self.group.attrs.asdict())
+        """
+        Metadata attributes.
+        """
         return ImageAttrs(**self.group.attrs.asdict())
 
     @attributes.setter
     def attributes(self, attrs: ImageAttrs) -> None:
+        if not isinstance(attrs, ImageAttrs):
+            raise ValueError(f"attributes must by of type ImageAttrs (got type {type(attrs)})")
         self.group.attrs.put(attrs.model_dump(exclude_none=True))
 
     @model_validator(mode="after")
