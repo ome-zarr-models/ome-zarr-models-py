@@ -42,3 +42,18 @@ We are trying to make this as usable and useful as possible while still complyin
 - We do not currently validate [`bioformats2raw` metadata](https://ngff.openmicroscopy.org/0.4/index.html#bf2raw)
   This is because it is transitional, and we have decided to put time into implementing other
   parts of the specification. We would welcome a pull request to add this functionality though!
+  
+## Roadmap
+
+This is our draft roadmap.
+
+### v1
+
+- A working validator for OME-zarr 0.4 datasets.
+- A python object representation of OME-zarr 0.4 datasets.
+
+### v2
+
+- The ability to modify the python representation, and write this out to zarr storage backends.
+- Ability to write metadata after creation/modification
+- A working validator for OME-zarr 0.5 datasets
