@@ -7,6 +7,7 @@ from rich.pretty import pprint
 
 from ome_zarr_models.data import tutorial_data_path
 from ome_zarr_models.v04 import Image2
+
 # ## Loading datasets
 #
 # OME-zarr datasets are just zarr groups with special metadata.
@@ -34,4 +35,4 @@ pprint(metadata.multiscales[0].datasets)
 
 zarr_arr = ome_zarr_image.group[metadata.multiscales[0].datasets[0].path]
 pprint(zarr_arr)
-plt.imshow(zarr_arr, cmap='gray')
+plt.imshow(zarr_arr, cmap="gray")
