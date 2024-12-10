@@ -11,7 +11,7 @@ from typing import Annotated, Any, Self, get_args
 from pydantic import AfterValidator, Field, model_validator
 
 from ome_zarr_models.base import Base
-from ome_zarr_models.utils import duplicates
+from ome_zarr_models._utils import duplicates
 from ome_zarr_models.v04.axes import Axes, AxisType
 from ome_zarr_models.v04.coordinate_transformations import (
     ScaleTransform,

@@ -8,7 +8,7 @@ from typing import Annotated, Literal
 from pydantic import AfterValidator, Field
 
 from ome_zarr_models.base import Base
-from ome_zarr_models.utils import _AlphaNumericConstraint, _unique_items_validator
+from ome_zarr_models._utils import _AlphaNumericConstraint, _unique_items_validator
 
 __all__ = ["Well", "WellImage"]
 
