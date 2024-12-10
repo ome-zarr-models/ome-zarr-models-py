@@ -112,7 +112,7 @@ def test_unique_row_names() -> None:
 
 
 @pytest.mark.parametrize("cls", [Row, Column])
-def test_alphanumeric_column_names(cls) -> None:
+def test_alphanumeric_column_names(cls: type[Row | Column]) -> None:
     with pytest.raises(ValidationError, match="String should match pattern "):
         cls(name="col-1")
 

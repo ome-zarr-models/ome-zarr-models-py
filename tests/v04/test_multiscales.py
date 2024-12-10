@@ -74,7 +74,7 @@ def test_multiscale_unique_axis_names() -> None:
         ("space", "channel", "space", "channel"),
     ],
 )
-def test_multiscale_space_axes_last(axis_types: list[str | None]) -> None:
+def test_multiscale_space_axes_last(axis_types: list[str]) -> None:
     units_map = {"space": "meter", "time": "second"}
     axes = tuple(
         Axis(name=str(idx), type=t, unit=units_map.get(t))
@@ -179,7 +179,7 @@ def test_transform_invalid_second_element(
         ValidationError,
         match="Input should be a valid dictionary or instance of VectorTranslation",
     ):
-        Dataset(path="foo", coordinateTransformations=transforms)
+        Dataset(path="foo", coordinateTransformations=transforms)  # type: ignore[arg-type]
 
 
 def test_validate_axes_top_transforms() -> None:
@@ -362,7 +362,8 @@ def test_from_zarr_missing_metadata(
 ) -> None:
     group_model = GroupSpec()
     group = group_model.to_zarr(store, path="test")
-    store_path = store.path if hasattr(store, "path") else ""
+    store_path = ""
+    # store_path = store.path if hasattr(store, "path") else ""
     match = (
         "Failed to find mandatory `multiscales` key in the attributes of the "
         f"Zarr group at {store}://{store_path}://{group.path}."

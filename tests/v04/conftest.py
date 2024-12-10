@@ -40,7 +40,7 @@ def normalize_chunks(
         # sort shapes by descending size
         params_sorted_descending = sorted(
             zip(shapes, typesizes, strict=False),
-            key=lambda v: np.prod(v[0]),
+            key=lambda v: np.prod(v[0]),  # type: ignore[return-value, arg-type]
             reverse=True,
         )
         return (guess_chunks(*params_sorted_descending[0]),) * len(shapes)
@@ -58,7 +58,7 @@ def normalize_chunks(
 
 
 def from_arrays(
-    arrays: Sequence[np.ndarray],
+    arrays: Sequence[npt.NDArray[Any]],
     *,
     paths: Sequence[str],
     axes: Sequence[Axis],

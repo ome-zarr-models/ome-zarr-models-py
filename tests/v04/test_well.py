@@ -47,7 +47,7 @@ def test_examples_valid(filename: str, model_expected: Well) -> None:
     assert model == model_expected
 
 
-def test_get_paths():
+def test_get_paths() -> None:
     well = Well(
         images=[
             WellImage(path="0", acquisition=1),
