@@ -7,7 +7,6 @@ import numpy as np
 import pytest
 from pydantic import ValidationError
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
-from tests.v04.conftest import from_array_props, from_arrays
 
 from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.coordinate_transformations import (
@@ -20,6 +19,7 @@ from ome_zarr_models.v04.multiscales import (
     Dataset,
     Multiscale,
 )
+from tests.v04.conftest import from_array_props, from_arrays
 
 if TYPE_CHECKING:
     from typing import Literal

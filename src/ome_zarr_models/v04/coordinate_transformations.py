@@ -4,10 +4,9 @@ For reference, see the [coordinate transformations section of the OME-zarr speci
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Literal, Self
 
 from pydantic import Field
-from typing_extensions import Self
 
 from ome_zarr_models.base import Base
 

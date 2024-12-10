@@ -1,6 +1,5 @@
-from tests.v04.conftest import read_in_json
-
 from ome_zarr_models.v04.image_label import Color, ImageLabel, Property, Source
+from tests.v04.conftest import read_in_json
 
 
 def test_image_label_example_json() -> None:

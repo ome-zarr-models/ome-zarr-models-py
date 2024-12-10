@@ -2,9 +2,9 @@ import re
 
 import pytest
 from pydantic import ValidationError
-from tests.v04.conftest import read_in_json
 
 from ome_zarr_models.v04.plate import Acquisition, Column, Plate, Row, WellInPlate
+from tests.v04.conftest import read_in_json
 
 
 def test_example_plate_json() -> None:

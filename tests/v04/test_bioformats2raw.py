@@ -1,5 +1,3 @@
-from tests.v04.conftest import read_in_json
-
 from ome_zarr_models.v04.bioformats2raw import BioFormats2RawAttrs
 from ome_zarr_models.v04.plate import (
     Acquisition,
@@ -8,6 +6,7 @@ from ome_zarr_models.v04.plate import (
     Row,
     WellInPlate,
 )
+from tests.v04.conftest import read_in_json
 
 
 def test_bioformats2raw_exmaple_json() -> None:
