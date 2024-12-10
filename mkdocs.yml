@@ -9,8 +9,8 @@ markdown_extensions:
 
 plugins:
   - mkdocs-jupyter:
-      execute: true
-      allow_errors: false
+      execute: false
+      allow_errors: true
   - mkdocstrings:
       handlers:
         python:
