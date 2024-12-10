@@ -1,5 +1,7 @@
 from collections.abc import Sequence
-from typing import Any, Literal
+from typing import Literal
+
+from pydantic import JsonValue
 
 from ome_zarr_models.base import Base
 
@@ -18,7 +20,7 @@ class Axis(Base):
 
     name: str
     type: str | None = None
-    unit: str | Any | None = None
+    unit: str | JsonValue | None = None
 
 
 Axes = Sequence[Axis]
