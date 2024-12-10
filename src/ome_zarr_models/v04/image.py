@@ -137,17 +137,3 @@ class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec]):
             update={"members": members_normalized.members}
         )
         return cls(**guess_inferred_members.model_dump())
-
-    @property
-    def multiscales(self) -> Multiscales:
-        """
-        Multiscales metadata model.
-        """
-        return self.attributes.multiscales
-
-    @property
-    def omero(self) -> Omero | None:
-        """
-        omero metadata model (if present).
-        """
-        return self.attributes.omero
