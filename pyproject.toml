@@ -4,7 +4,7 @@ dynamic = ["version"]
 description = "Data models for OME-Zarr"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["zarr", "typing_extensions"]
+dependencies = ["zarr<3", "typing_extensions", "pydantic"]
 
 [project.optional-dependencies]
 docs = [
@@ -12,10 +12,10 @@ docs = [
     "mkdocstrings-python>=1.12.2",
     "mkdocs-material",
     "mkdocs-jupyter",
-    "gcsfs",
+    "matplotlib",
     "rich",
     "griffe-pydantic",
-    "zarr<3",
+    "fsspec[http]",
 ]
 pydantic = ["pydantic"]
 
@@ -32,10 +32,10 @@ docs = [
     "mkdocstrings-python>=1.12.2",
     "mkdocs-material",
     "mkdocs-jupyter",
-    "gcsfs",
+    "matplotlib",
     "rich",
     "griffe-pydantic",
-    "zarr<3",
+    "fsspec[http]",
 ]
 dev = [
     "jupyter[notebook]>=1.1.1",

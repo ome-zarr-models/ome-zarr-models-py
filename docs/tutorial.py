@@ -1,59 +1,41 @@
 # # Tutorial
 
+import matplotlib.pyplot as plt
 import zarr
 import zarr.storage
 from rich.pretty import pprint
 
 from ome_zarr_models.v04 import Image
-from ome_zarr_models.v04.coordinate_transformations import (
-    VectorTranslation,
-)
 
-# ## Creating models
+# ## Loading datasets
 #
-# We can create an Image model from a zarr group, that points to an
-# OME-zarr dataset:
+# OME-zarr datasets are just zarr groups with special metadata.
+# To open an OME-zarr dataset, we first open the zarr group, and
+# then create an image object from it. This will validate the
+# metadata.
 
-group = zarr.open("https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0062A/6001240.zarr")
+group = zarr.open(
+    "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0062A/6001240.zarr", mode="r"
+)
 ome_zarr_image = Image.from_zarr(group)
 pprint(ome_zarr_image)
 
-# This image contains both the zarr group, and a model of the multiscales metadata
-
-multiscales_meta = ome_zarr_image.attributes.multiscales
-pprint(multiscales_meta)
-
-# ## Updating models
+# No errors, which means the metadata is valid 🎉
 #
-# All the fields in the models can be updated in place. When you do this, any
-# validation on the individual field you are updating will take place.
-#
-# For example, there is no name for the first multiscales entry, so lets add it
+# ## Accessing metadata
+# To access the OME-zarr metadata, use the `.attributes` property:
 
-multiscales_meta[0].name = "The first multiscales entry"
-pprint(multiscales_meta)
-
-# One constraint in the OME-zarr spec is that the coordinate transforms have to be a
-# scale, or a scale then translation (strictly in that order). So if we try and make a
-# transformation just a translation, it will raise an error.
-
-multiscales_meta[0].datasets[0].coordinateTransformations = VectorTranslation(
-    type="translation", translation=[1, 2, 3]
-)
-
-
-# This means validation happens early, allowing you to catch errors
-# before getting too far.
+metadata = ome_zarr_image.attributes
+pprint(metadata)
+pprint(metadata.multiscales[0].datasets)
 
 # ## Accessing data
 #
 # Although these models do not handle reading or writing data, they do expose the zarr
-# arrays.
+# arrays. For example, to get the highest resolution image:
 
-zarr_arr = ome_zarr_image.group[multiscales_meta[0].datasets[0].path]
+zarr_arr = group[metadata.multiscales[0].datasets[0].path]
 pprint(zarr_arr)
 
-# ## Not using validation
-#
-# If you want to create models that are not validated against the OME-zarr
-# specifciation, you can use the ``model_construct`` method on the models.
+# To finish off, lets plot the first z-slice of the first channel of this data:
+plt.imshow(zarr_arr[0, 0, :, :], cmap="gray")
