@@ -104,3 +104,5 @@ plugins = ['pydantic.mypy']
 [[tool.mypy.overrides]]
 module = ["zarr.*", "pydantic_zarr.*"]
 ignore_missing_imports = true
+
+[tool.pytest.ini_options]
