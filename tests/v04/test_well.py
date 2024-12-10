@@ -1,18 +1,7 @@
-import json
-from pathlib import Path
-
 import pytest
-from pydantic import BaseModel
 
 from ome_zarr_models.v04.well import Well, WellImage
 from tests.v04.conftest import read_in_json
-
-
-def check_against_json(json_path: Path, expected_model: BaseModel) -> None:
-    with open(json_path) as f:
-        data = json.load(f)
-
-    assert type(expected_model)(**data["well"]) == expected_model
 
 
 @pytest.mark.parametrize(
