@@ -99,6 +99,7 @@ skip-magic-trailing-comma = false # default is false
 [tool.mypy]
 
 strict = true
+plugins = ['pydantic.mypy']
 
 [[tool.mypy.overrides]]
 module = ["zarr.*", "pydantic_zarr.*"]
