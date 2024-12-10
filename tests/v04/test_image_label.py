@@ -34,3 +34,14 @@ def test_invalid_label() -> None:
     """
     with pytest.raises(ValidationError, match="Input should be a valid integer"):
         Color(label_value="abc", rgba=(255, 255, 255, 255))
+
+
+def test_invalid_rgba() -> None:
+    """
+    >  MUST be an array of four integers between 0 and 255 [uint8, uint8, uint8, uint8]
+    > specifying the label color as RGBA
+    """
+    with pytest.raises(
+        ValidationError, match="Input should be less than or equal to 255"
+    ):
+        Color(label_value=1, rgba=(255, 255, 3412, 255))
