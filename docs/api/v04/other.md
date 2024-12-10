@@ -14,9 +14,9 @@ These are models that live further down the hierarchy.
 
 ::: ome_zarr_models.v04.multiscales
 
-## plate
+## hcs
 
-::: ome_zarr_models.v04.plate
+::: ome_zarr_models.v04.hcs
 
 ## image_label
 
@@ -25,6 +25,10 @@ These are models that live further down the hierarchy.
 ## omero
 
 ::: ome_zarr_models.v04.omero
+
+## plate
+
+::: ome_zarr_models.v04.plate
 
 ## well
 
