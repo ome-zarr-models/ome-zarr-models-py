@@ -5,6 +5,7 @@ from typing import TypeVar
 
 import pydantic
 from pydantic import StringConstraints, create_model
+from zarr.storage import Store
 
 T = TypeVar("T")
 
@@ -17,6 +18,16 @@ def _unique_items_validator(values: list[T]) -> list[T]:
 
 
 _AlphaNumericConstraint = StringConstraints(pattern="^[a-zA-Z0-9]*$")
+
+
+def get_store_path(store: Store) -> str:
+    """
+    Get a path from a zarr store
+    """
+    if hasattr(store, "path"):
+        return store.path  # type: ignore[no-any-return]
+
+    return ""
 
 
 def duplicates(values: Iterable[Hashable]) -> dict[Hashable, int]:
@@ -56,4 +67,4 @@ def dataclass_to_pydantic(dataclass_type: type) -> type[pydantic.BaseModel]:
             # No default value
             field_definitions[_field.name] = (_field.type, Ellipsis)
 
-    return create_model(dataclass_type.__name__, **field_definitions)
+    return create_model(dataclass_type.__name__, **field_definitions)  # type: ignore[no-any-return, call-overload]

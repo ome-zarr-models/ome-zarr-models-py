@@ -6,11 +6,11 @@ import zarr.errors
 from pydantic import Field, model_validator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
+from ome_zarr_models._utils import get_store_path
 from ome_zarr_models.base import Base
 from ome_zarr_models.v04.image_label import ImageLabel
 from ome_zarr_models.v04.multiscales import Multiscales
 from ome_zarr_models.v04.omero import Omero
-from ome_zarr_models.zarr_utils import get_path
 
 # Image is imported to the `ome_zarr_py.v04` namespace, so not
 # listed here
@@ -102,7 +102,7 @@ class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec]):
         try:
             multi_meta_maybe = guess.attributes["multiscales"]
         except KeyError as e:
-            store_path = get_path(node.store)
+            store_path = get_store_path(node.store)
             msg = (
                 "Failed to find mandatory `multiscales` key in the attributes of the "
                 "Zarr group at "

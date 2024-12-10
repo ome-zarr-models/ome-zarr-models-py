@@ -10,8 +10,8 @@ from typing import Annotated, Any, Self, get_args
 
 from pydantic import AfterValidator, Field, model_validator
 
-from ome_zarr_models.base import Base
 from ome_zarr_models._utils import duplicates
+from ome_zarr_models.base import Base
 from ome_zarr_models.v04.axes import Axes, AxisType
 from ome_zarr_models.v04.coordinate_transformations import (
     ScaleTransform,
@@ -37,7 +37,7 @@ def _ensure_transform_dimensionality(
     transforms will be returned as-is.
     """
     vector_transforms = filter(lambda v: isinstance(v, VectorTransform), transforms)
-    ndims = tuple(map(_ndim, vector_transforms))
+    ndims = tuple(map(_ndim, vector_transforms))  # type: ignore[arg-type]
     ndims_set = set(ndims)
     if len(ndims_set) > 1:
         msg = (
