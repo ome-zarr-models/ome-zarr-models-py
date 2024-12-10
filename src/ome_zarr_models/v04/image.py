@@ -8,7 +8,7 @@ from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models._utils import get_store_path
 from ome_zarr_models.base import Base
-from ome_zarr_models.v04.image_label import ImageLabel
+from ome_zarr_models.v04.image_label import ImageLabelAttrs
 from ome_zarr_models.v04.multiscales import Multiscales
 from ome_zarr_models.v04.omero import Omero
 
@@ -72,7 +72,9 @@ class ImageAttrs(Base):
         min_length=1,
     )
     omero: Omero | None = None
-    image_labels: Annotated[ImageLabel | None, Field(..., alias="image-label")] = None
+    image_labels: Annotated[ImageLabelAttrs | None, Field(..., alias="image-label")] = (
+        None
+    )
 
     # TODO: validate:
     # "image-label groups MUST also contain multiscales metadata and the two "datasets"

@@ -12,7 +12,7 @@ from pydantic import AfterValidator, Field, model_validator
 from ome_zarr_models._utils import duplicates
 from ome_zarr_models.base import Base
 
-__all__ = ["RGBA", "Color", "ImageLabel", "Property", "Source", "Uint8"]
+__all__ = ["RGBA", "Color", "ImageLabelAttrs", "Property", "Source", "Uint8"]
 
 Uint8 = Annotated[int, Field(strict=True, ge=0, le=255)]
 RGBA = tuple[Uint8, Uint8, Uint8, Uint8]
@@ -65,7 +65,7 @@ def _parse_colors(colors: tuple[Color] | None) -> tuple[Color] | None:
     return colors
 
 
-def _parse_imagelabel(model: ImageLabel) -> ImageLabel:
+def _parse_imagelabel(model: ImageLabelAttrs) -> ImageLabelAttrs:
     """
     check that label_values are consistent across properties and colors
     """
@@ -85,7 +85,7 @@ def _parse_imagelabel(model: ImageLabel) -> ImageLabel:
     return model
 
 
-class ImageLabel(Base):
+class ImageLabelAttrs(Base):
     """
     image-label metadata.
     """
@@ -98,5 +98,5 @@ class ImageLabel(Base):
     version: Literal["0.4"] | None
 
     @model_validator(mode="after")
-    def _parse_model(self) -> ImageLabel:
+    def _parse_model(self) -> ImageLabelAttrs:
         return _parse_imagelabel(self)

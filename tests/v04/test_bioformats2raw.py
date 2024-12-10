@@ -1,4 +1,4 @@
-from ome_zarr_models.v04.bioformats2raw import BioFormats2RawAttrs
+from ome_zarr_models.v04._bioformats2raw import BioFormats2RawAttrs
 from ome_zarr_models.v04.plate import (
     Acquisition,
     Column,
