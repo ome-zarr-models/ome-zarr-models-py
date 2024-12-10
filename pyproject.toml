@@ -106,3 +106,9 @@ module = ["zarr.*", "pydantic_zarr.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
+minversion = "8"
+testpaths = ["tests"]
+log_cli_level = "INFO"
+xfail_strict = true
+addopts = ["-ra", "--strict-config", "--strict-markers"]
+filterwarnings = ["error"]
