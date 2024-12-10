@@ -67,7 +67,6 @@ select = [
     "W",    # style warnings
     "F",    # flakes
     "D",    # pydocstyle
-    "D417", # Missing argument descriptions in Docstrings
     "I",    # isort
     "UP",   # pyupgrade
     "C4",   # flake8-comprehensions
