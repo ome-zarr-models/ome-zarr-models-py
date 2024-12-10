@@ -128,11 +128,17 @@ def _ensure_axis_types(axes: Axes) -> Axes:
         raise ValueError(msg)
 
     if not all(a == "space" for a in axis_types[-num_spaces:]):
-        msg = f"Space axes must come last. Got axes with order: {axis_types}."
+        msg = (
+            f"All space axes must be at the end of the axes list. "
+            f"Got axes with order: {axis_types}."
+        )
         raise ValueError(msg)
 
     if (num_times := type_census["time"]) > 1:
         msg = f"Invalid number of time axes: {num_times}. Only 1 time axis is allowed."
+        raise ValueError(msg)
+    elif num_times == 1 and axis_types[0] != "time":
+        msg = "Time axis must be at the beginning of axis list."
         raise ValueError(msg)
 
     if (num_channels := type_census["channel"]) > 1:

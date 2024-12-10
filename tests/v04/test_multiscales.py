@@ -24,9 +24,14 @@ from tests.v04.conftest import from_array_props, from_arrays
 if TYPE_CHECKING:
     from typing import Literal
 
+DEFAULT_UNITS_MAP = {"space": "meter", "time": "second"}
+
 
 @pytest.fixture
 def default_multiscale() -> Multiscale:
+    """
+    Return a valid Multiscale object.
+    """
     axes = (
         Axis(name="c", type="channel", unit=None),
         Axis(name="z", type="space", unit="meter"),
@@ -51,7 +56,7 @@ def default_multiscale() -> Multiscale:
 
 
 def test_multiscale_unique_axis_names() -> None:
-    # make axis names collide
+    # TODO: is unique names actually part of the spec???
     axes = (
         Axis(name="x", type="space", unit="meter"),
         Axis(name="x", type="space", unit="meter"),
@@ -75,6 +80,13 @@ def test_multiscale_unique_axis_names() -> None:
     ],
 )
 def test_multiscale_space_axes_last(axis_types: list[str]) -> None:
+    """
+    Error if the last axes isn't 'space'.
+
+    > ... the entries MUST be ordered by "type" where the
+    > "time" axis must come first (if present), followed by the "channel" or
+    > custom axis (if present) and the axes of type "space".
+    """
     units_map = {"space": "meter", "time": "second"}
     axes = tuple(
         Axis(name=str(idx), type=t, unit=units_map.get(t))
@@ -83,7 +95,41 @@ def test_multiscale_space_axes_last(axis_types: list[str]) -> None:
     rank = len(axes)
     datasets = (Dataset.build(path="path", scale=(1,) * rank, translation=(0,) * rank),)
     # TODO: make some axis-specifc exceptions
-    with pytest.raises(ValidationError, match="Space axes must come last."):
+    with pytest.raises(
+        ValidationError, match="All space axes must be at the end of the axes list."
+    ):
+        Multiscale(
+            axes=axes,
+            datasets=datasets,
+            coordinateTransformations=_build_transforms(
+                scale=(1,) * rank, translation=None
+            ),
+        )
+
+
+@pytest.mark.parametrize(
+    "axis_types",
+    [
+        ("channel", "time", "space", "space"),
+    ],
+)
+def test_axes_order(axis_types: list[str]) -> None:
+    """
+    If 'time' is present, it must be first
+
+    > ... the entries MUST be ordered by "type" where the
+    > "time" axis must come first (if present), followed by the "channel" or
+    > custom axis (if present) and the axes of type "space".
+    """
+    axes = tuple(
+        Axis(name=str(idx), type=t, unit=DEFAULT_UNITS_MAP.get(t))
+        for idx, t in enumerate(axis_types)
+    )
+    rank = len(axes)
+    datasets = (Dataset.build(path="path", scale=(1,) * rank, translation=(0,) * rank),)
+    with pytest.raises(
+        ValidationError, match="Time axis must be at the beginning of axis list"
+    ):
         Multiscale(
             axes=axes,
             datasets=datasets,
@@ -95,6 +141,9 @@ def test_multiscale_space_axes_last(axis_types: list[str]) -> None:
 
 @pytest.mark.parametrize("num_axes", [0, 1, 6, 7])
 def test_multiscale_axis_length(num_axes: int) -> None:
+    """
+    > The length of "axes" must be between 2 and 5...
+    """
     rank = num_axes
     axes = tuple(
         Axis(name=str(idx), type="space", unit="meter") for idx in range(num_axes)
@@ -282,6 +331,9 @@ def test_multiscale_group_datasets_ndim() -> None:
     """
     Test that creating a Image with arrays with mismatched shapes raises
     an exception
+
+    > The length of "axes" ... MUST be equal to the dimensionality of the zarr arrays
+    > storing the image data
     """
     true_ndim = 2
     bad_ndim = 3
