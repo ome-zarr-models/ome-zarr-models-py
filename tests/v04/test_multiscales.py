@@ -159,12 +159,37 @@ def test_multiscale_axis_length(num_axes: int) -> None:
         )
 
 
+def test_invalid_dataset_dimensions() -> None:
+    """
+    > Each "datasets" dictionary MUST have the same number of dimensions...
+    """
+    datasets = [
+        Dataset.build(path="path", scale=(1,) * rank, translation=(0,) * rank)
+        for rank in [2, 3]
+    ]
+    axes = tuple(Axis(name=str(idx), type="space", unit="meter") for idx in range(3))
+    with pytest.raises(
+        ValidationError,
+        match=(
+            "The length of axes does not match the dimensionality "
+            "of the scale transform"
+        ),
+    ):
+        Multiscale(
+            axes=axes,
+            datasets=datasets,
+        )
+
+
 @pytest.mark.parametrize(
     "scale, translation", [((1, 1), (1, 1, 1)), ((1, 1, 1), (1, 1))]
 )
 def test_transform_invalid_ndims(
     scale: tuple[int, ...], translation: tuple[int, ...]
 ) -> None:
+    """
+    Make sure dimensions of scale/translation transforms match.
+    """
     with pytest.raises(
         ValidationError,
         match="The transforms have inconsistent dimensionality.",
@@ -186,6 +211,9 @@ def test_transform_invalid_ndims(
 def test_transform_invalid_length(
     transforms: tuple[Any, ...],
 ) -> None:
+    """
+    Error if there's the wrong number of transforms.
+    """
     with pytest.raises(
         ValidationError, match=f"after validation, not {len(transforms)}"
     ):
@@ -205,6 +233,9 @@ def test_transform_invalid_length(
 def test_transform_invalid_first_element(
     transforms: tuple[Any, Any],
 ) -> None:
+    """
+    Make sure first transform element is a scale.
+    """
     with pytest.raises(
         ValidationError,
         match="Input should be a valid dictionary or instance of VectorScale",
@@ -224,6 +255,9 @@ def test_transform_invalid_first_element(
 def test_transform_invalid_second_element(
     transforms: tuple[VectorScale, VectorScale],
 ) -> None:
+    """
+    Make sure second transform is a translation.
+    """
     with pytest.raises(
         ValidationError,
         match="Input should be a valid dictionary or instance of VectorTranslation",
@@ -234,7 +268,7 @@ def test_transform_invalid_second_element(
 def test_validate_axes_top_transforms() -> None:
     """
     Test that the number of axes must match the dimensionality of the
-    top-level coordinateTransformations
+    top-level coordinateTransformations.
     """
     axes_rank = 3
     tforms_rank = 2
