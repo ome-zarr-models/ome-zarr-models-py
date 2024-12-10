@@ -1,0 +1,6 @@
+{
+    "tables": [
+        "FOV_ROI_table",
+        "well_ROI_table"
+    ]
+}
