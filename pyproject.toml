@@ -41,7 +41,7 @@ dev = [
     "jupyter[notebook]>=1.1.1",
     "jupytext>=1.16.4",
     "mypy",
-    "ruff",
+    "ruff>=0.8",
     "pre-commit",
     "pytest>=8.3.3",
 ]
