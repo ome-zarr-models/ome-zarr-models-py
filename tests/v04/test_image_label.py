@@ -1,13 +1,16 @@
-from ome_zarr_models.v04.image_label import Color, ImageLabelAttrs, Property, Source
+from ome_zarr_models.v04.image_label import (
+    Color,
+    Label,
+    Property,
+    Source,
+)
 from tests.v04.conftest import read_in_json
 
 
 def test_image_label_example_json() -> None:
-    model = read_in_json(
-        json_fname="image_label_example.json", model_cls=ImageLabelAttrs
-    )
+    model = read_in_json(json_fname="image_label_example.json", model_cls=Label)
 
-    assert model == ImageLabelAttrs(
+    assert model == Label(
         colors=(
             Color(label_value=1, rgba=(255, 255, 255, 255)),
             Color(label_value=4, rgba=(0, 255, 255, 128)),
