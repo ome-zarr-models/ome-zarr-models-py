@@ -43,10 +43,9 @@ dev = [
     "mypy",
     "ruff>=0.8",
     "pre-commit",
-    "pytest>=8.3.3",
 ]
 
-test = ["pytest"]
+test = ["pytest>=8.3.3", "pytest-cov"]
 
 pydantic = ["pydantic", "pydantic-zarr"]
 
@@ -71,7 +70,7 @@ select = [
     "B",    # flake8-bugbear
     "A001", # flake8-builtins
     "RUF",  # ruff-specific rules
-    "TC",  # flake8-type-checking
+    "TC",   # flake8-type-checking
     "TID",  # flake8-tidy-imports
 ]
 ignore = [
@@ -107,5 +106,11 @@ minversion = "8"
 testpaths = ["tests"]
 log_cli_level = "INFO"
 xfail_strict = true
-addopts = ["-ra", "--strict-config", "--strict-markers"]
+addopts = [
+    "-ra",
+    "--strict-config",
+    "--strict-markers",
+    "--cov",
+    "--cov-report=xml",
+]
 filterwarnings = ["error"]

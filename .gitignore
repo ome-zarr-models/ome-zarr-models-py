@@ -5,3 +5,6 @@ __pycache__
 *checkpoint.py
 
 *.DS_Store
+
+coverage.xml
+.coverage*
