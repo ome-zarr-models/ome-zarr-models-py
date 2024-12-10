@@ -9,8 +9,8 @@ from typing import Annotated, Literal
 
 from pydantic import AfterValidator, Field, model_validator
 
-from ome_zarr_models.base import Base
 from ome_zarr_models._utils import duplicates
+from ome_zarr_models.base import Base
 
 __all__ = ["RGBA", "Color", "ImageLabel", "Property", "Source", "Uint8"]
 

@@ -13,8 +13,8 @@ from pydantic import (
     model_validator,
 )
 
-from ome_zarr_models.base import Base
 from ome_zarr_models._utils import _AlphaNumericConstraint, _unique_items_validator
+from ome_zarr_models.base import Base
 
 __all__ = [
     "Acquisition",
