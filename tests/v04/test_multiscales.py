@@ -330,6 +330,39 @@ def test_validate_axes_dset_transforms() -> None:
         )
 
 
+def test_ordred_multiscales() -> None:
+    """
+    > The "path"s MUST be ordered from largest (i.e. highest resolution) to smallest.
+    """
+    axes = (
+        Axis(name="c", type="channel", unit=None),
+        Axis(name="z", type="space", unit="meter"),
+        Axis(name="x", type="space", unit="meter"),
+        Axis(name="y", type="space", unit="meter"),
+    )
+    datasets = (
+        Dataset(
+            path="0",
+            coordinateTransformations=(VectorScale(type="scale", scale=(2, 2, 2, 2)),),
+        ),
+        Dataset(
+            path="1",
+            coordinateTransformations=(VectorScale(type="scale", scale=(2, 2, 1, 2)),),
+        ),
+    )
+    with pytest.raises(
+        ValidationError,
+        match=re.escape(
+            "Dataset 0 has a lower resolution (scales = [2.0, 2.0, 2.0, 2.0]) "
+            "than dataset 1 (scales = [2.0, 2.0, 1.0, 2.0])"
+        ),
+    ):
+        Multiscale(
+            axes=axes,
+            datasets=datasets,
+        )
+
+
 @pytest.mark.skip
 def test_multiscale_group_datasets_exist(
     default_multiscale: Multiscale,
