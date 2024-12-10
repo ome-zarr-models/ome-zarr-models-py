@@ -57,7 +57,6 @@ default-groups = ["docs", "dev", "pydantic", "test"]
 # https://docs.astral.sh/ruff
 [tool.ruff]
 line-length = 88
-src = ["src"]
 
 [tool.ruff.lint]
 pydocstyle = { convention = "numpy" }
