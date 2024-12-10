@@ -17,7 +17,7 @@ from ome_zarr_models.v04 import Image
 group = zarr.open(
     "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0062A/6001240.zarr", mode="r"
 )
-ome_zarr_image = Image(group=group)
+ome_zarr_image = Image.from_zarr(group)
 pprint(ome_zarr_image)
 
 # No errors, which means the metadata is valid 🎉
@@ -34,7 +34,7 @@ pprint(metadata.multiscales[0].datasets)
 # Although these models do not handle reading or writing data, they do expose the zarr
 # arrays. For example, to get the highest resolution image:
 
-zarr_arr = ome_zarr_image.group[metadata.multiscales[0].datasets[0].path]
+zarr_arr = group[metadata.multiscales[0].datasets[0].path]
 pprint(zarr_arr)
 
 # To finish off, lets plot the first z-slice of the first channel of this data:
