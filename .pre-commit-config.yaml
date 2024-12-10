@@ -25,3 +25,10 @@ repos:
     rev: v5.0.0
     hooks:
     -   id: trailing-whitespace
+
+  - repo: https://github.com/adamchainz/blacken-docs
+    rev: 0bc601e0cc771b26b206a46d3b298ef951b43c7c # 1.19.1
+    hooks:
+    -   id: blacken-docs
+        additional_dependencies:
+        - black==22.12.0
