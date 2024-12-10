@@ -57,7 +57,6 @@ default-groups = ["docs", "dev", "pydantic", "test"]
 # https://docs.astral.sh/ruff
 [tool.ruff]
 line-length = 88
-target-version = "py310"
 src = ["src"]
 
 [tool.ruff.lint]
