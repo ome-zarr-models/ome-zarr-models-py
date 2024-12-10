@@ -1,6 +1,6 @@
-from typing import Any, Literal
+from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, JsonValue
 
 from ome_zarr_models.base import Base
 from ome_zarr_models.v04.plate import Plate
@@ -13,4 +13,4 @@ class BioFormats2RawAttrs(Base):
 
     bioformats2raw_layout: Literal[3] = Field(..., alias="bioformats2raw.layout")
     plate: Plate | None = None
-    series: Any | None = None
+    series: JsonValue | None = None

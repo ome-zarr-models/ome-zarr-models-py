@@ -6,9 +6,9 @@ from __future__ import annotations
 
 from collections import Counter
 from collections.abc import Sequence
-from typing import Annotated, Any, Self, get_args
+from typing import Annotated, Literal, Self, get_args
 
-from pydantic import AfterValidator, Field, model_validator
+from pydantic import AfterValidator, Field, JsonValue, model_validator
 
 from ome_zarr_models._utils import duplicates
 from ome_zarr_models.base import Base
@@ -203,11 +203,11 @@ class Multiscale(Base):
         AfterValidator(_ensure_axis_types),
     ]
     datasets: Datasets = Field(..., min_length=1)
-    version: Any | None = None
+    version: Literal["0.4"] | None = None
     coordinateTransformations: ValidTransform | None = None
-    metadata: Any = None
-    name: Any | None = None
-    type: Any = None
+    metadata: JsonValue = None
+    name: JsonValue | None = None
+    type: JsonValue = None
 
     @property
     def ndim(self) -> int:
