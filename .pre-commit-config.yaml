@@ -32,3 +32,8 @@ repos:
     -   id: blacken-docs
         additional_dependencies:
         - black==22.12.0
+
+  - repo: https://github.com/executablebooks/mdformat
+    rev: e4610eb89da7633170df4c298347558c914780d9 # 0.7.19
+    hooks:
+    - id: mdformat
