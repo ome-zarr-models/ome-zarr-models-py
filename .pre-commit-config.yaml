@@ -1,5 +1,6 @@
 ci:
   autofix_prs: false
+  autoupdate_commit_msg: 'Update pre-commit hooks'
 
 repos:
   - repo: https://github.com/abravalheri/validate-pyproject
