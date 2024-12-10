@@ -1,3 +1,6 @@
+import pytest
+from pydantic import ValidationError
+
 from ome_zarr_models.v04.image_label import (
     Color,
     Label,
@@ -22,3 +25,12 @@ def test_image_label_example_json() -> None:
         source=Source(image="../../"),
         version="0.4",
     )
+
+
+def test_invalid_label() -> None:
+    """
+    > Each color object MUST contain the label-value key whose value MUST be an integer
+    > specifying the pixel value for that label
+    """
+    with pytest.raises(ValidationError, match="Input should be a valid integer"):
+        Color(label_value="abc", rgba=(255, 255, 255, 255))
