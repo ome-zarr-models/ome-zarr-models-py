@@ -72,7 +72,7 @@ class ImageAttrs(Base):
         min_length=1,
     )
     omero: Omero | None = None
-    labels: list[str]
+    labels: list[str] | None = None
     image_labels: Annotated[ImageLabelAttrs | None, Field(..., alias="image-label")] = (
         None
     )
