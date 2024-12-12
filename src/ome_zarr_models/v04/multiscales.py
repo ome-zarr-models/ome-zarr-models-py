@@ -16,6 +16,7 @@ from ome_zarr_models.v04.axes import Axes, AxisType
 from ome_zarr_models.v04.coordinate_transformations import (
     ScaleTransform,
     TranslationTransform,
+    VectorScale,
     VectorTransform,
     _build_transforms,
     _ndim,
@@ -188,7 +189,26 @@ class Dataset(Base):
         )
 
 
-Datasets = Sequence[Dataset]
+def _ensure_ordered_scales(datasets: list[Dataset]) -> list[Dataset]:
+    """
+    Make sure datasets are ordered from highests resolution to smallest.
+    """
+    scale_transforms = [d.coordinateTransformations[0] for d in datasets]
+    # Only handle scales given in metadata, not in files
+    scale_vector_transforms = [
+        t for t in scale_transforms if isinstance(t, VectorScale)
+    ]
+    scales = [s.scale for s in scale_vector_transforms]
+    for i in range(len(scales) - 1):
+        s1, s2 = scales[i], scales[i + 1]
+        is_ordered = all(s1[j] <= s2[j] for j in range(len(s1)))
+        if not is_ordered:
+            raise ValueError(
+                f"Dataset {i} has a lower resolution (scales = {s1}) "
+                f"than dataset {i+1} (scales = {s2})."
+            )
+
+    return datasets
 
 
 class Multiscale(Base):
@@ -202,7 +222,9 @@ class Multiscale(Base):
         AfterValidator(_ensure_unique_axis_names),
         AfterValidator(_ensure_axis_types),
     ]
-    datasets: Datasets = Field(..., min_length=1)
+    datasets: Annotated[tuple[Dataset, ...], AfterValidator(_ensure_ordered_scales)] = (
+        Field(..., min_length=1)
+    )
     version: Literal["0.4"] | None = None
     coordinateTransformations: ValidTransform | None = None
     metadata: JsonValue = None
