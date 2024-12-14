@@ -1,5 +1,5 @@
 """
-Private utilies.
+Private utilities.
 """
 
 from collections import Counter
