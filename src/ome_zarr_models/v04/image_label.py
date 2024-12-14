@@ -123,13 +123,13 @@ class ImageLabel(GroupSpec[ImageLabelAttrs, ArraySpec | GroupSpec]):
     _check_arrays_compatible = model_validator(mode="after")(_check_arrays_compatible)
 
     @classmethod
-    def from_zarr(cls, node: zarr.Group) -> Self:
+    def from_zarr(cls, group: zarr.Group) -> Self:
         """
         Create an instance of an OME-zarr image from a `zarr.Group`.
 
         Parameters
         ----------
-        node : zarr.Group
+        group : zarr.Group
             A Zarr group that has valid OME-NGFF image label metadata.
         """
-        return Image.from_zarr(node)
+        return Image.from_zarr(group)

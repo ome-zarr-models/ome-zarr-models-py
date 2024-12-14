@@ -82,26 +82,26 @@ class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec]):
     _check_arrays_compatible = model_validator(mode="after")(_check_arrays_compatible)
 
     @classmethod
-    def from_zarr(cls, node: zarr.Group) -> Self:
+    def from_zarr(cls, group: zarr.Group) -> Self:
         """
         Create an instance of an OME-zarr image from a `zarr.Group`.
 
         Parameters
         ----------
-        node : zarr.Group
+        group : zarr.Group
             A Zarr group that has valid OME-NGFF image metadata.
         """
         # on unlistable storage backends, the members of this group will be {}
-        guess = GroupSpec.from_zarr(node, depth=0)
+        guess = GroupSpec.from_zarr(group, depth=0)
 
         try:
             multi_meta_maybe = guess.attributes["multiscales"]
         except KeyError as e:
-            store_path = get_store_path(node.store)
+            store_path = get_store_path(group.store)
             msg = (
                 "Failed to find mandatory `multiscales` key in the attributes of the "
                 "Zarr group at "
-                f"{node.store}://{store_path}://{node.path}."
+                f"{group.store}://{store_path}://{group.path}."
             )
             raise KeyError(msg) from e
 
@@ -109,9 +109,11 @@ class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec]):
         members_tree_flat = {}
         for multiscale in multi_meta.multiscales:
             for dataset in multiscale.datasets:
-                array_path = f"{node.path}/{dataset.path}"
+                array_path = f"{group.path}/{dataset.path}"
                 try:
-                    array = zarr.open_array(store=node.store, path=array_path, mode="r")
+                    array = zarr.open_array(
+                        store=group.store, path=array_path, mode="r"
+                    )
                     array_spec = ArraySpec.from_zarr(array)
                 except zarr.errors.ArrayNotFoundError as e:
                     msg = (
