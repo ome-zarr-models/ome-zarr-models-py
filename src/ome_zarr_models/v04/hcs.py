@@ -25,6 +25,11 @@ class HCS(GroupSpec[HCSAttrs, ArraySpec | GroupSpec]):
     def get_well_group(self, i: int) -> WellGroup:
         """
         Get a single well group.
+
+        Parameters
+        ----------
+        i :
+            Index of well group.
         """
         well = self.attributes.plate.wells[i]
         well_path = well.path
