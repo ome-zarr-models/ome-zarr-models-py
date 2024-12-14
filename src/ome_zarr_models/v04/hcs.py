@@ -2,7 +2,7 @@ from collections.abc import Generator
 
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
-from ome_zarr_models.base import Base
+from ome_zarr_models.v04.base import Base
 from ome_zarr_models.v04.plate import Plate
 from ome_zarr_models.v04.well import WellGroup
 

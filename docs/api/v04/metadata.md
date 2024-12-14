@@ -37,3 +37,7 @@ These are models of the metadata contained within OME-zarr datasets.
 ## well
 
 ::: ome_zarr_models.v04.well
+
+## base
+
+::: ome_zarr_models.v04.base

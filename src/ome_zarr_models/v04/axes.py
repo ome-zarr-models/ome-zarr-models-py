@@ -3,7 +3,7 @@ from typing import Literal
 
 from pydantic import JsonValue
 
-from ome_zarr_models.base import Base
+from ome_zarr_models.v04.base import Base
 
 __all__ = ["Axes", "Axis", "AxisType"]
 

@@ -5,14 +5,13 @@ For reference, see the [multiscales section of the OME-zarr specification](https
 from __future__ import annotations
 
 from collections import Counter
-from collections.abc import Sequence
-from typing import Annotated, Literal, Self, get_args
+from typing import TYPE_CHECKING, Annotated, Literal, Self, get_args
 
 from pydantic import AfterValidator, Field, JsonValue, model_validator
 
 from ome_zarr_models._utils import duplicates
-from ome_zarr_models.base import Base
 from ome_zarr_models.v04.axes import Axes, AxisType
+from ome_zarr_models.v04.base import Base
 from ome_zarr_models.v04.coordinate_transformations import (
     ScaleTransform,
     TranslationTransform,
@@ -21,6 +20,10 @@ from ome_zarr_models.v04.coordinate_transformations import (
     _build_transforms,
     _ndim,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
 
 __all__ = ["Dataset", "Multiscale"]
 

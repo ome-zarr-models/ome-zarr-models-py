@@ -2,7 +2,7 @@ from typing import Literal
 
 from pydantic import Field, JsonValue
 
-from ome_zarr_models.base import Base
+from ome_zarr_models.v04.base import Base
 from ome_zarr_models.v04.plate import Plate
 
 
