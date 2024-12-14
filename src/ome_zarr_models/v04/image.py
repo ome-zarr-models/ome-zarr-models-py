@@ -8,7 +8,7 @@ from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models._utils import get_store_path
 from ome_zarr_models.base import Base
-from ome_zarr_models.v04.multiscales import Multiscales
+from ome_zarr_models.v04.multiscales import Multiscale
 from ome_zarr_models.v04.omero import Omero
 
 # Image is imported to the `ome_zarr_py.v04` namespace, so not
@@ -65,7 +65,7 @@ class ImageAttrs(Base):
     See https://ngff.openmicroscopy.org/0.4/#image-layout.
     """
 
-    multiscales: Multiscales = Field(
+    multiscales: list[Multiscale] = Field(
         ...,
         description="The multiscale datasets for this image",
         min_length=1,

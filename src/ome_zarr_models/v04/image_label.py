@@ -14,7 +14,7 @@ from pydantic_zarr.v2 import ArraySpec, GroupSpec
 from ome_zarr_models._utils import duplicates
 from ome_zarr_models.base import Base
 from ome_zarr_models.v04.image import Image, _check_arrays_compatible
-from ome_zarr_models.v04.multiscales import Multiscales
+from ome_zarr_models.v04.multiscales import Multiscale
 
 if TYPE_CHECKING:
     import zarr
@@ -116,7 +116,7 @@ class ImageLabelAttrs(Base):
     """
 
     image_label: Label
-    multiscales: Multiscales
+    multiscales: list[Multiscale]
 
 
 class ImageLabel(GroupSpec[ImageLabelAttrs, ArraySpec | GroupSpec]):

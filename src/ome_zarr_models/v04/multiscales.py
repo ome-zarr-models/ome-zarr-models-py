@@ -22,7 +22,7 @@ from ome_zarr_models.v04.coordinate_transformations import (
     _ndim,
 )
 
-__all__ = ["Dataset", "Multiscale", "Multiscales"]
+__all__ = ["Dataset", "Multiscale"]
 
 VALID_NDIM = (2, 3, 4, 5)
 ValidTransform = tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform]
@@ -291,6 +291,3 @@ class Multiscale(Base):
                     )
                     raise ValueError(msg)
         return data
-
-
-Multiscales = Sequence[Multiscale]

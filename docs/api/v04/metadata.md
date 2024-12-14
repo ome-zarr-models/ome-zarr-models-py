@@ -18,6 +18,10 @@ These are models of the metadata contained within OME-zarr datasets.
 
 ::: ome_zarr_models.v04.hcs
 
+## image
+
+::: ome_zarr_models.v04.image
+
 ## image_label
 
 ::: ome_zarr_models.v04.image_label
