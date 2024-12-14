@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Literal, Self
 
 from pydantic import Field
 
-from ome_zarr_models.base import Base
+from ome_zarr_models.v04.base import Base
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence

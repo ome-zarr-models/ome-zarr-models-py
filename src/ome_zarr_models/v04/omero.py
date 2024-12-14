@@ -6,7 +6,7 @@ from typing import Annotated
 
 from pydantic import StringConstraints
 
-from ome_zarr_models.base import Base
+from ome_zarr_models.v04.base import Base
 
 __all__ = ["Channel", "Omero", "Window"]
 

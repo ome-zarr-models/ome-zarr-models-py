@@ -9,7 +9,7 @@ from numcodecs.abc import Codec
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 from zarr.util import guess_chunks
 
-from ome_zarr_models.base import Base
+from ome_zarr_models.v04.base import Base
 from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.image import Image, ImageAttrs
 from ome_zarr_models.v04.multiscales import (

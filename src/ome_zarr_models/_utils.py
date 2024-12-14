@@ -1,3 +1,7 @@
+"""
+Private utilies.
+"""
+
 from collections import Counter
 from collections.abc import Hashable, Iterable
 from dataclasses import MISSING, fields, is_dataclass

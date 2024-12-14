@@ -10,7 +10,7 @@ from pydantic import AfterValidator, Field
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models._utils import _AlphaNumericConstraint, _unique_items_validator
-from ome_zarr_models.base import Base
+from ome_zarr_models.v04.base import Base
 from ome_zarr_models.v04.image import Image
 
 # WellGroup is defined one level higher
