@@ -13,6 +13,15 @@ To suggest a new feature, please open a ticket on [our issue tracker](https://gi
 
 If you think you've found an issue or bug with this package, please report it on [our issue tracker](https://github.com/BioImageTools/ome-zarr-models-py).
 
+## Implementing OME-Zarr RFCs
+
+The request for comment (RFC) process in the OME-Zarr spec allows major changes or additions to be proposed to the specification.
+We encourage RFC authors to implement OME-Zarr RFCs in this package, as a mechanism to see what the RFC looks like in practice before it is merged.
+
+For every OME-Zarr RFC we will open an issue.
+If you would like to implement it, please comment on that issue (so we can avoid duplication of work).
+Then submit the changes to `ome-zarr-models-py` required to implement the RFC as a PR, and mention the PR in a comment on the issue.
+
 ## Contributing code
 
 ### Setting up a development environment
