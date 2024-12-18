@@ -72,7 +72,6 @@ class ImageAttrs(Base):
         min_length=1,
     )
     omero: Omero | None = None
-    labels: list[str] | None = None
 
 
 class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec]):
