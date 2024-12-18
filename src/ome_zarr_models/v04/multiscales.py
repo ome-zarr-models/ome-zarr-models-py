@@ -7,13 +7,21 @@ from __future__ import annotations
 from collections import Counter
 from typing import TYPE_CHECKING, Annotated, Literal, Self, get_args
 
-from pydantic import AfterValidator, Field, JsonValue, model_validator
+from pydantic import (
+    AfterValidator,
+    BaseModel,
+    BeforeValidator,
+    Field,
+    JsonValue,
+    model_validator,
+)
 
 from ome_zarr_models._utils import duplicates
 from ome_zarr_models.v04.axes import Axes, AxisType
 from ome_zarr_models.v04.base import Base
 from ome_zarr_models.v04.coordinate_transformations import (
     ScaleTransform,
+    Transform,
     TranslationTransform,
     VectorScale,
     VectorTransform,
@@ -53,14 +61,26 @@ def _ensure_transform_dimensionality(
 
 
 def _ensure_scale_translation(
-    transforms: ValidTransform,
-) -> ValidTransform:
+    transforms_obj: object,
+) -> object:
     """
     Ensures that
     - there are only 1 or 2 transforms.
     - the first element is a scale transformation
     - the second element, if present, is a translation transform
     """
+    # This is used as a before validator - to help use, we use pydantic to first
+    # cast the input (which can in general anything) into a set of transformations.
+    # Then we check the transformations are valid.
+    #
+    # This is a bit convoluted, but we do it because the default pydantic error messages
+    # are a mess otherwise
+
+    class Transforms(BaseModel):
+        transforms: list[Transform]
+
+    transforms = Transforms(transforms=transforms_obj).transforms
+
     if len(transforms) not in (1, 2):
         msg = f"Invalid number of transforms: got {len(transforms)}, expected 1 or 2"
         raise ValueError(msg)
@@ -81,7 +101,7 @@ def _ensure_scale_translation(
             )
             raise ValueError(msg)
 
-    return transforms
+    return transforms_obj
 
 
 def _ensure_axis_length(axes: Axes) -> Axes:
@@ -173,7 +193,7 @@ class Dataset(Base):
     path: str
     coordinateTransformations: Annotated[
         ValidTransform,
-        AfterValidator(_ensure_scale_translation),
+        BeforeValidator(_ensure_scale_translation),
         AfterValidator(_ensure_transform_dimensionality),
     ]
 

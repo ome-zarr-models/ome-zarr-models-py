@@ -223,7 +223,8 @@ def test_transform_invalid_length(
     Error if there's the wrong number of transforms.
     """
     with pytest.raises(
-        ValidationError, match=f"after validation, not {len(transforms)}"
+        ValidationError,
+        match=f"Invalid number of transforms: got {len(transforms)}, expected 1 or 2",
     ):
         Dataset(path="foo", coordinateTransformations=transforms)
 
@@ -246,7 +247,8 @@ def test_transform_invalid_first_element(
     """
     with pytest.raises(
         ValidationError,
-        match="Input should be a valid dictionary or instance of VectorScale",
+        match="The first element of `coordinateTransformations` "
+        "must be a scale transform",
     ):
         Dataset(path="foo", coordinateTransformations=transforms)
 
@@ -268,7 +270,8 @@ def test_transform_invalid_second_element(
     """
     with pytest.raises(
         ValidationError,
-        match="Input should be a valid dictionary or instance of VectorTranslation",
+        match="The second element of `coordinateTransformations` "
+        "must be a translation transform",
     ):
         Dataset(path="foo", coordinateTransformations=transforms)  # type: ignore[arg-type]
 

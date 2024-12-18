@@ -25,7 +25,11 @@ __all__ = [
 ]
 
 
-class Identity(Base):
+class Transform(Base):
+    type: Literal["identity", "scale", "translation"]
+
+
+class Identity(Transform):
     """
     Identity transformation.
 
@@ -38,7 +42,7 @@ class Identity(Base):
     type: Literal["identity"]
 
 
-class VectorScale(Base):
+class VectorScale(Transform):
     """
     Scale transformation parametrized by a vector of numbers.
     """
@@ -61,7 +65,7 @@ class VectorScale(Base):
         return len(self.scale)
 
 
-class PathScale(Base):
+class PathScale(Transform):
     """
     Scale transformation parametrized by a path.
     """
@@ -70,7 +74,7 @@ class PathScale(Base):
     path: str
 
 
-class VectorTranslation(Base):
+class VectorTranslation(Transform):
     """
     Translation transformation parametrized by a vector of numbers.
     """
@@ -93,7 +97,7 @@ class VectorTranslation(Base):
         return len(self.translation)
 
 
-class PathTranslation(Base):
+class PathTranslation(Transform):
     """
     Translation transformation parametrized by a path.
     """
