@@ -93,7 +93,7 @@ class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec]):
             A Zarr group that has valid OME-NGFF image metadata.
         """
         # on unlistable storage backends, the members of this group will be {}
-        guess = GroupSpec.from_zarr(group, depth=1)
+        guess = GroupSpec.from_zarr(group, depth=0)
 
         try:
             multi_meta_maybe = guess.attributes["multiscales"]
