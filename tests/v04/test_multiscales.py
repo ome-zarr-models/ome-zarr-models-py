@@ -60,7 +60,7 @@ def test_immutable(default_multiscale: Multiscale) -> None:
     Check that models are immutable.
     """
     with pytest.raises(ValidationError, match="Instance is frozen"):
-        default_multiscale.axes[0].name = "new_name"
+        default_multiscale.axes[0].name = "new_name"  # type: ignore[misc]
 
 
 def test_multiscale_unique_axis_names() -> None:
