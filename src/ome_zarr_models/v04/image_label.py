@@ -92,7 +92,7 @@ class Label(Base):
 
 def _parse_imagelabel(model: Label) -> Label:
     """
-    check that label_values are consistent across properties and colors
+    Check that label_values are consistent across properties and colors
     """
     if model.colors is not None and model.properties is not None:
         prop_label_value = [prop.label_value for prop in model.properties]
