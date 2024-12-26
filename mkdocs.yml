@@ -35,11 +35,11 @@ plugins:
 
 nav:
   - Tutorial: tutorial.py
-  - Contributing: contributing.md
   - API reference:
       - v04:
           - api/v04/datasets.md
           - api/v04/metadata.md
+  - Contributing: contributing.md
 
 watch:
   - src
