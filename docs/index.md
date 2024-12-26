@@ -13,18 +13,24 @@ pip install git+https://github.com/BioImageTools/ome-zarr-models-py.git@main
 
 When we do a first release, it will be available on PyPI and conda-forge.
 
-## Getting help
-
-Developers of this package are active on our [Zulip chat channel](https://imagesc.zulipchat.com/#narrow/channel/469152-ome-zarr-models-py), which is a great place for asking questions and getting help.
-
 ## Design
 
-This package is designed with the following guiding principles:
+OME-zarr data are zarr groups that contain specific metadata in the zarr attributes metdata.
+`ome-zarr-models` models this with:
+
+- Classes that represent the different zarr groups (see the [datasets API docs](api/v04/datasets.md))
+- Classes that represent valid metadata within these groups (see the [metadata models API docs](api/v04/metadata.md))
+
+This package has been designed with the following guiding principles:
 
 - Strict adherence to the [OME-zarr specification](https://ngff.openmicroscopy.org/), with the goal of being a reference implementation.
 - A usable set of Python classes for reading, writing, and interacting with OME-zarr metadata.
 - The ability to work with multiple versions of the OME-zarr spec at the same time.
 - Array reading and writing operations are out of scope.
+
+## Getting help
+
+Developers of this package are active on our [Zulip chat channel](https://imagesc.zulipchat.com/#narrow/channel/469152-ome-zarr-models-py), which is a great place for asking questions and getting help.
 
 ## Known issues
 
