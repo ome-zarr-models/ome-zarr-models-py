@@ -2,15 +2,14 @@ from pathlib import Path
 
 import zarr
 
-from ome_zarr_models.v04 import HCS
 from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.coordinate_transformations import VectorScale
-from ome_zarr_models.v04.hcs import HCSAttrs
+from ome_zarr_models.v04.hcs import HCS, HCSAttrs
 from ome_zarr_models.v04.image import ImageAttrs
 from ome_zarr_models.v04.multiscales import Dataset, Multiscale
 from ome_zarr_models.v04.omero import Channel, Omero, Window
 from ome_zarr_models.v04.plate import Acquisition, Column, Plate, Row, WellInPlate
-from ome_zarr_models.v04.well import Well, WellImage
+from ome_zarr_models.v04.well_types import WellImage, WellMeta
 
 
 def test_example_hcs() -> None:
@@ -40,7 +39,7 @@ def test_example_hcs() -> None:
     well_groups = list(hcs.well_groups)
     assert len(well_groups) == 1
     well_group = well_groups[0]
-    assert well_group.attributes.well == Well(
+    assert well_group.attributes.well == WellMeta(
         images=[WellImage(path="0", acquisition=None)], version="0.4"
     )
 

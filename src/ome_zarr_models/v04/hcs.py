@@ -6,9 +6,9 @@ from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models.v04.base import Base
 from ome_zarr_models.v04.plate import Plate
-from ome_zarr_models.v04.well import WellGroup
+from ome_zarr_models.v04.well import Well
 
-__all__ = ["HCSAttrs"]
+__all__ = ["HCS", "HCSAttrs"]
 
 
 class HCSAttrs(Base):
@@ -49,7 +49,7 @@ class HCS(GroupSpec[HCSAttrs, ArraySpec | GroupSpec]):  # type: ignore[misc]
 
         return self
 
-    def get_well_group(self, i: int) -> WellGroup:
+    def get_well_group(self, i: int) -> Well:
         """
         Get a single well group.
 
@@ -65,7 +65,7 @@ class HCS(GroupSpec[HCSAttrs, ArraySpec | GroupSpec]):  # type: ignore[misc]
         for part in well_path_parts:
             group = group.members[part]
 
-        return WellGroup(attributes=group.attributes, members=group.members)
+        return Well(attributes=group.attributes, members=group.members)
 
     @property
     def n_wells(self) -> int:
@@ -75,6 +75,9 @@ class HCS(GroupSpec[HCSAttrs, ArraySpec | GroupSpec]):  # type: ignore[misc]
         return len(self.attributes.plate.wells)
 
     @property
-    def well_groups(self) -> Generator[WellGroup, None, None]:
+    def well_groups(self) -> Generator[Well, None, None]:
+        """
+        Well groups within this HCS group.
+        """
         for i in range(self.n_wells):
             yield self.get_well_group(i)
