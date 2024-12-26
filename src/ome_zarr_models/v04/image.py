@@ -74,7 +74,7 @@ class ImageAttrs(Base):
     omero: Omero | None = None
 
 
-class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec]):
+class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec]):  # type: ignore[misc]
     """
     An OME-zarr multiscale dataset.
     """

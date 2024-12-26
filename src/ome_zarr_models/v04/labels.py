@@ -20,7 +20,7 @@ class LabelsAttrs(Base):
     )
 
 
-class Labels(GroupSpec[LabelsAttrs, ArraySpec | GroupSpec]):
+class Labels(GroupSpec[LabelsAttrs, ArraySpec | GroupSpec]):  # type: ignore[misc]
     """
     An OME-zarr labels dataset.
     """
