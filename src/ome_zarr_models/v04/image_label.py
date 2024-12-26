@@ -119,7 +119,7 @@ class ImageLabelAttrs(Base):
     multiscales: list[Multiscale]
 
 
-class ImageLabel(GroupSpec[ImageLabelAttrs, ArraySpec | GroupSpec]):
+class ImageLabel(GroupSpec[ImageLabelAttrs, ArraySpec | GroupSpec]):  # type: ignore[misc]
     _check_arrays_compatible = model_validator(mode="after")(_check_arrays_compatible)
 
     @classmethod

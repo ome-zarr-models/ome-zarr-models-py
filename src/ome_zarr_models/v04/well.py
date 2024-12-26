@@ -72,7 +72,7 @@ class WellAttrs(Base):
     well: Well
 
 
-class WellGroup(GroupSpec[WellAttrs, ArraySpec | GroupSpec]):
+class WellGroup(GroupSpec[WellAttrs, ArraySpec | GroupSpec]):  # type: ignore[misc]
     def get_image(self, i: int) -> Image:
         """
         Get a single image from this well.

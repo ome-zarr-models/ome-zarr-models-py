@@ -19,7 +19,7 @@ class HCSAttrs(Base):
     plate: Plate
 
 
-class HCS(GroupSpec[HCSAttrs, ArraySpec | GroupSpec]):
+class HCS(GroupSpec[HCSAttrs, ArraySpec | GroupSpec]):  # type: ignore[misc]
     """
     An OME-zarr high-content screening (HCS) dataset representing a single plate.
     """
