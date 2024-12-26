@@ -2,10 +2,6 @@
 
 A Python package that provides validation and a Pythonic interface to OME-zarr datasets.
 
-> ⚠️ This is still under construction!
-> We welcome feedback, suggestions, and contributions!
-> But beware, this package may change without warning for now
-
 ## Installing
 
 Currently this package is only available in the GitHub repo.

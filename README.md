@@ -4,9 +4,6 @@
 [![Run tests](https://github.com/BioImageTools/ome-zarr-models-py/actions/workflows/python-package.yml/badge.svg?branch=main)](https://github.com/BioImageTools/ome-zarr-models-py/actions/workflows/python-package.yml)
 [![codecov](https://codecov.io/gh/BioImageTools/ome-zarr-models-py/graph/badge.svg?token=QDV2J4ZUZ7)](https://codecov.io/gh/BioImageTools/ome-zarr-models-py)
 
-> [!WARNING]
-> This is still under construction!
-
 ## Development
 
 To install development dependencies, run `uv sync`.
