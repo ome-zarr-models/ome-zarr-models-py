@@ -1,4 +1,4 @@
-# ome-zarr-models-py
+# ome-zarr-models
 
 A Python package that provides validation and a Pythonic interface for OME-zarr datasets.
 
