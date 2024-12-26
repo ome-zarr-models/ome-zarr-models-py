@@ -1,7 +1,31 @@
 site_name: ome-zarr-models
 site_url: https://ome-zarr-models-py.readthedocs.io
+repo_url: https://github.com/BioImageTools/ome-zarr-models-py
+repo_name: ome-zarr-models-py
 theme:
   name: material
+  language: en
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.tabs
+  palette:
+    # Palette toggle for light mode
+
+    - media: "(prefers-color-scheme: light)"
+      primary: pink
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      primary: pink
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
 
 markdown_extensions:
   - toc:
@@ -9,7 +33,7 @@ markdown_extensions:
 
 plugins:
   - mkdocs-jupyter:
-      execute: true
+      execute: false
       allow_errors: false
   - mkdocstrings:
       handlers:
@@ -34,6 +58,7 @@ plugins:
                   schema: false
 
 nav:
+  - Home: index.md
   - Tutorial: tutorial.py
   - API reference:
       - v04:
