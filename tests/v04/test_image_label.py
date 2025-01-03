@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from ome_zarr_models.v04.image_label import (
+from ome_zarr_models.v04.image_label_types import (
     Color,
     Label,
     Property,

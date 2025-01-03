@@ -5,9 +5,7 @@ from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models.v04.base import Base
 
-# Labels is imported to the `ome_zarr_py.v04` namespace, so not
-# listed here
-__all__ = ["LabelsAttrs"]
+__all__ = ["Labels", "LabelsAttrs"]
 
 
 class LabelsAttrs(Base):

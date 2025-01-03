@@ -5,7 +5,7 @@ import zarr
 import zarr.storage
 from rich.pretty import pprint
 
-from ome_zarr_models.v04 import Image
+from ome_zarr_models.v04.image import Image
 
 # ## Loading datasets
 #

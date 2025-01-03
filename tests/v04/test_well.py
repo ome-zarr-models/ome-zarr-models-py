@@ -1,6 +1,6 @@
 import pytest
 
-from ome_zarr_models.v04.well import Well, WellImage
+from ome_zarr_models.v04.well_types import WellImage, WellMeta
 from tests.v04.conftest import read_in_json
 
 
@@ -9,7 +9,7 @@ from tests.v04.conftest import read_in_json
     [
         (
             "well_example_1.json",
-            Well(
+            WellMeta(
                 images=[
                     WellImage(path="0", acquisition=1),
                     WellImage(path="1", acquisition=1),
@@ -21,7 +21,7 @@ from tests.v04.conftest import read_in_json
         ),
         (
             "well_example_2.json",
-            Well(
+            WellMeta(
                 images=[
                     WellImage(path="0", acquisition=0),
                     WellImage(path="1", acquisition=3),
@@ -31,13 +31,13 @@ from tests.v04.conftest import read_in_json
         ),
     ],
 )
-def test_examples_valid(filename: str, model_expected: Well) -> None:
-    model = read_in_json(json_fname=filename, model_cls=Well)
+def test_examples_valid(filename: str, model_expected: WellMeta) -> None:
+    model = read_in_json(json_fname=filename, model_cls=WellMeta)
     assert model == model_expected
 
 
 def test_get_paths() -> None:
-    well = Well(
+    well = WellMeta(
         images=[
             WellImage(path="0", acquisition=1),
             WellImage(path="1", acquisition=1),
