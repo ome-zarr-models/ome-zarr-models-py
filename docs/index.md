@@ -13,15 +13,14 @@ pip install git+https://github.com/BioImageTools/ome-zarr-models-py.git@main
 
 When we do a first release, it will be available on PyPI and conda-forge.
 
+## Getting started
+
+Useful places to get started are:
+
+- [The tutorial](tutorial.md), which gives a worked example of using this package
+- [The API reference](api/index.md), which explains how this package is structured
+
 ## Design
-
-OME-zarr data are zarr groups that contain specific metadata in the zarr attributes metadata.
-`ome-zarr-models` models this with:
-
-- Classes that represent the different OME-Zarr groups.
-- Classes that represent valid metadata within these groups.
-
-See the [API reference](api/index.md) for more information on how the package is structured.
 
 This package has been designed with the following guiding principles:
 
