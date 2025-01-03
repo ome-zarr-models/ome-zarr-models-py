@@ -1,6 +1,6 @@
 site_name: ome-zarr-models
 site_url: https://ome-zarr-models-py.readthedocs.io
-repo_url: https://github.com/BioImageTools/ome-zarr-models-py
+repo_url: https://github.com/ome-zarr-models/ome-zarr-models-py
 repo_name: ome-zarr-models-py
 theme:
   name: material

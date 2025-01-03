@@ -7,11 +7,11 @@ Below are some different ways you can contribute.
 ## Suggesting new features
 
 We're super open to helper functionality for working with OME-zarr metadata using our package!
-To suggest a new feature, please open a ticket on [our issue tracker](https://github.com/BioImageTools/ome-zarr-models-py).
+To suggest a new feature, please open a ticket on [our issue tracker](https://github.com/ome-zarr-models/ome-zarr-models-py).
 
 ## Reporting issues
 
-If you think you've found an issue or bug with this package, please report it on [our issue tracker](https://github.com/BioImageTools/ome-zarr-models-py).
+If you think you've found an issue or bug with this package, please report it on [our issue tracker](https://github.com/ome-zarr-models/ome-zarr-models-py).
 
 ## Implementing OME-Zarr RFCs
 

@@ -8,7 +8,7 @@ Currently this package is only available in the GitHub repo.
 Install it using:
 
 ```sh
-pip install git+https://github.com/BioImageTools/ome-zarr-models-py.git@main
+pip install git+https://github.com/ome-zarr-models/ome-zarr-models-py.git@main
 ```
 
 When we do a first release, it will be available on PyPI and conda-forge.
