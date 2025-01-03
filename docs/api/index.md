@@ -11,10 +11,10 @@ A listing of the group objects and associated metadata objects is given below fo
 
 ### v04
 
-| OME-Zarr group objects | Metadata attributes |
+| OME-Zarr group objects                                     | Metadata attributes                                                  |
 | ---------------------------------------------------------- | -------------------------------------------------------------------- |
-| \[`HCS`\][ome_zarr_models.v04.hcs.HCS] | \[`HCSAttrs`\][ome_zarr_models.v04.hcs.HCSAttrs] |
-| \[`Image`\][ome_zarr_models.v04.image.Image] | \[`ImageAttrs`\][ome_zarr_models.v04.image.ImageAttrs] |
-| \[`Labels`\][ome_zarr_models.v04.labels.Labels] | \[`LabelsAttrs`\][ome_zarr_models.v04.labels.LabelsAttrs] |
-| \[`ImageLabel`\][ome_zarr_models.v04.image_label.ImageLabel] | \[`ImageLabelAttrs`\][ome_zarr_models.v04.image_label.ImageLabelAttrs] |
-| \[`Well`\][ome_zarr_models.v04.well.Well] | \[`WellAttrs`\][ome_zarr_models.v04.well.WellAttrs] |
+| [`HCS`][ome_zarr_models.v04.hcs.HCS]                       | [`HCSAttrs`][ome_zarr_models.v04.hcs.HCSAttrs]                       |
+| [`Image`][ome_zarr_models.v04.image.Image]                 | [`ImageAttrs`][ome_zarr_models.v04.image.ImageAttrs]                 |
+| [`Labels`][ome_zarr_models.v04.labels.Labels]              | [`LabelsAttrs`][ome_zarr_models.v04.labels.LabelsAttrs]              |
+| [`ImageLabel`][ome_zarr_models.v04.image_label.ImageLabel] | [`ImageLabelAttrs`][ome_zarr_models.v04.image_label.ImageLabelAttrs] |
+| [`Well`][ome_zarr_models.v04.well.Well]                    | [`WellAttrs`][ome_zarr_models.v04.well.WellAttrs]                    |
