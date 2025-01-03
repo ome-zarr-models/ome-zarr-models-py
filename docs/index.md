@@ -18,8 +18,10 @@ When we do a first release, it will be available on PyPI and conda-forge.
 OME-zarr data are zarr groups that contain specific metadata in the zarr attributes metadata.
 `ome-zarr-models` models this with:
 
-- Classes that represent the different zarr groups (see the [datasets API docs](api/v04/datasets.md))
-- Classes that represent valid metadata within these groups (see the [metadata models API docs](api/v04/metadata.md))
+- Classes that represent the different OME-Zarr groups.
+- Classes that represent valid metadata within these groups.
+
+See the [API reference](api/index.md) for more information on how the package is structured.
 
 This package has been designed with the following guiding principles:
 
