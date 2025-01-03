@@ -1,6 +1,6 @@
 ci:
   autofix_prs: false
-  autoupdate_commit_msg: 'Update pre-commit hooks'
+  autoupdate_commit_msg: "Update pre-commit hooks"
 
 repos:
   - repo: https://github.com/abravalheri/validate-pyproject
@@ -25,25 +25,25 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
-    -   id: trailing-whitespace
+      - id: trailing-whitespace
 
   - repo: https://github.com/adamchainz/blacken-docs
     rev: 1.19.1
     hooks:
-    -   id: blacken-docs
+      - id: blacken-docs
         additional_dependencies:
-        - black==22.12.0
+          - black==22.12.0
 
-  - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.21
+  - repo: https://github.com/rbubley/mirrors-prettier
+    rev: "v3.4.2"
     hooks:
-    - id: mdformat
+      - id: prettier
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.14.0
     hooks:
-    -   id: mypy
+      - id: mypy
         additional_dependencies:
-        - pydantic
-        - pytest
-        - pydantic-zarr
+          - pydantic
+          - pytest
+          - pydantic-zarr
