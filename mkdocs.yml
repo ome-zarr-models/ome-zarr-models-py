@@ -9,6 +9,7 @@ theme:
     repo: fontawesome/brands/github
   features:
     - navigation.tabs
+    - navigation.indexes
   palette:
     # Palette toggle for light mode
 
@@ -61,6 +62,7 @@ nav:
   - Home: index.md
   - Tutorial: tutorial.py
   - API reference:
+      - api/index.md
       - v04:
           - api/v04/hcs.md
           - api/v04/image.md
