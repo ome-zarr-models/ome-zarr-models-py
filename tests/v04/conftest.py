@@ -9,15 +9,15 @@ from numcodecs.abc import Codec
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 from zarr.util import guess_chunks
 
+from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.v04.axes import Axis
-from ome_zarr_models.v04.base import Base
 from ome_zarr_models.v04.image import Image, ImageAttrs
 from ome_zarr_models.v04.multiscales import (
     Dataset,
     Multiscale,
 )
 
-T = TypeVar("T", bound=Base)
+T = TypeVar("T", bound=BaseAttrs)
 
 
 def read_in_json(*, json_fname: str, model_cls: type[T]) -> T:

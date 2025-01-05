@@ -17,8 +17,8 @@ from pydantic import (
 )
 
 from ome_zarr_models._utils import duplicates
+from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.v04.axes import Axes, AxisType
-from ome_zarr_models.v04.base import Base
 from ome_zarr_models.v04.coordinate_transformations import (
     ScaleTransform,
     Transform,
@@ -182,7 +182,7 @@ def _ensure_axis_types(axes: Axes) -> Axes:
     return axes
 
 
-class Dataset(Base):
+class Dataset(BaseAttrs):
     """
     An element of Multiscale.datasets.
     """
@@ -234,7 +234,7 @@ def _ensure_ordered_scales(datasets: list[Dataset]) -> list[Dataset]:
     return datasets
 
 
-class Multiscale(Base):
+class Multiscale(BaseAttrs):
     """
     An element of multiscales metadata.
     """

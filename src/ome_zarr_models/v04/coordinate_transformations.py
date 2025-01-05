@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Literal, Self
 
 from pydantic import Field
 
-from ome_zarr_models.v04.base import Base
+from ome_zarr_models.base import BaseAttrs
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
@@ -25,7 +25,7 @@ __all__ = [
 ]
 
 
-class Transform(Base):
+class Transform(BaseAttrs):
     type: Literal["identity", "scale", "translation"]
 
 
