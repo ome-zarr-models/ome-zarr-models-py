@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pytest
 import zarr
 
 from ome_zarr_models import load_ome_zarr_group
@@ -14,3 +15,9 @@ def test_load_ome_zarr_group() -> None:
 
     assert isinstance(ome_zarr_group, HCS)
     assert ome_zarr_group.ome_zarr_version == "0.4"
+
+
+def test_load_ome_zarr_group_bad(tmp_path: Path) -> None:
+    hcs_group = zarr.group(tmp_path / "test")
+    with pytest.raises(RuntimeError, match="Could not find any matches for group "):
+        load_ome_zarr_group(hcs_group)
