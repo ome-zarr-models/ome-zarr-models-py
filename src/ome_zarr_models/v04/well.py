@@ -7,6 +7,7 @@ from collections.abc import Generator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.image import Image
 from ome_zarr_models.v04.well_types import WellMeta
 
@@ -22,7 +23,7 @@ class WellAttrs(BaseAttrs):
     well: WellMeta
 
 
-class Well(GroupSpec[WellAttrs, ArraySpec | GroupSpec]):  # type: ignore[misc]
+class Well(GroupSpec[WellAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ignore[misc]
     def get_image(self, i: int) -> Image:
         """
         Get a single image from this well.

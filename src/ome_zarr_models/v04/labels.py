@@ -4,6 +4,7 @@ from pydantic import Field
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.v04.base import BaseGroupv04
 
 __all__ = ["Labels", "LabelsAttrs"]
 
@@ -18,7 +19,7 @@ class LabelsAttrs(BaseAttrs):
     )
 
 
-class Labels(GroupSpec[LabelsAttrs, ArraySpec | GroupSpec]):  # type: ignore[misc]
+class Labels(GroupSpec[LabelsAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ignore[misc]
     """
     An OME-zarr labels dataset.
     """

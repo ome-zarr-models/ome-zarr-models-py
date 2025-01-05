@@ -11,6 +11,7 @@ from pydantic import model_validator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.image import Image, _check_arrays_compatible
 from ome_zarr_models.v04.image_label_types import (
     Label,
@@ -36,7 +37,7 @@ class ImageLabelAttrs(BaseAttrs):
     multiscales: list[Multiscale]
 
 
-class ImageLabel(GroupSpec[ImageLabelAttrs, ArraySpec | GroupSpec]):  # type: ignore[misc]
+class ImageLabel(GroupSpec[ImageLabelAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ignore[misc]
     """
     An image label dataset.
     """

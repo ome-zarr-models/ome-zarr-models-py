@@ -1,4 +1,8 @@
+from abc import ABC, abstractmethod
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict
+from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 
 class BaseAttrs(BaseModel):
@@ -17,3 +21,17 @@ class BaseAttrs(BaseModel):
         populate_by_name=True,
         frozen=True,
     )
+
+
+class BaseGroup(GroupSpec[BaseAttrs, ArraySpec | GroupSpec], ABC):
+    """
+    Base class for all OME-Zarr groups.
+    """
+
+    @property
+    @abstractmethod
+    def ome_zarr_version(self) -> Literal["0.4"]:
+        """
+        Version of the OME-Zarr specification that this group corresponds to.
+        """
+        ...

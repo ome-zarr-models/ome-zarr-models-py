@@ -8,6 +8,7 @@ from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models._utils import get_store_path
 from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.labels import Labels
 from ome_zarr_models.v04.multiscales import Multiscale
 from ome_zarr_models.v04.omero import Omero
@@ -74,7 +75,7 @@ class ImageAttrs(BaseAttrs):
     omero: Omero | None = None
 
 
-class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec]):  # type: ignore[misc]
+class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ignore[misc]
     """
     An OME-zarr multiscale dataset.
     """
