@@ -9,7 +9,7 @@ To access these, use the `.attributes` property on the group objects.
 
 A listing of the group objects and associated metadata objects is given below for each version of the OME-Zarr specification.
 
-### v04
+## v04
 
 | OME-Zarr group objects                                     | Metadata attributes                                                  |
 | ---------------------------------------------------------- | -------------------------------------------------------------------- |
@@ -18,3 +18,7 @@ A listing of the group objects and associated metadata objects is given below fo
 | [`Labels`][ome_zarr_models.v04.labels.Labels]              | [`LabelsAttrs`][ome_zarr_models.v04.labels.LabelsAttrs]              |
 | [`ImageLabel`][ome_zarr_models.v04.image_label.ImageLabel] | [`ImageLabelAttrs`][ome_zarr_models.v04.image_label.ImageLabelAttrs] |
 | [`Well`][ome_zarr_models.v04.well.Well]                    | [`WellAttrs`][ome_zarr_models.v04.well.WellAttrs]                    |
+
+## Common objects
+
+::: ome_zarr_models.base

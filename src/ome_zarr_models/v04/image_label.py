@@ -10,7 +10,7 @@ import zarr
 from pydantic import model_validator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
-from ome_zarr_models.v04.base import Base
+from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.v04.image import Image, _check_arrays_compatible
 from ome_zarr_models.v04.image_label_types import (
     Label,
@@ -27,7 +27,7 @@ __all__ = [
 ]
 
 
-class ImageLabelAttrs(Base):
+class ImageLabelAttrs(BaseAttrs):
     """
     Attributes for an image label object.
     """

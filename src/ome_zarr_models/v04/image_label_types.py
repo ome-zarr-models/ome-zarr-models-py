@@ -10,7 +10,7 @@ from typing import Annotated, Literal
 from pydantic import AfterValidator, Field, model_validator
 
 from ome_zarr_models._utils import duplicates
-from ome_zarr_models.v04.base import Base
+from ome_zarr_models.base import BaseAttrs
 
 # ImageLabel is imported into the top level namespace
 __all__ = [
@@ -25,7 +25,7 @@ Uint8 = Annotated[int, Field(strict=True, ge=0, le=255)]
 RGBA = tuple[Uint8, Uint8, Uint8, Uint8]
 
 
-class Color(Base):
+class Color(BaseAttrs):
     """
     A label value and RGBA.
     """
@@ -34,7 +34,7 @@ class Color(Base):
     rgba: RGBA | None
 
 
-class Source(Base):
+class Source(BaseAttrs):
     """
     Source data for the labels.
     """
@@ -45,7 +45,7 @@ class Source(Base):
     )
 
 
-class Property(Base):
+class Property(BaseAttrs):
     """
     A single property.
     """
@@ -72,7 +72,7 @@ def _parse_colors(colors: tuple[Color] | None) -> tuple[Color] | None:
     return colors
 
 
-class Label(Base):
+class Label(BaseAttrs):
     """
     Metadata for a single image-label.
     """

@@ -14,7 +14,7 @@ from pydantic import (
 )
 
 from ome_zarr_models._utils import _AlphaNumericConstraint, _unique_items_validator
-from ome_zarr_models.v04.base import Base
+from ome_zarr_models.base import BaseAttrs
 
 __all__ = [
     "Acquisition",
@@ -25,7 +25,7 @@ __all__ = [
 ]
 
 
-class Acquisition(Base):
+class Acquisition(BaseAttrs):
     """
     A single acquisition.
     """
@@ -41,7 +41,7 @@ class Acquisition(Base):
     endtime: int | None = None
 
 
-class WellInPlate(Base):
+class WellInPlate(BaseAttrs):
     """
     A single well within a plate.
     """
@@ -53,7 +53,7 @@ class WellInPlate(Base):
     columnIndex: int
 
 
-class Column(Base):
+class Column(BaseAttrs):
     """
     A single column within a well.
     """
@@ -61,7 +61,7 @@ class Column(Base):
     name: Annotated[str, _AlphaNumericConstraint]
 
 
-class Row(Base):
+class Row(BaseAttrs):
     """
     A single row within a well.
     """
@@ -69,7 +69,7 @@ class Row(Base):
     name: Annotated[str, _AlphaNumericConstraint]
 
 
-class Plate(Base):
+class Plate(BaseAttrs):
     """
     A single plate.
     """

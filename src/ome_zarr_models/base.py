@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 
 
-class Base(BaseModel):
+class BaseAttrs(BaseModel):
     """
     The base pydantic model for all metadata classes
     """

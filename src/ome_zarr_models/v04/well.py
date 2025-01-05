@@ -6,7 +6,7 @@ from collections.abc import Generator
 
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
-from ome_zarr_models.v04.base import Base
+from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.v04.image import Image
 from ome_zarr_models.v04.well_types import WellMeta
 
@@ -14,7 +14,7 @@ from ome_zarr_models.v04.well_types import WellMeta
 __all__ = ["WellAttrs"]
 
 
-class WellAttrs(Base):
+class WellAttrs(BaseAttrs):
     """
     Attributes for a well group.
     """

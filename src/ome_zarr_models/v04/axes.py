@@ -3,7 +3,7 @@ from typing import Literal
 
 from pydantic import JsonValue
 
-from ome_zarr_models.v04.base import Base
+from ome_zarr_models.base import BaseAttrs
 
 __all__ = ["Axes", "Axis", "AxisType"]
 
@@ -11,7 +11,7 @@ __all__ = ["Axes", "Axis", "AxisType"]
 AxisType = Literal["space", "time", "channel"]
 
 
-class Axis(Base):
+class Axis(BaseAttrs):
     """
     Model for an element of `Multiscale.axes`.
 

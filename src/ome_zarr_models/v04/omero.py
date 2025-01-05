@@ -6,12 +6,12 @@ from typing import Annotated
 
 from pydantic import StringConstraints
 
-from ome_zarr_models.v04.base import Base
+from ome_zarr_models.base import BaseAttrs
 
 __all__ = ["Channel", "Omero", "Window"]
 
 
-class Window(Base):
+class Window(BaseAttrs):
     """
     A single window.
     """
@@ -25,7 +25,7 @@ class Window(Base):
 _RGBHexConstraint = StringConstraints(pattern=r"[0-9a-fA-F]{6}")
 
 
-class Channel(Base):
+class Channel(BaseAttrs):
     """
     A single omero channel.
     """
@@ -34,7 +34,7 @@ class Channel(Base):
     window: Window
 
 
-class Omero(Base):
+class Omero(BaseAttrs):
     """
     omero model.
     """

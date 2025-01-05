@@ -8,13 +8,13 @@ from typing import Annotated, Literal
 from pydantic import AfterValidator, Field
 
 from ome_zarr_models._utils import _AlphaNumericConstraint, _unique_items_validator
-from ome_zarr_models.v04.base import Base
+from ome_zarr_models.base import BaseAttrs
 
 # WellGroup is defined one level higher
 __all__ = ["WellImage", "WellMeta"]
 
 
-class WellImage(Base):
+class WellImage(BaseAttrs):
     """
     A single image within a well.
     """
@@ -25,7 +25,7 @@ class WellImage(Base):
     )
 
 
-class WellMeta(Base):
+class WellMeta(BaseAttrs):
     """
     Metadata for a single well.
     """
