@@ -34,4 +34,3 @@ class BaseGroup(GroupSpec[BaseAttrs, ArraySpec | GroupSpec], ABC):
         """
         Version of the OME-Zarr specification that this group corresponds to.
         """
-        ...
