@@ -34,6 +34,11 @@ def open_ome_zarr(group: zarr.Group) -> BaseGroup:
     trying to validate each group metadata definition against your data.
     If validation is successful, that data class is returned without
     trying any more.
+
+    Parameters
+    ----------
+    group : zarr.Group
+        Zarr group containing OME-Zarr data.
     """
     for group_cls in _V04_groups:
         try:

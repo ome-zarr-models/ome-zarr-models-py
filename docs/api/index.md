@@ -9,6 +9,10 @@ To access these, use the `.attributes` property on the group objects.
 
 A listing of the group objects and associated metadata objects is given below for each version of the OME-Zarr specification.
 
+## Top-level
+
+::: ome_zarr_models
+
 ## v04
 
 | OME-Zarr group objects                                     | Metadata attributes                                                  |
