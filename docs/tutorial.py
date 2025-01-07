@@ -10,8 +10,8 @@ from ome_zarr_models.v04.image import Image
 
 # ## Loading datasets
 #
-# OME-zarr datasets are just zarr groups with special metadata.
-# To open an OME-zarr dataset, we first open the zarr group.
+# OME-Zarr datasets are just zarr groups with special metadata.
+# To open an OME-Zarr dataset, we first open the zarr group.
 
 zarr_group = zarr.open(
     "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0062A/6001240.zarr", mode="r"
@@ -33,7 +33,7 @@ ome_zarr_image = Image.from_zarr(zarr_group)
 # No errors, which means the metadata is valid 🎉
 #
 # ## Accessing metadata
-# To access the OME-zarr metadata, use the `.attributes` property:
+# To access the OME-Zarr metadata, use the `.attributes` property:
 
 metadata = ome_zarr_image.attributes
 pprint(metadata)

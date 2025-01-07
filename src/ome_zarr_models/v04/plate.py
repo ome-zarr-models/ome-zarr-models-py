@@ -1,5 +1,5 @@
 """
-For reference, see the [plate section of the OME-zarr specification](https://ngff.openmicroscopy.org/0.4/index.html#plate-md).
+For reference, see the [plate section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.4/index.html#plate-md).
 """
 
 from collections import Counter

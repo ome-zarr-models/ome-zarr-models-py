@@ -6,7 +6,7 @@ Below are some different ways you can contribute.
 
 ## Suggesting new features
 
-We're super open to helper functionality for working with OME-zarr metadata using our package!
+We're super open to helper functionality for working with OME-Zarr metadata using our package!
 To suggest a new feature, please open a ticket on [our issue tracker](https://github.com/ome-zarr-models/ome-zarr-models-py).
 
 ## Reporting issues

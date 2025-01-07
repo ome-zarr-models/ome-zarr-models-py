@@ -1,5 +1,5 @@
 """
-For reference, see the [well section of the OME-zarr specification](https://ngff.openmicroscopy.org/0.4/#well-md).
+For reference, see the [well section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.4/#well-md).
 """
 
 from collections import defaultdict

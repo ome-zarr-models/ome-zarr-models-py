@@ -1,6 +1,6 @@
 # ome-zarr-models
 
-A Python package that provides validation and a Pythonic interface for OME-zarr datasets.
+A Python package that provides validation and a Pythonic interface for OME-Zarr datasets.
 
 ## Installing
 
@@ -19,9 +19,9 @@ Useful places to get started are:
 
 This package has been designed with the following guiding principles:
 
-- Strict adherence to the [OME-zarr specification](https://ngff.openmicroscopy.org/), with the goal of being a reference implementation.
-- A usable set of Python classes for reading, writing, and interacting with OME-zarr metadata.
-- The ability to work with multiple versions of the OME-zarr spec at the same time.
+- Strict adherence to the [OME-Zarr specification](https://ngff.openmicroscopy.org/), with the goal of being a reference implementation.
+- A usable set of Python classes for reading, writing, and interacting with OME-Zarr metadata.
+- The ability to work with multiple versions of the OME-Zarr spec at the same time.
 - Array reading and writing operations are out of scope.
 
 ## Getting help

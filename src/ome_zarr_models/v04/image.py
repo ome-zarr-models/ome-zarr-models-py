@@ -61,7 +61,7 @@ def _check_arrays_compatible(data: Image) -> Image:
 
 class ImageAttrs(BaseAttrs):
     """
-    Model for the metadata of OME-zarr data.
+    Model for the metadata of OME-Zarr data.
 
     See https://ngff.openmicroscopy.org/0.4/#image-layout.
     """
@@ -76,7 +76,7 @@ class ImageAttrs(BaseAttrs):
 
 class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ignore[misc]
     """
-    An OME-zarr multiscale dataset.
+    An OME-Zarr multiscale dataset.
     """
 
     _check_arrays_compatible = model_validator(mode="after")(_check_arrays_compatible)
@@ -84,7 +84,7 @@ class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type
     @classmethod
     def from_zarr(cls, group: zarr.Group) -> Self:
         """
-        Create an instance of an OME-zarr image from a `zarr.Group`.
+        Create an instance of an OME-Zarr image from a `zarr.Group`.
 
         Parameters
         ----------

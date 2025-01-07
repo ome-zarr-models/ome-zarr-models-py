@@ -1,5 +1,5 @@
 """
-For reference, see the [multiscales section of the OME-zarr specification](https://ngff.openmicroscopy.org/0.4/#multiscale-md).
+For reference, see the [multiscales section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.4/#multiscale-md).
 """
 
 from __future__ import annotations
