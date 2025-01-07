@@ -1,10 +1,26 @@
 [project]
 name = "ome-zarr-models"
 dynamic = ["version"]
-description = "Data models for OME-Zarr"
+description = "A minimal Python package for reading OME-Zarr (meta)data "
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = ["zarr<3", "pydantic", "pydantic-zarr"]
+maintainers = [
+  {name = "David Stansby"}
+]
+license = {file = "LICENSE"}
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  "Programming Language :: Python"
+]
+
+[project.urls]
+Documentation = "https://ome-zarr-models-py.readthedocs.io"
+Repository = "https://github.com/ome-zarr-models/ome-zarr-models-py"
+"Bug Tracker" = "https://github.com/ome-zarr-models/ome-zarr-models-py/issues"
+# Changelog = ""
 
 [project.optional-dependencies]
 docs = [
