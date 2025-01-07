@@ -1,5 +1,5 @@
 """
-For reference, see the [well section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.4/#well-md).
+For reference, see the [well section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.5/#well-md).
 """
 
 from collections import defaultdict
@@ -31,7 +31,7 @@ class WellMeta(BaseAttrs):
     """
 
     images: Annotated[list[WellImage], AfterValidator(_unique_items_validator)]
-    version: Literal["0.4"] | None = Field(
+    version: Literal["0.5"] | None = Field(
         None, description="Version of the well specification"
     )
 

@@ -15,7 +15,7 @@ class Axis(BaseAttrs):
     """
     Model for an element of `Multiscale.axes`.
 
-    See https://ngff.openmicroscopy.org/0.4/#axes-md.
+    See https://ngff.openmicroscopy.org/0.5/#axes-md.
     """
 
     name: str

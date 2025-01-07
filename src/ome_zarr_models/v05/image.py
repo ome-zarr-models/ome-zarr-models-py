@@ -7,12 +7,12 @@ from pydantic import Field, model_validator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models.base import BaseAttrs
-from ome_zarr_models.v04.base import BaseGroupv04
-from ome_zarr_models.v04.labels import Labels
-from ome_zarr_models.v04.multiscales import Multiscale
-from ome_zarr_models.v04.omero import Omero
+from ome_zarr_models.v05.base import BaseGroupv05
+from ome_zarr_models.v05.labels import Labels
+from ome_zarr_models.v05.multiscales import Multiscale
+from ome_zarr_models.v05.omero import Omero
 
-# Image is imported to the `ome_zarr_py.v04` namespace, so not
+# Image is imported to the `ome_zarr_py.v05` namespace, so not
 # listed here
 __all__ = ["ImageAttrs"]
 
@@ -63,7 +63,7 @@ class ImageAttrs(BaseAttrs):
     """
     Model for the metadata of OME-Zarr data.
 
-    See https://ngff.openmicroscopy.org/0.4/#image-layout.
+    See https://ngff.openmicroscopy.org/0.5/#image-layout.
     """
 
     multiscales: list[Multiscale] = Field(
@@ -74,7 +74,7 @@ class ImageAttrs(BaseAttrs):
     omero: Omero | None = None
 
 
-class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ignore[misc]
+class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec], BaseGroupv05):  # type: ignore[misc]
     """
     An OME-Zarr multiscale dataset.
     """

@@ -5,9 +5,9 @@ from pydantic import model_validator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models.base import BaseAttrs
-from ome_zarr_models.v04.base import BaseGroupv04
-from ome_zarr_models.v04.plate import Plate
-from ome_zarr_models.v04.well import Well
+from ome_zarr_models.v05.base import BaseGroupv05
+from ome_zarr_models.v05.plate import Plate
+from ome_zarr_models.v05.well import Well
 
 __all__ = ["HCS", "HCSAttrs"]
 
@@ -20,7 +20,7 @@ class HCSAttrs(BaseAttrs):
     plate: Plate
 
 
-class HCS(GroupSpec[HCSAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ignore[misc]
+class HCS(GroupSpec[HCSAttrs, ArraySpec | GroupSpec], BaseGroupv05):  # type: ignore[misc]
     """
     An OME-Zarr high-content screening (HCS) dataset representing a single plate.
     """

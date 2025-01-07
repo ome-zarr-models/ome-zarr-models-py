@@ -3,7 +3,7 @@ from typing import Literal
 from pydantic import Field, JsonValue
 
 from ome_zarr_models.base import BaseAttrs
-from ome_zarr_models.v04.plate import Plate
+from ome_zarr_models.v05.plate import Plate
 
 
 class BioFormats2RawAttrs(BaseAttrs):

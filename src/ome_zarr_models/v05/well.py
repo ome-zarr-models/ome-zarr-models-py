@@ -1,5 +1,5 @@
 """
-For reference, see the [well section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.4/#well-md).
+For reference, see the [well section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.5/#well-md).
 """
 
 from collections.abc import Generator
@@ -7,9 +7,9 @@ from collections.abc import Generator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models.base import BaseAttrs
-from ome_zarr_models.v04.base import BaseGroupv04
-from ome_zarr_models.v04.image import Image
-from ome_zarr_models.v04.well_types import WellMeta
+from ome_zarr_models.v05.base import BaseGroupv05
+from ome_zarr_models.v05.image import Image
+from ome_zarr_models.v05.well_types import WellMeta
 
 # WellGroup is defined one level higher
 __all__ = ["WellAttrs"]
@@ -23,7 +23,7 @@ class WellAttrs(BaseAttrs):
     well: WellMeta
 
 
-class Well(GroupSpec[WellAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ignore[misc]
+class Well(GroupSpec[WellAttrs, ArraySpec | GroupSpec], BaseGroupv05):  # type: ignore[misc]
     def get_image(self, i: int) -> Image:
         """
         Get a single image from this well.

@@ -1,5 +1,5 @@
 """
-For reference, see the [image label section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.4/index.html#label-md).
+For reference, see the [image label section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.5/index.html#label-md).
 """
 
 from __future__ import annotations
@@ -11,12 +11,12 @@ from pydantic import model_validator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models.base import BaseAttrs
-from ome_zarr_models.v04.base import BaseGroupv04
-from ome_zarr_models.v04.image import Image, _check_arrays_compatible
-from ome_zarr_models.v04.image_label_types import (
+from ome_zarr_models.v05.base import BaseGroupv05
+from ome_zarr_models.v05.image import Image, _check_arrays_compatible
+from ome_zarr_models.v05.image_label_types import (
     Label,
 )
-from ome_zarr_models.v04.multiscales import Multiscale
+from ome_zarr_models.v05.multiscales import Multiscale
 
 if TYPE_CHECKING:
     import zarr
@@ -37,7 +37,7 @@ class ImageLabelAttrs(BaseAttrs):
     multiscales: list[Multiscale]
 
 
-class ImageLabel(GroupSpec[ImageLabelAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ignore[misc]
+class ImageLabel(GroupSpec[ImageLabelAttrs, ArraySpec | GroupSpec], BaseGroupv05):  # type: ignore[misc]
     """
     An image label dataset.
     """

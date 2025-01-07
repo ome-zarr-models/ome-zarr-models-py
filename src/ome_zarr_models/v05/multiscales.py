@@ -1,5 +1,5 @@
 """
-For reference, see the [multiscales section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.4/#multiscale-md).
+For reference, see the [multiscales section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.5/#multiscale-md).
 """
 
 from __future__ import annotations
@@ -18,8 +18,8 @@ from pydantic import (
 
 from ome_zarr_models._utils import duplicates
 from ome_zarr_models.base import BaseAttrs
-from ome_zarr_models.v04.axes import Axes, AxisType
-from ome_zarr_models.v04.coordinate_transformations import (
+from ome_zarr_models.v05.axes import Axes, AxisType
+from ome_zarr_models.v05.coordinate_transformations import (
     ScaleTransform,
     Transform,
     TranslationTransform,
@@ -248,7 +248,7 @@ class Multiscale(BaseAttrs):
     datasets: Annotated[tuple[Dataset, ...], AfterValidator(_ensure_ordered_scales)] = (
         Field(..., min_length=1)
     )
-    version: Literal["0.4"] | None = None
+    version: Literal["0.5"] | None = None
     coordinateTransformations: ValidTransform | None = None
     metadata: JsonValue = None
     name: JsonValue | None = None

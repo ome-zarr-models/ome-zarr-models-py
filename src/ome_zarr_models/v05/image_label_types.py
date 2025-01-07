@@ -1,5 +1,5 @@
 """
-For reference, see the [image label section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.4/index.html#label-md).
+For reference, see the [image label section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.5/index.html#label-md).
 """
 
 from __future__ import annotations
@@ -82,7 +82,7 @@ class Label(BaseAttrs):
     colors: Annotated[tuple[Color, ...] | None, AfterValidator(_parse_colors)] = None
     properties: tuple[Property, ...] | None = None
     source: Source | None = None
-    version: Literal["0.4"] | None
+    version: Literal["0.5"] | None
 
     @model_validator(mode="after")
     def _parse_model(self) -> Label:
