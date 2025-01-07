@@ -1,5 +1,5 @@
 """
-For reference, see the [image label section of the OME-zarr specification](https://ngff.openmicroscopy.org/0.4/index.html#label-md).
+For reference, see the [image label section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.4/index.html#label-md).
 """
 
 from __future__ import annotations
@@ -47,7 +47,7 @@ class ImageLabel(GroupSpec[ImageLabelAttrs, ArraySpec | GroupSpec], BaseGroupv04
     @classmethod
     def from_zarr(cls, group: zarr.Group) -> Self:
         """
-        Create an instance of an OME-zarr image from a `zarr.Group`.
+        Create an instance of an OME-Zarr image from a `zarr.Group`.
 
         Parameters
         ----------

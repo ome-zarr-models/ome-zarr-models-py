@@ -21,5 +21,5 @@ class LabelsAttrs(BaseAttrs):
 
 class Labels(GroupSpec[LabelsAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ignore[misc]
     """
-    An OME-zarr labels dataset.
+    An OME-Zarr labels dataset.
     """

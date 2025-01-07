@@ -1,5 +1,5 @@
 """
-For reference, see the [omero section of the OME-zarr specification](https://ngff.openmicroscopy.org/0.4/#omero-md).
+For reference, see the [omero section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.4/#omero-md).
 """
 
 from typing import Annotated

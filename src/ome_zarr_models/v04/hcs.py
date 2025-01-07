@@ -22,7 +22,7 @@ class HCSAttrs(BaseAttrs):
 
 class HCS(GroupSpec[HCSAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ignore[misc]
     """
-    An OME-zarr high-content screening (HCS) dataset representing a single plate.
+    An OME-Zarr high-content screening (HCS) dataset representing a single plate.
     """
 
     @model_validator(mode="after")

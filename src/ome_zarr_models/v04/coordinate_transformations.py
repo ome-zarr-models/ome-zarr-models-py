@@ -1,5 +1,5 @@
 """
-For reference, see the [coordinate transformations section of the OME-zarr specification](https://ngff.openmicroscopy.org/0.4/#trafo-md).
+For reference, see the [coordinate transformations section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.4/#trafo-md).
 """
 
 from __future__ import annotations
