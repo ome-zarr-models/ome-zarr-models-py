@@ -4,7 +4,7 @@ dynamic = ["version"]
 description = "Data models for OME-Zarr"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["zarr<3", "typing_extensions", "pydantic", "pydantic-zarr"]
+dependencies = ["zarr<3", "pydantic", "pydantic-zarr"]
 
 [project.optional-dependencies]
 docs = [
@@ -17,7 +17,6 @@ docs = [
     "griffe-pydantic",
     "fsspec[http]",
 ]
-pydantic = ["pydantic"]
 
 [tool.hatch.version]
 source = "vcs"
@@ -28,29 +27,17 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 docs = [
-    "mkdocs>=1.6.1",
-    "mkdocstrings-python>=1.12.2",
-    "mkdocs-material",
-    "mkdocs-jupyter",
-    "matplotlib",
-    "rich",
-    "griffe-pydantic",
-    "fsspec[http]",
+    "ome-zarr-models[docs]",
 ]
 dev = [
-    "jupyter[notebook]>=1.1.1",
-    "jupytext>=1.16.4",
     "mypy",
     "ruff>=0.8",
     "pre-commit",
 ]
-
 test = ["pytest>=8.3.3", "pytest-cov"]
 
-pydantic = ["pydantic", "pydantic-zarr"]
-
 [tool.uv]
-default-groups = ["docs", "dev", "pydantic", "test"]
+default-groups = ["docs", "dev", "test"]
 
 # Ruff configuration for linting and formatting
 # https://docs.astral.sh/ruff

@@ -42,7 +42,7 @@ def open_ome_zarr(group: zarr.Group) -> BaseGroup:
     """
     for group_cls in _V04_groups:
         try:
-            return group_cls.from_zarr(group)
+            return group_cls.from_zarr(group)  # type: ignore[no-any-return]
         except ValidationError:
             continue
 
