@@ -4,7 +4,7 @@ dynamic = ["version"]
 description = "Data models for OME-Zarr"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["zarr<3", "typing_extensions", "pydantic", "pydantic-zarr"]
+dependencies = ["zarr<3", "pydantic", "pydantic-zarr"]
 
 [project.optional-dependencies]
 docs = [
