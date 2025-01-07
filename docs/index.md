@@ -4,14 +4,9 @@ A Python package that provides validation and a Pythonic interface for OME-zarr 
 
 ## Installing
 
-Currently this package is only available in the GitHub repo.
-Install it using:
-
 ```sh
-pip install git+https://github.com/ome-zarr-models/ome-zarr-models-py.git@main
+pip install ome-zarr-models-py
 ```
-
-When we do a first release, it will be available on PyPI and conda-forge.
 
 ## Getting started
 
@@ -45,12 +40,6 @@ Developers of this package are active on our [Zulip chat channel](https://images
 
 ## Roadmap
 
-### v1
-
-- A working validator for OME-zarr 0.4 datasets.
-- A Python object representation of OME-zarr 0.4 datasets.
-
-### v2
-
-- Write metadata after creation/modification.
-- A working validator for OME-zarr 0.5 datasets.
+- Writing metadata after creation/modification.
+- Support for OME-Zarr version 0.5.
+- Want to see a feature? See [the contributing guide](contributing.md)!
