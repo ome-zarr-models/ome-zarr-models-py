@@ -6,7 +6,6 @@ import zarr.errors
 from pydantic import Field, model_validator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
-from ome_zarr_models._utils import get_store_path
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.labels import Labels
@@ -95,18 +94,7 @@ class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type
         # on unlistable storage backends, the members of this group will be {}
         guess = GroupSpec.from_zarr(group, depth=0)
 
-        try:
-            multi_meta_maybe = guess.attributes["multiscales"]
-        except KeyError as e:
-            store_path = get_store_path(group.store)
-            msg = (
-                "Failed to find mandatory `multiscales` key in the attributes of the "
-                "Zarr group at "
-                f"{group.store}://{store_path}://{group.path}."
-            )
-            raise KeyError(msg) from e
-
-        multi_meta = ImageAttrs(multiscales=multi_meta_maybe)
+        multi_meta = ImageAttrs.model_validate(guess.attributes)
         members_tree_flat = {}
         for multiscale in multi_meta.multiscales:
             for dataset in multiscale.datasets:

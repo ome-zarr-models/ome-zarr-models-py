@@ -1,6 +1,7 @@
 from importlib.metadata import PackageNotFoundError, version
 
 import zarr
+from pydantic import ValidationError
 
 import ome_zarr_models.v04.hcs
 import ome_zarr_models.v04.image
@@ -37,7 +38,7 @@ def load_ome_zarr_group(group: zarr.Group) -> BaseGroup:
     for group_cls in _V04_groups:
         try:
             return group_cls.from_zarr(group)
-        except Exception:
+        except ValidationError:
             continue
 
     raise RuntimeError(f"Could not find any matches for group {group}")
