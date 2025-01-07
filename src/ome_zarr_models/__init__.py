@@ -26,7 +26,7 @@ _V04_groups: list[type[BaseGroupv04]] = [
 ]
 
 
-def load_ome_zarr_group(group: zarr.Group) -> BaseGroup:
+def open_ome_zarr(group: zarr.Group) -> BaseGroup:
     """
     Create an ome-zarr-models object from an existing OME-Zarr group.
 

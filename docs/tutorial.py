@@ -5,7 +5,7 @@ import zarr
 import zarr.storage
 from rich.pretty import pprint
 
-from ome_zarr_models import load_ome_zarr_group
+from ome_zarr_models import open_ome_zarr
 from ome_zarr_models.v04.image import Image
 
 # ## Loading datasets
@@ -18,9 +18,9 @@ zarr_group = zarr.open(
 )
 
 # If you're not sure what type or OME-Zarr version of data you have, you can
-# use load_ome_zarr_group() to automatically 'guess' the correct group:
+# use open_ome_zarr() to automatically 'guess' the correct group:
 
-ome_zarr_group = load_ome_zarr_group(zarr_group)
+ome_zarr_group = open_ome_zarr(zarr_group)
 print(type(ome_zarr_group))
 print(ome_zarr_group.ome_zarr_version)
 
