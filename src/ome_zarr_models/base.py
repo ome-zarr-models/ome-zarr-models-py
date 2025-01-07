@@ -23,7 +23,7 @@ class BaseAttrs(BaseModel):
     )
 
 
-class BaseGroup(GroupSpec[BaseAttrs, ArraySpec | GroupSpec], ABC):
+class BaseGroup(GroupSpec[BaseAttrs, ArraySpec | GroupSpec], ABC):  # type: ignore[misc]
     """
     Base class for all OME-Zarr groups.
     """
