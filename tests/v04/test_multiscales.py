@@ -492,13 +492,9 @@ def test_from_zarr_missing_metadata(
 ) -> None:
     group_model = GroupSpec()
     group = group_model.to_zarr(store, path="test")
-    store_path = ""
     # store_path = store.path if hasattr(store, "path") else ""
-    match = (
-        "Failed to find mandatory `multiscales` key in the attributes of the "
-        f"Zarr group at {store}://{store_path}://{group.path}."
-    )
-    with pytest.raises(KeyError, match=match):
+    match = "multiscales\n  Field required"
+    with pytest.raises(ValidationError, match=match):
         Image.from_zarr(group)
 
 
