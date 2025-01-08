@@ -47,3 +47,12 @@ repos:
           - pydantic
           - pytest
           - pydantic-zarr
+
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.29.4
+    hooks:
+      - id: typos
+        files: \.(py|md|rst|yaml|toml)
+        # empty to do not write fixes
+        args: []
+        exclude: pyproject.toml

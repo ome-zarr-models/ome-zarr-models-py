@@ -141,6 +141,6 @@ class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type
         if "labels" not in self.members:
             return None
 
-        lables_group = self.members["labels"]
+        labels_group = self.members["labels"]
 
-        return Labels(attributes=lables_group.attributes, members=lables_group.members)
+        return Labels(attributes=labels_group.attributes, members=labels_group.members)

@@ -9,7 +9,7 @@ from ome_zarr_models.v04.plate import (
 from tests.v04.conftest import read_in_json
 
 
-def test_bioformats2raw_exmaple_json() -> None:
+def test_bioformats2raw_example_json() -> None:
     model = read_in_json(
         json_fname="bioformats2raw_example.json", model_cls=BioFormats2RawAttrs
     )

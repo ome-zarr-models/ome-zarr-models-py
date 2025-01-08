@@ -120,3 +120,6 @@ addopts = [
     "-vv",
 ]
 filterwarnings = ["error"]
+
+[tool.typos.default.extend-words]
+ome = "ome"

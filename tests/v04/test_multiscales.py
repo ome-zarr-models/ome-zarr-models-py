@@ -102,7 +102,7 @@ def test_multiscale_space_axes_last(axis_types: list[str]) -> None:
     )
     rank = len(axes)
     datasets = (Dataset.build(path="path", scale=(1,) * rank, translation=(0,) * rank),)
-    # TODO: make some axis-specifc exceptions
+    # TODO: make some axis-specific exceptions
     with pytest.raises(
         ValidationError, match="All space axes must be at the end of the axes list."
     ):
@@ -341,7 +341,7 @@ def test_validate_axes_dset_transforms() -> None:
         )
 
 
-def test_ordred_multiscales() -> None:
+def test_ordered_multiscales() -> None:
     """
     > The "path"s MUST be ordered from largest (i.e. highest resolution) to smallest.
     """
