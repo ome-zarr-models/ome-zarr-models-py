@@ -12,7 +12,7 @@ pip install ome-zarr-models-py
 
 Useful places to get started are:
 
-- [The tutorial](tutorial.md), which gives a worked example of using this package
+- [The tutorial](tutorial.py), which gives a worked example of using this package
 - [The API reference](api/index.md), which explains how this package is structured
 
 ## Design
