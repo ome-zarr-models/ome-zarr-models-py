@@ -25,7 +25,7 @@ print(type(ome_zarr_group))
 print(ome_zarr_group.ome_zarr_version)
 
 # If you already know the data type you're loading, it's better to load
-# directly from that class (see [the API reference](api/index.md) for a list of classes)
+# directly from that class (see [the API reference](../api/) for a list of classes)
 # This will validate the metadata:
 
 ome_zarr_image = Image.from_zarr(zarr_group)
