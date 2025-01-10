@@ -1,0 +1,56 @@
+{
+  "_creator": {
+    "name": "omero-zarr",
+    "version": "0.4.0"
+  },
+  "multiscales": [
+    {
+      "axes": [
+        {
+          "name": "c",
+          "type": "channel"
+        },
+        {
+          "name": "z",
+          "type": "space",
+          "unit": "micrometer"
+        },
+        {
+          "name": "y",
+          "type": "space",
+          "unit": "micrometer"
+        },
+        {
+          "name": "x",
+          "type": "space",
+          "unit": "micrometer"
+        }
+      ],
+      "datasets": [
+        {
+          "coordinateTransformations": [
+            {
+              "scale": [
+                1.0, 0.5002025531914894, 0.3603981534640209, 0.3603981534640209
+              ],
+              "type": "scale"
+            }
+          ],
+          "path": "0"
+        },
+        {
+          "coordinateTransformations": [
+            {
+              "scale": [
+                1.0, 0.5002025531914894, 0.7207963069280418, 0.7207963069280418
+              ],
+              "type": "scale"
+            }
+          ],
+          "path": "1"
+        }
+      ],
+      "version": "0.4"
+    }
+  ]
+}
