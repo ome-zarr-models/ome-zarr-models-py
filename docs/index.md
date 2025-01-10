@@ -5,7 +5,13 @@ A Python package that provides validation and a Pythonic interface for OME-Zarr 
 ## Installing
 
 ```sh
-pip install ome-zarr-models-py
+pip install ome-zarr-models
+```
+
+or
+
+```sh
+conda install -c conda-forge ome-zarr-models
 ```
 
 ## Getting started
