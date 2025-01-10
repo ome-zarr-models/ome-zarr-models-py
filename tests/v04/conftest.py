@@ -1,3 +1,4 @@
+import json
 from collections.abc import Sequence
 from pathlib import Path
 from typing import Any, Literal, TypeVar
@@ -5,6 +6,7 @@ from typing import Any, Literal, TypeVar
 import numcodecs
 import numpy as np
 import numpy.typing as npt
+import zarr
 from numcodecs.abc import Codec
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 from zarr.util import guess_chunks
@@ -23,6 +25,18 @@ T = TypeVar("T", bound=BaseAttrs)
 def read_in_json(*, json_fname: str, model_cls: type[T]) -> T:
     with open(Path(__file__).parent / "data" / json_fname) as f:
         return model_cls.model_validate_json(f.read())
+
+
+def json_to_zarr_group(*, json_fname: str) -> zarr.Group:
+    """
+    Create an empty Zarr group, and set attributes from a JSON file.
+    """
+    group = zarr.open_group(store=zarr.MemoryStore())
+    with open(Path(__file__).parent / "data" / json_fname) as f:
+        attrs = json.load(f)
+
+    group.attrs.put(attrs)
+    return group
 
 
 def normalize_chunks(

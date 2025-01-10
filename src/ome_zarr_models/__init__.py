@@ -19,6 +19,10 @@ except PackageNotFoundError:  # pragma: no cover
 
 _V04_groups: list[type[BaseGroupv04]] = [
     ome_zarr_models.v04.hcs.HCS,
+    # Important that ImageLabel is higher than Image
+    # otherwise Image will happily parse an ImageLabel
+    # dataset without parsing the image-label bit of
+    # metadata
     ome_zarr_models.v04.image_label.ImageLabel,
     ome_zarr_models.v04.image.Image,
     ome_zarr_models.v04.labels.Labels,
