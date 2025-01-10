@@ -4,7 +4,7 @@
 
 ### Bug fixes
 
-- `ImageLabel` data is now correctly parsed.
+- [ome_zarr_models.v04.image_label.ImageLabel][] data is now correctly parsed.
   Previously the `'image-label'` field was loaded, but not validated or parsed.
 
 ## 0.1
