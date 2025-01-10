@@ -7,12 +7,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Self
 
 import zarr
-from pydantic import model_validator
+from pydantic import Field
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.v04.base import BaseGroupv04
-from ome_zarr_models.v04.image import Image, _check_arrays_compatible
+from ome_zarr_models.v04.image import Image
 from ome_zarr_models.v04.image_label_types import (
     Label,
 )
@@ -33,7 +33,7 @@ class ImageLabelAttrs(BaseAttrs):
     Attributes for an image label object.
     """
 
-    image_label: Label
+    image_label: Label = Field(..., alias="image-label")
     multiscales: list[Multiscale]
 
 
@@ -41,8 +41,6 @@ class ImageLabel(GroupSpec[ImageLabelAttrs, ArraySpec | GroupSpec], BaseGroupv04
     """
     An image label dataset.
     """
-
-    _check_arrays_compatible = model_validator(mode="after")(_check_arrays_compatible)
 
     @classmethod
     def from_zarr(cls, group: zarr.Group) -> Self:
@@ -54,4 +52,6 @@ class ImageLabel(GroupSpec[ImageLabelAttrs, ArraySpec | GroupSpec], BaseGroupv04
         group : zarr.Group
             A Zarr group that has valid OME-NGFF image label metadata.
         """
-        return Image.from_zarr(group)
+        # Use Image.from_zarr() to validate multiscale metadata
+        Image.from_zarr(group)
+        return super().from_zarr(group)  # type: ignore[no-any-return]

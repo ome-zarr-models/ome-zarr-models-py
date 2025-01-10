@@ -1,29 +1,69 @@
 import pytest
 from pydantic import ValidationError
 
+from ome_zarr_models.v04.axes import Axis
+from ome_zarr_models.v04.coordinate_transformations import VectorScale
+from ome_zarr_models.v04.image_label import ImageLabel, ImageLabelAttrs
 from ome_zarr_models.v04.image_label_types import (
     Color,
     Label,
     Property,
     Source,
 )
-from tests.v04.conftest import read_in_json
+from ome_zarr_models.v04.multiscales import Dataset, Multiscale
+from tests.v04.conftest import json_to_zarr_group
 
 
 def test_image_label_example_json() -> None:
-    model = read_in_json(json_fname="image_label_example.json", model_cls=Label)
+    zarr_group = json_to_zarr_group(json_fname="image_label_example.json")
+    zarr_group.create_dataset("0", shape=(1, 1, 1, 1, 1))
+    ome_group = ImageLabel.from_zarr(zarr_group)
 
-    assert model == Label(
-        colors=(
-            Color(label_value=1, rgba=(255, 255, 255, 255)),
-            Color(label_value=4, rgba=(0, 255, 255, 128)),
+    assert ome_group.attributes == ImageLabelAttrs(
+        image_label=Label(
+            colors=(
+                Color(label_value=1, rgba=(255, 255, 255, 255)),
+                Color(label_value=4, rgba=(0, 255, 255, 128)),
+            ),
+            properties=(
+                Property(label_value=1, area=1200, cls="foo"),
+                Property(label_value=4, area=1650),
+            ),
+            source=Source(image="../../"),
+            version="0.4",
         ),
-        properties=(
-            Property(label_value=1, area=1200, cls="foo"),
-            Property(label_value=4, area=1650),
-        ),
-        source=Source(image="../../"),
-        version="0.4",
+        multiscales=[
+            Multiscale(
+                axes=[
+                    Axis(name="t", type="time", unit="millisecond"),
+                    Axis(name="c", type="channel", unit=None),
+                    Axis(name="z", type="space", unit="micrometer"),
+                    Axis(name="y", type="space", unit="micrometer"),
+                    Axis(name="x", type="space", unit="micrometer"),
+                ],
+                datasets=(
+                    Dataset(
+                        path="0",
+                        coordinateTransformations=(
+                            VectorScale(type="scale", scale=[1.0, 1.0, 0.5, 0.5, 0.5]),
+                        ),
+                    ),
+                ),
+                version="0.4",
+                coordinateTransformations=(
+                    VectorScale(type="scale", scale=[0.1, 1.0, 1.0, 1.0, 1.0]),
+                ),
+                metadata={
+                    "description": "abc",
+                    "method": "skimage.transform.pyramid_gaussian",
+                    "version": "0.16.1",
+                    "args": "[true]",
+                    "kwargs": {"multichannel": True},
+                },
+                name="example",
+                type="gaussian",
+            )
+        ],
     )
 
 

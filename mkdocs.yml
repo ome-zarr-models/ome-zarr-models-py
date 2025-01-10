@@ -69,6 +69,7 @@ nav:
           - api/v04/image-label.md
           - api/v04/labels.md
           - api/v04/well.md
+  - Changelog: changelog.md
   - Contributing: contributing.md
 
 watch:

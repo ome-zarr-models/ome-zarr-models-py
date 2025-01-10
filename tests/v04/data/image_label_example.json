@@ -1,27 +1,67 @@
 {
-  "version": "0.4",
-  "colors": [
-    {
-      "label-value": 1,
-      "rgba": [255, 255, 255, 255]
-    },
-    {
-      "label-value": 4,
-      "rgba": [0, 255, 255, 128]
+  "image-label": {
+    "version": "0.4",
+    "colors": [
+      {
+        "label-value": 1,
+        "rgba": [255, 255, 255, 255]
+      },
+      {
+        "label-value": 4,
+        "rgba": [0, 255, 255, 128]
+      }
+    ],
+    "properties": [
+      {
+        "label-value": 1,
+        "area": 1200,
+        "cls": "foo"
+      },
+      {
+        "label-value": 4,
+        "area": 1650
+      }
+    ],
+    "source": {
+      "image": "../../"
     }
-  ],
-  "properties": [
+  },
+  "multiscales": [
     {
-      "label-value": 1,
-      "area": 1200,
-      "cls": "foo"
-    },
-    {
-      "label-value": 4,
-      "area": 1650
+      "version": "0.4",
+      "name": "example",
+      "axes": [
+        { "name": "t", "type": "time", "unit": "millisecond" },
+        { "name": "c", "type": "channel" },
+        { "name": "z", "type": "space", "unit": "micrometer" },
+        { "name": "y", "type": "space", "unit": "micrometer" },
+        { "name": "x", "type": "space", "unit": "micrometer" }
+      ],
+      "datasets": [
+        {
+          "path": "0",
+          "coordinateTransformations": [
+            {
+              "type": "scale",
+              "scale": [1.0, 1.0, 0.5, 0.5, 0.5]
+            }
+          ]
+        }
+      ],
+      "coordinateTransformations": [
+        {
+          "type": "scale",
+          "scale": [0.1, 1.0, 1.0, 1.0, 1.0]
+        }
+      ],
+      "type": "gaussian",
+      "metadata": {
+        "description": "abc",
+        "method": "skimage.transform.pyramid_gaussian",
+        "version": "0.16.1",
+        "args": "[true]",
+        "kwargs": { "multichannel": true }
+      }
     }
-  ],
-  "source": {
-    "image": "../../"
-  }
+  ]
 }
