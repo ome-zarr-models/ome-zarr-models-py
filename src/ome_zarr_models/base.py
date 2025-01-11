@@ -30,7 +30,7 @@ class BaseGroup(GroupSpec[BaseAttrs, ArraySpec | GroupSpec], ABC):  # type: igno
 
     @property
     @abstractmethod
-    def ome_zarr_version(self) -> Literal["0.4"]:
+    def ome_zarr_version(self) -> Literal["0.4", "0.5"]:
         """
         Version of the OME-Zarr specification that this group corresponds to.
         """
