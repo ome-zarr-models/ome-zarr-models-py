@@ -3,7 +3,7 @@ from ome_zarr_models._v05.plate import Acquisition, Column, Plate, Row, WellInPl
 from tests.v05.conftest import json_to_zarr_group
 
 
-def test_labels() -> None:
+def test_hcs() -> None:
     zarr_group = json_to_zarr_group(json_fname="hcs_example.json")
     ome_group = HCS.from_zarr(zarr_group)
     assert ome_group.ome_attributes == HCSAttrs(
