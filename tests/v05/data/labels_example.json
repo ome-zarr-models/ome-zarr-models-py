@@ -1,0 +1,6 @@
+{
+  "ome": {
+    "version": "0.5",
+    "labels": ["cell_space_segmentation"]
+  }
+}
