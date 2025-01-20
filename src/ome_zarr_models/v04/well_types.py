@@ -10,7 +10,6 @@ from pydantic import AfterValidator, Field
 from ome_zarr_models._utils import _AlphaNumericConstraint, _unique_items_validator
 from ome_zarr_models.base import BaseAttrs
 
-# WellGroup is defined one level higher
 __all__ = ["WellImage", "WellMeta"]
 
 
