@@ -1,5 +1,4 @@
-from ome_zarr_models.v04.labels import LabelsAttrs
-from ome_zarr_models.v05.labels import Labels
+from ome_zarr_models._v05.labels import Labels, LabelsAttrs
 from tests.v05.conftest import json_to_zarr_group
 
 
