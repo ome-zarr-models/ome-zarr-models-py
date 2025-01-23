@@ -3,6 +3,8 @@ The data in `from_specification` is the one [introduced in the PR](https://githu
 
 This document keeps track of which data we are using for testing up to this point. The order below is the order in which we aim to implement the tests. On top of this data, we also have new test data.
 
+Note: Some of the data from the specification needs fixes. Once the project is in the late stage, it will be important to diff the data with the one from the specification and make a PR to fix the issues in the NGFF specs.
+
 ## coordinate_systems
 - [ ] arrayCoordSys.json
 
