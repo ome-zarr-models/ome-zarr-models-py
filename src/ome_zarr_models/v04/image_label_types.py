@@ -66,6 +66,10 @@ def _parse_colors(colors: tuple[Color] | None) -> tuple[Color] | None:
 
 
 class LabelBase(BaseAttrs):
+    """
+    Base class for image-label metadata.
+    """
+
     # TODO: validate
     # "All the values under the label-value (of colors) key MUST be unique."
     colors: Annotated[tuple[Color, ...] | None, AfterValidator(_parse_colors)] = None
