@@ -1,5 +1,5 @@
 {
-  "arrayCoordinateSystem": {
+  "coordinateSystem": {
     "name": "myDataArray",
     "axes": [
       { "name": "k", "type": "array" },
