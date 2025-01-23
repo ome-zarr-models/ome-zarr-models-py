@@ -12,7 +12,6 @@ from pydantic import AfterValidator, Field, model_validator
 from ome_zarr_models._utils import duplicates
 from ome_zarr_models.base import BaseAttrs
 
-# ImageLabel is imported into the top level namespace
 __all__ = [
     "RGBA",
     "Color",

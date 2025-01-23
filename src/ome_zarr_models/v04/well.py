@@ -11,8 +11,7 @@ from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.image import Image
 from ome_zarr_models.v04.well_types import WellMeta
 
-# WellGroup is defined one level higher
-__all__ = ["WellAttrs"]
+__all__ = ["Well", "WellAttrs"]
 
 
 class WellAttrs(BaseAttrs):
@@ -24,6 +23,10 @@ class WellAttrs(BaseAttrs):
 
 
 class Well(GroupSpec[WellAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ignore[misc]
+    """
+    An OME-Zarr well group.
+    """
+
     def get_image(self, i: int) -> Image:
         """
         Get a single image from this well.

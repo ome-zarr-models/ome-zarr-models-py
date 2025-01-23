@@ -21,7 +21,6 @@ from ome_zarr_models.v04.multiscales import Multiscale
 if TYPE_CHECKING:
     import zarr
 
-# ImageLabel is imported into the top level namespace
 __all__ = [
     "ImageLabel",
     "ImageLabelAttrs",

@@ -12,9 +12,7 @@ from ome_zarr_models.v04.labels import Labels
 from ome_zarr_models.v04.multiscales import Multiscale
 from ome_zarr_models.v04.omero import Omero
 
-# Image is imported to the `ome_zarr_py.v04` namespace, so not
-# listed here
-__all__ = ["ImageAttrs"]
+__all__ = ["Image", "ImageAttrs"]
 
 
 def _check_arrays_compatible(data: Image) -> Image:
