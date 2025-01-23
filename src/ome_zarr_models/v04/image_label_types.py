@@ -5,7 +5,7 @@ For reference, see the [image label section of the OME-Zarr specification](https
 from __future__ import annotations
 
 import warnings
-from typing import Annotated, Literal
+from typing import Annotated, Literal, Self, TypeVar
 
 from pydantic import AfterValidator, Field, model_validator
 
@@ -71,24 +71,31 @@ def _parse_colors(colors: tuple[Color] | None) -> tuple[Color] | None:
     return colors
 
 
-class Label(BaseAttrs):
-    """
-    Metadata for a single image-label.
-    """
-
+class LabelBase(BaseAttrs):
     # TODO: validate
     # "All the values under the label-value (of colors) key MUST be unique."
     colors: Annotated[tuple[Color, ...] | None, AfterValidator(_parse_colors)] = None
     properties: tuple[Property, ...] | None = None
     source: Source | None = None
-    version: Literal["0.4"] | None
+    version: str | None = None
 
     @model_validator(mode="after")
-    def _parse_model(self) -> Label:
+    def _parse_model(self) -> Self:
         return _parse_imagelabel(self)
 
 
-def _parse_imagelabel(model: Label) -> Label:
+class Label(LabelBase):
+    """
+    Metadata for a single image-label.
+    """
+
+    version: Literal["0.4"] | None = None
+
+
+_T = TypeVar("_T", bound=LabelBase)
+
+
+def _parse_imagelabel(model: _T) -> _T:
     """
     Check that label_values are consistent across properties and colors
     """
