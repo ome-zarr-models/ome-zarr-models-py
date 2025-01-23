@@ -48,4 +48,5 @@ Developers of this package are active on our [Zulip chat channel](https://images
 
 - Writing metadata after creation/modification.
 - Support for OME-Zarr version 0.5.
+- Emitting warnings when data violates "SHOULD" statements in the specification.
 - Want to see a feature? See [the contributing guide](contributing.md)!
