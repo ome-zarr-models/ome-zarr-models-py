@@ -4,7 +4,7 @@ For reference, see the [image label section of the OME-Zarr specification](https
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Literal, Self
+from typing import TYPE_CHECKING, Self
 
 import zarr
 from pydantic import Field
@@ -13,9 +13,7 @@ from pydantic_zarr.v2 import ArraySpec, GroupSpec
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.image import Image
-from ome_zarr_models.v04.image_label_types import (
-    Label as _Label,
-)
+from ome_zarr_models.v04.image_label_types import Label
 from ome_zarr_models.v04.multiscales import Multiscale
 
 if TYPE_CHECKING:
@@ -25,10 +23,6 @@ __all__ = [
     "ImageLabel",
     "ImageLabelAttrs",
 ]
-
-
-class Label(_Label):
-    version: Literal["0.5"]
 
 
 class ImageLabelAttrs(BaseAttrs):
