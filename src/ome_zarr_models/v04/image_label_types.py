@@ -12,13 +12,7 @@ from pydantic import AfterValidator, Field, model_validator
 from ome_zarr_models._utils import duplicates
 from ome_zarr_models.base import BaseAttrs
 
-__all__ = [
-    "RGBA",
-    "Color",
-    "Property",
-    "Source",
-    "Uint8",
-]
+__all__ = ["RGBA", "Color", "Label", "LabelBase", "Property", "Source", "Uint8"]
 
 Uint8 = Annotated[int, Field(strict=True, ge=0, le=255)]
 RGBA = tuple[Uint8, Uint8, Uint8, Uint8]
@@ -72,6 +66,10 @@ def _parse_colors(colors: tuple[Color] | None) -> tuple[Color] | None:
 
 
 class LabelBase(BaseAttrs):
+    """
+    Base class for image-label metadata.
+    """
+
     # TODO: validate
     # "All the values under the label-value (of colors) key MUST be unique."
     colors: Annotated[tuple[Color, ...] | None, AfterValidator(_parse_colors)] = None
