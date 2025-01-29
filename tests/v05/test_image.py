@@ -8,7 +8,7 @@ from tests.v05.conftest import json_to_zarr_group
 def test_image() -> None:
     zarr_group = json_to_zarr_group(json_fname="image_example.json")
     ome_group = Image.from_zarr(zarr_group)
-    assert ome_group.ome_attributes == ImageAttrs(
+    assert ome_group.attributes.ome == ImageAttrs(
         multiscales=[
             Multiscale(
                 axes=[

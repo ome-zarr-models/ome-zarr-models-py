@@ -15,11 +15,7 @@ class HCSAttrs(BaseAttrs):
     plate: Plate
 
 
-class OMEHCSAttrs(BaseOMEAttrs):
-    ome: HCSAttrs
-
-
-class HCS(GroupSpec[OMEHCSAttrs, ArraySpec | GroupSpec], BaseGroupv05):  # type: ignore[misc]
+class HCS(GroupSpec[BaseOMEAttrs[HCSAttrs], ArraySpec | GroupSpec], BaseGroupv05):  # type: ignore[misc]
     """
     An OME-Zarr high content screening (HCS) dataset.
     """
