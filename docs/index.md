@@ -55,7 +55,7 @@ _Note:_ support for OME-Zarr 0.5 is not complete, but when it is the following i
 
 ## Versioning
 
-`ome-zarr-models` has a 0.minor.micro versioning scheme where:
+`ome-zarr-models` has a major.minor versioning scheme where:
 
 - The major version is incremented when support for a new version of the OME-Zarr specification is added, or a breaking change is made to the package.
 - The minor version is incremented for any other changes (e.g., documentation improvments, bug fixes, new features)
