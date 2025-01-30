@@ -55,6 +55,8 @@ plugins:
             show_source: false
             show_signature_annotations: true
             signature_crossrefs: true
+            show_labels: false
+            docstring_style: numpy
             extensions:
               - griffe_pydantic:
                   schema: false
