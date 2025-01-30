@@ -34,7 +34,7 @@ markdown_extensions:
 
 plugins:
   - mkdocs-jupyter:
-      execute: true
+      execute: false
       allow_errors: false
   - mkdocstrings:
       handlers:
@@ -42,6 +42,7 @@ plugins:
           paths: [src]
           import:
             - https://docs.python.org/3/objects.inv
+            - https://zarr.dev/pydantic-zarr/objects.inv
 
           options:
             docstring_style: numpy
