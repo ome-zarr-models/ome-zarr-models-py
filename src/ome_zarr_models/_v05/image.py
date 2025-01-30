@@ -6,11 +6,7 @@ from ome_zarr_models.v04.image import ImageAttrs
 __all__ = ["Image", "ImageAttrs"]
 
 
-class OMEImageAttrs(BaseOMEAttrs):
-    ome: ImageAttrs
-
-
-class Image(GroupSpec[OMEImageAttrs, ArraySpec | GroupSpec], BaseGroupv05):  # type: ignore[misc]
+class Image(GroupSpec[BaseOMEAttrs[ImageAttrs], ArraySpec | GroupSpec], BaseGroupv05):  # type: ignore[misc]
     """
     An OME-Zarr image dataset.
     """

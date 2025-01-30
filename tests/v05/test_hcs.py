@@ -6,7 +6,7 @@ from tests.v05.conftest import json_to_zarr_group
 def test_hcs() -> None:
     zarr_group = json_to_zarr_group(json_fname="hcs_example.json")
     ome_group = HCS.from_zarr(zarr_group)
-    assert ome_group.ome_attributes == HCSAttrs(
+    assert ome_group.attributes.ome == HCSAttrs(
         plate=Plate(
             acquisitions=[
                 Acquisition(

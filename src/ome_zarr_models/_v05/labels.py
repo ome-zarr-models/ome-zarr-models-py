@@ -6,11 +6,7 @@ from ome_zarr_models.v04.labels import LabelsAttrs
 __all__ = ["Labels", "LabelsAttrs"]
 
 
-class OMELabelsAttrs(BaseOMEAttrs):
-    ome: LabelsAttrs
-
-
-class Labels(GroupSpec[OMELabelsAttrs, ArraySpec | GroupSpec], BaseGroupv05):  # type: ignore[misc]
+class Labels(GroupSpec[BaseOMEAttrs[LabelsAttrs], ArraySpec | GroupSpec], BaseGroupv05):  # type: ignore[misc]
     """
     An OME-Zarr labels dataset.
     """

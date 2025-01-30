@@ -18,11 +18,10 @@ class ImageLabelAttrs(BaseAttrs):
     multiscales: list[Multiscale]
 
 
-class OMEImageLabelAttrs(BaseOMEAttrs):
-    ome: ImageLabelAttrs
-
-
-class ImageLabel(GroupSpec[OMEImageLabelAttrs, ArraySpec | GroupSpec], BaseGroupv05):  # type: ignore[misc]
+class ImageLabel(
+    GroupSpec[BaseOMEAttrs[ImageLabelAttrs], ArraySpec | GroupSpec],  # type: ignore[misc]
+    BaseGroupv05,
+):
     """
     An OME-Zarr image label dataset.
     """
