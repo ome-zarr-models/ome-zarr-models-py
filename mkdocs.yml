@@ -61,6 +61,7 @@ plugins:
 nav:
   - Home: index.md
   - Tutorial: tutorial.py
+  - How do I...?: how-to.md
   - API reference:
       - api/index.md
       - v04:

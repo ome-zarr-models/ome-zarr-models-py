@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.2
+
+### Doc improvements
+
+- Added a ["How do I...?" page](how-to.md) that explains how to do common tasks with `ome-zarr-models`.
+
 ## 0.1.1
 
 ### Bug fixes
