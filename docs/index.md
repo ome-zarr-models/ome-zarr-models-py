@@ -44,6 +44,15 @@ Developers of this package are active on our [Zulip chat channel](https://images
   This is because it is transitional, and we have decided to put time into implementing other
   parts of the specification. We would welcome a pull request to add this functionality though!
 
+## Versioning
+
+`ome-zarr-models` has a 0.minor.micro versioning scheme where:
+
+- The major version is incremented when support for a new version of the OME-Zarr specification is added, or a breaking change is made to the package.
+- The minor version is incremented for any other changes (e.g., documentation improvments, bug fixes, new features)
+
+Before version 1.0 is released, the version number will be 0.major.minor, and version 1.0 will be released when support for version 0.5 of the OME-Zarr specification is complete.
+
 ## Roadmap
 
 - Writing metadata after creation/modification.
