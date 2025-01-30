@@ -2,7 +2,7 @@
 
 ## Validate an OME-Zarr group
 
-If you know what type of group it is, use the `to_zarr()` method on [one of the group objects](api/index.md):
+If you know what type of group it is, use the `from_zarr()` method on [one of the group objects](api/index.md):
 
 ```python
 import zarr
