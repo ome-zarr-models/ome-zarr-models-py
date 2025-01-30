@@ -46,7 +46,7 @@ Developers of this package are active on our [Zulip chat channel](https://images
 
 ## Versioning
 
-`ome-zarr-models` has a 0.minor.micro versioning scheme where:
+`ome-zarr-models` has a major.minor versioning scheme where:
 
 - The major version is incremented when support for a new version of the OME-Zarr specification is added, or a breaking change is made to the package.
 - The minor version is incremented for any other changes (e.g., documentation improvments, bug fixes, new features)
