@@ -88,7 +88,7 @@ class Plate(BaseAttrs):
     wells: list[WellInPlate]
 
     @field_validator("columns", "rows", mode="after")
-    def _check_unique_items(cls, value: T) -> T:
+    def _check_unique_items(cls, value: list[T]) -> list[T]:
         _unique_items_validator(value)
         return value
 
