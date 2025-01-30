@@ -3,13 +3,13 @@ For reference, see the [plate section of the OME-Zarr specification](https://ngf
 """
 
 from collections import Counter
-from typing import Annotated, Self
+from typing import Annotated, Self, TypeVar
 
 from pydantic import (
-    AfterValidator,
     Field,
     NonNegativeInt,
     PositiveInt,
+    field_validator,
     model_validator,
 )
 
@@ -23,6 +23,8 @@ __all__ = [
     "Row",
     "WellInPlate",
 ]
+
+T = TypeVar("T")
 
 
 class Acquisition(BaseAttrs):
@@ -75,15 +77,20 @@ class Plate(BaseAttrs):
     """
 
     acquisitions: list[Acquisition] | None = None
-    columns: Annotated[list[Column], AfterValidator(_unique_items_validator)]
+    columns: list[Column]
     field_count: PositiveInt | None = Field(
         default=None, description="Maximum number of fields per view across wells"
     )
     name: str | None = Field(default=None, description="Plate name")
-    rows: Annotated[list[Row], AfterValidator(_unique_items_validator)]
+    rows: list[Row]
     # version will become required in 0.5
     version: str | None = Field(None, description="Version of the plate specification")
     wells: list[WellInPlate]
+
+    @field_validator("columns", "rows", mode="after")
+    def _check_unique_items(cls, value: T) -> T:
+        _unique_items_validator(value)
+        return value
 
     @model_validator(mode="after")
     def _check_well_paths(self) -> Self:
