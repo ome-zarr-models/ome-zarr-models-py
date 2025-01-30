@@ -22,4 +22,4 @@ zarr_group = zarr.open(path_to_group, mode="r")
 ome_group = ome_zarr_models.open_ome_zarr(zarr_group)
 ```
 
-If there aren't any errros, the Zarr group is a valid OME-Zarr group.
+If there aren't any errors, the Zarr group is a valid OME-Zarr group.
