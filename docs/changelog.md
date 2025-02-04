@@ -6,6 +6,15 @@
 
 - Added a ["How do I...?" page](how-to.md) that explains how to do common tasks with `ome-zarr-models`.
 
+### New features
+
+- Updated the return type on [ome_zarr_models.base.BaseGroup.ome_zarr_version] to allow "0.5" to be returned, in anticipation of upcoming support for OME-Zarr version 0.5.
+
+### Bug fixes
+
+- Added [ome_zarr_models.v04.image.Image][] to the `__all__` of [ome_zarr_models.v04.image][].
+- Added [ome_zarr_models.v04.well.Well][] to the `__all__` of [ome_zarr_models.v04.well][].
+
 ## 0.1.1
 
 ### Bug fixes
