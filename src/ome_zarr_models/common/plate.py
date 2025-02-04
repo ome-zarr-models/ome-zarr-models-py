@@ -15,7 +15,7 @@ from ome_zarr_models.base import BaseAttrs
 __all__ = [
     "Acquisition",
     "Column",
-    "Plate",
+    "PlateBase",
     "Row",
     "WellInPlate",
 ]
@@ -67,7 +67,7 @@ class Row(BaseAttrs):
     name: Annotated[str, _AlphaNumericConstraint]
 
 
-class Plate(BaseAttrs):
+class PlateBase(BaseAttrs):
     """
     A single plate.
     """
@@ -79,8 +79,6 @@ class Plate(BaseAttrs):
     )
     name: str | None = Field(default=None, description="Plate name")
     rows: list[Row]
-    # version will become required in 0.5
-    version: str | None = Field(None, description="Version of the plate specification")
     wells: list[WellInPlate]
 
     @field_validator("columns", "rows", mode="after")

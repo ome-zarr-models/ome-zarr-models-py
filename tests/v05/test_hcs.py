@@ -30,7 +30,6 @@ def test_hcs() -> None:
             field_count=4,
             name="test",
             rows=[Row(name="A"), Row(name="B")],
-            version=None,
             wells=[
                 WellInPlate(path="A/1", rowIndex=0, columnIndex=0),
                 WellInPlate(path="A/2", rowIndex=0, columnIndex=1),
@@ -39,6 +38,7 @@ def test_hcs() -> None:
                 WellInPlate(path="B/2", rowIndex=1, columnIndex=1),
                 WellInPlate(path="B/3", rowIndex=1, columnIndex=2),
             ],
+            version="0.5",
         ),
         version="0.5",
     )
