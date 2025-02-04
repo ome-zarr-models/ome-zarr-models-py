@@ -11,8 +11,6 @@ __all__ = ["Image", "ImageAttrs"]
 class ImageAttrs(BaseAttrs):
     """
     Model for the metadata of OME-Zarr data.
-
-    See https://ngff.openmicroscopy.org/0.4/#image-layout.
     """
 
     multiscales: list[Multiscale] = Field(
