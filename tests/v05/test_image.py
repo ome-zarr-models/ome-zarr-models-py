@@ -38,16 +38,13 @@ def test_image() -> None:
                         ),
                     ),
                 ),
-                version=None,
                 coordinateTransformations=(
                     VectorScale(type="scale", scale=[0.1, 1.0, 1.0, 1.0, 1.0]),
                 ),
                 metadata={
-                    "description": (
-                        "the fields in metadata depend on the downscaling "
-                        "implementation. Here, the parameters passed to the "
-                        "skimage function are given"
-                    ),
+                    "description": "the fields in metadata depend on the downscaling "
+                    "implementation. Here, the parameters passed to the "
+                    "skimage function are given",
                     "method": "skimage.transform.pyramid_gaussian",
                     "version": "0.16.1",
                     "args": "[true]",
@@ -57,6 +54,5 @@ def test_image() -> None:
                 type="gaussian",
             )
         ],
-        omero=None,
         version="0.5",
     )
