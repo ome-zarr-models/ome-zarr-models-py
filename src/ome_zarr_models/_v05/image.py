@@ -1,14 +1,13 @@
 from pydantic import Field
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
-from ome_zarr_models._v05.base import BaseGroupv05, BaseOMEAttrs
+from ome_zarr_models._v05.base import BaseGroupv05, BaseOMEAttrs, BaseZarrAttrs
 from ome_zarr_models._v05.multiscales import Multiscale
-from ome_zarr_models.base import BaseAttrs
 
 __all__ = ["Image", "ImageAttrs"]
 
 
-class ImageAttrs(BaseAttrs):
+class ImageAttrs(BaseOMEAttrs):
     """
     Model for the metadata of OME-Zarr data.
     """
@@ -20,7 +19,7 @@ class ImageAttrs(BaseAttrs):
     )
 
 
-class Image(GroupSpec[BaseOMEAttrs[ImageAttrs], ArraySpec | GroupSpec], BaseGroupv05):  # type: ignore[misc]
+class Image(GroupSpec[BaseZarrAttrs[ImageAttrs], ArraySpec | GroupSpec], BaseGroupv05):  # type: ignore[misc]
     """
     An OME-Zarr image dataset.
     """

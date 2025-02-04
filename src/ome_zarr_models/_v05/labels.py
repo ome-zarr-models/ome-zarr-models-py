@@ -4,8 +4,7 @@ import numpy as np
 from pydantic import Field, model_validator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
-from ome_zarr_models._v05.base import BaseGroupv05, BaseOMEAttrs
-from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models._v05.base import BaseGroupv05, BaseOMEAttrs, BaseZarrAttrs
 
 __all__ = ["Labels", "LabelsAttrs"]
 
@@ -46,7 +45,7 @@ def _check_valid_dtypes(labels: "Labels") -> "Labels":
     return labels
 
 
-class LabelsAttrs(BaseAttrs):
+class LabelsAttrs(BaseOMEAttrs):
     """
     Attributes for an OME-Zarr labels dataset.
     """
@@ -56,7 +55,10 @@ class LabelsAttrs(BaseAttrs):
     )
 
 
-class Labels(GroupSpec[BaseOMEAttrs[LabelsAttrs], ArraySpec | GroupSpec], BaseGroupv05):  # type: ignore[misc]
+class Labels(
+    GroupSpec[BaseZarrAttrs[LabelsAttrs], ArraySpec | GroupSpec],  # type: ignore[misc]
+    BaseGroupv05,
+):
     """
     An OME-Zarr labels dataset.
     """
