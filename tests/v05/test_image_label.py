@@ -60,7 +60,6 @@ def test_image_label() -> None:
                         ),
                     ),
                 ),
-                version=None,
                 coordinateTransformations=(
                     VectorScale(type="scale", scale=[0.1, 1.0, 1.0, 1.0, 1.0]),
                 ),
