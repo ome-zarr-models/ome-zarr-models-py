@@ -1,3 +1,3 @@
 """
-Common functionality between versions of the specification.
+Common functionality between versions of the OME-Zarr specification.
 """
