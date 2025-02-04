@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter
-from typing import TYPE_CHECKING, Annotated, Literal, Self, get_args
+from typing import TYPE_CHECKING, Annotated, Self, get_args
 
 from pydantic import (
     AfterValidator,
@@ -244,7 +244,6 @@ class MultiscaleBase(BaseAttrs):
     datasets: Annotated[tuple[Dataset, ...], AfterValidator(_ensure_ordered_scales)] = (
         Field(..., min_length=1)
     )
-    version: Literal["0.4"] | None = None
     coordinateTransformations: ValidTransform | None = None
     metadata: JsonValue = None
     name: JsonValue | None = None
