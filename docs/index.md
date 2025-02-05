@@ -44,6 +44,10 @@ Developers of this package are active on our [Zulip chat channel](https://images
   This is because it is transitional, and we have decided to put time into implementing other
   parts of the specification. We would welcome a pull request to add this functionality though!
 
+### OME-Zarr 0.5
+
+- For labels, [the OME-Zarr specification says](https://ngff.openmicroscopy.org/0.5/index.html#labels-md) "Intermediate groups between "labels" and the images within it are allowed, but these MUST NOT contain metadata.". Because it is not clear what "metadata" means in this sentence, we do not validate this part of the specification.
+
 ## Roadmap
 
 - Writing metadata after creation/modification.
