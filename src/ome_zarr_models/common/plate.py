@@ -9,8 +9,11 @@ from pydantic import (
     model_validator,
 )
 
-from ome_zarr_models._utils import _AlphaNumericConstraint, _unique_items_validator
 from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.common.validation import (
+    AlphaNumericConstraint,
+    unique_items_validator,
+)
 
 __all__ = [
     "Acquisition",
@@ -56,7 +59,7 @@ class Column(BaseAttrs):
     A single column within a well.
     """
 
-    name: Annotated[str, _AlphaNumericConstraint]
+    name: Annotated[str, AlphaNumericConstraint]
 
 
 class Row(BaseAttrs):
@@ -64,7 +67,7 @@ class Row(BaseAttrs):
     A single row within a well.
     """
 
-    name: Annotated[str, _AlphaNumericConstraint]
+    name: Annotated[str, AlphaNumericConstraint]
 
 
 class PlateBase(BaseAttrs):
@@ -83,7 +86,7 @@ class PlateBase(BaseAttrs):
 
     @field_validator("columns", "rows", mode="after")
     def _check_unique_items(cls, value: list[T]) -> list[T]:
-        _unique_items_validator(value)
+        unique_items_validator(value)
         return value
 
     @model_validator(mode="after")
