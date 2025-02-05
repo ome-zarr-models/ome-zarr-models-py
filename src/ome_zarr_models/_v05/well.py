@@ -7,7 +7,9 @@ __all__ = ["Well", "WellAttrs"]
 
 
 class WellAttrs(ome_zarr_models.v04.well.WellAttrs, BaseOMEAttrs):
-    pass
+    """
+    Attributes for a well.
+    """
 
 
 class Well(GroupSpec[BaseZarrAttrs[WellAttrs], ArraySpec | GroupSpec], BaseGroupv05):  # type: ignore[misc]
