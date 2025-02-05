@@ -72,6 +72,7 @@ nav:
           - api/v04/well.md
       - common:
           - api/common/multiscales.md
+          - api/common/plate.md
   - Changelog: changelog.md
   - Contributing: contributing.md
 

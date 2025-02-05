@@ -2,6 +2,7 @@
   "ome": {
     "version": "0.5",
     "plate": {
+      "version": "0.5",
       "acquisitions": [
         {
           "id": 1,
