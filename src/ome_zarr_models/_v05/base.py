@@ -2,16 +2,22 @@ from typing import Generic, Literal, TypeVar
 
 from ome_zarr_models.base import BaseAttrs, BaseGroup
 
-T = TypeVar("T", bound=BaseAttrs)
+T = TypeVar("T", bound="BaseOMEAttrs")
 
 
-class BaseOMEAttrs(BaseAttrs, Generic[T]):
+class BaseZarrAttrs(BaseAttrs, Generic[T]):
     """
-    Base class for all OME attributes.
+    Base class for zarr attributes in an OME-Zarr group.
     """
 
-    version: Literal["0.5"] = "0.5"
     ome: T
+
+
+class BaseOMEAttrs(BaseAttrs):
+    """
+    Base class for attributes under an OME-Zarr group"""
+
+    version: Literal["0.5"]
 
 
 class BaseGroupv05(BaseGroup):

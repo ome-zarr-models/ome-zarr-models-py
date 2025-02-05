@@ -1,15 +1,14 @@
 from pydantic import Field
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
-from ome_zarr_models._v05.base import BaseGroupv05, BaseOMEAttrs
+from ome_zarr_models._v05.base import BaseGroupv05, BaseOMEAttrs, BaseZarrAttrs
 from ome_zarr_models._v05.image_label_types import Label
 from ome_zarr_models._v05.multiscales import Multiscale
-from ome_zarr_models.base import BaseAttrs
 
 __all__ = ["ImageLabel", "ImageLabelAttrs"]
 
 
-class ImageLabelAttrs(BaseAttrs):
+class ImageLabelAttrs(BaseOMEAttrs):
     """
     Attributes for an image label object.
     """
@@ -19,7 +18,7 @@ class ImageLabelAttrs(BaseAttrs):
 
 
 class ImageLabel(
-    GroupSpec[BaseOMEAttrs[ImageLabelAttrs], ArraySpec | GroupSpec],  # type: ignore[misc]
+    GroupSpec[BaseZarrAttrs[ImageLabelAttrs], ArraySpec | GroupSpec],  # type: ignore[misc]
     BaseGroupv05,
 ):
     """
