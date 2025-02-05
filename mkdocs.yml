@@ -76,6 +76,7 @@ nav:
       - common:
           - api/common/multiscales.md
           - api/common/plate.md
+          - api/common/validation.md
   - Changelog: changelog.md
   - Contributing: contributing.md
 
