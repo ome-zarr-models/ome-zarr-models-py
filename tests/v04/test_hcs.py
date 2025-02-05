@@ -2,6 +2,7 @@ from pathlib import Path
 
 import zarr
 
+from ome_zarr_models.common.well_types import WellImage, WellMeta
 from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.coordinate_transformations import VectorScale
 from ome_zarr_models.v04.hcs import HCS, HCSAttrs
@@ -9,7 +10,6 @@ from ome_zarr_models.v04.image import ImageAttrs
 from ome_zarr_models.v04.multiscales import Dataset, Multiscale
 from ome_zarr_models.v04.omero import Channel, Omero, Window
 from ome_zarr_models.v04.plate import Acquisition, Column, Plate, Row, WellInPlate
-from ome_zarr_models.v04.well_types import WellImage, WellMeta
 
 
 def test_example_hcs() -> None:

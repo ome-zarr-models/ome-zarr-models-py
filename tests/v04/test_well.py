@@ -1,6 +1,6 @@
 import pytest
 
-from ome_zarr_models.v04.well_types import WellImage, WellMeta
+from ome_zarr_models.common.well_types import WellImage, WellMeta
 from tests.v04.conftest import read_in_json
 
 

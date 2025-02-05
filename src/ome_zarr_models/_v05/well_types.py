@@ -1,3 +1,3 @@
-from ome_zarr_models.v04.well_types import WellImage, WellMeta
+from ome_zarr_models.common.well_types import WellImage, WellMeta
 
 __all__ = ["WellImage", "WellMeta"]
