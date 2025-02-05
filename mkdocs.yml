@@ -34,7 +34,7 @@ markdown_extensions:
 
 plugins:
   - mkdocs-jupyter:
-      execute: true
+      execute: false
       allow_errors: false
   - mkdocstrings:
       handlers:
@@ -42,11 +42,12 @@ plugins:
           paths: [src]
           import:
             - https://docs.python.org/3/objects.inv
+            - https://zarr.dev/pydantic-zarr/objects.inv
 
           options:
             docstring_style: numpy
             show_root_toc_entry: false
-            show_object_full_path: true
+            show_root_members_full_path: true
             group_by_category: true
             heading_level: 3
             show_symbol_type_heading: true
@@ -54,6 +55,7 @@ plugins:
             show_source: false
             show_signature_annotations: true
             signature_crossrefs: true
+            show_labels: false
             extensions:
               - griffe_pydantic:
                   schema: false
@@ -70,6 +72,7 @@ nav:
           - api/v04/image-label.md
           - api/v04/labels.md
           - api/v04/well.md
+          - api/v04/other.md
       - common:
           - api/common/multiscales.md
           - api/common/plate.md
