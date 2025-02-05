@@ -46,6 +46,9 @@ Developers of this package are active on our [Zulip chat channel](https://images
 
 ### OME-Zarr 0.5
 
+- Since the first release of OME-Zarr 0.5 (commit [8a0f886](https://github.com/ome/ngff/tree/8a0f886aac791060e329874b624126d3530c2b6f)), the specification has edited without the version number in OME-Zarr datasets being changed.
+  A diff between the 'current' 0.5 specification and 'original' 0.5 specification [can be seen here](https://github.com/ome/ngff/compare/0.5.0...main#diff-6e0c0575683d2ac5c07564e6828e9c71ae3b93b6eacc36575055150af6c5ef73).
+  As an implementation we have no way of knowing which version of the specification data that contains version "0.5" was written to, so **we have chosen to validate against the original release of OME-Zarr 0.5** (commit [8a0f886](https://github.com/ome/ngff/tree/8a0f886aac791060e329874b624126d3530c2b6f)).
 - For labels, [the OME-Zarr specification says](https://ngff.openmicroscopy.org/0.5/index.html#labels-md) "Intermediate groups between "labels" and the images within it are allowed, but these MUST NOT contain metadata.". Because it is not clear what "metadata" means in this sentence, we do not validate this part of the specification.
 
 ## Roadmap
