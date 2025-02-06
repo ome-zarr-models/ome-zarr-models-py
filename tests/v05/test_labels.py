@@ -1,6 +1,7 @@
 import re
 
 import numpy as np
+from pydantic import ValidationError
 import pytest
 
 from ome_zarr_models._v05.labels import Labels, LabelsAttrs
@@ -9,6 +10,14 @@ from tests.v05.conftest import json_to_zarr_group
 
 def test_labels() -> None:
     zarr_group = json_to_zarr_group(json_fname="labels_example.json")
+    # No labels images present
+    with pytest.raises(
+        ValidationError,
+        match="Label path 'cell_space_segmentation' not found in zarr group",
+    ):
+        Labels.from_zarr(zarr_group)
+
+    # TODO: this should be a multiscale image, not just a zarr array
     zarr_group.create_dataset("cell_space_segmentation", shape=(1, 1), dtype=np.int64)
     ome_group = Labels.from_zarr(zarr_group)
     assert ome_group.attributes.ome == LabelsAttrs(

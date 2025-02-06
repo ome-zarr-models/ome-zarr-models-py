@@ -1,10 +1,14 @@
-from typing import Any
+from cProfile import label
+from math import e
+from typing import Any, Self
 
 import numpy as np
 from pydantic import Field, model_validator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
+import zarr
 
 from ome_zarr_models._v05.base import BaseGroupv05, BaseOMEAttrs, BaseZarrAttrs
+from ome_zarr_models._v05.image import Image
 
 __all__ = ["Labels", "LabelsAttrs"]
 
@@ -62,5 +66,30 @@ class Labels(
     """
     An OME-Zarr labels dataset.
     """
+
+    @classmethod
+    def from_zarr(cls, group: zarr.Group) -> Self:
+        """
+        Create an instance of an OME-Zarr image from a `zarr.Group`.
+
+        Parameters
+        ----------
+        group : zarr.Group
+            A Zarr group that has valid OME-Zarr label metadata.
+        """
+        ret: Self = super().from_zarr(group)
+
+        # Check all labels paths are valid multiscales
+        for label_path in ret.attributes.ome.labels:
+            try:
+                Image.from_zarr(group[label_path])
+            except Exception as err:
+                msg = (
+                    f"Error validating the label path '{label_path}' "
+                    "as a OME-Zarr multiscales group."
+                )
+                raise RuntimeError(msg) from err
+
+        return ret
 
     _check_valid_dtypes = model_validator(mode="after")(_check_valid_dtypes)
