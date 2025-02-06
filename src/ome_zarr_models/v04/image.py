@@ -72,6 +72,32 @@ class ImageAttrs(BaseAttrs):
     omero: Omero | None = None
 
 
+def _check_array_path(group: zarr.Group, array_path: str) -> ArraySpec:
+    """
+    Check if an array exists at a given path in a group.
+
+    If it doesn't, raise a ValueError.
+    If it does, return the array spec.
+    """
+    try:
+        array = zarr.open_array(store=group.store, path=array_path, mode="r")
+        array_spec = ArraySpec.from_zarr(array)
+    except zarr.errors.ArrayNotFoundError as e:
+        msg = (
+            f"Expected to find an array at {array_path}, "
+            "but no array was found there."
+        )
+        raise ValueError(msg) from e
+    except zarr.errors.ContainsGroupError as e:
+        msg = (
+            f"Expected to find an array at {array_path}, "
+            "but a group was found there instead."
+        )
+        raise ValueError(msg) from e
+
+    return array_spec
+
+
 class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ignore[misc]
     """
     An OME-Zarr multiscale dataset.
@@ -90,30 +116,14 @@ class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type
             A Zarr group that has valid OME-NGFF image metadata.
         """
         # on unlistable storage backends, the members of this group will be {}
-        guess = GroupSpec.from_zarr(group, depth=0)
+        group_spec = GroupSpec.from_zarr(group, depth=0)
 
-        multi_meta = ImageAttrs.model_validate(guess.attributes)
+        multi_meta = ImageAttrs.model_validate(group_spec.attributes)
         members_tree_flat = {}
         for multiscale in multi_meta.multiscales:
             for dataset in multiscale.datasets:
                 array_path = f"{group.path}/{dataset.path}"
-                try:
-                    array = zarr.open_array(
-                        store=group.store, path=array_path, mode="r"
-                    )
-                    array_spec = ArraySpec.from_zarr(array)
-                except zarr.errors.ArrayNotFoundError as e:
-                    msg = (
-                        f"Expected to find an array at {array_path}, "
-                        "but no array was found there."
-                    )
-                    raise ValueError(msg) from e
-                except zarr.errors.ContainsGroupError as e:
-                    msg = (
-                        f"Expected to find an array at {array_path}, "
-                        "but a group was found there instead."
-                    )
-                    raise ValueError(msg) from e
+                array_spec = _check_array_path(group, array_path)
                 members_tree_flat["/" + dataset.path] = array_spec
 
         try:
@@ -124,10 +134,10 @@ class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type
 
         members_normalized = GroupSpec.from_flat(members_tree_flat)
 
-        guess_inferred_members = guess.model_copy(
+        group_spec = group_spec.model_copy(
             update={"members": members_normalized.members}
         )
-        return cls(**guess_inferred_members.model_dump())
+        return cls(**group_spec.model_dump())
 
     @property
     def labels(self) -> Labels | None:
