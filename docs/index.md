@@ -19,6 +19,7 @@ conda install -c conda-forge ome-zarr-models
 Useful places to get started are:
 
 - [The tutorial](tutorial.py), which gives a worked example of using this package
+- [How do I?](how-to.md), which explains how to do common tasks
 - [The API reference](api/index.md), which explains how this package is structured
 
 ## Design
