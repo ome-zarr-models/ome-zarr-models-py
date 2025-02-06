@@ -46,6 +46,8 @@ Developers of this package are active on our [Zulip chat channel](https://images
 
 ### OME-Zarr 0.5
 
+_Note:_ support for OME-Zarr 0.5 is not complete, but when it is the following issues will apply:
+
 - Since the first release of OME-Zarr 0.5 (commit [8a0f886](https://github.com/ome/ngff/tree/8a0f886aac791060e329874b624126d3530c2b6f)), the specification has edited without the version number in OME-Zarr datasets being changed.
   A diff between the 'current' 0.5 specification and 'original' 0.5 specification [can be seen here](https://github.com/ome/ngff/compare/0.5.0...main#diff-6e0c0575683d2ac5c07564e6828e9c71ae3b93b6eacc36575055150af6c5ef73).
   As an implementation we have no way of knowing which version of the specification data that contains version "0.5" was written to, so **we have chosen to validate against the original release of OME-Zarr 0.5** (commit [8a0f886](https://github.com/ome/ngff/tree/8a0f886aac791060e329874b624126d3530c2b6f)). As of writing, this means `ome-zarr-models` does not validate omero metadata, and does not require that the "dimension_names" attribute to be present in multiscale Zarr array metadata.
