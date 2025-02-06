@@ -22,7 +22,3 @@ A listing of the group objects and associated metadata objects is given below fo
 ## Helper functions
 
 ::: ome_zarr_models
-
-## Common objects
-
-::: ome_zarr_models.base

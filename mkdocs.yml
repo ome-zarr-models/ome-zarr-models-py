@@ -76,8 +76,7 @@ nav:
               - api/v04/well.md
               - api/v04/other.md
       - Shared:
-          - api/common/multiscales.md
-          - api/common/plate.md
+          - Base objects: api/common/base.md
           - api/common/validation.md
   - Changelog: changelog.md
   - Contributing: contributing.md
