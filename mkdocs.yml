@@ -43,6 +43,7 @@ plugins:
           import:
             - https://docs.python.org/3/objects.inv
             - https://zarr.dev/pydantic-zarr/objects.inv
+            - https://docs.pydantic.dev/latest/objects.inv
 
           options:
             docstring_style: numpy
