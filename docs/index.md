@@ -19,6 +19,7 @@ conda install -c conda-forge ome-zarr-models
 Useful places to get started are:
 
 - [The tutorial](tutorial.py), which gives a worked example of using this package
+- [How do I?](how-to.md), which explains how to do common tasks
 - [The API reference](api/index.md), which explains how this package is structured
 
 ## Design
@@ -38,13 +39,14 @@ Developers of this package are active on our [Zulip chat channel](https://images
 
 - Because of the way this package is structured, it can't currently distinguish
   between values that are present but set to `null` in saved metadata, and
-  fields that are not present. Any fields set to `None` in the Python objects
-  are currently not written when they are saved back to the JSON metadata using this package.
+  fields that are not present.
 - We do not currently validate [`bioformats2raw` metadata](https://ngff.openmicroscopy.org/0.4/index.html#bf2raw)
   This is because it is transitional, and we have decided to put time into implementing other
   parts of the specification. We would welcome a pull request to add this functionality though!
 
 ### OME-Zarr 0.5
+
+_Note:_ support for OME-Zarr 0.5 is not complete, but when it is the following issues will apply:
 
 - Since the first release of OME-Zarr 0.5 (commit [8a0f886](https://github.com/ome/ngff/tree/8a0f886aac791060e329874b624126d3530c2b6f)), the specification has edited without the version number in OME-Zarr datasets being changed.
   A diff between the 'current' 0.5 specification and 'original' 0.5 specification [can be seen here](https://github.com/ome/ngff/compare/0.5.0...main#diff-6e0c0575683d2ac5c07564e6828e9c71ae3b93b6eacc36575055150af6c5ef73).

@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.3
+
+### Doc improvements
+
+- General minor improvements to the layout and look of the API docs.
+- Added some notes on known issues that will be encountered with support for OME-Zarr 0.5 in the future.
+
+### New features
+
+- The main OME-Zarr classes are now imported into the [ome_zarr_models.v04][] namespace, making them easier to import (e.g., what was `ome_zarr_models.v04.hcs.HCS` can now just be `ome_zarr_models.v04.HCS`).
+
 ## 0.1.2
 
 ### Doc improvements
