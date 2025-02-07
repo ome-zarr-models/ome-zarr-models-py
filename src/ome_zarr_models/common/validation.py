@@ -2,11 +2,13 @@ from typing import TypeVar
 
 from pydantic import StringConstraints
 
-__all__ = ["AlphaNumericConstraint", "unique_items_validator"]
+__all__ = ["AlphaNumericConstraint", "RGBHexConstraint", "unique_items_validator"]
 
 AlphaNumericConstraint = StringConstraints(pattern="^[a-zA-Z0-9]*$")
 """Require a string to only contain letters and numbers"""
 
+RGBHexConstraint = StringConstraints(pattern=r"[0-9a-fA-F]{6}")
+"""Require a string to be a valid RGB hex string"""
 
 T = TypeVar("T")
 
