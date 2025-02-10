@@ -8,11 +8,13 @@ import pytest
 from pydantic import ValidationError
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
+from ome_zarr_models.common.coordinate_transformations import (
+    _build_transforms,
+)
 from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.coordinate_transformations import (
     VectorScale,
     VectorTranslation,
-    _build_transforms,
 )
 from ome_zarr_models.v04.image import Image, ImageAttrs
 from ome_zarr_models.v04.multiscales import (
