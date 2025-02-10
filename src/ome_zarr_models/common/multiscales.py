@@ -114,20 +114,6 @@ def _ensure_axis_length(axes: Axes) -> Axes:
     return axes
 
 
-def _ensure_unique_axis_names(axes: Axes) -> Axes:
-    """
-    Ensures that the names of the axes are unique.
-    """
-    name_dupes = duplicates(a.name for a in axes)
-    if len(name_dupes) > 0:
-        msg = (
-            f"Axis names must be unique. Axis names {tuple(name_dupes.keys())} are "
-            "repeated."
-        )
-        raise ValueError(msg)
-    return axes
-
-
 class Dataset(BaseAttrs):
     """
     An element of Multiscale.datasets.
@@ -166,7 +152,6 @@ class MultiscaleBase(BaseAttrs):
     axes: Annotated[
         Axes,
         AfterValidator(_ensure_axis_length),
-        AfterValidator(_ensure_unique_axis_names),
     ]
     datasets: tuple[Dataset, ...] = Field(..., min_length=1)
     coordinateTransformations: ValidTransform | None = None
@@ -309,6 +294,21 @@ class MultiscaleBase(BaseAttrs):
             msg = (
                 f"Invalid number of custom axes: {num_custom}. "
                 "Only 1 custom axis is allowed."
+            )
+            raise ValueError(msg)
+        return axes
+
+    @field_validator("axes", mode="after")
+    @classmethod
+    def _ensure_unique_axis_names(cls, axes: Axes) -> Axes:
+        """
+        Ensures that the names of the axes are unique.
+        """
+        name_dupes = duplicates(a.name for a in axes)
+        if len(name_dupes) > 0:
+            msg = (
+                f"Axis names must be unique. Axis names {tuple(name_dupes.keys())} are "
+                "repeated."
             )
             raise ValueError(msg)
         return axes
