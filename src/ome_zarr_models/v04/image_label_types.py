@@ -4,10 +4,9 @@ For reference, see the [image label section of the OME-Zarr specification](https
 
 from __future__ import annotations
 
-import warnings
-from typing import Annotated, Literal, Self, TypeVar
+from typing import Annotated, Literal, Self
 
-from pydantic import AfterValidator, Field, model_validator
+from pydantic import Field, field_validator, model_validator
 
 from ome_zarr_models._utils import duplicates
 from ome_zarr_models.base import BaseAttrs
@@ -46,14 +45,52 @@ class Property(BaseAttrs):
     label_value: int = Field(..., alias="label-value")
 
 
-def _parse_colors(colors: tuple[Color] | None) -> tuple[Color] | None:
-    if colors is None:
-        msg = (
-            "The field `colors` is `None`. `colors` should be a list of "
-            "label descriptors."
-        )
-        warnings.warn(msg, stacklevel=1)
-    else:
+class LabelBase(BaseAttrs):
+    """
+    Base class for image-label metadata.
+    """
+
+    # TODO: validate
+    # "All the values under the label-value (of colors) key MUST be unique."
+    colors: tuple[Color, ...] | None = None
+    properties: tuple[Property, ...] | None = None
+    source: Source | None = None
+    version: str | None = None
+
+    @model_validator(mode="after")
+    def _check_label_values(self) -> Self:
+        """
+        Check that label_values are consistent across properties and colors
+        """
+        if self.colors is not None and self.properties is not None:
+            prop_label_value = [prop.label_value for prop in self.properties]
+            color_label_value = [color.label_value for color in self.colors]
+
+            prop_label_value_set = set(prop_label_value)
+            color_label_value_set = set(color_label_value)
+            if color_label_value_set != prop_label_value_set:
+                msg = (
+                    "Inconsistent `label_value` attributes in "
+                    "`colors` and `properties`."
+                    "The `properties` attributes have "
+                    f"`label_values` {prop_label_value}, "
+                    "The `colors` attributes have "
+                    f"`label_values` {color_label_value}, "
+                )
+                raise ValueError(msg)
+        return self
+
+    @field_validator("colors", mode="after")
+    def _parse_colors(cls, colors: tuple[Color, ...]) -> tuple[Color, ...]:
+        """
+        Check that color label values are unique.
+        """
+        # if colors is None:
+        #    msg = (
+        #        "The field `colors` is `None`. `colors` should be a list of "
+        #        "label descriptors."
+        #    )
+        #    warnings.warn(msg, stacklevel=1)
         dupes = duplicates(x.label_value for x in colors)
         if len(dupes) > 0:
             msg = (
@@ -62,24 +99,7 @@ def _parse_colors(colors: tuple[Color] | None) -> tuple[Color] | None:
             )
             raise ValueError(msg)
 
-    return colors
-
-
-class LabelBase(BaseAttrs):
-    """
-    Base class for image-label metadata.
-    """
-
-    # TODO: validate
-    # "All the values under the label-value (of colors) key MUST be unique."
-    colors: Annotated[tuple[Color, ...] | None, AfterValidator(_parse_colors)] = None
-    properties: tuple[Property, ...] | None = None
-    source: Source | None = None
-    version: str | None = None
-
-    @model_validator(mode="after")
-    def _parse_model(self) -> Self:
-        return _parse_imagelabel(self)
+        return colors
 
 
 class Label(LabelBase):
@@ -88,26 +108,3 @@ class Label(LabelBase):
     """
 
     version: Literal["0.4"] | None = None
-
-
-_T = TypeVar("_T", bound=LabelBase)
-
-
-def _parse_imagelabel(model: _T) -> _T:
-    """
-    Check that label_values are consistent across properties and colors
-    """
-    if model.colors is not None and model.properties is not None:
-        prop_label_value = [prop.label_value for prop in model.properties]
-        color_label_value = [color.label_value for color in model.colors]
-
-        prop_label_value_set = set(prop_label_value)
-        color_label_value_set = set(color_label_value)
-        if color_label_value_set != prop_label_value_set:
-            msg = (
-                "Inconsistent `label_value` attributes in `colors` and `properties`."
-                f"The `properties` attributes have `label_values` {prop_label_value}, "
-                f"The `colors` attributes have `label_values` {color_label_value}, "
-            )
-            raise ValueError(msg)
-    return model
