@@ -101,19 +101,6 @@ def _ensure_scale_translation(
     return transforms_obj
 
 
-def _ensure_axis_length(axes: Axes) -> Axes:
-    """
-    Ensures that there are between 2 and 5 axes (inclusive)
-    """
-    if (len_axes := len(axes)) not in VALID_NDIM:
-        msg = (
-            f"Incorrect number of axes provided ({len_axes}). "
-            "Only 2, 3, 4, or 5 axes are allowed."
-        )
-        raise ValueError(msg)
-    return axes
-
-
 class Dataset(BaseAttrs):
     """
     An element of Multiscale.datasets.
@@ -149,10 +136,7 @@ class MultiscaleBase(BaseAttrs):
     An element of multiscales metadata.
     """
 
-    axes: Annotated[
-        Axes,
-        AfterValidator(_ensure_axis_length),
-    ]
+    axes: Axes
     datasets: tuple[Dataset, ...] = Field(..., min_length=1)
     coordinateTransformations: ValidTransform | None = None
     metadata: JsonValue = None
@@ -242,6 +226,20 @@ class MultiscaleBase(BaseAttrs):
                 )
 
         return datasets
+
+    @field_validator("axes", mode="after")
+    @classmethod
+    def _ensure_axis_length(cls, axes: Axes) -> Axes:
+        """
+        Ensures that there are between 2 and 5 axes (inclusive)
+        """
+        if (len_axes := len(axes)) not in VALID_NDIM:
+            msg = (
+                f"Incorrect number of axes provided ({len_axes}). "
+                "Only 2, 3, 4, or 5 axes are allowed."
+            )
+            raise ValueError(msg)
+        return axes
 
     @field_validator("axes", mode="after")
     @classmethod
