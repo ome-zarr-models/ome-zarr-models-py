@@ -14,7 +14,7 @@ from pydantic import (
 
 from ome_zarr_models._utils import duplicates
 from ome_zarr_models.base import BaseAttrs
-from ome_zarr_models.v04.axes import Axes, AxisType
+from ome_zarr_models.common.axes import Axes, AxisType
 from ome_zarr_models.v04.coordinate_transformations import (
     ScaleTransform,
     Transform,
