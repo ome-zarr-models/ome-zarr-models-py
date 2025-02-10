@@ -128,57 +128,6 @@ def _ensure_unique_axis_names(axes: Axes) -> Axes:
     return axes
 
 
-def _ensure_axis_types(axes: Axes) -> Axes:
-    """
-    Ensures that the following conditions are true:
-
-    - there are only 2 or 3 axes with type `space`
-    - the axes with type `space` are last in the list of axes
-    - there is only 1 axis with type `time`
-    - there is only 1 axis with type `channel`
-    - there is only 1 axis with a type that is not `space`, `time`, or `channel`
-    """
-    axis_types = [ax.type for ax in axes]
-    type_census = Counter(axis_types)
-    num_spaces = type_census["space"]
-    if num_spaces not in [2, 3]:
-        msg = (
-            f"Invalid number of space axes: {num_spaces}. "
-            "Only 2 or 3 space axes are allowed."
-        )
-        raise ValueError(msg)
-
-    if not all(a == "space" for a in axis_types[-num_spaces:]):
-        msg = (
-            f"All space axes must be at the end of the axes list. "
-            f"Got axes with order: {axis_types}."
-        )
-        raise ValueError(msg)
-
-    if (num_times := type_census["time"]) > 1:
-        msg = f"Invalid number of time axes: {num_times}. Only 1 time axis is allowed."
-        raise ValueError(msg)
-    elif num_times == 1 and axis_types[0] != "time":
-        msg = "Time axis must be at the beginning of axis list."
-        raise ValueError(msg)
-
-    if (num_channels := type_census["channel"]) > 1:
-        msg = (
-            f"Invalid number of channel axes: {num_channels}. "
-            "Only 1 channel axis is allowed."
-        )
-        raise ValueError(msg)
-
-    custom_axes = set(axis_types) - set(get_args(AxisType))
-    if (num_custom := len(custom_axes)) > 1:
-        msg = (
-            f"Invalid number of custom axes: {num_custom}. "
-            "Only 1 custom axis is allowed."
-        )
-        raise ValueError(msg)
-    return axes
-
-
 class Dataset(BaseAttrs):
     """
     An element of Multiscale.datasets.
@@ -218,7 +167,6 @@ class MultiscaleBase(BaseAttrs):
         Axes,
         AfterValidator(_ensure_axis_length),
         AfterValidator(_ensure_unique_axis_names),
-        AfterValidator(_ensure_axis_types),
     ]
     datasets: tuple[Dataset, ...] = Field(..., min_length=1)
     coordinateTransformations: ValidTransform | None = None
@@ -309,3 +257,58 @@ class MultiscaleBase(BaseAttrs):
                 )
 
         return datasets
+
+    @field_validator("axes", mode="after")
+    @classmethod
+    def _ensure_axis_types(cls, axes: Axes) -> Axes:
+        """
+        Ensures that the following conditions are true:
+
+        - there are only 2 or 3 axes with type `space`
+        - the axes with type `space` are last in the list of axes
+        - there is only 1 axis with type `time`
+        - there is only 1 axis with type `channel`
+        - there is only 1 axis with a type that is not `space`, `time`, or `channel`
+        """
+        axis_types = [ax.type for ax in axes]
+        type_census = Counter(axis_types)
+        num_spaces = type_census["space"]
+        if num_spaces not in [2, 3]:
+            msg = (
+                f"Invalid number of space axes: {num_spaces}. "
+                "Only 2 or 3 space axes are allowed."
+            )
+            raise ValueError(msg)
+
+        if not all(a == "space" for a in axis_types[-num_spaces:]):
+            msg = (
+                f"All space axes must be at the end of the axes list. "
+                f"Got axes with order: {axis_types}."
+            )
+            raise ValueError(msg)
+
+        if (num_times := type_census["time"]) > 1:
+            msg = (
+                f"Invalid number of time axes: {num_times}. "
+                "Only 1 time axis is allowed."
+            )
+            raise ValueError(msg)
+        elif num_times == 1 and axis_types[0] != "time":
+            msg = "Time axis must be at the beginning of axis list."
+            raise ValueError(msg)
+
+        if (num_channels := type_census["channel"]) > 1:
+            msg = (
+                f"Invalid number of channel axes: {num_channels}. "
+                "Only 1 channel axis is allowed."
+            )
+            raise ValueError(msg)
+
+        custom_axes = set(axis_types) - set(get_args(AxisType))
+        if (num_custom := len(custom_axes)) > 1:
+            msg = (
+                f"Invalid number of custom axes: {num_custom}. "
+                "Only 1 custom axis is allowed."
+            )
+            raise ValueError(msg)
+        return axes
