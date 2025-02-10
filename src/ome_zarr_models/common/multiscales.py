@@ -9,6 +9,7 @@ from pydantic import (
     BeforeValidator,
     Field,
     JsonValue,
+    field_validator,
     model_validator,
 )
 
@@ -208,28 +209,6 @@ class Dataset(BaseAttrs):
         )
 
 
-def _ensure_ordered_scales(datasets: list[Dataset]) -> list[Dataset]:
-    """
-    Make sure datasets are ordered from highests resolution to smallest.
-    """
-    scale_transforms = [d.coordinateTransformations[0] for d in datasets]
-    # Only handle scales given in metadata, not in files
-    scale_vector_transforms = [
-        t for t in scale_transforms if isinstance(t, VectorScale)
-    ]
-    scales = [s.scale for s in scale_vector_transforms]
-    for i in range(len(scales) - 1):
-        s1, s2 = scales[i], scales[i + 1]
-        is_ordered = all(s1[j] <= s2[j] for j in range(len(s1)))
-        if not is_ordered:
-            raise ValueError(
-                f"Dataset {i} has a lower resolution (scales = {s1}) "
-                f"than dataset {i+1} (scales = {s2})."
-            )
-
-    return datasets
-
-
 class MultiscaleBase(BaseAttrs):
     """
     An element of multiscales metadata.
@@ -241,9 +220,7 @@ class MultiscaleBase(BaseAttrs):
         AfterValidator(_ensure_unique_axis_names),
         AfterValidator(_ensure_axis_types),
     ]
-    datasets: Annotated[tuple[Dataset, ...], AfterValidator(_ensure_ordered_scales)] = (
-        Field(..., min_length=1)
-    )
+    datasets: tuple[Dataset, ...] = Field(..., min_length=1)
     coordinateTransformations: ValidTransform | None = None
     metadata: JsonValue = None
     name: JsonValue | None = None
@@ -309,3 +286,26 @@ class MultiscaleBase(BaseAttrs):
                     )
                     raise ValueError(msg)
         return data
+
+    @field_validator("datasets", mode="after")
+    @classmethod
+    def _ensure_ordered_scales(cls, datasets: list[Dataset]) -> list[Dataset]:
+        """
+        Make sure datasets are ordered from highest resolution to smallest.
+        """
+        scale_transforms = [d.coordinateTransformations[0] for d in datasets]
+        # Only handle scales given in metadata, not in files
+        scale_vector_transforms = [
+            t for t in scale_transforms if isinstance(t, VectorScale)
+        ]
+        scales = [s.scale for s in scale_vector_transforms]
+        for i in range(len(scales) - 1):
+            s1, s2 = scales[i], scales[i + 1]
+            is_ordered = all(s1[j] <= s2[j] for j in range(len(s1)))
+            if not is_ordered:
+                raise ValueError(
+                    f"Dataset {i} has a lower resolution (scales = {s1}) "
+                    f"than dataset {i+1} (scales = {s2})."
+                )
+
+        return datasets
