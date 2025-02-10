@@ -4,7 +4,6 @@ from collections import Counter
 from typing import TYPE_CHECKING, Annotated, Self, get_args
 
 from pydantic import (
-    AfterValidator,
     BaseModel,
     BeforeValidator,
     Field,
@@ -34,27 +33,6 @@ __all__ = ["Dataset", "MultiscaleBase"]
 
 VALID_NDIM = (2, 3, 4, 5)
 ValidTransform = tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform]
-
-
-def _ensure_transform_dimensionality(
-    transforms: ValidTransform,
-) -> ValidTransform:
-    """
-    Ensures that the elements in the input sequence define transformations with
-    identical dimensionality. If any of the transforms are defined with a path
-    instead of concrete values, then no validation will be performed and the
-    transforms will be returned as-is.
-    """
-    vector_transforms = filter(lambda v: isinstance(v, VectorTransform), transforms)
-    ndims = tuple(map(_ndim, vector_transforms))  # type: ignore[arg-type]
-    ndims_set = set(ndims)
-    if len(ndims_set) > 1:
-        msg = (
-            "The transforms have inconsistent dimensionality. "
-            f"Got transforms with dimensionality = {ndims}."
-        )
-        raise ValueError(msg)
-    return transforms
 
 
 def _ensure_scale_translation(
@@ -113,7 +91,6 @@ class Dataset(BaseAttrs):
     coordinateTransformations: Annotated[
         ValidTransform,
         BeforeValidator(_ensure_scale_translation),
-        AfterValidator(_ensure_transform_dimensionality),
     ]
 
     @classmethod
@@ -129,6 +106,29 @@ class Dataset(BaseAttrs):
                 scale=scale, translation=translation
             ),
         )
+
+    @field_validator("coordinateTransformations", mode="after")
+    @classmethod
+    def _ensure_transform_dimensionality(
+        cls,
+        transforms: ValidTransform,
+    ) -> ValidTransform:
+        """
+        Ensures that the elements in the input sequence define transformations with
+        identical dimensionality. If any of the transforms are defined with a path
+        instead of concrete values, then no validation will be performed and the
+        transforms will be returned as-is.
+        """
+        vector_transforms = filter(lambda v: isinstance(v, VectorTransform), transforms)
+        ndims = tuple(map(_ndim, vector_transforms))  # type: ignore[arg-type]
+        ndims_set = set(ndims)
+        if len(ndims_set) > 1:
+            msg = (
+                "The transforms have inconsistent dimensionality. "
+                f"Got transforms with dimensionality = {ndims}."
+            )
+            raise ValueError(msg)
+        return transforms
 
 
 class MultiscaleBase(BaseAttrs):
@@ -151,20 +151,6 @@ class MultiscaleBase(BaseAttrs):
         Determined by the length of the axes attribute.
         """
         return len(self.axes)
-
-    @model_validator(mode="after")
-    def _ensure_top_transforms_dimensionality(self) -> Self:
-        """
-        Ensure that the dimensionality of the top-level coordinateTransformations,
-        if present, is consistent with the rest of the model.
-        """
-        ctx = self.coordinateTransformations
-        if ctx is not None:
-            # check that the dimensionality of the coordinateTransformations is
-            # internally consistent
-            _ = _ensure_transform_dimensionality(ctx)
-
-        return self
 
     @model_validator(mode="after")
     def _ensure_axes_top_transforms(data: Self) -> Self:
