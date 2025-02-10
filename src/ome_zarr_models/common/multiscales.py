@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 from collections import Counter
-from typing import TYPE_CHECKING, Annotated, Self, get_args
+from typing import TYPE_CHECKING, Self, get_args
 
 from pydantic import (
     BaseModel,
-    BeforeValidator,
     Field,
     JsonValue,
     field_validator,
@@ -35,50 +34,6 @@ VALID_NDIM = (2, 3, 4, 5)
 ValidTransform = tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform]
 
 
-def _ensure_scale_translation(
-    transforms_obj: object,
-) -> object:
-    """
-    Ensures that
-    - there are only 1 or 2 transforms.
-    - the first element is a scale transformation
-    - the second element, if present, is a translation transform
-    """
-    # This is used as a before validator - to help use, we use pydantic to first
-    # cast the input (which can in general anything) into a set of transformations.
-    # Then we check the transformations are valid.
-    #
-    # This is a bit convoluted, but we do it because the default pydantic error messages
-    # are a mess otherwise
-
-    class Transforms(BaseModel):
-        transforms: list[Transform]
-
-    transforms = Transforms(transforms=transforms_obj).transforms
-
-    if len(transforms) not in (1, 2):
-        msg = f"Invalid number of transforms: got {len(transforms)}, expected 1 or 2"
-        raise ValueError(msg)
-
-    maybe_scale = transforms[0]
-    if maybe_scale.type != "scale":
-        msg = (
-            "The first element of `coordinateTransformations` must be a scale "
-            f"transform. Got {maybe_scale} instead."
-        )
-        raise ValueError(msg)
-    if len(transforms) == 2:
-        maybe_trans = transforms[1]
-        if (maybe_trans.type) != "translation":
-            msg = (
-                "The second element of `coordinateTransformations` must be a "
-                f"translation transform. Got {maybe_trans} instead."
-            )
-            raise ValueError(msg)
-
-    return transforms_obj
-
-
 class Dataset(BaseAttrs):
     """
     An element of Multiscale.datasets.
@@ -88,10 +43,7 @@ class Dataset(BaseAttrs):
     # TODO: can we validate that the paths must be ordered from highest resolution to
     # smallest using scale metadata?
     path: str
-    coordinateTransformations: Annotated[
-        ValidTransform,
-        BeforeValidator(_ensure_scale_translation),
-    ]
+    coordinateTransformations: ValidTransform
 
     @classmethod
     def build(
@@ -106,6 +58,52 @@ class Dataset(BaseAttrs):
                 scale=scale, translation=translation
             ),
         )
+
+    @field_validator("coordinateTransformations", mode="before")
+    def _ensure_scale_translation(
+        transforms_obj: object,
+    ) -> object:
+        """
+        Ensures that
+        - there are only 1 or 2 transforms.
+        - the first element is a scale transformation
+        - the second element, if present, is a translation transform
+        """
+        # This is used as a before validator - to help use, we use pydantic to first
+        # cast the input (which can in general anything) into a set of transformations.
+        # Then we check the transformations are valid.
+        #
+        # This is a bit convoluted, but we do it because the default pydantic error
+        # messages are a mess otherwise
+
+        class Transforms(BaseModel):
+            transforms: list[Transform]
+
+        transforms = Transforms(transforms=transforms_obj).transforms
+
+        if len(transforms) not in (1, 2):
+            msg = (
+                f"Invalid number of transforms: got {len(transforms)}, expected 1 or 2"
+            )
+            raise ValueError(msg)
+
+        maybe_scale = transforms[0]
+        if maybe_scale.type != "scale":
+            msg = (
+                "The first element of `coordinateTransformations` must be a scale "
+                f"transform. Got {maybe_scale} instead."
+            )
+            raise ValueError(msg)
+        if len(transforms) == 2:
+            maybe_trans = transforms[1]
+            if (maybe_trans.type) != "translation":
+                msg = (
+                    "The second element of `coordinateTransformations` must be a "
+                    f"translation transform. Got {maybe_trans} instead."
+                )
+                raise ValueError(msg)
+
+        return transforms_obj
 
     @field_validator("coordinateTransformations", mode="after")
     @classmethod
