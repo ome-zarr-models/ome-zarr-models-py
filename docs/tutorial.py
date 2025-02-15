@@ -1,11 +1,15 @@
 # # Tutorial
 
+import os
+import tempfile
+
 import matplotlib.pyplot as plt
 import zarr
 import zarr.storage
 from rich.pretty import pprint
 
 from ome_zarr_models import open_ome_zarr
+from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.image import Image
 
 # ## Loading datasets
@@ -53,3 +57,41 @@ pprint(zarr_arr)
 
 # To finish off, lets plot the first z-slice of the first channel of this data:
 plt.imshow(zarr_arr[0, 0, :, :], cmap="gray")
+
+# ## Creating new datasets
+#
+# To create new OME-Zarr datasets, the ``.new()`` method on the OME-Zarr groups
+# can be used.
+#
+# As an example we'll create an OME-Zarr image with two arrays, one at the
+# original resolution and one downsampled version.
+
+arrays = [zarr.empty(shape=(100, 100)), zarr.empty(shape=(50, 50))]
+pixel_size = (6, 4)
+pixel_unit = "um"
+
+ome_zarr_image = Image.new(
+    arrays=arrays,
+    paths=["level0", "level1"],
+    axes=[
+        Axis(name="y", type="space", unit=pixel_unit),
+        Axis(name="x", type="space", unit=pixel_unit),
+    ],
+    global_scale=pixel_size,
+    scales=[(1, 1), (2, 2)],
+    translations=[(0, 0), (3, 2)],
+)
+print(ome_zarr_image)
+
+# ## Saving datasets
+#
+# To save a new dataset the ``.to_zarr(store=...)`` method can be used,
+# which will put all the OME-Zarr group metadata into a Zarr store.
+#
+# In this tutorial we'll use a temporary directory to save the Zarr group
+# to:
+
+with tempfile.TemporaryDirectory() as fp:
+    store = zarr.DirectoryStore(path=fp)
+    ome_zarr_image.to_zarr(store=store, path="/")
+    print(os.listdir(fp))
