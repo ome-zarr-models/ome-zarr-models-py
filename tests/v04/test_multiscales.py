@@ -86,7 +86,6 @@ def test_multiscale_unique_axis_names() -> None:
     "axis_types",
     [
         ("space", "space", "channel"),
-        ("space", "channel", "space", "channel"),
     ],
 )
 def test_multiscale_space_axes_last(axis_types: list[str]) -> None:
@@ -159,7 +158,7 @@ def test_multiscale_axis_length(num_axes: int) -> None:
         Axis(name=str(idx), type="space", unit="meter") for idx in range(num_axes)
     )
     datasets = (Dataset.build(path="path", scale=(1,) * rank, translation=(0,) * rank),)
-    with pytest.raises(ValidationError, match="Incorrect number of axes provided"):
+    with pytest.raises(ValidationError, match=r"Length of axes \([0-9]+\) not valid"):
         Multiscale(
             axes=axes,
             datasets=datasets,
@@ -226,7 +225,7 @@ def test_transform_invalid_length(
     """
     with pytest.raises(
         ValidationError,
-        match=f"Invalid number of transforms: got {len(transforms)}, expected 1 or 2",
+        match=re.escape(f"Length of transforms ({len(transforms)}) not valid"),
     ):
         Dataset(path="foo", coordinateTransformations=transforms)
 

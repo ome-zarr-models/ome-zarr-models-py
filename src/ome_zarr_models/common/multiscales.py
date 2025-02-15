@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter
-from typing import TYPE_CHECKING, Self, get_args
+from typing import TYPE_CHECKING, Self
 
 from pydantic import (
     BaseModel,
@@ -13,7 +13,7 @@ from pydantic import (
 
 from ome_zarr_models._utils import duplicates
 from ome_zarr_models.base import BaseAttrs
-from ome_zarr_models.common.axes import Axes, AxisType
+from ome_zarr_models.common.axes import Axes
 from ome_zarr_models.common.coordinate_transformations import (
     ScaleTransform,
     Transform,
@@ -23,6 +23,7 @@ from ome_zarr_models.common.coordinate_transformations import (
     _build_transforms,
     _ndim,
 )
+from ome_zarr_models.common.validation import check_length
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -80,12 +81,7 @@ class Dataset(BaseAttrs):
             transforms: list[Transform]
 
         transforms = Transforms(transforms=transforms_obj).transforms
-
-        if len(transforms) not in (1, 2):
-            msg = (
-                f"Invalid number of transforms: got {len(transforms)}, expected 1 or 2"
-            )
-            raise ValueError(msg)
+        check_length(transforms, valid_lengths=[1, 2], variable_name="transforms")
 
         maybe_scale = transforms[0]
         if maybe_scale.type != "scale":
@@ -217,12 +213,7 @@ class MultiscaleBase(BaseAttrs):
         """
         Ensures that there are between 2 and 5 axes (inclusive)
         """
-        if (len_axes := len(axes)) not in VALID_NDIM:
-            msg = (
-                f"Incorrect number of axes provided ({len_axes}). "
-                "Only 2, 3, 4, or 5 axes are allowed."
-            )
-            raise ValueError(msg)
+        check_length(axes, valid_lengths=VALID_NDIM, variable_name="axes")
         return axes
 
     @field_validator("axes", mode="after")
@@ -237,16 +228,30 @@ class MultiscaleBase(BaseAttrs):
         - there is only 1 axis with type `channel`
         - there is only 1 axis with a type that is not `space`, `time`, or `channel`
         """
+        check_length(
+            [ax for ax in axes if ax.type == "space"],
+            valid_lengths=[2, 3],
+            variable_name="space axes",
+        )
+        check_length(
+            [ax for ax in axes if ax.type == "time"],
+            valid_lengths=[0, 1],
+            variable_name="time axes",
+        )
+        check_length(
+            [ax for ax in axes if ax.type == "channel"],
+            valid_lengths=[0, 1],
+            variable_name="channel axes",
+        )
+        check_length(
+            [ax for ax in axes if ax.type not in ["space", "time", "channel"]],
+            valid_lengths=[0, 1],
+            variable_name="custom axes",
+        )
+
         axis_types = [ax.type for ax in axes]
         type_census = Counter(axis_types)
         num_spaces = type_census["space"]
-        if num_spaces not in [2, 3]:
-            msg = (
-                f"Invalid number of space axes: {num_spaces}. "
-                "Only 2 or 3 space axes are allowed."
-            )
-            raise ValueError(msg)
-
         if not all(a == "space" for a in axis_types[-num_spaces:]):
             msg = (
                 f"All space axes must be at the end of the axes list. "
@@ -254,30 +259,11 @@ class MultiscaleBase(BaseAttrs):
             )
             raise ValueError(msg)
 
-        if (num_times := type_census["time"]) > 1:
-            msg = (
-                f"Invalid number of time axes: {num_times}. "
-                "Only 1 time axis is allowed."
-            )
-            raise ValueError(msg)
-        elif num_times == 1 and axis_types[0] != "time":
+        num_times = type_census["time"]
+        if num_times == 1 and axis_types[0] != "time":
             msg = "Time axis must be at the beginning of axis list."
             raise ValueError(msg)
 
-        if (num_channels := type_census["channel"]) > 1:
-            msg = (
-                f"Invalid number of channel axes: {num_channels}. "
-                "Only 1 channel axis is allowed."
-            )
-            raise ValueError(msg)
-
-        custom_axes = set(axis_types) - set(get_args(AxisType))
-        if (num_custom := len(custom_axes)) > 1:
-            msg = (
-                f"Invalid number of custom axes: {num_custom}. "
-                "Only 1 custom axis is allowed."
-            )
-            raise ValueError(msg)
         return axes
 
     @field_validator("axes", mode="after")
