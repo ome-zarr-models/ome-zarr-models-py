@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING, Self
 
 import zarr
 from pydantic import Field
-from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.v04.base import BaseGroupv04
@@ -34,7 +33,7 @@ class ImageLabelAttrs(BaseAttrs):
     multiscales: list[Multiscale]
 
 
-class ImageLabel(GroupSpec[ImageLabelAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ignore[misc]
+class ImageLabel(BaseGroupv04[ImageLabelAttrs]):
     """
     An image label dataset.
     """
