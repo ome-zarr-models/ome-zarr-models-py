@@ -20,7 +20,7 @@ class BaseOMEAttrs(BaseAttrs):
     version: Literal["0.5"]
 
 
-class BaseGroupv05(BaseGroup):
+class BaseGroupv05(BaseGroup[BaseZarrAttrs[T]], Generic[T]):
     """
     Base class for all v0.5 OME-Zarr groups.
     """

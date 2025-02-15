@@ -1,6 +1,4 @@
-from pydantic_zarr.v2 import ArraySpec, GroupSpec
-
-from ome_zarr_models._v05.base import BaseGroupv05, BaseOMEAttrs, BaseZarrAttrs
+from ome_zarr_models._v05.base import BaseGroupv05, BaseOMEAttrs
 from ome_zarr_models._v05.plate import Plate
 
 __all__ = ["HCS", "HCSAttrs"]
@@ -14,7 +12,7 @@ class HCSAttrs(BaseOMEAttrs):
     plate: Plate
 
 
-class HCS(GroupSpec[BaseZarrAttrs[HCSAttrs], ArraySpec | GroupSpec], BaseGroupv05):  # type: ignore[misc]
+class HCS(BaseGroupv05[HCSAttrs]):
     """
     An OME-Zarr high content screening (HCS) dataset.
     """
