@@ -80,7 +80,7 @@ class Image(BaseGroupv04[ImageAttrs]):
     def new(
         cls,
         *,
-        arrays: Sequence[zarr.Array],
+        array_specs: Sequence[ArraySpec],
         paths: Sequence[str],
         axes: Sequence[Axis],
         global_scale: Sequence[float] | None = None,
@@ -98,8 +98,8 @@ class Image(BaseGroupv04[ImageAttrs]):
         Parameters
         ----------
         arrays :
-            A sequence of `zarr.Array` that collectively represent the same image
-            at multiple levels of detail.
+            A sequence of array specifications that collectively represent the same
+            image at multiple levels of detail.
         paths :
             The paths to the arrays within the new Zarr group.
         axes :
@@ -126,16 +126,14 @@ class Image(BaseGroupv04[ImageAttrs]):
         first write this class to a zarr Store, and then write data to the Zarr
         arrays in that store.
         """
-        if len(arrays) != len(paths):
+        if len(array_specs) != len(paths):
             raise ValueError(
-                f"Length of arrays (got {len(arrays)=}) must be the same as "
+                f"Length of arrays (got {len(array_specs)=}) must be the same as "
                 f"length of paths (got {len(paths)=})"
             )
         members_flat = {
-            "/" + key.lstrip("/"): ArraySpec.from_zarr(
-                array=arr,
-            )
-            for key, arr in zip(paths, arrays, strict=True)
+            "/" + key.lstrip("/"): arr
+            for key, arr in zip(paths, array_specs, strict=True)
         }
 
         if global_scale is None and global_translation is None:
