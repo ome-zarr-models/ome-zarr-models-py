@@ -6,7 +6,7 @@ from typing import Literal
 
 from ome_zarr_models.common.multiscales import Dataset, MultiscaleBase
 
-__all__ = ["Dataset", "Multiscale"]
+__all__ = ["Dataset", "Multiscale", "MultiscaleBase"]
 
 
 class Multiscale(MultiscaleBase):
