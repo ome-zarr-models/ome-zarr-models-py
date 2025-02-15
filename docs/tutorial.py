@@ -77,9 +77,8 @@ ome_zarr_image = Image.new(
         Axis(name="y", type="space", unit=pixel_unit),
         Axis(name="x", type="space", unit=pixel_unit),
     ],
-    global_scale=pixel_size,
-    scales=[(1, 1), (2, 2)],
-    translations=[(0, 0), (3, 2)],
+    scales=[[p * 1 for p in pixel_size], [p * 2 for p in pixel_size]],
+    translations=[[0, 0], [p * 0.5 for p in pixel_size]],
 )
 print(ome_zarr_image)
 
