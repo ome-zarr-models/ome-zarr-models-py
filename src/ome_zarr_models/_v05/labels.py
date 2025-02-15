@@ -2,9 +2,9 @@ from typing import Any
 
 import numpy as np
 from pydantic import Field, model_validator
-from pydantic_zarr.v2 import ArraySpec, GroupSpec
+from pydantic_zarr.v2 import GroupSpec
 
-from ome_zarr_models._v05.base import BaseGroupv05, BaseOMEAttrs, BaseZarrAttrs
+from ome_zarr_models._v05.base import BaseGroupv05, BaseOMEAttrs
 
 __all__ = ["Labels", "LabelsAttrs"]
 
@@ -56,8 +56,7 @@ class LabelsAttrs(BaseOMEAttrs):
 
 
 class Labels(
-    GroupSpec[BaseZarrAttrs[LabelsAttrs], ArraySpec | GroupSpec],  # type: ignore[misc]
-    BaseGroupv05,
+    BaseGroupv05[LabelsAttrs],
 ):
     """
     An OME-Zarr labels dataset.
