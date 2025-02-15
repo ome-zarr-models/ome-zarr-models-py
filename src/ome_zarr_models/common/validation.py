@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import TypeVar
 
 import zarr
@@ -62,3 +63,22 @@ def check_array_path(group: zarr.Group, array_path: str) -> ArraySpec:
         raise ValueError(msg) from e
 
     return array_spec
+
+
+def check_length(
+    sequence: Sequence[T], *, valid_lengths: Sequence[int], variable_name: str
+) -> None:
+    """
+    Check if the length of a sequence is valid.
+
+    Raises
+    ------
+    ValueError
+        If the sequence is not a valid length.
+    """
+    if len(sequence) not in valid_lengths:
+        msg = (
+            f"Length of {variable_name} ({len(sequence)}) not valid. "
+            f"Allowed lengths are {valid_lengths}."
+        )
+        raise ValueError(msg)
