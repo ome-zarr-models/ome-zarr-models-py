@@ -1,11 +1,17 @@
 # # Tutorial
 
+import os
+import tempfile
+
 import matplotlib.pyplot as plt
+import numpy as np
 import zarr
 import zarr.storage
+from pydantic_zarr.v2 import ArraySpec
 from rich.pretty import pprint
 
 from ome_zarr_models import open_ome_zarr
+from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.image import Image
 
 # ## Loading datasets
@@ -53,3 +59,54 @@ pprint(zarr_arr)
 
 # To finish off, lets plot the first z-slice of the first channel of this data:
 plt.imshow(zarr_arr[0, 0, :, :], cmap="gray")
+
+# ## Creating new datasets
+#
+# To create new OME-Zarr datasets, the ``.new()`` method on the OME-Zarr groups
+# can be used.
+#
+# As an example we'll create an OME-Zarr image with two arrays, one at the
+# original resolution and one downsampled version.
+
+array_specs = [
+    ArraySpec(shape=(100, 100), chunks=(32, 32), dtype=np.uint16),
+    ArraySpec(shape=(50, 50), chunks=(32, 32), dtype=np.uint16),
+]
+pixel_size = (6, 4)
+pixel_unit = "um"
+
+ome_zarr_image = Image.new(
+    array_specs=array_specs,
+    paths=["level0", "level1"],
+    axes=[
+        Axis(name="y", type="space", unit=pixel_unit),
+        Axis(name="x", type="space", unit=pixel_unit),
+    ],
+    scales=[[p * 1 for p in pixel_size], [p * 2 for p in pixel_size]],
+    translations=[[0, 0], [p * 0.5 for p in pixel_size]],
+)
+print(ome_zarr_image)
+
+# It's also possible to create array metadata from existing arrays.
+# For numpy arrays:
+arr0 = np.zeros(shape=(100, 100), dtype=np.uint16)
+arr1 = np.zeros(shape=(50, 50), dtype=np.uint16)
+array_specs = [ArraySpec.from_array(arr0), ArraySpec.from_array(arr1)]
+
+# or for Zarr arrays:
+arr0 = zarr.zeros(shape=(100, 100), dtype=np.uint16)
+arr1 = zarr.zeros(shape=(50, 50), dtype=np.uint16)
+array_specs = [ArraySpec.from_array(arr0), ArraySpec.from_array(arr1)]
+
+# ## Saving datasets
+#
+# To save a new dataset the ``.to_zarr(store=...)`` method can be used,
+# which will put all the OME-Zarr group metadata into a Zarr store.
+#
+# In this tutorial we'll use a temporary directory to save the Zarr group
+# to:
+
+with tempfile.TemporaryDirectory() as fp:
+    store = zarr.DirectoryStore(path=fp)
+    ome_zarr_image.to_zarr(store=store, path="/")
+    print(os.listdir(fp))
