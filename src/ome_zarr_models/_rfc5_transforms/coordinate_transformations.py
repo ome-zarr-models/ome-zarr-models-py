@@ -1,9 +1,13 @@
 from typing import Literal
 
 from pydantic import Field, model_validator
-
-from ome_zarr_models._rfc5_transforms.coordinate_systems import CoordinateSystem
+from ome_zarr_models.common.axes import Axes
 from ome_zarr_models.base import BaseAttrs
+
+
+class CoordinateSystem(BaseAttrs):
+    name: str
+    axes: Axes
 
 
 class CoordinateTransformation(BaseAttrs):
