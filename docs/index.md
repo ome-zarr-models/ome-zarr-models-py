@@ -53,6 +53,17 @@ _Note:_ support for OME-Zarr 0.5 is not complete, but when it is the following i
   As an implementation we have no way of knowing which version of the specification data that contains version "0.5" was written to, so **we have chosen to validate against the original release of OME-Zarr 0.5** (commit [8a0f886](https://github.com/ome/ngff/tree/8a0f886aac791060e329874b624126d3530c2b6f)). As of writing, this means `ome-zarr-models` does not validate omero metadata, and does not require that the "dimension_names" attribute to be present in multiscale Zarr array metadata.
 - For labels, [the OME-Zarr specification says](https://ngff.openmicroscopy.org/0.5/index.html#labels-md) "Intermediate groups between "labels" and the images within it are allowed, but these MUST NOT contain metadata.". Because it is not clear what "metadata" means in this sentence, we do not validate this part of the specification.
 
+## Versioning
+
+`ome-zarr-models` has a major.minor versioning scheme where:
+
+- The major version is incremented when support for a new version of the OME-Zarr specification is added, or a breaking change is made to the package.
+- The minor version is incremented for any other changes (e.g., documentation improvements, bug fixes, new features)
+
+Minor versions are released often with new improvements and bugfixes.
+
+Before version 1.0 is released, the version number will be 0.major.minor, and version 1.0 will be released when support for version 0.5 of the OME-Zarr specification is complete.
+
 ## Roadmap
 
 - Writing metadata after creation/modification.
