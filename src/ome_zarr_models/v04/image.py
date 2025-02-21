@@ -83,13 +83,13 @@ class Image(BaseGroupv04[ImageAttrs]):
         array_specs: Sequence[ArraySpec],
         paths: Sequence[str],
         axes: Sequence[Axis],
-        global_scale: Sequence[float] | None = None,
-        global_translation: Sequence[float] | None = None,
         scales: Sequence[Sequence[float]],
         translations: Sequence[Sequence[float] | None],
         name: str | None = None,
         type: str | None = None,
         metadata: JsonValue | None = None,
+        global_scale: Sequence[float] | None = None,
+        global_translation: Sequence[float] | None = None,
     ) -> Image:
         """
         Create a new `Image` from a sequence of multiscale arrays
@@ -104,10 +104,6 @@ class Image(BaseGroupv04[ImageAttrs]):
             The paths to the arrays within the new Zarr group.
         axes :
             `Axis` objects describing the axes of the arrays.
-        global_scale :
-            A global scale value for each axis of every array.
-        global_translation :
-            A global translation value for each axis of every array.
         scales :
             For each array, a scale value for each axis of the array.
         translations :
@@ -119,11 +115,15 @@ class Image(BaseGroupv04[ImageAttrs]):
             Optional.
         metadata :
             Arbitrary metadata to store in the multiscales group.
+        global_scale :
+            A global scale value for each axis of every array.
+        global_translation :
+            A global translation value for each axis of every array.
 
         Notes
         -----
         This class does not store or copy any array data. To save array data,
-        first write this class to a zarr Store, and then write data to the Zarr
+        first write this class to a Zarr store, and then write data to the Zarr
         arrays in that store.
         """
         if len(array_specs) != len(paths):
