@@ -9,7 +9,7 @@ Note: Some of the data from the specification needs fixes. Once the project is i
 - [ ] arrayCoordSys.json
 
 ## transformations
-- [ ] identity.json
+- [x] identity.json
 - [ ] scale.json
 - [ ] translation.json
 - [ ] sequence.json
