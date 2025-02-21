@@ -108,8 +108,8 @@ addopts = [
     "-ra",
     "--strict-config",
     "--strict-markers",
-    "--cov",
-    "--cov-report=xml",
+  # "--cov",
+   # "--cov-report=xml",
     "-vv",
 ]
 filterwarnings = ["error"]

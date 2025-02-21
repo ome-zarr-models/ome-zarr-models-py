@@ -1,6 +1,6 @@
 from typing import Literal
-
-from pydantic import Field, model_validator
+from typing_extensions import Self
+from pydantic import Field, model_validator, BaseModel
 from ome_zarr_models.common.axes import Axes
 from ome_zarr_models.base import BaseAttrs
 
@@ -13,8 +13,8 @@ class CoordinateSystem(BaseAttrs):
 class CoordinateTransformation(BaseAttrs):
     # TODO: extend this as we incorporate more types of transformation
     type: Literal["identity", "scale"]
-    output: str
     input: str
+    output: str
 
 
 class Identity(CoordinateTransformation):
@@ -38,7 +38,7 @@ class Scale(CoordinateTransformation):
 
 
 # TODO: agree on the name of this class
-class SpatialMapper(BaseAttrs):
+class SpatialMapper(BaseModel):
     """Container class for coordinate systems and coordinate transformations."""
 
     coordinateSystems: list[CoordinateSystem] = Field(
@@ -49,10 +49,15 @@ class SpatialMapper(BaseAttrs):
     )
 
     @model_validator(mode="after")
-    def check_cs_input_output(self):
+    def check_cs_input_output(self) -> Self:
         """Check input and output for each coordinate system.
 
         The input and output must either be a path relative to the current file in the zarr store
         or must be a name that is present in the list of coordinate systems.
         """
-        pass
+        cs_names = {cs.name for cs in self.coordinateSystems}
+        for transformation in self.coordinateTransformations:
+            if transformation.output not in cs_names:
+                raise ValueError(f"Invalid output in coordinate transformation: {transformation.output}. Must be one of"
+                                 f"{', '.join(cs_names)}")
+        return self
