@@ -2,8 +2,9 @@ from typing import Literal
 
 from pydantic import Field, model_validator
 
-from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models._rfc5_transforms.coordinate_systems import CoordinateSystem
+from ome_zarr_models.base import BaseAttrs
+
 
 class CoordinateTransformation(BaseAttrs):
     # TODO: extend this as we incorporate more types of transformation
@@ -14,10 +15,13 @@ class CoordinateTransformation(BaseAttrs):
 
 class Identity(CoordinateTransformation):
     """Identity transformation."""
+
     type: Literal["identity"]
+
 
 class Scale(CoordinateTransformation):
     """Scale transformation."""
+
     type: Literal["scale"]
     scale: list[float]
 
@@ -27,6 +31,7 @@ class Scale(CoordinateTransformation):
         Number of dimensions.
         """
         return len(self.scale)
+
 
 # TODO: agree on the name of this class
 class SpatialMapper(BaseAttrs):
