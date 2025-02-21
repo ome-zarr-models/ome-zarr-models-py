@@ -1,8 +1,15 @@
 # Changelog
 
+## 0.1.4
+
+### Documentation improvements
+
+- Added a versioning policy to the documentation home page.
+- Added some missing objects to the API documentation for `ome_zarr_models.v04`.
+
 ## 0.1.3
 
-### Doc improvements
+### Documentation improvements
 
 - General minor improvements to the layout and look of the API docs.
 - Added some notes on known issues that will be encountered with support for OME-Zarr 0.5 in the future.
@@ -13,7 +20,7 @@
 
 ## 0.1.2
 
-### Doc improvements
+### Documentation improvements
 
 - Added a ["How do I...?" page](how-to.md) that explains how to do common tasks with `ome-zarr-models`.
 
@@ -33,7 +40,7 @@
 - [ome_zarr_models.v04.image_label.ImageLabel][] data is now correctly parsed.
   Previously the `'image-label'` field was loaded, but not validated or parsed.
 
-### Doc improvements
+### Documentation improvements
 
 - Fixed the `pip` install command on the home page.
 - Added a conda install command to the home page.
