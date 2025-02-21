@@ -50,6 +50,21 @@ class HCS(GroupSpec[HCSAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ig
 
         return self
 
+    @property
+    def n_wells(self) -> int:
+        """
+        Number of wells.
+        """
+        return len(self.attributes.plate.wells)
+
+    @property
+    def well_groups(self) -> Generator[Well, None, None]:
+        """
+        Well groups within this HCS group.
+        """
+        for i in range(self.n_wells):
+            yield self.get_well_group(i)
+
     def get_well_group(self, i: int) -> Well:
         """
         Get a single well group.
@@ -67,18 +82,3 @@ class HCS(GroupSpec[HCSAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ig
             group = group.members[part]
 
         return Well(attributes=group.attributes, members=group.members)
-
-    @property
-    def n_wells(self) -> int:
-        """
-        Number of wells.
-        """
-        return len(self.attributes.plate.wells)
-
-    @property
-    def well_groups(self) -> Generator[Well, None, None]:
-        """
-        Well groups within this HCS group.
-        """
-        for i in range(self.n_wells):
-            yield self.get_well_group(i)

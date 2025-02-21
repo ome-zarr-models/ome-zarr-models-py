@@ -4,9 +4,8 @@ For reference, see the [omero section of the OME-Zarr specification](https://ngf
 
 from typing import Annotated
 
-from pydantic import StringConstraints
-
 from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.common.validation import RGBHexConstraint
 
 __all__ = ["Channel", "Omero", "Window"]
 
@@ -22,15 +21,12 @@ class Window(BaseAttrs):
     end: float
 
 
-_RGBHexConstraint = StringConstraints(pattern=r"[0-9a-fA-F]{6}")
-
-
 class Channel(BaseAttrs):
     """
     A single omero channel.
     """
 
-    color: Annotated[str, _RGBHexConstraint]
+    color: Annotated[str, RGBHexConstraint]
     window: Window
 
 

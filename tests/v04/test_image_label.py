@@ -85,3 +85,23 @@ def test_invalid_rgba() -> None:
         ValidationError, match="Input should be less than or equal to 255"
     ):
         Color(label_value=1, rgba=(255, 255, 3412, 255))
+
+
+def test_default_source() -> None:
+    """
+    Check that default image source is '../../'
+    """
+    attrs = Label(
+        colors=(
+            Color(label_value=1, rgba=(255, 255, 255, 255)),
+            Color(label_value=4, rgba=(0, 255, 255, 128)),
+        ),
+        properties=(
+            Property(label_value=1, area=1200, cls="foo"),
+            Property(label_value=4, area=1650),
+        ),
+        source={"planet": "Mars"},
+        version="0.4",
+    )
+    assert attrs.source is not None
+    assert attrs.source.image == "../../"
