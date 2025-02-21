@@ -1,4 +1,4 @@
-from ome_zarr_models.v04.coordinate_transformations import (
+from ome_zarr_models.common.coordinate_transformations import (
     Identity,
     PathScale,
     PathTranslation,
