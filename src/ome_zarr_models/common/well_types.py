@@ -3,7 +3,7 @@ For reference, see the [well section of the OME-Zarr specification](https://ngff
 """
 
 from collections import defaultdict
-from typing import Annotated, Literal
+from typing import Annotated
 
 from pydantic import AfterValidator, Field
 
@@ -33,9 +33,7 @@ class WellMeta(BaseAttrs):
     """
 
     images: Annotated[list[WellImage], AfterValidator(unique_items_validator)]
-    version: Literal["0.4"] | None = Field(
-        None, description="Version of the well specification"
-    )
+    version: str | None = Field(None, description="Version of the well specification")
 
     def get_acquisition_paths(self) -> dict[int, list[str]]:
         """

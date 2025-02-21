@@ -7,6 +7,7 @@ def test_well() -> None:
     zarr_group = json_to_zarr_group(json_fname="well_example.json")
     ome_group = Well.from_zarr(zarr_group)
     assert ome_group.attributes.ome == WellAttrs(
+        version="0.5",
         well=WellMeta(
             images=[
                 WellImage(path="0", acquisition=1),
@@ -14,7 +15,6 @@ def test_well() -> None:
                 WellImage(path="2", acquisition=2),
                 WellImage(path="3", acquisition=2),
             ],
-            version=None,
+            version="0.5",
         ),
-        version="0.5",
     )
