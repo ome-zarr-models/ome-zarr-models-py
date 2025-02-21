@@ -16,15 +16,15 @@ from ome_zarr_models.v04.image import Image
 
 # ## Loading datasets
 #
-# OME-Zarr datasets are just zarr groups with special metadata.
-# To open an OME-Zarr dataset, we first open the zarr group.
+# OME-Zarr datasets are Zarr groups with specific metadata.
+# To open an OME-Zarr dataset, we first open the Zarr group.
 
 zarr_group = zarr.open(
     "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0062A/6001240.zarr", mode="r"
 )
 
 # If you're not sure what type or OME-Zarr version of data you have, you can
-# use open_ome_zarr() to automatically 'guess' the correct group:
+# use `open_ome_zarr()` to automatically 'guess' the correct group:
 
 ome_zarr_group = open_ome_zarr(zarr_group)
 print(type(ome_zarr_group))
@@ -51,8 +51,9 @@ pprint(metadata.multiscales[0].datasets)
 
 # ## Accessing data
 #
-# Although these models do not handle reading or writing data, they do expose the zarr
-# arrays. For example, to get the highest resolution image:
+# Although these models do not handle reading or writing data, they do give access to
+# the Zarr arrays using the `zarr-python` library.
+# For example, to get the highest resolution image:
 
 zarr_arr = zarr_group[metadata.multiscales[0].datasets[0].path]
 pprint(zarr_arr)
@@ -62,8 +63,9 @@ plt.imshow(zarr_arr[0, 0, :, :], cmap="gray")
 
 # ## Creating new datasets
 #
-# To create new OME-Zarr datasets, the ``.new()`` method on the OME-Zarr groups
-# can be used.
+# To create new OME-Zarr datasets, the `.new()` method on the OME-Zarr groups
+# can be used. Note that this creates the Zarr groups, Zarr arrays, and related
+# metadata, but does not write any data to the Zarr arrays.
 #
 # As an example we'll create an OME-Zarr image with two arrays, one at the
 # original resolution and one downsampled version.
@@ -89,11 +91,13 @@ print(ome_zarr_image)
 
 # It's also possible to create array metadata from existing arrays.
 # For numpy arrays:
+
 arr0 = np.zeros(shape=(100, 100), dtype=np.uint16)
 arr1 = np.zeros(shape=(50, 50), dtype=np.uint16)
 array_specs = [ArraySpec.from_array(arr0), ArraySpec.from_array(arr1)]
 
 # or for Zarr arrays:
+
 arr0 = zarr.zeros(shape=(100, 100), dtype=np.uint16)
 arr1 = zarr.zeros(shape=(50, 50), dtype=np.uint16)
 array_specs = [ArraySpec.from_array(arr0), ArraySpec.from_array(arr1)]
@@ -104,7 +108,7 @@ array_specs = [ArraySpec.from_array(arr0), ArraySpec.from_array(arr1)]
 # which will put all the OME-Zarr group metadata into a Zarr store.
 #
 # In this tutorial we'll use a temporary directory to save the Zarr group
-# to:
+# to, and then list the directory to show that it has been saved.
 
 with tempfile.TemporaryDirectory() as fp:
     store = zarr.DirectoryStore(path=fp)
