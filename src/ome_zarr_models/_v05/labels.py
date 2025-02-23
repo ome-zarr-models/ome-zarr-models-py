@@ -1,11 +1,9 @@
-from cProfile import label
-from math import e
 from typing import Any, Self
 
 import numpy as np
-from pydantic import Field, model_validator
-from pydantic_zarr.v2 import ArraySpec, GroupSpec
 import zarr
+from pydantic import Field, ValidationError, model_validator
+from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models._v05.base import BaseGroupv05, BaseOMEAttrs, BaseZarrAttrs
 from ome_zarr_models._v05.image import Image
@@ -29,22 +27,42 @@ VALID_DTYPES: list[np.dtype[Any]] = [
 
 
 def _check_valid_dtypes(labels: "Labels") -> "Labels":
+    """
+    Check that all multiscales levels of a labels image are valid Label data types.
+    """
     for label_path in labels.attributes.ome.labels:
         if label_path not in labels.members:
             raise ValueError(f"Label path '{label_path}' not found in zarr group")
         else:
             spec = labels.members[label_path]
-            if isinstance(spec, GroupSpec):
-                raise ValueError(
-                    f"Label path '{label_path}' points to a group, not an array"
+            if isinstance(spec, ArraySpec):
+                raise RuntimeError(
+                    f"Node at path '{label_path}' is an array, expected a group"
                 )
-
-            dtype = np.dtype(spec.dtype)
-            if dtype not in VALID_DTYPES:
-                raise ValueError(
-                    f"Data type of labels at '{label_path}' is not valid. "
-                    f"Got {dtype}, should be one of {[str(x) for x in VALID_DTYPES]}."
-                )
+            try:
+                image_spec = Image(attributes=spec.attributes, members=spec.members)
+            except ValidationError as e:
+                raise RuntimeError(
+                    f"Error validating multiscale image at path '{label_path}'. "
+                    "See above for more detailed error message."
+                ) from e
+            for multiscale in image_spec.attributes.ome.multiscales:
+                for dataset in multiscale.datasets:
+                    arr_spec = image_spec.members[dataset.path]
+                    if isinstance(arr_spec, GroupSpec):
+                        raise RuntimeError(
+                            f"Node at path '{label_path}/{dataset.path}' is a group, "
+                            "expected an array"
+                        )
+                    dtype = np.dtype(arr_spec.dtype)
+                    if dtype not in VALID_DTYPES:
+                        msg = (
+                            "Data type of labels at path "
+                            f"'{label_path}/{dataset.path}' is not valid. "
+                            f"Got {dtype}, should be one of "
+                            f"{[str(x) for x in VALID_DTYPES]}."
+                        )
+                        raise ValueError(msg)
 
     return labels
 
