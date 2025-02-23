@@ -1,4 +1,3 @@
-import glob
 import numpy as np
 from pydantic_zarr.v2 import ArraySpec
 
