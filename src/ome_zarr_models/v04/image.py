@@ -158,6 +158,7 @@ class Image(BaseGroupv04[ImageAttrs]):
             metadata=metadata,
             name=name,
             type=type,
+            version="0.4",
         )
         return Image(
             members=GroupSpec.from_flat(members_flat).members,
