@@ -86,7 +86,7 @@ class Image(BaseGroupv04[ImageAttrs]):
         scales: Sequence[Sequence[float]],
         translations: Sequence[Sequence[float] | None],
         name: str | None = None,
-        type: str | None = None,
+        multiscale_type: str | None = None,
         metadata: JsonValue | None = None,
         global_scale: Sequence[float] | None = None,
         global_translation: Sequence[float] | None = None,
@@ -110,8 +110,8 @@ class Image(BaseGroupv04[ImageAttrs]):
             For each array, a translation value for each axis the array.
         name :
             A name for the multiscale collection.
-        type :
-            A description of the type of multiscale image represented by this group.
+        multiscale_type :
+            Type of downscaling method used to generate the multiscale image pyramid.
             Optional.
         metadata :
             Arbitrary metadata to store in the multiscales group.
@@ -157,7 +157,7 @@ class Image(BaseGroupv04[ImageAttrs]):
             coordinateTransformations=global_transform,
             metadata=metadata,
             name=name,
-            type=type,
+            type=multiscale_type,
             version="0.4",
         )
         return Image(
