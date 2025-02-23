@@ -4,7 +4,7 @@ from typing import TypeVar
 import zarr
 import zarr.errors
 from pydantic import StringConstraints
-from pydantic_zarr.v2 import ArraySpec
+from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 __all__ = [
     "AlphaNumericConstraint",
@@ -82,3 +82,33 @@ def check_length(
             f"Allowed lengths are {valid_lengths}."
         )
         raise ValueError(msg)
+
+
+def check_array_spec(spec: GroupSpec, path: str) -> ArraySpec:
+    """
+    Check that a path within a group is an array.
+
+    Raises
+    ------
+    RuntimeError :
+        If path is a group.
+    """
+    new_spec = spec.members[path]
+    if not isinstance(new_spec, ArraySpec):
+        raise RuntimeError(f"Node at path '{path}' is a group, expected an array")
+    return new_spec
+
+
+def check_group_spec(spec: GroupSpec, path: str) -> GroupSpec:
+    """
+    Check that a path within a group is a group.
+
+    Raises
+    ------
+    RuntimeError :
+        If path is an array.
+    """
+    new_spec = spec.members[path]
+    if not isinstance(new_spec, GroupSpec):
+        raise RuntimeError(f"Node at path '{path}' is an array, expected an group")
+    return new_spec
