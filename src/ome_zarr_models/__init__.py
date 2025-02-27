@@ -55,7 +55,7 @@ def open_ome_zarr(group: zarr.Group) -> BaseGroup[Any]:
     raise RuntimeError(
         f"Could not successfully validate {group} with any OME-Zarr group models.\n"
         "\n"
-        "If you know what type of group you tryint to open, using the "
+        "If you know what type of group you are trying to open, using the "
         "<group class>.from_zarr() method will give you a more informative "
         "error message explaining why validation failed."
     )
