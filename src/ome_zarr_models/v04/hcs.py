@@ -2,7 +2,6 @@ from collections.abc import Generator
 from typing import Self
 
 from pydantic import model_validator
-from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.v04.base import BaseGroupv04
@@ -20,7 +19,7 @@ class HCSAttrs(BaseAttrs):
     plate: Plate
 
 
-class HCS(GroupSpec[HCSAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ignore[misc]
+class HCS(BaseGroupv04[HCSAttrs]):
     """
     An OME-Zarr high-content screening (HCS) dataset representing a single plate.
     """
@@ -50,6 +49,21 @@ class HCS(GroupSpec[HCSAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ig
 
         return self
 
+    @property
+    def n_wells(self) -> int:
+        """
+        Number of wells.
+        """
+        return len(self.attributes.plate.wells)
+
+    @property
+    def well_groups(self) -> Generator[Well, None, None]:
+        """
+        Well groups within this HCS group.
+        """
+        for i in range(self.n_wells):
+            yield self.get_well_group(i)
+
     def get_well_group(self, i: int) -> Well:
         """
         Get a single well group.
@@ -67,18 +81,3 @@ class HCS(GroupSpec[HCSAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ig
             group = group.members[part]
 
         return Well(attributes=group.attributes, members=group.members)
-
-    @property
-    def n_wells(self) -> int:
-        """
-        Number of wells.
-        """
-        return len(self.attributes.plate.wells)
-
-    @property
-    def well_groups(self) -> Generator[Well, None, None]:
-        """
-        Well groups within this HCS group.
-        """
-        for i in range(self.n_wells):
-            yield self.get_well_group(i)

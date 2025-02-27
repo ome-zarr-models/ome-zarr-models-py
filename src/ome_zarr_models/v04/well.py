@@ -4,26 +4,18 @@ For reference, see the [well section of the OME-Zarr specification](https://ngff
 
 from collections.abc import Generator
 
-from pydantic_zarr.v2 import ArraySpec, GroupSpec
-
-from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.common.well import WellAttrs
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.image import Image
-from ome_zarr_models.v04.well_types import WellMeta
 
-# WellGroup is defined one level higher
-__all__ = ["WellAttrs"]
+__all__ = ["Well", "WellAttrs"]
 
 
-class WellAttrs(BaseAttrs):
+class Well(BaseGroupv04[WellAttrs]):
     """
-    Attributes for a well group.
+    An OME-Zarr well group.
     """
 
-    well: WellMeta
-
-
-class Well(GroupSpec[WellAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ignore[misc]
     def get_image(self, i: int) -> Image:
         """
         Get a single image from this well.
