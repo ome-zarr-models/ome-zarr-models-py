@@ -1,11 +1,11 @@
 from typing import Literal
 from typing_extensions import Self
 from pydantic import Field, model_validator, field_validator
-from ome_zarr_models.common.axes import Axes
-from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models._rfc5_transforms.axes import Axes
+from ome_zarr_models._rfc5_transforms.base import BaseOMEAttrs
 
 
-class CoordinateSystem(BaseAttrs):
+class CoordinateSystem(BaseOMEAttrs):
     name: str
     axes: Axes
 
@@ -22,7 +22,7 @@ class CoordinateSystem(BaseAttrs):
         return value
 
 
-class CoordinateTransformation(BaseAttrs):
+class CoordinateTransformation(BaseOMEAttrs):
     # TODO: extend this as we incorporate more types of transformation
     type: Literal["identity", "scale"]
     input: str
@@ -50,7 +50,7 @@ class Scale(CoordinateTransformation):
 
 
 # TODO: agree on the name of this class. Ideas: SpatialMetadata, CoordinateMetadata, ...
-class SpatialMapper(BaseAttrs):
+class SpatialMapper(BaseOMEAttrs):
     """Container class for coordinate systems and coordinate transformations."""
 
     coordinateSystems: list[CoordinateSystem] = Field(
