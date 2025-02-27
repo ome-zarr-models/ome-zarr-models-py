@@ -48,7 +48,7 @@ class Dataset(BaseAttrs):
 
     @classmethod
     def build(
-        cls, *, path: str, scale: Sequence[float], translation: Sequence[float]
+        cls, *, path: str, scale: Sequence[float], translation: Sequence[float] | None
     ) -> Self:
         """
         Construct a `Dataset` from a path, a scale, and a translation.

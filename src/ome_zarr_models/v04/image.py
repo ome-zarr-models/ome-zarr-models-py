@@ -1,17 +1,23 @@
 from __future__ import annotations
 
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
 import zarr.errors
-from pydantic import Field, model_validator
+from pydantic import Field, JsonValue, model_validator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.common.coordinate_transformations import _build_transforms
 from ome_zarr_models.common.validation import check_array_path
+from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.labels import Labels
-from ome_zarr_models.v04.multiscales import Multiscale
+from ome_zarr_models.v04.multiscales import Dataset, Multiscale
 from ome_zarr_models.v04.omero import Omero
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
 
 __all__ = ["Image", "ImageAttrs"]
 
@@ -31,7 +37,7 @@ class ImageAttrs(BaseAttrs):
     omero: Omero | None = None
 
 
-class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ignore[misc]
+class Image(BaseGroupv04[ImageAttrs]):
     """
     An OME-Zarr multiscale dataset.
     """
@@ -69,6 +75,95 @@ class Image(GroupSpec[ImageAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type
             update={"members": members_normalized.members}
         )
         return cls(**group_spec.model_dump())
+
+    @classmethod
+    def new(
+        cls,
+        *,
+        array_specs: Sequence[ArraySpec],
+        paths: Sequence[str],
+        axes: Sequence[Axis],
+        scales: Sequence[Sequence[float]],
+        translations: Sequence[Sequence[float] | None],
+        name: str | None = None,
+        multiscale_type: str | None = None,
+        metadata: JsonValue | None = None,
+        global_scale: Sequence[float] | None = None,
+        global_translation: Sequence[float] | None = None,
+    ) -> Image:
+        """
+        Create a new `Image` from a sequence of multiscale arrays
+        and spatial metadata.
+
+        Parameters
+        ----------
+        arrays :
+            A sequence of array specifications that collectively represent the same
+            image at multiple levels of detail.
+        paths :
+            The paths to the arrays within the new Zarr group.
+        axes :
+            `Axis` objects describing the axes of the arrays.
+        scales :
+            For each array, a scale value for each axis of the array.
+        translations :
+            For each array, a translation value for each axis the array.
+        name :
+            A name for the multiscale collection.
+        multiscale_type :
+            Type of downscaling method used to generate the multiscale image pyramid.
+            Optional.
+        metadata :
+            Arbitrary metadata to store in the multiscales group.
+        global_scale :
+            A global scale value for each axis of every array.
+        global_translation :
+            A global translation value for each axis of every array.
+
+        Notes
+        -----
+        This class does not store or copy any array data. To save array data,
+        first write this class to a Zarr store, and then write data to the Zarr
+        arrays in that store.
+        """
+        if len(array_specs) != len(paths):
+            raise ValueError(
+                f"Length of arrays (got {len(array_specs)=}) must be the same as "
+                f"length of paths (got {len(paths)=})"
+            )
+        members_flat = {
+            "/" + key.lstrip("/"): arr
+            for key, arr in zip(paths, array_specs, strict=True)
+        }
+
+        if global_scale is None and global_translation is None:
+            global_transform = None
+        elif global_scale is None:
+            raise ValueError(
+                "If global_translation is specified, "
+                "global_scale must also be specified."
+            )
+        else:
+            global_transform = _build_transforms(global_scale, global_translation)
+
+        multimeta = Multiscale(
+            axes=tuple(axes),
+            datasets=tuple(
+                Dataset.build(path=path, scale=scale, translation=translation)
+                for path, scale, translation in zip(
+                    paths, scales, translations, strict=False
+                )
+            ),
+            coordinateTransformations=global_transform,
+            metadata=metadata,
+            name=name,
+            type=multiscale_type,
+            version="0.4",
+        )
+        return Image(
+            members=GroupSpec.from_flat(members_flat).members,
+            attributes=ImageAttrs(multiscales=(multimeta,)),
+        )
 
     @model_validator(mode="after")
     def check_arrays_compatible(self) -> Self:

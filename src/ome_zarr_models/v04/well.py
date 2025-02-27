@@ -4,25 +4,14 @@ For reference, see the [well section of the OME-Zarr specification](https://ngff
 
 from collections.abc import Generator
 
-from pydantic_zarr.v2 import ArraySpec, GroupSpec
-
-from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.common.well import WellAttrs
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.image import Image
-from ome_zarr_models.v04.well_types import WellMeta
 
 __all__ = ["Well", "WellAttrs"]
 
 
-class WellAttrs(BaseAttrs):
-    """
-    Attributes for a well group.
-    """
-
-    well: WellMeta
-
-
-class Well(GroupSpec[WellAttrs, ArraySpec | GroupSpec], BaseGroupv04):  # type: ignore[misc]
+class Well(BaseGroupv04[WellAttrs]):
     """
     An OME-Zarr well group.
     """

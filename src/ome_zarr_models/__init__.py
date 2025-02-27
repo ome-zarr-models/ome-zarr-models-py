@@ -1,4 +1,5 @@
 from importlib.metadata import PackageNotFoundError, version
+from typing import Any
 
 import zarr
 from pydantic import ValidationError
@@ -17,7 +18,7 @@ except PackageNotFoundError:  # pragma: no cover
     __version__ = "uninstalled"
 
 
-_V04_groups: list[type[BaseGroupv04]] = [
+_V04_groups: list[type[BaseGroupv04[Any]]] = [
     ome_zarr_models.v04.hcs.HCS,
     # Important that ImageLabel is higher than Image
     # otherwise Image will happily parse an ImageLabel
@@ -30,7 +31,7 @@ _V04_groups: list[type[BaseGroupv04]] = [
 ]
 
 
-def open_ome_zarr(group: zarr.Group) -> BaseGroup:
+def open_ome_zarr(group: zarr.Group) -> BaseGroup[Any]:
     """
     Create an ome-zarr-models object from an existing OME-Zarr group.
 
@@ -43,11 +44,23 @@ def open_ome_zarr(group: zarr.Group) -> BaseGroup:
     ----------
     group : zarr.Group
         Zarr group containing OME-Zarr data.
+
+    Raises
+    ------
+    RuntimeError :
+        If the passed group cannot be validated with any of the OME-Zarr group models.
     """
+    group_cls: type[BaseGroupv04[Any]]
     for group_cls in _V04_groups:
         try:
             return group_cls.from_zarr(group)  # type: ignore[no-any-return]
         except ValidationError:
             continue
 
-    raise RuntimeError(f"Could not find any matches for group {group}")
+    raise RuntimeError(
+        f"Could not successfully validate {group} with any OME-Zarr group models.\n"
+        "\n"
+        "If you know what type of group you are trying to open, using the "
+        "<group class>.from_zarr() method will give you a more informative "
+        "error message explaining why validation failed."
+    )

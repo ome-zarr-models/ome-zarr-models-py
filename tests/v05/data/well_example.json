@@ -19,7 +19,8 @@
           "acquisition": 2,
           "path": "3"
         }
-      ]
+      ],
+      "version": "0.5"
     }
   }
 }

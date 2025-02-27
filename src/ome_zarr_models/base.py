@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Literal
+from typing import Generic, Literal, TypeVar, Union
 
 from pydantic import BaseModel, ConfigDict
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
@@ -23,7 +23,10 @@ class BaseAttrs(BaseModel):
     )
 
 
-class BaseGroup(GroupSpec[BaseAttrs, ArraySpec | GroupSpec], ABC):  # type: ignore[misc]
+T = TypeVar("T", bound=BaseAttrs)
+
+
+class BaseGroup(GroupSpec[T, Union["ArraySpec", "GroupSpec"]], ABC, Generic[T]):  # type: ignore[misc]
     """
     Base class for all OME-Zarr groups.
     """
