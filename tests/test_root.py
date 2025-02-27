@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 
 import pytest
 import zarr
@@ -19,5 +20,11 @@ def test_load_ome_zarr_group() -> None:
 
 def test_load_ome_zarr_group_bad(tmp_path: Path) -> None:
     hcs_group = zarr.group(tmp_path / "test")
-    with pytest.raises(RuntimeError, match="Could not find any matches for group "):
+    with pytest.raises(
+        RuntimeError,
+        match=re.escape(
+            "Could not successfully validate <zarr.hierarchy.Group '/'> "
+            "with any OME-Zarr group models."
+        ),
+    ):
         open_ome_zarr(hcs_group)
