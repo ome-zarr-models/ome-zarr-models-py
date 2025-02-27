@@ -1,4 +1,5 @@
 # Dev notes
+
 The data in `from_specification` is the one [introduced in the PR](https://github.com/bogovicj/ngff/tree/coord-transforms/latest/examples) from @bogovicj.
 
 This document keeps track of which data we are using for testing up to this point. The order below is the order in which we aim to implement the tests. On top of this data, we also have new test data.
@@ -6,10 +7,12 @@ This document keeps track of which data we are using for testing up to this poin
 Note: Some of the data from the specification needs fixes. Once the project is in the late stage, it will be important to diff the data with the one from the specification and make a PR to fix the issues in the NGFF specs.
 
 ## coordinate_systems
+
 - [ ] arrayCoordSys.json
 
 ## transformations
-- [ ] identity.json
+
+- [x] identity.json
 - [ ] scale.json
 - [ ] translation.json
 - [ ] sequence.json
