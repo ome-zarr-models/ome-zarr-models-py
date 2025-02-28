@@ -1,10 +1,9 @@
 import pytest
 
 from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
-    SpatialMapper,
     CoordinateSystem,
     CoordinateTransformation,
-    Axes
+    SpatialMapper,
 )
 from ome_zarr_models.common.axes import Axis
 from tests._rfc5_transforms.conftest import read_in_json
@@ -14,9 +13,11 @@ def test_coordinate_system_name_not_empty() -> None:
     with pytest.raises(ValueError, match="name must be a non-empty string"):
         CoordinateSystem(name="", axes=[Axis(name="x")])
 
+
 def test_coordinate_system_axes_not_empty() -> None:
     with pytest.raises(ValueError, match="axes must contain at least one axis"):
         CoordinateSystem(name="test", axes=[])
+
 
 def test_identity_transform():
     read = read_in_json(json_fname="identity.json", model_cls=SpatialMapper)
@@ -67,12 +68,19 @@ def test_transformation_input_output_validation():
     ]
 
     with pytest.raises(ValueError, match="Invalid input in coordinate transformation"):
-        SpatialMapper(coordinateSystems=csystems, coordinateTransformations=invalid_input)
+        SpatialMapper(
+            coordinateSystems=csystems, coordinateTransformations=invalid_input
+        )
 
     with pytest.raises(ValueError, match="Invalid output in coordinate transformation"):
-        SpatialMapper(coordinateSystems=csystems, coordinateTransformations=invalid_output)
+        SpatialMapper(
+            coordinateSystems=csystems, coordinateTransformations=invalid_output
+        )
 
-    SpatialMapper(coordinateSystems=csystems, coordinateTransformations=working_transformation)
+    SpatialMapper(
+        coordinateSystems=csystems, coordinateTransformations=working_transformation
+    )
+
 
 def test_coordinate_transformations_full_metadata():
     pass
