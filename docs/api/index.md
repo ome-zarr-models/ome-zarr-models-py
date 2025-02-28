@@ -11,10 +11,10 @@ A listing of the group objects and associated metadata objects is given below fo
 
 ## v04
 
-| OME-Zarr group objects                         | Metadata attributes                                                  |
-| ---------------------------------------------- | -------------------------------------------------------------------- |
+| OME-Zarr group objects                         | Metadata attributes                                                  | Creation helper                                      |
+| ---------------------------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------- |
 | [`HCS`][ome_zarr_models.v04.HCS]               | [`HCSAttrs`][ome_zarr_models.v04.hcs.HCSAttrs]                       |
-| [`Image`][ome_zarr_models.v04.Image]           | [`ImageAttrs`][ome_zarr_models.v04.image.ImageAttrs]                 |
+| [`Image`][ome_zarr_models.v04.Image]           | [`ImageAttrs`][ome_zarr_models.v04.image.ImageAttrs]                 | [`Image.new()`][ome_zarr_models.v04.image.Image.new] |
 | [`Labels`][ome_zarr_models.v04.Labels]         | [`LabelsAttrs`][ome_zarr_models.v04.labels.LabelsAttrs]              |
 | [`ImageLabel`][ome_zarr_models.v04.ImageLabel] | [`ImageLabelAttrs`][ome_zarr_models.v04.image_label.ImageLabelAttrs] |
 | [`Well`][ome_zarr_models.v04.Well]             | [`WellAttrs`][ome_zarr_models.v04.well.WellAttrs]                    |
