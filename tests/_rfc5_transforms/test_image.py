@@ -1,7 +1,11 @@
 from ome_zarr_models._rfc5_transforms.axes import Axis
-from ome_zarr_models._v05.coordinate_transformations import VectorScale  # TODO: replace with _rfc5_transforms
-from ome_zarr_models._rfc5_transforms.image import Image, ImageAttrs
+from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
+    CoordinateSystem,
+    CoordinateTransformation,
+)
+from ome_zarr_models._rfc5_transforms.image import ImageAttrs
 from ome_zarr_models._rfc5_transforms.multiscales import Dataset, Multiscale
+
 # from tests.v05.conftest import json_to_zarr_group
 
 
@@ -12,36 +16,71 @@ def test_image() -> None:
     image_attrs = ImageAttrs(
         multiscales=[
             Multiscale(
-                axes=[
-                    Axis(name="t", type="time", unit="millisecond"),
-                    Axis(name="c", type="channel", unit=None),
-                    Axis(name="z", type="space", unit="micrometer"),
-                    Axis(name="y", type="space", unit="micrometer"),
-                    Axis(name="x", type="space", unit="micrometer"),
-                ],
+                coordinateSystems=(
+                    CoordinateSystem(
+                        name="example",
+                        axes=[
+                            Axis(name="t", type="time", unit="millisecond"),
+                            Axis(name="c", type="channel", unit=None),
+                            Axis(name="z", type="space", unit="micrometer"),
+                            Axis(name="y", type="space", unit="micrometer"),
+                            Axis(name="x", type="space", unit="micrometer"),
+                        ],
+                    ),
+                    CoordinateSystem(
+                        name="example2",
+                        axes=[
+                            Axis(name="t", type="time", unit="millisecond"),
+                            Axis(name="c", type="channel", unit=None),
+                            Axis(name="z", type="space", unit="micrometer"),
+                            Axis(name="y", type="space", unit="micrometer"),
+                            Axis(name="x", type="space", unit="micrometer"),
+                        ],
+                    ),
+                ),
                 datasets=(
                     Dataset(
                         path="0",
-                        coordinateTransformations=(
-                            VectorScale(type="scale", scale=[1.0, 1.0, 0.5, 0.5, 0.5]),
-                        ),
+                        coordinateTransformations=[
+                            CoordinateTransformation(
+                                type="scale",
+                                scale=[1.0, 1.0, 0.5, 0.5, 0.5],
+                                input="/0",
+                                output="example",
+                            )
+                        ],
                     ),
                     Dataset(
                         path="1",
-                        coordinateTransformations=(
-                            VectorScale(type="scale", scale=[1.0, 1.0, 1.0, 1.0, 1.0]),
-                        ),
+                        coordinateTransformations=[
+                            CoordinateTransformation(
+                                type="scale",
+                                scale=[1.0, 1.0, 1.0, 1.0, 1.0],
+                                input="/1",
+                                output="example",
+                            )
+                        ],
                     ),
                     Dataset(
                         path="2",
-                        coordinateTransformations=(
-                            VectorScale(type="scale", scale=[1.0, 1.0, 2.0, 2.0, 2.0]),
-                        ),
+                        coordinateTransformations=[
+                            CoordinateTransformation(
+                                type="scale",
+                                scale=[1.0, 1.0, 2.0, 2.0, 2.0],
+                                input="/2",
+                                output="example",
+                            )
+                        ],
                     ),
                 ),
-                coordinateTransformations=(
-                    VectorScale(type="scale", scale=[0.1, 1.0, 1.0, 1.0, 1.0]),
-                ),
+                coordinateTransformations=[
+                    CoordinateTransformation(
+                        type="scale",
+                        scale=[0.1, 1.0, 1.0, 1.0, 1.0],
+                        input="example",
+                        output="example2",
+                    )
+                ],
                 metadata={
                     "description": "the fields in metadata depend on the downscaling "
                     "implementation. Here, the parameters passed to the "
@@ -57,3 +96,4 @@ def test_image() -> None:
         ],
         version="0.5",
     )
+    print(image_attrs.model_dump_json(indent=4))
