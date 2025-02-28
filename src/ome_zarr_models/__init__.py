@@ -43,7 +43,7 @@ def open_ome_zarr(group: zarr.Group) -> BaseGroup:
 
     Parameters
     ----------
-    group : zarr.Group
+    group :
         Zarr group containing OME-Zarr data.
 
     Raises
