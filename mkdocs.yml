@@ -52,6 +52,7 @@ plugins:
             - https://docs.python.org/3/objects.inv
             - https://zarr.dev/pydantic-zarr/objects.inv
             - https://docs.pydantic.dev/latest/objects.inv
+            - https://zarr.readthedocs.io/en/v2.18.4/objects.inv
 
           options:
             docstring_style: numpy
