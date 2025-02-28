@@ -26,7 +26,7 @@ If there aren't any errors, the Zarr group is a valid OME-Zarr group.
 
 ## Create a new OME-Zarr group
 
-Use the `.new()` method on [one of the group objects](api/index.md):
+Use the `.new()` method on [one of the group objects](api/index.md) (currently only supported on `Image`):
 
 ```python
 import ome_zarr_models.v04
