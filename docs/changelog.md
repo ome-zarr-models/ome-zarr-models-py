@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.1.5
+
+### New features
+
+- Added a method to create new [ome_zarr_models.v04.Image][] objects from scratch.
+
+### Minor improvements
+
+- Improved the error message in [ome_zarr_models.open_ome_zarr][] when a Zarr group can't be validated with any OME-Zarr groups.
+- Simplified the class inheritance structure across the package.
+
+### Documentation improvements
+
+- Added project governance to home page.
+
 ## 0.1.4
 
 ### Documentation improvements
