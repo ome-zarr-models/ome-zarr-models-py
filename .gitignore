@@ -8,3 +8,6 @@ __pycache__
 
 coverage.xml
 .coverage*
+
+# Where `mkdocs build` puts local website build
+site
