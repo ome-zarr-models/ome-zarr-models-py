@@ -70,3 +70,22 @@ Before version 1.0 is released, the version number will be 0.major.minor, and ve
 - Support for OME-Zarr version 0.5.
 - Emitting warnings when data violates "SHOULD" statements in the specification.
 - Want to see a feature? See [the contributing guide](contributing.md)!
+
+## Governance
+
+### Core maintainers
+
+Core maintainers are the decision makers for the project, making decisions in consultation and consensus with the wider developer and user community.
+They are also responsible for making releases of `ome-zarr-models`.
+These are initially the founders of the project, and others can join by invitation after several sustained contributions to the project.
+Core maintainers are expected to be active on maintaining the project, and should step down being core developers after a substantial period of inactivity.
+
+### Core developers
+
+Core developers have commit rights to the project, and are encouraged and trusted to use these to review and merge pull requests.
+Anyone who has made a single contribution to the project will be invited to be a core developer.
+
+### Reviewing and merging code
+
+Code must be submitted via a pull request (PR), and any core developer (including the author of the PR) can merge the pull request using their judgment on whether it is ready to be merged or not.
+Core developers are trusted to ask for review from other core developers on their own PRs when necessary.
