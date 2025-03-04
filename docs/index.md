@@ -79,11 +79,13 @@ Core maintainers are the decision makers for the project, making decisions in co
 They are also responsible for making releases of `ome-zarr-models`.
 These are initially the founders of the project, and others can join by invitation after several sustained contributions to the project.
 Core maintainers are expected to be active on maintaining the project, and should step down being core developers after a substantial period of inactivity.
+For an up to date list, see the ["ome-zarr-models maintainers" team on GitHub](https://github.com/orgs/ome-zarr-models/teams/ome-zarr-models-maintainers).
 
 ### Core developers
 
 Core developers have commit rights to the project, and are encouraged and trusted to use these to review and merge pull requests.
 Anyone who has made a single contribution to the project will be invited to be a core developer.
+For an up to date list, see the ["ome-zarr-models developers" team on GitHub](https://github.com/orgs/ome-zarr-models/teams/ome-zarr-models-developers).
 
 ### Reviewing and merging code
 
