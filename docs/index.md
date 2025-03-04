@@ -70,7 +70,7 @@ Before version 1.0 is released, the version number will be 0.major.minor, and ve
 - Emitting warnings when data violates "SHOULD" statements in the specification.
 
 Is something missing from this list?
-Or do you want to help impelment our roadmap?
+Or do you want to help implement our roadmap?
 See [the contributing guide](contributing.md)!
 
 ## Governance
