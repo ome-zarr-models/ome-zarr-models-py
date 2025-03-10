@@ -1,4 +1,6 @@
 # # Tutorial
+#
+# This tutorial provides a full worked example of using `ome-zarr-models`
 
 import os
 import tempfile
@@ -27,8 +29,8 @@ zarr_group = zarr.open(
 # use `open_ome_zarr()` to automatically 'guess' the correct group:
 
 ome_zarr_group = open_ome_zarr(zarr_group)
-print(type(ome_zarr_group))
-print(ome_zarr_group.ome_zarr_version)
+print(f"Group class: {type(ome_zarr_group)}")
+print(f"OME-Zarr version: {ome_zarr_group.ome_zarr_version}")
 
 # If you already know the data type you're loading, it's better to load
 # directly from that class (see [the API reference](../api/) for a list of classes)
@@ -58,24 +60,34 @@ pprint(metadata.multiscales[0].datasets)
 zarr_arr = zarr_group[metadata.multiscales[0].datasets[0].path]
 pprint(zarr_arr)
 
-# To finish off, lets plot the first z-slice of the first channel of this data:
+# To finish off this section on accessing data, lets plot the first z-slice of the
+# first channel of this data:
+
 plt.imshow(zarr_arr[0, 0, :, :], cmap="gray")
 
 # ## Creating new datasets
 #
 # To create new OME-Zarr datasets, the `.new()` method on the OME-Zarr groups
-# can be used. Note that this creates the Zarr groups, Zarr arrays, and related
-# metadata, but does not write any data to the Zarr arrays.
+# can be used. This creates all the Zarr groups, Zarr arrays within those groups,
+# and related metadata, but does not write any data to the Zarr arrays.
 #
 # As an example we'll create an OME-Zarr image with two arrays, one at the
 # original resolution and one downsampled version.
+#
+# First, we need to create `ArraySpec` objects, which tell `ome-zarr-models`
+# what the structure of the data arrays will be.
 
 array_specs = [
     ArraySpec(shape=(100, 100), chunks=(32, 32), dtype=np.uint16),
     ArraySpec(shape=(50, 50), chunks=(32, 32), dtype=np.uint16),
 ]
+
+# Next, we'll set some metadata values
+
 pixel_size = (6, 4)
 pixel_unit = "um"
+
+# Finally, we can use these variables to create a new OME-Zarr image group.
 
 ome_zarr_image = Image.new(
     array_specs=array_specs,
@@ -90,6 +102,7 @@ ome_zarr_image = Image.new(
 print(ome_zarr_image)
 
 # It's also possible to create array metadata from existing arrays.
+#
 # For numpy arrays:
 
 arr0 = np.zeros(shape=(100, 100), dtype=np.uint16)
@@ -103,6 +116,9 @@ arr1 = zarr.zeros(shape=(50, 50), dtype=np.uint16)
 array_specs = [ArraySpec.from_array(arr0), ArraySpec.from_array(arr1)]
 
 # ## Saving datasets
+#
+# At this point the `ome_zarr_image` object is a representation of the
+# OME-Zarr group in the memory of your computer.
 #
 # To save a new dataset the ``.to_zarr(store=...)`` method can be used,
 # which will put all the OME-Zarr group metadata into a Zarr store.
