@@ -54,7 +54,7 @@ def _parse_data(folder: str, in_memory: T) -> Callable[..., Any]:
 
 
 def check_examples_rfc5_are_downloaded() -> None:
-    if not Path("./data_rfc5/full_examples").exists():
+    if not (Path(__file__).parent / "data_rfc5/full_examples").exists():
         command = (
             "aws s3 --no-sign-request sync "
             "s3://ngff-rfc5-coordinate-transformation-examples/ "
@@ -64,6 +64,9 @@ def check_examples_rfc5_are_downloaded() -> None:
             "RFC5 full examples are not downloaded. Please run the following command "
             f"from the project root:\n{command}"
         )
+    # TODO: the first run in the CI will fail because the examples are not downloaded;
+    #  we will have to add a job in the CI to download the examples before running the
+    #  tests
 
 
 check_examples_rfc5_are_downloaded()
