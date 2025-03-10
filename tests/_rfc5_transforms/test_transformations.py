@@ -19,7 +19,7 @@ def test_coordinate_system_axes_not_empty() -> None:
         CoordinateSystem(name="test", axes=[])
 
 
-def test_identity_transform():
+def test_identity_transform() -> None:
     read = read_in_json(json_fname="identity.json", model_cls=SpatialMapper)
     in_memory = SpatialMapper(
         coordinateSystems=[
@@ -52,7 +52,7 @@ def test_identity_transform():
     assert read == in_memory
 
 
-def test_transformation_input_output_validation():
+def test_transformation_input_output_validation() -> None:
     axis_names = ["a", "b", "c"]
     cs_names = ["in", "out", "other"]
     axes = [Axis(name=i) for i in axis_names]
@@ -82,5 +82,5 @@ def test_transformation_input_output_validation():
     )
 
 
-def test_coordinate_transformations_full_metadata():
+def test_coordinate_transformations_full_metadata() -> None:
     pass

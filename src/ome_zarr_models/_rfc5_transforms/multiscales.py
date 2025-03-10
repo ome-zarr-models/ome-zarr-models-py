@@ -9,29 +9,31 @@ from pydantic import (
     model_validator,
 )
 
-from ome_zarr_models._rfc5_transforms.base import BaseOMEAttrs
 from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
     CoordinateSystem,
     CoordinateTransformation,
 )
+from ome_zarr_models.base import BaseAttrs
 
-__all__ = ["Dataset", "MultiscaleBase"]
+__all__ = ["Dataset"]
 
 
-class Dataset(BaseOMEAttrs):
+class Dataset(BaseAttrs):
     """
     An element of Multiscale.datasets.
     """
 
     path: str
-    coordinateTransformation: CoordinateTransformation
+    coordinateTransformations: tuple[CoordinateTransformation] = Field(
+        ..., min_length=1, max_length=1
+    )
 
-    @field_validator("coordinateTransformation", mode="after")
+    @field_validator("coordinateTransformations", mode="after")
     @classmethod
     def _ensure_transform_dimensionality(
         cls,
-        transform: CoordinateTransformation,
-    ) -> CoordinateTransformation:
+        transforms: tuple[CoordinateTransformation],
+    ) -> tuple[CoordinateTransformation]:
         """
         Ensures that the input transform
         1) is either a single scale, a single translation or a sequence of a scale and
@@ -50,15 +52,15 @@ class Dataset(BaseOMEAttrs):
         #         f"Got transforms with dimensionality = {ndims}."
         #     )
         #     raise ValueError(msg)
-        return transform
+        return transforms
 
 
-class MultiscaleBase(BaseOMEAttrs):
+class Multiscale(BaseAttrs):
     """
     An element of multiscales metadata.
     """
 
-    coordinateSystems: tuple[CoordinateSystem, ...] = Field(..., max_length=1)
+    coordinateSystems: tuple[CoordinateSystem, ...] = Field(..., min_length=1)
     datasets: tuple[Dataset, ...] = Field(..., min_length=1)
     coordinateTransformations: tuple[CoordinateTransformation, ...] | None = None
     metadata: JsonValue = None
@@ -72,7 +74,7 @@ class MultiscaleBase(BaseOMEAttrs):
 
         Determined by the length of the axes attribute.
         """
-        output_cs_name = self.datasets[0].coordinateTransformation.output
+        output_cs_name = self.datasets[0].coordinateTransformations[0].output
         output_cs: CoordinateSystem | None = None
         for cs in self.coordinateSystems:
             if cs.name == output_cs_name:
