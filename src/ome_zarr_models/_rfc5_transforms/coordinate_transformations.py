@@ -3,11 +3,11 @@ from typing import Literal, Self
 from pydantic import Field, field_validator, model_validator
 
 from ome_zarr_models._rfc5_transforms.axes import Axes
-from ome_zarr_models._rfc5_transforms.base import BaseOMEAttrs
 from ome_zarr_models._utils import duplicates
+from ome_zarr_models.base import BaseAttrs
 
 
-class CoordinateSystem(BaseOMEAttrs):
+class CoordinateSystem(BaseAttrs):
     name: str
     axes: Axes
 
@@ -40,8 +40,7 @@ class CoordinateSystem(BaseOMEAttrs):
         return axes
 
 
-class CoordinateTransformation(BaseOMEAttrs):
-    # TODO: extend this as we incorporate more types of transformation
+class CoordinateTransformation(BaseAttrs):
     type: Literal["identity", "scale"]
     input: str
     output: str
@@ -69,7 +68,7 @@ class Scale(CoordinateTransformation):
 
 # TODO: remove this class! the validation functions should be part of multiscale
 # TODO: remove the test using this class and replace it with a test for multiscale
-class SpatialMapper(BaseOMEAttrs):
+class SpatialMapper(BaseAttrs):
     """Container class for coordinate systems and coordinate transformations."""
 
     coordinateSystems: list[CoordinateSystem] = Field(
