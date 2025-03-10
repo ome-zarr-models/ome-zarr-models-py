@@ -47,7 +47,7 @@ def open_ome_zarr(group: zarr.Group) -> BaseGroup[Any]:
 
     Raises
     ------
-    RuntimeError :
+    RuntimeError
         If the passed group cannot be validated with any of the OME-Zarr group models.
     """
     group_cls: type[BaseGroupv04[Any]]
