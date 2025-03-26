@@ -20,7 +20,19 @@ We encourage RFC authors to implement OME-Zarr RFCs in this package, as a mechan
 
 For every OME-Zarr RFC we will open an issue.
 If you would like to implement it, please comment on that issue (so we can avoid duplication of work).
-Then submit the changes to `ome-zarr-models-py` required to implement the RFC as a PR, and mention the PR in a comment on the issue.
+
+### RFC PR process
+
+Each RFC will have it's own branch in the main `ome-zarr-models-py` repository.
+The RFC branch will contain a modified version of the current latest OME-Zarr implementation with changes required to implement the RFC.
+This means the diff between the RFC branch and the `main` branch shows the implementation of the RFC.
+
+Implementations of an RFC should be made on a separate branch and:
+
+- The changes should be made against the latest released version of the OME-Zarr spec.
+- The changes should be sumitted as pull requests against the relevant RFC branch.
+
+The PR will be reviewed, and once accepted will be merged into the RFC branch.
 
 ## Contributing code
 
