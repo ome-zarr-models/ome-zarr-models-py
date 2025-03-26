@@ -30,7 +30,7 @@ This means the diff between the RFC branch and the `main` branch shows the imple
 Implementations of an RFC should be made on a separate branch and:
 
 - The changes should be made against the latest released version of the OME-Zarr spec.
-- The changes should be sumitted as pull requests against the relevant RFC branch.
+- The changes should be submitted as pull requests against the relevant RFC branch.
 
 The PR will be reviewed, and once accepted will be merged into the RFC branch.
 
