@@ -3,16 +3,14 @@ from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
     CoordinateSystem,
     CoordinateTransformation,
 )
-from ome_zarr_models._rfc5_transforms.image import ImageAttrs
+from ome_zarr_models._rfc5_transforms.image import Image, ImageAttrs
 from ome_zarr_models._rfc5_transforms.multiscales import Dataset, Multiscale
-
-# from tests.v05.conftest import json_to_zarr_group
+from tests._rfc5_transforms.conftest import json_to_zarr_group
 
 
 def test_image() -> None:
-    # zarr_group = json_to_zarr_group(json_fname="image_example.json")
-    # ome_group = Image.from_zarr(zarr_group)
-    # assert ome_group.attributes.ome == ImageAttrs(
+    zarr_group = json_to_zarr_group(json_fname="image_example.json")
+    ome_group = Image.from_zarr(zarr_group)
     image_attrs = ImageAttrs(
         multiscales=[
             Multiscale(
@@ -97,3 +95,4 @@ def test_image() -> None:
         version="0.5",
     )
     print(image_attrs.model_dump_json(indent=4))
+    assert ome_group.attributes.ome == image_attrs

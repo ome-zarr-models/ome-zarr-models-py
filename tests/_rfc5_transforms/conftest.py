@@ -1,20 +1,47 @@
+import json
 import re
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any, TypeVar
+
+import zarr
 
 from ome_zarr_models.base import BaseAttrs
 
 T = TypeVar("T", bound=BaseAttrs)
 
 
-def read_in_json(*, folder: str, json_fname: str, model_cls: type[T]) -> T:
-    with open(Path(__file__).parent / folder / json_fname) as f:
+def json_to_zarr_group(*, json_fname: str) -> zarr.Group:
+    """
+    Create an empty Zarr group, and set attributes from a JSON file.
+    """
+    group = zarr.open_group(store=zarr.MemoryStore())
+    with open(Path(__file__).parent / "data_rfc5" / json_fname) as f:
+        attrs = json.load(f)
+
+    group.attrs.put(attrs)
+    return group
+
+
+def get_data_file_path(*, folder: str, json_fname: str) -> Path:
+    return Path(__file__).parent / folder / json_fname
+
+
+def read_in_json(*, file_path: Path, model_cls: type[T]) -> T:
+    with open(file_path) as f:
         return model_cls.model_validate_json(f.read())
+
+
+def read_in_zarr(*, file_path: Path, model_cls: type[T]) -> T:
+    raise NotImplementedError(
+        "The tests require NGFF 0.5 support since the data is the in Zarr v3 format. "
+        "Tracked here https://github.com/ome-zarr-models/ome-zarr-models-py/issues/88"
+    )
 
 
 # paths are relative to the 'tests' directory
 TESTS_FILE_TO_DATA_MAPPING = {
+    # data from specs
     "test_data_rfc5/from_specification/test_transformations.py": (
         "data_rfc5/from_specification/transformations"
     ),
@@ -26,6 +53,38 @@ TESTS_FILE_TO_DATA_MAPPING = {
     ),
     "test_data_rfc5/from_specification/test_coordinate_systems.py": (
         "data_rfc5/from_specification/coordinate_systems"
+    ),
+    # 2d examples
+    "test_data_rfc5/full_examples/test_2d_axis_dependent.py": (
+        "data_rfc5/full_examples/2d/axis_dependent"
+    ),
+    "test_data_rfc5/full_examples/test_2d_basic.py": (
+        "data_rfc5/full_examples/2d/basic"
+    ),
+    "test_data_rfc5/full_examples/test_2d_basic_binary.py": (
+        "data_rfc5/full_examples/2d/basic_binary"
+    ),
+    "test_data_rfc5/full_examples/test_2d_nonlinear.py": (
+        "data_rfc5/full_examples/2d/nonlinear"
+    ),
+    "test_data_rfc5/full_examples/test_2d_simple.py": (
+        "data_rfc5/full_examples/2d/simple"
+    ),
+    # 3d examples
+    "test_data_rfc5/full_examples/test_3d_axis_dependent.py": (
+        "data_rfc5/full_examples/3d/axis_dependent"
+    ),
+    "test_data_rfc5/full_examples/test_3d_basic.py": (
+        "data_rfc5/full_examples/3d/basic"
+    ),
+    "test_data_rfc5/full_examples/test_3d_basic_binary.py": (
+        "data_rfc5/full_examples/3d/basic_binary"
+    ),
+    "test_data_rfc5/full_examples/test_3d_nonlinear.py": (
+        "data_rfc5/full_examples/3d/nonlinear"
+    ),
+    "test_data_rfc5/full_examples/test_3d_simple.py": (
+        "data_rfc5/full_examples/3d/simple"
     ),
 }
 
@@ -42,9 +101,20 @@ def _parse_data(folder: str, in_memory: T) -> Callable[..., Any]:
         def inner(*args: Any, **kwargs: Any) -> Any:
             test_name = re.sub(r"^test_", "", func.__name__)
             model_cls = type(in_memory)
-            parsed = read_in_json(
-                folder=folder, json_fname=f"{test_name}.json", model_cls=model_cls
+            file_path_json = get_data_file_path(
+                folder=folder, json_fname=f"{test_name}.json"
             )
+            file_path_zarr = get_data_file_path(
+                folder=folder, json_fname=f"{test_name}.zarr"
+            )
+            if file_path_json.exists():
+                parsed = read_in_json(file_path=file_path_json, model_cls=model_cls)
+            elif file_path_zarr.exists():
+                parsed = read_in_zarr(file_path=file_path_zarr, model_cls=model_cls)
+            else:
+                raise FileNotFoundError(
+                    f"Neither {file_path_json} nor {file_path_zarr} exists."
+                )
             assert parsed == in_memory
             return func(*args, parsed=parsed, **kwargs)
 
