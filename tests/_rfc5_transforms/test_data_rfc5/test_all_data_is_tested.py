@@ -14,6 +14,15 @@ def test_all_files_have_functions(test_file: str, data_folder: str) -> None:
         for f in os.listdir(Path(__file__).parent.parent / data_folder)
         if f.endswith(".json")
     ]
+    zarr_files = [
+        f
+        for f in os.listdir(Path(__file__).parent.parent / data_folder)
+        if f.endswith(".zarr")
+    ]
+    assert len(json_files) + len(zarr_files) > 0, "No JSON or Zarr files found."
+    assert (
+        len(json_files) == 0 or len(zarr_files) == 0
+    ), "Only one of JSON or Zarr files should be present."
 
     module = importlib.import_module(
         "tests._rfc5_transforms." + test_file.replace(".py", "").replace("/", ".")
@@ -26,9 +35,14 @@ def test_all_files_have_functions(test_file: str, data_folder: str) -> None:
         test_name = f"test_{json_file.replace('.json', '')}"
         if test_name not in test_functions:
             missing_functions.append(json_file)
+    for zarr_file in zarr_files:
+        test_name = f"test_{zarr_file.replace('.zarr', '')}"
+        if test_name not in test_functions:
+            missing_functions.append(zarr_file)
 
     if missing_functions:
-        print("Missing test functions for the following JSON files:")
+        file_type = "JSON" if json_files else "Zarr"
+        print(f"Missing test functions for the following {file_type} files:")
         for missing in missing_functions:
             print(f"- {missing}")
         raise AssertionError("Some test functions are missing.")
