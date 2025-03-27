@@ -86,6 +86,10 @@ TESTS_FILE_TO_DATA_MAPPING = {
     "test_data_rfc5/full_examples/test_3d_simple.py": (
         "data_rfc5/full_examples/3d/simple"
     ),
+    # user stories
+    "test_data_rfc5/full_examples/test_user_stories.py": (
+        "data_rfc5/full_examples/user_stories"
+    ),
 }
 
 
