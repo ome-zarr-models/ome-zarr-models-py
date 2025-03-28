@@ -1,7 +1,7 @@
 from ome_zarr_models._rfc5_transforms.axes import Axis
 from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
     CoordinateSystem,
-    CoordinateTransformation,
+    Scale,
 )
 from ome_zarr_models._rfc5_transforms.image import Image, ImageAttrs
 from ome_zarr_models._rfc5_transforms.multiscales import Dataset, Multiscale
@@ -39,46 +39,42 @@ def test_image() -> None:
                 datasets=(
                     Dataset(
                         path="0",
-                        coordinateTransformations=[
-                            CoordinateTransformation(
-                                type="scale",
+                        coordinateTransformations=(
+                            Scale(
                                 scale=[1.0, 1.0, 0.5, 0.5, 0.5],
                                 input="/0",
                                 output="example",
-                            )
-                        ],
+                            ),
+                        ),
                     ),
                     Dataset(
                         path="1",
-                        coordinateTransformations=[
-                            CoordinateTransformation(
-                                type="scale",
+                        coordinateTransformations=(
+                            Scale(
                                 scale=[1.0, 1.0, 1.0, 1.0, 1.0],
                                 input="/1",
                                 output="example",
-                            )
-                        ],
+                            ),
+                        ),
                     ),
                     Dataset(
                         path="2",
-                        coordinateTransformations=[
-                            CoordinateTransformation(
-                                type="scale",
+                        coordinateTransformations=(
+                            Scale(
                                 scale=[1.0, 1.0, 2.0, 2.0, 2.0],
                                 input="/2",
                                 output="example",
-                            )
-                        ],
+                            ),
+                        ),
                     ),
                 ),
-                coordinateTransformations=[
-                    CoordinateTransformation(
-                        type="scale",
+                coordinateTransformations=(
+                    Scale(
                         scale=[0.1, 1.0, 1.0, 1.0, 1.0],
                         input="example",
                         output="example2",
-                    )
-                ],
+                    ),
+                ),
                 metadata={
                     "description": "the fields in metadata depend on the downscaling "
                     "implementation. Here, the parameters passed to the "

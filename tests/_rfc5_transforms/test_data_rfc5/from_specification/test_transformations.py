@@ -1,20 +1,24 @@
 import pytest
 
+from ome_zarr_models._rfc5_transforms.axes import Axis
 from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
     CoordinateSystem,
-    CoordinateTransformation,
-    SpatialMapper,
+    Identity,
 )
-from ome_zarr_models.common.axes import Axis
-from tests._rfc5_transforms.conftest import T, _parse_data, get_data_folder
+from tests._rfc5_transforms.conftest import (
+    T,
+    _parse_data,
+    get_data_folder,
+    wrap_coordinate_transformations_and_systems_into_multiscale,
+)
 
 FOLDER = get_data_folder(__file__)
 
 
 @_parse_data(
     folder=FOLDER,
-    in_memory=SpatialMapper(
-        coordinateSystems=[
+    in_memory=wrap_coordinate_transformations_and_systems_into_multiscale(
+        coordinate_systems=(
             CoordinateSystem(
                 name="in",
                 axes=[
@@ -36,10 +40,8 @@ FOLDER = get_data_folder(__file__)
                     Axis(name="x"),
                 ],
             ),
-        ],
-        coordinateTransformations=[
-            CoordinateTransformation(type="identity", input="in", output="out")
-        ],
+        ),
+        coordinate_transformations=(Identity(input="in", output="out"),),
     ),
 )
 def test_identity(parsed: type[T]) -> None:

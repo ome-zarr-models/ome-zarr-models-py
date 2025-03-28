@@ -11,7 +11,7 @@ from pydantic import (
 
 from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
     CoordinateSystem,
-    CoordinateTransformation,
+    CoordinateTransformationType,
 )
 from ome_zarr_models.base import BaseAttrs
 
@@ -24,7 +24,7 @@ class Dataset(BaseAttrs):
     """
 
     path: str
-    coordinateTransformations: tuple[CoordinateTransformation] = Field(
+    coordinateTransformations: tuple[CoordinateTransformationType] = Field(
         ..., min_length=1, max_length=1
     )
 
@@ -32,8 +32,8 @@ class Dataset(BaseAttrs):
     @classmethod
     def _ensure_transform_dimensionality(
         cls,
-        transforms: tuple[CoordinateTransformation],
-    ) -> tuple[CoordinateTransformation]:
+        transforms: tuple[CoordinateTransformationType],
+    ) -> tuple[CoordinateTransformationType]:
         """
         Ensures that the input transform
         1) is either a single scale, a single translation or a sequence of a scale and
@@ -62,7 +62,8 @@ class Multiscale(BaseAttrs):
 
     coordinateSystems: tuple[CoordinateSystem, ...] = Field(..., min_length=1)
     datasets: tuple[Dataset, ...] = Field(..., min_length=1)
-    coordinateTransformations: tuple[CoordinateTransformation, ...] | None = None
+    # TODO: or is it min_length=1? check with the specs and examples
+    coordinateTransformations: tuple[CoordinateTransformationType, ...] | None = None
     metadata: JsonValue = None
     name: JsonValue | None = None
     type: JsonValue = None
@@ -147,3 +148,34 @@ class Multiscale(BaseAttrs):
         #         )
 
         return datasets
+
+    @model_validator(mode="after")
+    def check_cs_input_output(self) -> Self:
+        """Check input and output for each coordinate system.
+
+        The input and output must either be a path relative to the current file in the
+        zarr store or must be a name that is present in the list of coordinate systems.
+        """
+        if self.coordinateTransformations is None:
+            return self
+        cs_names = {cs.name for cs in self.coordinateSystems}
+
+        # check input
+        for transformation in self.coordinateTransformations:
+            # TODO: add support for the input coordinate system being equal to the path
+            #  of the array data. See more:
+            # https://imagesc.zulipchat.com/#narrow/channel/469152-ome-zarr-models-py/topic/validating.20paths
+            if transformation.input not in cs_names:
+                raise ValueError(
+                    "Invalid input in coordinate transformation: "
+                    f"{transformation.input}. Must be one of {cs_names}."
+                )
+
+        # check output
+        for transformation in self.coordinateTransformations:
+            if transformation.output not in cs_names:
+                raise ValueError(
+                    "Invalid output in coordinate transformation: "
+                    f"{transformation.output}. Must be one of {cs_names}."
+                )
+        return self

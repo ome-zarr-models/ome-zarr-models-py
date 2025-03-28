@@ -1,6 +1,6 @@
-from typing import Literal, Self
+from typing import Annotated, Literal
 
-from pydantic import Field, field_validator, model_validator
+from pydantic import Field, field_validator
 
 from ome_zarr_models._rfc5_transforms.axes import Axes
 from ome_zarr_models._utils import duplicates
@@ -41,7 +41,7 @@ class CoordinateSystem(BaseAttrs):
 
 
 class CoordinateTransformation(BaseAttrs):
-    type: Literal["identity", "scale"]
+    type: str
     input: str
     output: str
 
@@ -49,13 +49,13 @@ class CoordinateTransformation(BaseAttrs):
 class Identity(CoordinateTransformation):
     """Identity transformation."""
 
-    type: Literal["identity"]
+    type: Literal["identity"] = "identity"
 
 
 class Scale(CoordinateTransformation):
     """Scale transformation."""
 
-    type: Literal["scale"]
+    type: Literal["scale"] = "scale"
     scale: list[float]
 
     @property
@@ -66,43 +66,4 @@ class Scale(CoordinateTransformation):
         return len(self.scale)
 
 
-# TODO: remove this class! the validation functions should be part of multiscale
-# TODO: remove the test using this class and replace it with a test for multiscale
-class SpatialMapper(BaseAttrs):
-    """Container class for coordinate systems and coordinate transformations."""
-
-    coordinateSystems: list[CoordinateSystem] = Field(
-        ..., description="List of coordinate systems.", min_length=1
-    )
-    coordinateTransformations: list[CoordinateTransformation] = Field(
-        ..., description="List of coordinate transformations.", min_length=1
-    )
-
-    @model_validator(mode="after")
-    def check_cs_input_output(self) -> Self:
-        """Check input and output for each coordinate system.
-
-        The input and output must either be a path relative to the current file in the
-        zarr store or must be a name that is present in the list of coordinate systems.
-        """
-        cs_names = {cs.name for cs in self.coordinateSystems}
-
-        # check input
-        for transformation in self.coordinateTransformations:
-            # TODO: add support for the input coordinate system being equal to the path
-            #  of the array data. See more:
-            # https://imagesc.zulipchat.com/#narrow/channel/469152-ome-zarr-models-py/topic/validating.20paths
-            if transformation.input not in cs_names:
-                raise ValueError(
-                    "Invalid input in coordinate transformation: "
-                    f"{transformation.input}. Must be one of {cs_names}."
-                )
-
-        # check output
-        for transformation in self.coordinateTransformations:
-            if transformation.output not in cs_names:
-                raise ValueError(
-                    "Invalid output in coordinate transformation: "
-                    f"{transformation.output}. Must be one of {cs_names}."
-                )
-        return self
+CoordinateTransformationType = Annotated[Scale | Identity, Field(discriminator="type")]
