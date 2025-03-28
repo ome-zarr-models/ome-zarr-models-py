@@ -6,9 +6,18 @@ from typing import Any, TypeVar
 
 import zarr
 
+from ome_zarr_models._rfc5_transforms.axes import Axis
+from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
+    CoordinateSystem,
+    CoordinateTransformationType,
+    Scale,
+)
+from ome_zarr_models._rfc5_transforms.multiscales import Dataset, Multiscale
 from ome_zarr_models.base import BaseAttrs
 
 T = TypeVar("T", bound=BaseAttrs)
+
+COORDINATE_SYSTEM_NAME_FOR_TESTS = "coordinate_system_name_reserved_for_tests"
 
 
 def json_to_zarr_group(*, json_fname: str) -> zarr.Group:
@@ -29,7 +38,34 @@ def get_data_file_path(*, folder: str, json_fname: str) -> Path:
 
 def read_in_json(*, file_path: Path, model_cls: type[T]) -> T:
     with open(file_path) as f:
-        return model_cls.model_validate_json(f.read())
+        d = json.load(f)
+        extra_cs = {
+            "name": COORDINATE_SYSTEM_NAME_FOR_TESTS,
+            "axes": [{"name": "j"}, {"name": "i"}],
+        }
+        d["coordinateSystems"].append(extra_cs)
+        wrapped = d | {
+            "datasets": [
+                {
+                    "path": "0",
+                    "coordinateTransformations": [
+                        {
+                            "type": "scale",
+                            "scale": [1.0, 1.0, 0.5, 0.5, 0.5],
+                            "input": "/0",
+                            "output": COORDINATE_SYSTEM_NAME_FOR_TESTS,
+                        }
+                    ],
+                }
+            ]
+        }
+
+        wrapped_json = json.dumps(wrapped)
+        import pyperclip
+
+        pyperclip.copy(wrapped_json)
+
+        return model_cls.model_validate_json(wrapped_json)
 
 
 def read_in_zarr(*, file_path: Path, model_cls: type[T]) -> T:
@@ -141,6 +177,39 @@ def check_examples_rfc5_are_downloaded() -> None:
     # TODO: the first run in the CI will fail because the examples are not downloaded;
     #  we will have to add a job in the CI to download the examples before running the
     #  tests
+
+
+def _gen_dataset(output_coordinate_system: str) -> Dataset:
+    return Dataset(
+        path="0",
+        coordinateTransformations=(
+            Scale(
+                scale=[1.0, 1.0, 0.5, 0.5, 0.5],
+                input="/0",
+                output=output_coordinate_system,
+            ),
+        ),
+    )
+
+
+def wrap_coordinate_transformations_and_systems_into_multiscale(
+    coordinate_systems: tuple[CoordinateSystem, ...],
+    coordinate_transformations: tuple[CoordinateTransformationType, ...],
+) -> Multiscale:
+    extra_cs = CoordinateSystem(
+        name=COORDINATE_SYSTEM_NAME_FOR_TESTS,
+        axes=[
+            Axis(name="j"),
+            Axis(name="i"),
+        ],
+    )
+    return Multiscale(
+        coordinateTransformations=coordinate_transformations,
+        coordinateSystems=(*coordinate_systems, extra_cs),
+        datasets=(
+            _gen_dataset(output_coordinate_system=COORDINATE_SYSTEM_NAME_FOR_TESTS),
+        ),
+    )
 
 
 check_examples_rfc5_are_downloaded()
