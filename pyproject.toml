@@ -46,7 +46,12 @@ build-backend = "hatchling.build"
 [dependency-groups]
 docs = ["ome-zarr-models[docs]"]
 dev = ["mypy==1.18.2", "ruff==0.13.2", "pre-commit==4.3.0"]
-test = ["pytest==8.4.2", "pytest-cov==7.0.0", "pytest-recording==0.13.4"]
+test = [
+    "pytest==8.4.2",
+    "pytest-cov==7.0.0",
+    "pytest-recording==0.13.4",
+    "pyperclip",
+]
 
 [tool.uv]
 default-groups = ["docs", "dev", "test"]
@@ -108,8 +113,8 @@ addopts = [
     "-ra",
     "--strict-config",
     "--strict-markers",
-  # "--cov",
-   # "--cov-report=xml",
+    # "--cov",
+    # "--cov-report=xml",
     "-vv",
 ]
 filterwarnings = ["error"]
