@@ -130,8 +130,10 @@ TESTS_FILE_TO_DATA_MAPPING = {
 
 
 def get_data_folder(test_file: str) -> str:
+    path = Path(test_file)
+    rel_path = path.relative_to(path.parents[2])
     for file, folder in TESTS_FILE_TO_DATA_MAPPING.items():
-        if test_file.endswith(file):
+        if rel_path == Path(file):
             return folder
     raise ValueError(f"Test file {test_file} not found in mapping.")
 
