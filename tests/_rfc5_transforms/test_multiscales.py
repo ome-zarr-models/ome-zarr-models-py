@@ -1,5 +1,4 @@
-import pytest
-from pydantic import ValidationError
+import pydantic_core
 
 from ome_zarr_models._rfc5_transforms.axes import Axis
 from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
@@ -61,22 +60,24 @@ def test_ensure_scale_translation():
 
     # not ok (a tuple of > 1 transformation is not allowed, a sequence should be used
     # instead)
-    # with pytest.raises(ValidationError):
-    _ = _gen_multiscale(
-        coordinateTransformations=(
-            Translation(
-                translation=[1.0, 1.0, 0.5, 0.5, 0.5],
-                input="/0",
-                output="intermediate",  # can be anything, this case is not
-                # valid anyway
-            ),
-            Translation(
-                translation=[1.0, 1.0, 0.5, 0.5, 0.5],
-                input="intermediate",
-                output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
-            ),
+    try:
+        _ = _gen_multiscale(
+            coordinateTransformations=(
+                Translation(
+                    translation=[1.0, 1.0, 0.5, 0.5, 0.5],
+                    input="/0",
+                    output="intermediate",  # can be anything, this case is not
+                    # valid anyway
+                ),
+                Translation(
+                    translation=[1.0, 1.0, 0.5, 0.5, 0.5],
+                    input="intermediate",
+                    output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
+                ),
+            )
         )
-    )
+    except pydantic_core.ValidationError as e:
+        assert "1 validation error for Dataset" in str(e)
 
     # ok (a sequence of a scale and a translation)
     _ = _gen_multiscale(
@@ -101,7 +102,7 @@ def test_ensure_scale_translation():
     )
 
     # not ok (it's a sequence but not of a scale and a translation)
-    with pytest.raises(ValidationError):
+    try:
         _ = _gen_multiscale(
             coordinateTransformations=(
                 Sequence(
@@ -122,9 +123,11 @@ def test_ensure_scale_translation():
                 ),
             )
         )
+    except pydantic_core.ValidationError as e:
+        assert "1 validation error for Dataset" in str(e)
 
     # not ok (a sequence of a scale and a translation, but the dimensions do not match)
-    with pytest.raises(ValidationError):
+    try:
         _ = _gen_multiscale(
             coordinateTransformations=(
                 Sequence(
@@ -145,3 +148,5 @@ def test_ensure_scale_translation():
                 ),
             )
         )
+    except pydantic_core.ValidationError as e:
+        assert "1 validation error for Dataset" in str(e)
