@@ -24,13 +24,13 @@ class Dataset(BaseAttrs):
     """
 
     path: str
-    coordinateTransformations: tuple[CoordinateTransformationType] = Field(
+    coordinateTransformations: tuple[CoordinateTransformationType, ...] = Field(
         ..., min_length=1, max_length=1
     )
 
     @field_validator("coordinateTransformations", mode="after")
     @classmethod
-    def _ensure_transform_dimensionality(
+    def _ensure_scale_translation(
         cls,
         transforms: tuple[CoordinateTransformationType],
     ) -> tuple[CoordinateTransformationType]:
@@ -40,7 +40,6 @@ class Dataset(BaseAttrs):
         a translation (in this order)
         2) if a sequence, the scale and translation have the same dimensionality
         """
-        # TODO: implement
         # vector_transforms = filter(
         #     lambda v: isinstance(v, VectorTransform), transforms
         # )
@@ -52,6 +51,7 @@ class Dataset(BaseAttrs):
         #         f"Got transforms with dimensionality = {ndims}."
         #     )
         #     raise ValueError(msg)
+
         return transforms
 
 

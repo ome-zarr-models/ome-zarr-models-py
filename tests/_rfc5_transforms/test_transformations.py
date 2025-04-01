@@ -20,6 +20,14 @@ def test_coordinate_system_axes_not_empty() -> None:
         CoordinateSystem(name="test", axes=[])
 
 
+def test_coordinate_system_axes_unique_names() -> None:
+    with pytest.raises(ValueError, match="Axis names must be unique"):
+        CoordinateSystem(
+            name="test",
+            axes=[Axis(name="x"), Axis(name="y"), Axis(name="x")],
+        )
+
+
 def test_transformation_input_output_validation() -> None:
     axis_names = ["a", "b", "c"]
     cs_names = ["in", "out", "other"]
@@ -42,7 +50,3 @@ def test_transformation_input_output_validation() -> None:
     wrap_coordinate_transformations_and_systems_into_multiscale(
         coordinate_systems=csystems, coordinate_transformations=working_transformation
     )
-
-
-def test_coordinate_transformations_full_metadata() -> None:
-    pass

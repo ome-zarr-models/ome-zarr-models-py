@@ -181,13 +181,21 @@ def check_examples_rfc5_are_downloaded() -> None:
     #  tests
 
 
-def _gen_dataset(output_coordinate_system: str) -> Dataset:
+def _gen_dataset(
+    output_coordinate_system: str,
+    path: str = "0",
+    scale_factors: list[float] | None = None,
+) -> Dataset:
     return Dataset(
-        path="0",
+        path=path,
         coordinateTransformations=(
             Scale(
-                scale=[1.0, 1.0, 0.5, 0.5, 0.5],
-                input="/0",
+                scale=(
+                    scale_factors
+                    if scale_factors is not None
+                    else list([1.0, 1.0, 0.5, 0.5, 0.5])
+                ),
+                input=f"/{path}",
                 output=output_coordinate_system,
             ),
         ),

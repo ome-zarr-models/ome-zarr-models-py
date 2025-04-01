@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Annotated, Literal
 
 from pydantic import Field, field_validator
@@ -23,7 +25,6 @@ class CoordinateSystem(BaseAttrs):
             raise ValueError("axes must contain at least one axis")
         return value
 
-    # TODO: add tests
     @field_validator("axes", mode="after")
     @classmethod
     def _ensure_unique_axis_names(cls, axes: Axes) -> Axes:
@@ -42,8 +43,8 @@ class CoordinateSystem(BaseAttrs):
 
 class CoordinateTransformation(BaseAttrs):
     type: str
-    input: str
-    output: str
+    input: str | None
+    output: str | None
 
 
 class Identity(CoordinateTransformation):
@@ -66,4 +67,27 @@ class Scale(CoordinateTransformation):
         return len(self.scale)
 
 
-CoordinateTransformationType = Annotated[Scale | Identity, Field(discriminator="type")]
+class Translation(CoordinateTransformation):
+    """Translation transformation."""
+
+    type: Literal["translation"] = "translation"
+    translation: list[float]
+
+    @property
+    def ndim(self) -> int:
+        """
+        Number of dimensions.
+        """
+        return len(self.translation)
+
+
+class Sequence(CoordinateTransformation):
+    """Sequence transformation."""
+
+    type: Literal["sequence"] = "sequence"
+    transformations: tuple[CoordinateTransformationType, ...]
+
+
+CoordinateTransformationType = Annotated[
+    Identity | Scale | Translation | Sequence, Field(discriminator="type")
+]
