@@ -209,7 +209,7 @@ def wrap_coordinate_transformations_and_systems_into_multiscale(
         datasets=(
             _gen_dataset(
                 output_coordinate_system=COORDINATE_SYSTEM_NAME_FOR_TESTS,
-                scale_factors=[1.] * len(extra_cs.axes),
+                scale_factors=[1.0] * len(extra_cs.axes),
             ),
         ),
     )

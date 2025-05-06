@@ -161,6 +161,7 @@ def test_invalid_dimensionalities():
             ),
         )
 
+
 def test_ensure_ordered_scales():
     with pytest.raises(
         ValidationError,
