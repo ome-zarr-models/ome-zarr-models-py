@@ -3,11 +3,11 @@ from __future__ import annotations
 from typing import Self
 
 from pydantic import (
+    BaseModel,
     Field,
     JsonValue,
     field_validator,
     model_validator,
-    BaseModel,
 )
 
 from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
