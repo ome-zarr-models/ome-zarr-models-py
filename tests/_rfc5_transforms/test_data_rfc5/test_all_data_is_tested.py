@@ -12,7 +12,7 @@ def test_all_files_have_functions(test_file: str, data_folder: str) -> None:
     json_files = [
         f
         for f in os.listdir(Path(__file__).parent.parent / data_folder)
-        if f.endswith(".json")
+        if f.endswith(".json") and not f.startswith(".")
     ]
     zarr_files = [
         f
