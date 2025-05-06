@@ -33,13 +33,6 @@ FOLDER = get_data_folder(__file__)
                     Axis(name="x"),
                 ],
             ),
-            CoordinateSystem(
-                name="out2",
-                axes=[
-                    Axis(name="y"),
-                    Axis(name="x"),
-                ],
-            ),
         ),
         coordinate_transformations=(Identity(input="in", output="out"),),
     ),

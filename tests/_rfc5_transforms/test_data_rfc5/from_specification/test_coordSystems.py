@@ -6,5 +6,5 @@ FOLDER = get_data_folder(__file__)
 
 
 @pytest.mark.skip
-def test_coordSystem() -> None:
+def test_arrayCoordSys() -> None:
     pass
