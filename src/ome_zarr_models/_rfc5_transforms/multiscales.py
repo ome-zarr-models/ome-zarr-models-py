@@ -44,7 +44,7 @@ class Dataset(BaseAttrs):
         # the before validation is used to simplify the error messages
 
         class Transforms(BaseModel):
-            transforms: tuple[CoordinateTransformationType]
+            transforms: tuple[CoordinateTransformationType, ...]
 
         transforms = Transforms(transforms=transforms_obj).transforms
         check_length(transforms, valid_lengths=[1], variable_name="transforms")
@@ -99,6 +99,7 @@ class Dataset(BaseAttrs):
                     "The length of the scale and translation vectors must be the same."
                     f"Got {len(first.scale)} and {len(second.translation)}."
                 )
+        return transforms
 
 
 class Multiscale(BaseAttrs):
@@ -108,7 +109,6 @@ class Multiscale(BaseAttrs):
 
     coordinateSystems: tuple[CoordinateSystem, ...] = Field(..., min_length=1)
     datasets: tuple[Dataset, ...] = Field(..., min_length=1)
-    # TODO: or is it min_length=1? check with the specs and examples
     coordinateTransformations: tuple[CoordinateTransformationType, ...] | None = None
     metadata: JsonValue = None
     name: JsonValue | None = None
@@ -130,45 +130,19 @@ class Multiscale(BaseAttrs):
         assert output_cs is not None
         return len(output_cs.axes)
 
-    # TODO: to be replaced by a more general validator for checking the consistency
-    #  of all the "global" coordinate transformations
-    # @model_validator(mode="after")
-    # def _ensure_axes_top_transforms(data: Self) -> Self:
-    #     """
-    #     Ensure that the length of the axes matches the dimensionality of the
-    #     transforms defined in the top-level coordinateTransformations, if present.
-    #     """
-    #     self_ndim = len(data.axes)
-    #     if data.coordinateTransformations is not None:
-    #         for tx in data.coordinateTransformations:
-    #             if hasattr(tx, "ndim") and self_ndim != tx.ndim:
-    #                 msg = (
-    #                     f"The length of axes does not match the dimensionality of "
-    #                     f"the {tx.type} transform in coordinateTransformations. "
-    #                     f"Got {self_ndim} axes, but the {tx.type} transform has "
-    #                     f"dimensionality {tx.ndim}"
-    #                 )
-    #                 raise ValueError(msg)
-    #     return data
-
     @model_validator(mode="after")
     def _ensure_same_output_cs_for_all_datasets(data: Self) -> Self:
         """
         Ensure that all datasets have the same output coordinate system.
         """
-        # TODO: new implementation
-        # self_ndim = len(data.axes)
-        # for ds_idx, ds in enumerate(data.datasets):
-        #     for tx in ds.coordinateTransformations:
-        #         if hasattr(tx, "ndim") and self_ndim != tx.ndim:
-        #             msg = (
-        #                 f"The length of axes does not match the dimensionality of "
-        #                 f"the {tx.type} transform in "
-        #                 f"datasets[{ds_idx}].coordinateTransformations. "
-        #                 f"Got {self_ndim} axes, but the {tx.type} transform has "
-        #                 f"dimensionality {tx.ndim}"
-        #             )
-        #             raise ValueError(msg)
+        output_coordinate_systems = set()
+        for dataset in data.datasets:
+            output_coordinate_systems.add(dataset.coordinateTransformations[0].output)
+        if len(output_coordinate_systems) > 1:
+            raise ValueError(
+                "All `Dataset` instances of a `Multiscale`  must have the same output "
+                "coordinate system. Got {output_coordinate_systems}."
+            )
         return data
 
     @field_validator("datasets", mode="after")
@@ -177,22 +151,25 @@ class Multiscale(BaseAttrs):
         """
         Make sure datasets are ordered from highest resolution to smallest.
         """
-        # TODO: reimplement
-        # scale_transforms = [d.coordinateTransformations[0] for d in datasets]
-        # # Only handle scales given in metadata, not in files
-        # scale_vector_transforms = [
-        #     t for t in scale_transforms if isinstance(t, VectorScale)
-        # ]
-        # scales = [s.scale for s in scale_vector_transforms]
-        # for i in range(len(scales) - 1):
-        #     s1, s2 = scales[i], scales[i + 1]
-        #     is_ordered = all(s1[j] <= s2[j] for j in range(len(s1)))
-        #     if not is_ordered:
-        #         raise ValueError(
-        #             f"Dataset {i} has a lower resolution (scales = {s1}) "
-        #             f"than dataset {i+1} (scales = {s2})."
-        #         )
+        scale_transforms = []
+        for dataset in datasets:
+            (transform,) = dataset.coordinateTransformations
+            if transform.type == "scale":
+                scale_transforms.append(transform)
+            else:
+                assert transform.type == "sequence"
+                scale = transform.transformations[0]
+                scale_transforms.append(scale)
 
+        scales = [s.scale for s in scale_transforms]
+        for i in range(len(scales) - 1):
+            s1, s2 = scales[i], scales[i + 1]
+            is_ordered = all(s1[j] <= s2[j] for j in range(len(s1)))
+            if not is_ordered:
+                raise ValueError(
+                    f"Dataset {i} has a lower resolution (scales = {s1}) "
+                    f"than dataset {i+1} (scales = {s2})."
+                )
         return datasets
 
     @model_validator(mode="after")
