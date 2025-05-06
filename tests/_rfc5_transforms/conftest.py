@@ -61,9 +61,6 @@ def read_in_json(*, file_path: Path, model_cls: type[T]) -> T:
         }
 
         wrapped_json = json.dumps(wrapped)
-        import pyperclip
-
-        pyperclip.copy(wrapped_json)
 
         return model_cls.model_validate_json(wrapped_json)
 

@@ -1,4 +1,6 @@
 import pydantic_core
+import pytest
+from pydantic import ValidationError
 
 from ome_zarr_models._rfc5_transforms.axes import Axis
 from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
@@ -47,20 +49,21 @@ def test_ensure_scale_translation():
         )
     )
 
-    # ok (a single translation transformation)
-    _ = _gen_multiscale(
-        coordinateTransformations=(
-            Translation(
-                translation=[1.0, 1.0, 0.5, 0.5, 0.5],
-                input="/0",
-                output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
-            ),
+    # not ok (the first transformation should be a scale)
+    with pytest.raises(ValidationError):
+        _ = _gen_multiscale(
+            coordinateTransformations=(
+                Translation(
+                    translation=[1.0, 1.0, 0.5, 0.5, 0.5],
+                    input="/0",
+                    output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
+                ),
+            )
         )
-    )
 
     # not ok (a tuple of > 1 transformation is not allowed, a sequence should be used
     # instead)
-    try:
+    with pytest.raises(ValidationError):
         _ = _gen_multiscale(
             coordinateTransformations=(
                 Translation(
@@ -76,8 +79,6 @@ def test_ensure_scale_translation():
                 ),
             )
         )
-    except pydantic_core.ValidationError as e:
-        assert "1 validation error for Dataset" in str(e)
 
     # ok (a sequence of a scale and a translation)
     _ = _gen_multiscale(
