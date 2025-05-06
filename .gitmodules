@@ -1,3 +1,6 @@
 [submodule "tests/_rfc5_transforms/data_rfc5/ngff-rfc5-coordinate-transformation-examples"]
 	path = tests/_rfc5_transforms/data_rfc5/ngff-rfc5-coordinate-transformation-examples
 	url = https://github.com/bogovicj/ngff-rfc5-coordinate-transformation-examples
+[submodule "tests/_rfc5_transforms/data_rfc5/ngff"]
+	path = tests/_rfc5_transforms/data_rfc5/ngff
+	url = https://github.com/bogovicj/ngff.git
