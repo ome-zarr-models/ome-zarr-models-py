@@ -7,6 +7,7 @@ from pydantic import (
     JsonValue,
     field_validator,
     model_validator,
+    BaseModel,
 )
 
 from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
@@ -14,6 +15,7 @@ from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
     CoordinateTransformationType,
 )
 from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.common.validation import check_length
 
 __all__ = ["Dataset"]
 
@@ -28,31 +30,75 @@ class Dataset(BaseAttrs):
         ..., min_length=1, max_length=1
     )
 
+    @field_validator("coordinateTransformations", mode="before")
+    def _ensure_scale_translation(
+        transforms_obj: object,
+    ) -> object:
+        """
+        Ensures that
+        - a single transformation is present
+        - the first transformation is a scale
+        - if there are more than one transformation, they must be 2
+        - and the second transformation is a translation
+        """
+        # the before validation is used to simplify the error messages
+
+        class Transforms(BaseModel):
+            transforms: tuple[CoordinateTransformationType]
+
+        transforms = Transforms(transforms=transforms_obj).transforms
+        check_length(transforms, valid_lengths=[1], variable_name="transforms")
+
+        transform = transforms[0]
+        if transform.type == "sequence":
+            check_length(
+                transform.transformations,
+                valid_lengths=[2],
+                variable_name="transform.transforms",
+            )
+            first, second = transform.transformations
+            if first.type != "scale":
+                msg = (
+                    "When the first (and only) element in `coordinateTransformations`"
+                    " is a `Sequence`, the first element must be a `Scale` transform. "
+                    f"Got {first} instead."
+                )
+                raise ValueError(msg)
+            if second.type != "translation":
+                msg = (
+                    "When the first (and only) element in `coordinateTransformations`"
+                    " is a `Sequence`, the second element must be a `Translation` "
+                    f"transform. Got {second} instead."
+                )
+                raise ValueError(msg)
+        elif transform.type != "scale":
+            msg = (
+                "The first transformation in `coordinateTransformations` "
+                "must either be a `Scale` transform or a `Sequence` transform. "
+                f"Got {transform} instead."
+            )
+            raise ValueError(msg)
+
+        return transforms_obj
+
     @field_validator("coordinateTransformations", mode="after")
     @classmethod
-    def _ensure_scale_translation(
+    def _ensure_transform_dimensionality(
         cls,
-        transforms: tuple[CoordinateTransformationType],
-    ) -> tuple[CoordinateTransformationType]:
+        transforms: tuple[CoordinateTransformationType, ...],
+    ) -> tuple[CoordinateTransformationType, ...]:
         """
-        Ensures that the input transform
-        1) is either a single scale, a single translation or a sequence of a scale and
-        a translation (in this order)
-        2) if a sequence, the scale and translation have the same dimensionality
+        Ensures that the dimensionality of the transformation matches the
+        dimensionality of the dataset.
         """
-        # vector_transforms = filter(
-        #     lambda v: isinstance(v, VectorTransform), transforms
-        # )
-        # ndims = tuple(map(_ndim, vector_transforms))  # type: ignore[arg-type]
-        # ndims_set = set(ndims)
-        # if len(ndims_set) > 1:
-        #     msg = (
-        #         "The transforms have inconsistent dimensionality. "
-        #         f"Got transforms with dimensionality = {ndims}."
-        #     )
-        #     raise ValueError(msg)
-
-        return transforms
+        maybe_sequence = transforms[0]
+        if maybe_sequence.type == "sequence":
+            first, second = maybe_sequence.transformations
+            if len(first.scale) != len(second.translation):
+                raise ValueError(
+                    "The length of the scale and translation vectors must be the same."
+                    f"Got {len(first.scale)} and {len(second.translation)}."
+                )
 
 
 class Multiscale(BaseAttrs):

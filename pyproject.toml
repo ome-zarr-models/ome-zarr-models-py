@@ -53,7 +53,6 @@ dev = [
 test = [
     "pytest>=8.3.3",
     "pytest-cov",
-    "pyperclip"
 ]
 
 [tool.uv]

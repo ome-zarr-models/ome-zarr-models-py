@@ -48,35 +48,36 @@ def test_ensure_scale_translation():
         )
     )
 
-    # ok (a single translation transformation)
-    _ = _gen_multiscale(
-        coordinateTransformations=(
-            Translation(
-                translation=[1.0, 1.0, 0.5, 0.5, 0.5],
-                input="/0",
-                output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
-            ),
+    # not ok (the first transformation should be a scale)
+    with pytest.raises(ValidationError):
+        _ = _gen_multiscale(
+            coordinateTransformations=(
+                Translation(
+                    translation=[1.0, 1.0, 0.5, 0.5, 0.5],
+                    input="/0",
+                    output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
+                ),
+            )
         )
-    )
 
     # not ok (a tuple of > 1 transformation is not allowed, a sequence should be used
     # instead)
-    # with pytest.raises(ValidationError):
-    _ = _gen_multiscale(
-        coordinateTransformations=(
-            Translation(
-                translation=[1.0, 1.0, 0.5, 0.5, 0.5],
-                input="/0",
-                output="intermediate",  # can be anything, this case is not
-                # valid anyway
-            ),
-            Translation(
-                translation=[1.0, 1.0, 0.5, 0.5, 0.5],
-                input="intermediate",
-                output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
-            ),
+    with pytest.raises(ValidationError):
+        _ = _gen_multiscale(
+            coordinateTransformations=(
+                Translation(
+                    translation=[1.0, 1.0, 0.5, 0.5, 0.5],
+                    input="/0",
+                    output="intermediate",  # can be anything, this case is not
+                    # valid anyway
+                ),
+                Translation(
+                    translation=[1.0, 1.0, 0.5, 0.5, 0.5],
+                    input="intermediate",
+                    output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
+                ),
+            )
         )
-    )
 
     # ok (a sequence of a scale and a translation)
     _ = _gen_multiscale(
