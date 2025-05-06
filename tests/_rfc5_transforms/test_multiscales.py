@@ -41,7 +41,7 @@ def test_ensure_scale_translation():
     _ = _gen_multiscale(
         coordinateTransformations=(
             Scale(
-                scale=[1.0, 1.0, 0.5, 0.5, 0.5],
+                scale=[1.0, 1.0],
                 input="/0",
                 output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
             ),
@@ -49,11 +49,14 @@ def test_ensure_scale_translation():
     )
 
     # not ok (the first transformation should be a scale)
-    with pytest.raises(ValidationError):
+    with pytest.raises(
+        ValidationError,
+        match="The first transformation in `coordinateTransformations` must either be a `Scale` transform or a `Sequence`",
+    ):
         _ = _gen_multiscale(
             coordinateTransformations=(
                 Translation(
-                    translation=[1.0, 1.0, 0.5, 0.5, 0.5],
+                    translation=[1.0, 1.0],
                     input="/0",
                     output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
                 ),
@@ -62,17 +65,20 @@ def test_ensure_scale_translation():
 
     # not ok (a tuple of > 1 transformation is not allowed, a sequence should be used
     # instead)
-    with pytest.raises(ValidationError):
+    with pytest.raises(
+        ValidationError,
+        match=r"Length of transforms \(2\) not valid. Allowed lengths are \[1\].",
+    ):
         _ = _gen_multiscale(
             coordinateTransformations=(
                 Translation(
-                    translation=[1.0, 1.0, 0.5, 0.5, 0.5],
+                    translation=[1.0, 1.0],
                     input="/0",
                     output="intermediate",  # can be anything, this case is not
                     # valid anyway
                 ),
                 Translation(
-                    translation=[1.0, 1.0, 0.5, 0.5, 0.5],
+                    translation=[1.0, 1.0],
                     input="intermediate",
                     output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
                 ),
@@ -85,12 +91,12 @@ def test_ensure_scale_translation():
             Sequence(
                 transformations=(
                     Scale(
-                        scale=[1.0, 1.0, 0.5, 0.5, 0.5],
+                        scale=[1.0, 1.0],
                         input=None,
                         output=None,
                     ),
                     Translation(
-                        translation=[1.0, 1.0, 0.5, 0.5, 0.5],
+                        translation=[1.0, 1.0],
                         input=None,
                         output=None,
                     ),
@@ -101,48 +107,60 @@ def test_ensure_scale_translation():
         )
     )
 
-    # not ok (it's a sequence but not of a scale and a translation)
-    with pytest.raises(ValidationError):
-        _ = _gen_multiscale(
-            coordinateTransformations=(
-                Sequence(
-                    transformations=(
-                        Scale(
-                            scale=[1.0, 1.0, 0.5, 0.5, 0.5],
-                            input=None,
-                            output=None,
-                        ),
-                        Scale(
-                            scale=[1.0, 1.0, 0.5, 0.5, 0.5],
-                            input=None,
-                            output=None,
-                        ),
-                    ),
-                    input="/0",
-                    output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
-                ),
-            )
-        )
 
-    # not ok (a sequence of a scale and a translation, but the dimensions do not match)
-    with pytest.raises(ValidationError):
-        _ = _gen_multiscale(
-            coordinateTransformations=(
-                Sequence(
-                    transformations=(
+def test_invalid_dimensionalities():
+    # not ok (one transformation has different dimensionality than the coordinate
+    # system)
+    with pytest.raises(ValidationError, match=" has a different dimensionality "):
+        Multiscale(
+            coordinateTransformations=None,
+            coordinateSystems=(
+                CoordinateSystem(
+                    name="out",
+                    axes=[
+                        Axis(name="j"),
+                        Axis(name="i"),
+                    ],
+                ),
+            ),
+            datasets=(
+                Dataset(
+                    path="0",
+                    coordinateTransformations=(
                         Scale(
-                            scale=[1.0, 1.0, 0.5, 0.5, 0.5],
-                            input=None,
-                            output=None,
-                        ),
-                        Translation(
-                            translation=[1.0],
-                            input=None,
-                            output=None,
+                            scale=[1.0, 1.0, 1.0],
+                            input="/0",
+                            output="out",
                         ),
                     ),
-                    input="/0",
-                    output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
                 ),
-            )
+                Dataset(
+                    path="1",
+                    coordinateTransformations=(
+                        Sequence(
+                            transformations=(
+                                # TODO: small bug: when the dimensionality in these
+                                #  two places is 2
+                                #  an out of index error is triggered during one
+                                #  validation
+                                # TODO: (not implemented) here Scale and Translation
+                                #  should not require to specify input and output
+                                #  coordinate systems
+                                Scale(
+                                    scale=[1.0, 1.0, 1.0, 1.0],
+                                    input="workaround",
+                                    output="workaround",
+                                ),
+                                Translation(
+                                    translation=[1.0, 1.0, 1.0, 1.0],
+                                    input="workaround",
+                                    output="workaround",
+                                ),
+                            ),
+                            input="/1",
+                            output="out",
+                        ),
+                    ),
+                ),
+            ),
         )
