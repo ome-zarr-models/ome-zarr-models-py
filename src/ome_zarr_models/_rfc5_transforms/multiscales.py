@@ -210,6 +210,8 @@ class Multiscale(BaseAttrs):
         The input and output must either be a path relative to the current file in the
         zarr store or must be a name that is present in the list of coordinate systems.
         """
+        # TODO: this test is only for coordinate transformations that are not part of a
+        #  dataset. A second test for datasets should be added.
         if self.coordinateTransformations is None:
             return self
         cs_names = {cs.name for cs in self.coordinateSystems}

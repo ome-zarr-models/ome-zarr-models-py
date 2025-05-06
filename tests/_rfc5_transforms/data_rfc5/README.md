@@ -1,4 +1,4 @@
-# Dev Notes
+# How to obtain the data
 
 Use the following command to update the submodules in this repository:
 ```bash
