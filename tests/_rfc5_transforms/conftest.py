@@ -75,17 +75,17 @@ def read_in_zarr(*, file_path: Path, model_cls: type[T]) -> T:
 # paths are relative to the 'tests' directory
 TESTS_FILE_TO_DATA_MAPPING = {
     # data from specs
-    "test_data_rfc5/from_specification/test_transformations.py": (
-        "data_rfc5/from_specification/0.6-dev/examples/transformations"
+    "test_data_rfc5/ngff/test_transformations.py": (
+        "data_rfc5/ngff/0.6-dev/examples/transformations"
     ),
-    "test_data_rfc5/from_specification/test_subspace.py": (
-        "data_rfc5/from_specification/0.6-dev/examples/subspace"
+    "test_data_rfc5/ngff/test_subspace.py": (
+        "data_rfc5/ngff/0.6-dev/examples/subspace"
     ),
-    "test_data_rfc5/from_specification/test_multiscales_strict.py": (
-        "data_rfc5/from_specification/0.6-dev/examples/multiscales_strict"
+    "test_data_rfc5/ngff/test_multiscales_strict.py": (
+        "data_rfc5/ngff/0.6-dev/examples/multiscales_strict"
     ),
-    "test_data_rfc5/from_specification/test_coordSystems.py": (
-        "data_rfc5/from_specification/0.6-dev/examples/coordSystems"
+    "test_data_rfc5/ngff/test_coordSystems.py": (
+        "data_rfc5/ngff/0.6-dev/examples/coordSystems"
     ),
     # 2d examples
     "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_2d_axis_dependent.py": (
