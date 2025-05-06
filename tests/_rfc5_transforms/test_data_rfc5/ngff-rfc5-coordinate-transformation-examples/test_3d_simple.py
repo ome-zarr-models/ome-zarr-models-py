@@ -11,6 +11,11 @@ def test_affine() -> None:
 
 
 @pytest.mark.skip
+def test_affine_multiscale() -> None:
+    pass
+
+
+@pytest.mark.skip
 def test_affineParams() -> None:
     pass
 
