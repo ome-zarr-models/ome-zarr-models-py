@@ -26,5 +26,10 @@ def test_sequenceScaleTranslation() -> None:
 
 
 @pytest.mark.skip
+def test_sequenceScaleTranslation_multiscale() -> None:
+    pass
+
+
+@pytest.mark.skip
 def test_translation() -> None:
     pass
