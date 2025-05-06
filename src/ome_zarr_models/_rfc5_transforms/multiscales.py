@@ -3,11 +3,11 @@ from __future__ import annotations
 from typing import Self
 
 from pydantic import (
+    BaseModel,
     Field,
     JsonValue,
     field_validator,
     model_validator,
-    BaseModel,
 )
 
 from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
@@ -26,10 +26,14 @@ class Dataset(BaseAttrs):
     """
 
     path: str
+    # TODO: suggest John not to have a tuple for the coordinate transformations of a
+    #  dataset, since it's either a single scale or a single sequence (with a scale
+    #  and a translation)
     coordinateTransformations: tuple[CoordinateTransformationType, ...] = Field(
         ..., min_length=1, max_length=1
     )
 
+    # the before validation is used to simplify the error messages
     @field_validator("coordinateTransformations", mode="before")
     def _ensure_scale_translation(
         transforms_obj: object,
@@ -37,11 +41,10 @@ class Dataset(BaseAttrs):
         """
         Ensures that
         - a single transformation is present
-        - the first transformation is a scale
-        - if there are more than one transformation, they must be 2
-        - and the second transformation is a translation
+        - such transformation is a scale
+        - if such transformation is a sequence, ensure that its length is 2 and that
+          the first transformation is a scale and the second a translation
         """
-        # the before validation is used to simplify the error messages
 
         class Transforms(BaseModel):
             transforms: tuple[CoordinateTransformationType, ...]
@@ -54,7 +57,8 @@ class Dataset(BaseAttrs):
             check_length(
                 transform.transformations,
                 valid_lengths=[2],
-                variable_name="transform.transforms",
+                variable_name="transform.transforms (i.e. transformations composing "
+                "the sequence)",
             )
             first, second = transform.transformations
             if first.type != "scale":
@@ -88,8 +92,8 @@ class Dataset(BaseAttrs):
         transforms: tuple[CoordinateTransformationType, ...],
     ) -> tuple[CoordinateTransformationType, ...]:
         """
-        Ensures that the dimensionality of the transformation matches the
-        dimensionality of the dataset.
+        Ensures that the dimensionality of the scale and translation (when both present)
+        match
         """
         maybe_sequence = transforms[0]
         if maybe_sequence.type == "sequence":
@@ -134,16 +138,43 @@ class Multiscale(BaseAttrs):
     def _ensure_same_output_cs_for_all_datasets(data: Self) -> Self:
         """
         Ensure that all datasets have the same output coordinate system.
+
+        Also ensures that the dimensionality of each dataaset match the one of the
+        output coordinate system.
         """
-        output_coordinate_systems = set()
+        output_cs_names = set()
         for dataset in data.datasets:
-            output_coordinate_systems.add(dataset.coordinateTransformations[0].output)
-        if len(output_coordinate_systems) > 1:
+            output_cs_names.add(dataset.coordinateTransformations[0].output)
+        if len(output_cs_names) > 1:
             raise ValueError(
                 "All `Dataset` instances of a `Multiscale`  must have the same output "
-                "coordinate system. Got {output_coordinate_systems}."
+                "coordinate system. Got {output_cs_names}."
             )
         return data
+
+    @field_validator("datasets", mode="after")
+    @classmethod
+    def _ensure_same_dimensionality_for_all_datasets(
+        cls, datasets: list[Dataset]
+    ) -> list[Dataset]:
+        """
+        Ensure that all datasets have the same dimensionality
+        """
+        dims = []
+        for dataset in datasets:
+            transformation = dataset.coordinateTransformations[0]
+            if transformation.type == "scale":
+                dim = len(transformation.scale)
+            else:
+                assert transformation.type == "sequence"
+                dim = len(transformation.transformations[0].scale)
+            dims.append(dim)
+        if len(set(dims)) > 1:
+            raise ValueError(
+                "All `Dataset` instances of a `Multiscale` must have the same "
+                f"dimensionality. Got {dims}."
+            )
+        return datasets
 
     @field_validator("datasets", mode="after")
     @classmethod
@@ -179,6 +210,8 @@ class Multiscale(BaseAttrs):
         The input and output must either be a path relative to the current file in the
         zarr store or must be a name that is present in the list of coordinate systems.
         """
+        # TODO: this test is only for coordinate transformations that are not part of a
+        #  dataset. A second test for datasets should be added.
         if self.coordinateTransformations is None:
             return self
         cs_names = {cs.name for cs in self.coordinateSystems}

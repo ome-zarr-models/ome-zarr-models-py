@@ -1,12 +1,13 @@
-# Dev Notes
+# How to obtain the data
 
 Use the following command to update the submodules in this repository:
+
 ```bash
 git submodule update --init --recursive
 ```
 
-An extra step is required to enable sparse checkout for the `ngff` submodule 
-(otherwise tests will fail because they will mix tests for `ome-zarr-models-py` and 
+An extra step is required to enable sparse checkout for the `ngff` submodule
+(otherwise tests will fail because they will mix tests for `ome-zarr-models-py` and
 tests for `ngff`).
 
 ## Data in `ngff-rfc5-coordinate-transformation-examples`
@@ -17,7 +18,7 @@ Submodule from the repo data https://github.com/bogovicj/ngff-rfc5-coordinate-tr
 
 The data in `from_specification` is the one [introduced in the PR](https://github.com/bogovicj/ngff/tree/coord-transforms/latest/examples) from @bogovicj.
 
-Using a submodule would add the whole repository, including the tests, and we want 
+Using a submodule would add the whole repository, including the tests, and we want
 to avoid this.
 The current approach is to use `git sparse-checkout`. This requires the following steps:
 

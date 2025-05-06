@@ -4,3 +4,4 @@
 [submodule "tests/_rfc5_transforms/data_rfc5/ngff"]
 	path = tests/_rfc5_transforms/data_rfc5/ngff
 	url = https://github.com/bogovicj/ngff.git
+    branch = coord-transform

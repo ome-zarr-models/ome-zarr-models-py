@@ -51,7 +51,7 @@ def read_in_json(*, file_path: Path, model_cls: type[T]) -> T:
                     "coordinateTransformations": [
                         {
                             "type": "scale",
-                            "scale": [1.0, 1.0, 0.5, 0.5, 0.5],
+                            "scale": [1.0, 1.0],
                             "input": "/0",
                             "output": COORDINATE_SYSTEM_NAME_FOR_TESTS,
                         }
@@ -169,25 +169,22 @@ def check_examples_rfc5_are_downloaded() -> None:
     ).exists():
         command = "git submodule update --init --recursive"
         raise ValueError(
-            "RFC5 full examples are not downloaded. Please run the following command "
-            f"from the project root:\n{command}"
+            "RFC5 full examples are not downloaded. Please consult the README in "
+            "`tests/_rfc5_transforms/data_rfc5/README.md` for information on how"
+            " to obtain the data."
         )
 
 
 def _gen_dataset(
     output_coordinate_system: str,
+    scale_factors: list[float],
     path: str = "0",
-    scale_factors: list[float] | None = None,
 ) -> Dataset:
     return Dataset(
         path=path,
         coordinateTransformations=(
             Scale(
-                scale=(
-                    scale_factors
-                    if scale_factors is not None
-                    else list([1.0, 1.0, 0.5, 0.5, 0.5])
-                ),
+                scale=scale_factors,
                 input=f"/{path}",
                 output=output_coordinate_system,
             ),
@@ -210,7 +207,10 @@ def wrap_coordinate_transformations_and_systems_into_multiscale(
         coordinateTransformations=coordinate_transformations,
         coordinateSystems=(*coordinate_systems, extra_cs),
         datasets=(
-            _gen_dataset(output_coordinate_system=COORDINATE_SYSTEM_NAME_FOR_TESTS),
+            _gen_dataset(
+                output_coordinate_system=COORDINATE_SYSTEM_NAME_FOR_TESTS,
+                scale_factors=[1.0] * len(extra_cs.axes),
+            ),
         ),
     )
 
