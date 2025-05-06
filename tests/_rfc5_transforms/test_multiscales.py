@@ -163,3 +163,54 @@ def test_invalid_dimensionalities():
                 ),
             ),
         )
+
+def test_ensure_ordered_scales():
+    with pytest.raises(
+        ValidationError,
+        match=r" has a lower resolution \(scales =",
+    ):
+        Multiscale(
+            coordinateTransformations=None,
+            coordinateSystems=(
+                CoordinateSystem(
+                    name="out",
+                    axes=[
+                        Axis(name="j"),
+                        Axis(name="i"),
+                    ],
+                ),
+            ),
+            datasets=(
+                Dataset(
+                    path="0",
+                    coordinateTransformations=(
+                        Scale(
+                            scale=[2.0, 2.0],
+                            input="/0",
+                            output="out",
+                        ),
+                    ),
+                ),
+                Dataset(
+                    path="1",
+                    coordinateTransformations=(
+                        Sequence(
+                            transformations=(
+                                Scale(
+                                    scale=[1.0, 1.0],
+                                    input="workaround",
+                                    output="workaround",
+                                ),
+                                Translation(
+                                    translation=[1.0, 1.0],
+                                    input="workaround",
+                                    output="workaround",
+                                ),
+                            ),
+                            input="/1",
+                            output="out",
+                        ),
+                    ),
+                ),
+            ),
+        )
