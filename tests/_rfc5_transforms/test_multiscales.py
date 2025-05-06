@@ -111,7 +111,10 @@ def test_ensure_scale_translation():
 def test_invalid_dimensionalities():
     # not ok (one transformation has different dimensionality than the coordinate
     # system)
-    with pytest.raises(ValidationError, match=" has a different dimensionality "):
+    with pytest.raises(
+        ValidationError,
+        match="All `Dataset` instances of a `Multiscale` must have the same dimensionality. Got ",
+    ):
         Multiscale(
             coordinateTransformations=None,
             coordinateSystems=(
@@ -139,20 +142,16 @@ def test_invalid_dimensionalities():
                     coordinateTransformations=(
                         Sequence(
                             transformations=(
-                                # TODO: small bug: when the dimensionality in these
-                                #  two places is 2
-                                #  an out of index error is triggered during one
-                                #  validation
                                 # TODO: (not implemented) here Scale and Translation
                                 #  should not require to specify input and output
                                 #  coordinate systems
                                 Scale(
-                                    scale=[1.0, 1.0, 1.0, 1.0],
+                                    scale=[1.0, 1.0],
                                     input="workaround",
                                     output="workaround",
                                 ),
                                 Translation(
-                                    translation=[1.0, 1.0, 1.0, 1.0],
+                                    translation=[1.0, 1.0],
                                     input="workaround",
                                     output="workaround",
                                 ),

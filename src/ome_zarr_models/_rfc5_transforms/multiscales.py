@@ -45,6 +45,7 @@ class Dataset(BaseAttrs):
         - if such transformation is a sequence, ensure that its length is 2 and that
           the first transformation is a scale and the second a translation
         """
+
         class Transforms(BaseModel):
             transforms: tuple[CoordinateTransformationType, ...]
 
@@ -57,7 +58,7 @@ class Dataset(BaseAttrs):
                 transform.transformations,
                 valid_lengths=[2],
                 variable_name="transform.transforms (i.e. transformations composing "
-                              "the sequence)",
+                "the sequence)",
             )
             first, second = transform.transformations
             if first.type != "scale":
@@ -109,6 +110,7 @@ class Multiscale(BaseAttrs):
     """
     An element of multiscales metadata.
     """
+
     coordinateSystems: tuple[CoordinateSystem, ...] = Field(..., min_length=1)
     datasets: tuple[Dataset, ...] = Field(..., min_length=1)
     coordinateTransformations: tuple[CoordinateTransformationType, ...] | None = None
@@ -148,26 +150,31 @@ class Multiscale(BaseAttrs):
                 "All `Dataset` instances of a `Multiscale`  must have the same output "
                 "coordinate system. Got {output_cs_names}."
             )
+        return data
 
-        output_cs_name = output_cs_names.pop()
-        output_cs = [
-            cs for cs in data.coordinateSystems if cs.name == output_cs_name
-        ][0]
-        dim_output_cs = len(output_cs.axes)
-        for dataset in data.datasets:
+    @field_validator("datasets", mode="after")
+    @classmethod
+    def _ensure_same_dimensionality_for_all_datasets(
+        cls, datasets: list[Dataset]
+    ) -> list[Dataset]:
+        """
+        Ensure that all datasets have the same dimensionality
+        """
+        dims = []
+        for dataset in datasets:
             transformation = dataset.coordinateTransformations[0]
             if transformation.type == "scale":
                 dim = len(transformation.scale)
             else:
                 assert transformation.type == "sequence"
                 dim = len(transformation.transformations[0].scale)
-            if dim != dim_output_cs:
-                raise ValueError(
-                    f"Dataset {dataset.path} has a different dimensionality ({dim}) "
-                    f"than the output coordinate system {output_cs_name} "
-                    f"({dim_output_cs})."
-                )
-        return data
+            dims.append(dim)
+        if len(set(dims)) > 1:
+            raise ValueError(
+                "All `Dataset` instances of a `Multiscale` must have the same "
+                f"dimensionality. Got {dims}."
+            )
+        return datasets
 
     @field_validator("datasets", mode="after")
     @classmethod
