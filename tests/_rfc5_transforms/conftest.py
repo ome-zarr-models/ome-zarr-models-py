@@ -76,52 +76,52 @@ def read_in_zarr(*, file_path: Path, model_cls: type[T]) -> T:
 TESTS_FILE_TO_DATA_MAPPING = {
     # data from specs
     "test_data_rfc5/from_specification/test_transformations.py": (
-        "data_rfc5/from_specification/transformations"
+        "data_rfc5/from_specification/0.6-dev/examples/transformations"
     ),
     "test_data_rfc5/from_specification/test_subspace.py": (
-        "data_rfc5/from_specification/subspace"
+        "data_rfc5/from_specification/0.6-dev/examples/subspace"
     ),
     "test_data_rfc5/from_specification/test_multiscales_strict.py": (
-        "data_rfc5/from_specification/multiscales_strict"
+        "data_rfc5/from_specification/0.6-dev/examples/multiscales_strict"
     ),
-    "test_data_rfc5/from_specification/test_coordinate_systems.py": (
-        "data_rfc5/from_specification/coordinate_systems"
+    "test_data_rfc5/from_specification/test_coordSystems.py": (
+        "data_rfc5/from_specification/0.6-dev/examples/coordSystems"
     ),
     # 2d examples
-    "test_data_rfc5/full_examples/test_2d_axis_dependent.py": (
-        "data_rfc5/full_examples/2d/axis_dependent"
+    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_2d_axis_dependent.py": (
+        "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/2d/axis_dependent"
     ),
-    "test_data_rfc5/full_examples/test_2d_basic.py": (
-        "data_rfc5/full_examples/2d/basic"
+    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_2d_basic.py": (
+        "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/2d/basic"
     ),
-    "test_data_rfc5/full_examples/test_2d_basic_binary.py": (
-        "data_rfc5/full_examples/2d/basic_binary"
+    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_2d_basic_binary.py": (
+        "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/2d/basic_binary"
     ),
-    "test_data_rfc5/full_examples/test_2d_nonlinear.py": (
-        "data_rfc5/full_examples/2d/nonlinear"
+    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_2d_nonlinear.py": (
+        "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/2d/nonlinear"
     ),
-    "test_data_rfc5/full_examples/test_2d_simple.py": (
-        "data_rfc5/full_examples/2d/simple"
+    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_2d_simple.py": (
+        "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/2d/simple"
     ),
     # 3d examples
-    "test_data_rfc5/full_examples/test_3d_axis_dependent.py": (
-        "data_rfc5/full_examples/3d/axis_dependent"
+    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_3d_axis_dependent.py": (
+        "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/3d/axis_dependent"
     ),
-    "test_data_rfc5/full_examples/test_3d_basic.py": (
-        "data_rfc5/full_examples/3d/basic"
+    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_3d_basic.py": (
+        "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/3d/basic"
     ),
-    "test_data_rfc5/full_examples/test_3d_basic_binary.py": (
-        "data_rfc5/full_examples/3d/basic_binary"
+    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_3d_basic_binary.py": (
+        "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/3d/basic_binary"
     ),
-    "test_data_rfc5/full_examples/test_3d_nonlinear.py": (
-        "data_rfc5/full_examples/3d/nonlinear"
+    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_3d_nonlinear.py": (
+        "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/3d/nonlinear"
     ),
-    "test_data_rfc5/full_examples/test_3d_simple.py": (
-        "data_rfc5/full_examples/3d/simple"
+    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_3d_simple.py": (
+        "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/3d/simple"
     ),
     # user stories
-    "test_data_rfc5/full_examples/test_user_stories.py": (
-        "data_rfc5/full_examples/user_stories"
+    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_user_stories.py": (
+        "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/user_stories"
     ),
 }
 
@@ -163,19 +163,15 @@ def _parse_data(folder: str, in_memory: T) -> Callable[..., Any]:
 
 
 def check_examples_rfc5_are_downloaded() -> None:
-    if not (Path(__file__).parent / "data_rfc5/full_examples").exists():
-        command = (
-            "aws s3 --no-sign-request sync "
-            "s3://ngff-rfc5-coordinate-transformation-examples/ "
-            "tests/_rfc5_transforms/data_rfc5/full_examples/"
-        )
+    if not (
+        Path(__file__).parent
+        / "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2"
+    ).exists():
+        command = "git submodule update --init --recursive"
         raise ValueError(
             "RFC5 full examples are not downloaded. Please run the following command "
             f"from the project root:\n{command}"
         )
-    # TODO: the first run in the CI will fail because the examples are not downloaded;
-    #  we will have to add a job in the CI to download the examples before running the
-    #  tests
 
 
 def _gen_dataset(
