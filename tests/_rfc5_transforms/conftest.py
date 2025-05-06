@@ -169,8 +169,9 @@ def check_examples_rfc5_are_downloaded() -> None:
     ).exists():
         command = "git submodule update --init --recursive"
         raise ValueError(
-            "RFC5 full examples are not downloaded. Please run the following command "
-            f"from the project root:\n{command}"
+            "RFC5 full examples are not downloaded. Please consult the README in "
+            "`tests/_rfc5_transforms/data_rfc5/README.md` for information on how"
+            " to obtain the data."
         )
 
 

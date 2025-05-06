@@ -142,18 +142,15 @@ def test_invalid_dimensionalities():
                     coordinateTransformations=(
                         Sequence(
                             transformations=(
-                                # TODO: (not implemented) here Scale and Translation
-                                #  should not require to specify input and output
-                                #  coordinate systems
                                 Scale(
                                     scale=[1.0, 1.0],
-                                    input="workaround",
-                                    output="workaround",
+                                    input=None,
+                                    output=None,
                                 ),
                                 Translation(
                                     translation=[1.0, 1.0],
-                                    input="workaround",
-                                    output="workaround",
+                                    input=None,
+                                    output=None,
                                 ),
                             ),
                             input="/1",
@@ -198,13 +195,13 @@ def test_ensure_ordered_scales():
                             transformations=(
                                 Scale(
                                     scale=[1.0, 1.0],
-                                    input="workaround",
-                                    output="workaround",
+                                    input=None,
+                                    output=None,
                                 ),
                                 Translation(
                                     translation=[1.0, 1.0],
-                                    input="workaround",
-                                    output="workaround",
+                                    input=None,
+                                    output=None,
                                 ),
                             ),
                             input="/1",
