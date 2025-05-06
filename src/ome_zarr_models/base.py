@@ -33,7 +33,7 @@ class BaseGroup(GroupSpec[T, Union["ArraySpec", "GroupSpec"]], ABC, Generic[T]):
 
     @property
     @abstractmethod
-    def ome_zarr_version(self) -> Literal["0.4", "0.5"]:
+    def ome_zarr_version(self) -> Literal["0.4", "0.5", "0.6"]:
         """
         Version of the OME-Zarr specification that this group corresponds to.
         """

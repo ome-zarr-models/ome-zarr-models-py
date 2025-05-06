@@ -1,5 +1,7 @@
 # Dev notes
 
+## Data in `from_specification`
+
 The data in `from_specification` is the one [introduced in the PR](https://github.com/bogovicj/ngff/tree/coord-transforms/latest/examples) from @bogovicj.
 
 This document keeps track of which data we are using for testing up to this point. The order below is the order in which we aim to implement the tests. On top of this data, we also have new test data.
@@ -33,3 +35,11 @@ Note: Some of the data from the specification needs fixes. Once the project is i
 - [ ] bijection_verbose.json
 - [ ] xarrayLike.json
 - [ ] byDimensionXarray.json
+
+## Data in `full_examples`
+
+The data in `full_examples` has been created by @bogovicj and made [available here]
+(https://open.quiltdata.com/b/ngff-rfc5-coordinate-transformation-examples).
+See this [Zulip topic](https://imagesc.zulipchat.
+com/#narrow/channel/328251-NGFF/topic/Transforms.20examples.20for.20RFC-5) for more
+details, in particular for suggestions on how to download the data via the CLI.
