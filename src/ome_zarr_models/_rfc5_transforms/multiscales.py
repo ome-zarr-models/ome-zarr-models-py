@@ -13,6 +13,8 @@ from pydantic import (
 from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
     CoordinateSystem,
     CoordinateTransformationType,
+    Scale,
+    Translation,
 )
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.validation import check_length
@@ -98,7 +100,11 @@ class Dataset(BaseAttrs):
         maybe_sequence = transforms[0]
         if maybe_sequence.type == "sequence":
             first, second = maybe_sequence.transformations
-            if len(first.scale) != len(second.translation):
+            if (
+                isinstance(first, Scale)
+                and isinstance(second, Translation)
+                and len(first.scale) != len(second.translation)
+            ):
                 raise ValueError(
                     "The length of the scale and translation vectors must be the same."
                     f"Got {len(first.scale)} and {len(second.translation)}."
@@ -166,7 +172,9 @@ class Multiscale(BaseAttrs):
             if transformation.type == "scale":
                 dim = len(transformation.scale)
             else:
-                assert transformation.type == "sequence"
+                assert transformation.type == "sequence" and isinstance(
+                    transformation.transformations[0], Scale
+                )
                 dim = len(transformation.transformations[0].scale)
             dims.append(dim)
         if len(set(dims)) > 1:
@@ -188,7 +196,9 @@ class Multiscale(BaseAttrs):
             if transform.type == "scale":
                 scale_transforms.append(transform)
             else:
-                assert transform.type == "sequence"
+                assert transform.type == "sequence" and isinstance(
+                    transform.transformations[0], Scale
+                )
                 scale = transform.transformations[0]
                 scale_transforms.append(scale)
 
