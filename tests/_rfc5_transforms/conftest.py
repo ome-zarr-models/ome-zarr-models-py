@@ -2,7 +2,7 @@ import json
 import re
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 import zarr
 
@@ -62,7 +62,7 @@ def read_in_json(*, file_path: Path, model_cls: type[T]) -> T:
 
         wrapped_json = json.dumps(wrapped)
 
-        return model_cls.model_validate_json(wrapped_json)
+        return cast(T, model_cls.model_validate_json(wrapped_json))
 
 
 def read_in_zarr(*, file_path: Path, model_cls: type[T]) -> T:
@@ -72,6 +72,7 @@ def read_in_zarr(*, file_path: Path, model_cls: type[T]) -> T:
     )
 
 
+NGFF_EXAMPLES_TESTS_PATH = "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples"
 # paths are relative to the 'tests' directory
 TESTS_FILE_TO_DATA_MAPPING = {
     # data from specs
@@ -88,39 +89,39 @@ TESTS_FILE_TO_DATA_MAPPING = {
         "data_rfc5/ngff/0.6-dev/examples/coordSystems"
     ),
     # 2d examples
-    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_2d_axis_dependent.py": (
+    f"{NGFF_EXAMPLES_TESTS_PATH}/test_2d_axis_dependent.py": (
         "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/2d/axis_dependent"
     ),
-    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_2d_basic.py": (
+    f"{NGFF_EXAMPLES_TESTS_PATH}/test_2d_basic.py": (
         "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/2d/basic"
     ),
-    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_2d_basic_binary.py": (
+    f"{NGFF_EXAMPLES_TESTS_PATH}/test_2d_basic_binary.py": (
         "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/2d/basic_binary"
     ),
-    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_2d_nonlinear.py": (
+    f"{NGFF_EXAMPLES_TESTS_PATH}/test_2d_nonlinear.py": (
         "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/2d/nonlinear"
     ),
-    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_2d_simple.py": (
+    f"{NGFF_EXAMPLES_TESTS_PATH}/test_2d_simple.py": (
         "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/2d/simple"
     ),
     # 3d examples
-    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_3d_axis_dependent.py": (
+    f"{NGFF_EXAMPLES_TESTS_PATH}/test_3d_axis_dependent.py": (
         "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/3d/axis_dependent"
     ),
-    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_3d_basic.py": (
+    f"{NGFF_EXAMPLES_TESTS_PATH}/test_3d_basic.py": (
         "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/3d/basic"
     ),
-    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_3d_basic_binary.py": (
+    f"{NGFF_EXAMPLES_TESTS_PATH}/test_3d_basic_binary.py": (
         "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/3d/basic_binary"
     ),
-    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_3d_nonlinear.py": (
+    f"{NGFF_EXAMPLES_TESTS_PATH}/test_3d_nonlinear.py": (
         "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/3d/nonlinear"
     ),
-    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_3d_simple.py": (
+    f"{NGFF_EXAMPLES_TESTS_PATH}/test_3d_simple.py": (
         "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/3d/simple"
     ),
     # user stories
-    "test_data_rfc5/ngff-rfc5-coordinate-transformation-examples/test_user_stories.py": (
+    f"{NGFF_EXAMPLES_TESTS_PATH}/test_user_stories.py": (
         "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2/user_stories"
     ),
 }
@@ -167,7 +168,6 @@ def check_examples_rfc5_are_downloaded() -> None:
         Path(__file__).parent
         / "data_rfc5/ngff-rfc5-coordinate-transformation-examples/zarr2"
     ).exists():
-        command = "git submodule update --init --recursive"
         raise ValueError(
             "RFC5 full examples are not downloaded. Please consult the README in "
             "`tests/_rfc5_transforms/data_rfc5/README.md` for information on how"

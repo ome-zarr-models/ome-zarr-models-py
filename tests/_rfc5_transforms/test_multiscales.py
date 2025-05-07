@@ -15,9 +15,9 @@ from tests._rfc5_transforms.conftest import (
 )
 
 
-def test_ensure_scale_translation():
+def test_ensure_scale_translation() -> None:
     def _gen_multiscale(
-        coordinateTransformations: tuple[CoordinateTransformationType],
+        coordinateTransformations: tuple[CoordinateTransformationType, ...],
     ) -> Multiscale:
         extra_cs = CoordinateSystem(
             name=COORDINATE_SYSTEM_NAME_FOR_TESTS,
@@ -51,7 +51,10 @@ def test_ensure_scale_translation():
     # not ok (the first transformation should be a scale)
     with pytest.raises(
         ValidationError,
-        match="The first transformation in `coordinateTransformations` must either be a `Scale` transform or a `Sequence`",
+        match=(
+            "The first transformation in `coordinateTransformations` must either "
+            "be a `Scale` transform or a `Sequence`"
+        ),
     ):
         _ = _gen_multiscale(
             coordinateTransformations=(
@@ -108,12 +111,15 @@ def test_ensure_scale_translation():
     )
 
 
-def test_invalid_dimensionalities():
+def test_invalid_dimensionalities() -> None:
     # not ok (one transformation has different dimensionality than the coordinate
     # system)
     with pytest.raises(
         ValidationError,
-        match="All `Dataset` instances of a `Multiscale` must have the same dimensionality. Got ",
+        match=(
+            "All `Dataset` instances of a `Multiscale` must have the same "
+            "dimensionality. Got "
+        ),
     ):
         Multiscale(
             coordinateTransformations=None,
@@ -162,7 +168,7 @@ def test_invalid_dimensionalities():
         )
 
 
-def test_ensure_ordered_scales():
+def test_ensure_ordered_scales() -> None:
     with pytest.raises(
         ValidationError,
         match=r" has a lower resolution \(scales =",
