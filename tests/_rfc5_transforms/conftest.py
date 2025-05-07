@@ -2,7 +2,7 @@ import json
 import re
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any, TypeVar, cast
+from typing import Any, TypeVar
 
 import zarr
 
@@ -62,7 +62,7 @@ def read_in_json(*, file_path: Path, model_cls: type[T]) -> T:
 
         wrapped_json = json.dumps(wrapped)
 
-        return cast(T, model_cls.model_validate_json(wrapped_json))
+        return model_cls.model_validate_json(wrapped_json)
 
 
 def read_in_zarr(*, file_path: Path, model_cls: type[T]) -> T:
