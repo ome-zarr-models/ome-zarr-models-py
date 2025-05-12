@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import Annotated, Literal
+from typing import Literal
 
-from pydantic import Field, field_validator
+from pydantic import field_validator
 
 from ome_zarr_models._rfc5_transforms.axes import Axes
 from ome_zarr_models._utils import duplicates
@@ -88,6 +88,4 @@ class Sequence(CoordinateTransformation):
     transformations: list[CoordinateTransformationType]
 
 
-CoordinateTransformationType = Annotated[
-    Identity | Scale | Translation | Sequence, Field(discriminator="type")
-]
+CoordinateTransformationType = Identity | Scale | Translation | Sequence
