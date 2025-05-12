@@ -85,7 +85,7 @@ class Sequence(CoordinateTransformation):
     """Sequence transformation."""
 
     type: Literal["sequence"] = "sequence"
-    transformations: tuple[CoordinateTransformationType, ...]
+    transformations: list[CoordinateTransformationType]
 
 
 CoordinateTransformationType = Annotated[
