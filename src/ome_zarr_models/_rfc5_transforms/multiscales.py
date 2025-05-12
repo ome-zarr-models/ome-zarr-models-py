@@ -47,6 +47,8 @@ class Dataset(BaseAttrs):
         - if such transformation is a sequence, ensure that its length is 2 and that
           the first transformation is a scale and the second a translation
         """
+        # the class below simplifies error messages since we are in a before validator;
+        # see more: ome_zarr_models.common.multiscales.Dataset
 
         class Transforms(BaseModel):
             transforms: tuple[CoordinateTransformationType, ...]
