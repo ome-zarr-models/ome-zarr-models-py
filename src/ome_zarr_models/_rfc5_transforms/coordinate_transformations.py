@@ -3,30 +3,16 @@ from __future__ import annotations
 from abc import ABC
 from typing import Literal, Self
 
-from pydantic import field_validator, model_validator
+from pydantic import Field, field_validator, model_validator
 
 from ome_zarr_models._rfc5_transforms.axes import Axes
-from ome_zarr_models._utils import duplicates
 from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.common.validation import unique_items_validator
 
 
 class CoordinateSystem(BaseAttrs):
-    name: str
-    axes: Axes
-
-    @field_validator("name")
-    @classmethod
-    def name_must_not_be_empty(cls, value: str) -> str:
-        if value == "":
-            raise ValueError("name must be a non-empty string")
-        return value
-
-    @field_validator("axes")
-    @classmethod
-    def axes_must_not_be_empty(cls, value: Axes) -> Axes:
-        if len(value) == 0:
-            raise ValueError("axes must contain at least one axis")
-        return value
+    name: str = Field(min_length=1)
+    axes: Axes = Field(min_length=1)
 
     @field_validator("axes", mode="after")
     @classmethod
@@ -34,13 +20,7 @@ class CoordinateSystem(BaseAttrs):
         """
         Ensures that the names of the axes are unique.
         """
-        name_dupes = duplicates(a.name for a in axes)
-        if len(name_dupes) > 0:
-            msg = (
-                f"Axis names must be unique. Axis names {tuple(name_dupes.keys())} are "
-                "repeated."
-            )
-            raise ValueError(msg)
+        unique_items_validator([a.name for a in axes])
         return axes
 
 

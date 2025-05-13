@@ -11,17 +11,17 @@ from tests._rfc5_transforms.conftest import (
 
 
 def test_coordinate_system_name_not_empty() -> None:
-    with pytest.raises(ValueError, match="name must be a non-empty string"):
+    with pytest.raises(ValueError, match="String should have at least 1 character"):
         CoordinateSystem(name="", axes=[Axis(name="x")])
 
 
 def test_coordinate_system_axes_not_empty() -> None:
-    with pytest.raises(ValueError, match="axes must contain at least one axis"):
+    with pytest.raises(ValueError, match="Value should have at least 1 item after"):
         CoordinateSystem(name="test", axes=[])
 
 
 def test_coordinate_system_axes_unique_names() -> None:
-    with pytest.raises(ValueError, match="Axis names must be unique"):
+    with pytest.raises(ValueError, match="Duplicate values found in "):
         CoordinateSystem(
             name="test",
             axes=[Axis(name="x"), Axis(name="y"), Axis(name="x")],
