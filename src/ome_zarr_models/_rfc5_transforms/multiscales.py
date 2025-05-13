@@ -152,7 +152,9 @@ class Multiscale(BaseAttrs):
         Also ensures that the dimensionality of each dataset match the one of the
         output coordinate system.
         """
-        output_cs_names = {dataset.coordinateTransformations[0].output for dataset in datasets}
+        output_cs_names = {
+            dataset.coordinateTransformations[0].output for dataset in data.datasets
+        }
         if len(output_cs_names) > 1:
             raise ValueError(
                 "All `Dataset` instances of a `Multiscale`  must have the same output "
@@ -172,7 +174,7 @@ class Multiscale(BaseAttrs):
         for dataset in datasets:
             transformation = dataset.coordinateTransformations[0]
             if transformation.type == "scale":
-                dim = transormation.ndim
+                dim = transformation.ndim
             else:
                 assert transformation.type == "sequence" and isinstance(
                     transformation.transformations[0], Scale
