@@ -99,6 +99,8 @@ class Dataset(BaseAttrs):
         Ensures that the dimensionality of the scale and translation (when both present)
         match
         """
+        # this test will not be needed anymore when
+        # https://github.com/ome-zarr-models/ome-zarr-models-py/issues/188 is addressed
         maybe_sequence = transforms[0]
         if maybe_sequence.type == "sequence":
             first, second = maybe_sequence.transformations
