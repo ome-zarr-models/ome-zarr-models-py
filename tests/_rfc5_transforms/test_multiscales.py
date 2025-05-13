@@ -110,6 +110,26 @@ def test_ensure_scale_translation() -> None:
         )
     )
 
+    # not ok (the scale and translations have different dimensionalities)
+    with pytest.raises(
+        ValueError,
+        match="The length of the scale and translation vectors must be the same",
+    ):
+        _ = _gen_multiscale(
+            coordinateTransformations=(
+                Sequence(
+                    input="/0",
+                    output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
+                    transformations=[
+                        Scale(scale=[1.0, 1.0], input=None, output=None),
+                        Translation(
+                            translation=[1.0, 1.0, 2.0], input=None, output=None
+                        ),
+                    ],
+                ),
+            )
+        )
+
 
 def test_invalid_dimensionalities() -> None:
     # not ok (one transformation has different dimensionality than the coordinate

@@ -31,7 +31,7 @@ class Dataset(BaseAttrs):
     # TODO: suggest John not to have a tuple for the coordinate transformations of a
     #  dataset, since it's either a single scale or a single sequence (with a scale
     #  and a translation)
-    coordinateTransformations: tuple[CoordinateTransformationType, ...] = Field(
+    coordinateTransformations: list[CoordinateTransformationType] = Field(
         ..., min_length=1, max_length=1
     )
 
@@ -51,7 +51,7 @@ class Dataset(BaseAttrs):
         # see more: ome_zarr_models.common.multiscales.Dataset
 
         class Transforms(BaseModel):
-            transforms: tuple[CoordinateTransformationType, ...]
+            transforms: list[CoordinateTransformationType]
 
         transforms = Transforms(transforms=transforms_obj).transforms
         check_length(transforms, valid_lengths=[1], variable_name="transforms")
@@ -108,7 +108,7 @@ class Dataset(BaseAttrs):
                 and len(first.scale) != len(second.translation)
             ):
                 raise ValueError(
-                    "The length of the scale and translation vectors must be the same."
+                    "The length of the scale and translation vectors must be the same. "
                     f"Got {len(first.scale)} and {len(second.translation)}."
                 )
         return transforms
@@ -147,7 +147,7 @@ class Multiscale(BaseAttrs):
         """
         Ensure that all datasets have the same output coordinate system.
 
-        Also ensures that the dimensionality of each dataaset match the one of the
+        Also ensures that the dimensionality of each dataset match the one of the
         output coordinate system.
         """
         output_cs_names = set()

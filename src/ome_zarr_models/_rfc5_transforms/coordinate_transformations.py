@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import Literal
+from abc import ABC
+from typing import Literal, Self
 
-from pydantic import field_validator
+from pydantic import field_validator, model_validator
 
 from ome_zarr_models._rfc5_transforms.axes import Axes
 from ome_zarr_models._utils import duplicates
@@ -14,12 +15,14 @@ class CoordinateSystem(BaseAttrs):
     axes: Axes
 
     @field_validator("name")
+    @classmethod
     def name_must_not_be_empty(cls, value: str) -> str:
         if value == "":
             raise ValueError("name must be a non-empty string")
         return value
 
     @field_validator("axes")
+    @classmethod
     def axes_must_not_be_empty(cls, value: Axes) -> Axes:
         if len(value) == 0:
             raise ValueError("axes must contain at least one axis")
@@ -41,10 +44,23 @@ class CoordinateSystem(BaseAttrs):
         return axes
 
 
-class CoordinateTransformation(BaseAttrs):
+class CoordinateTransformation(BaseAttrs, ABC):
     type: str
     input: str | None
     output: str | None
+
+    @model_validator(mode="after")
+    def ensure_input_output_omitted_or_both_defined(self: Self) -> Self:
+        """
+        Ensures that either both input and output are defined or both are omitted.
+        """
+        if (self.input is None) != (self.output is None):
+            msg = (
+                "Either both input and output must be defined or both must be omitted. "
+                f"Got input={self.input} and output={self.output}."
+            )
+            raise ValueError(msg)
+        return self
 
 
 class Identity(CoordinateTransformation):

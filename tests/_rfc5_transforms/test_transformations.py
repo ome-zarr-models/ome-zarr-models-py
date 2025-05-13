@@ -28,7 +28,7 @@ def test_coordinate_system_axes_unique_names() -> None:
         )
 
 
-def test_transformation_input_output_validation() -> None:
+def test_input_output_coordinate_system_valid_for_transformation() -> None:
     axis_names = ["a", "b", "c"]
     cs_names = ["in", "out", "other"]
     axes = [Axis(name=i) for i in axis_names]
@@ -50,3 +50,26 @@ def test_transformation_input_output_validation() -> None:
     wrap_coordinate_transformations_and_systems_into_multiscale(
         coordinate_systems=csystems, coordinate_transformations=working_transformation
     )
+
+
+def test_coordinate_system_input_output_dimensionality() -> None:
+    # both input and output are None (valid)
+    ct = Identity(input=None, output=None)
+    assert ct.input is None and ct.output is None
+
+    # both input and output are defined (valid)
+    ct = Identity(input="a", output="b")
+    assert ct.input == "a" and ct.output == "b"
+
+    with pytest.raises(
+        ValueError,
+        match="Either both input and output must be defined or both must be omitted",
+    ):
+        Identity(input="a", output=None)
+
+    # only output is defined (invalid)
+    with pytest.raises(
+        ValueError,
+        match="Either both input and output must be defined or both must be omitted",
+    ):
+        Identity(input=None, output="b")
