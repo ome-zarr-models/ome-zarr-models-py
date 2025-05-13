@@ -454,8 +454,7 @@ def test_multiscale_group_missing_arrays() -> None:
     with pytest.raises(
         ValidationError,
         match=(
-            "The multiscale metadata references an array that does "
-            "not exist in this "
+            "The multiscale metadata references an array that does not exist in this "
         ),
     ):
         Image(**group_model_broken.model_dump())
