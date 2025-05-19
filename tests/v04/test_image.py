@@ -178,20 +178,22 @@ def example_image() -> Image:
     )
 
 
-def test_get_datasets(example_image: Image) -> None:
-    assert example_image.get_datasets() == (
-        Dataset(
-            path="scale0",
-            coordinateTransformations=(
-                VectorScale(type="scale", scale=[4.0, 4.0]),
-                VectorTranslation(type="translation", translation=[2.0, 2.0]),
+def test_datasets(example_image: Image) -> None:
+    assert example_image.datasets == (
+        (
+            Dataset(
+                path="scale0",
+                coordinateTransformations=(
+                    VectorScale(type="scale", scale=[4.0, 4.0]),
+                    VectorTranslation(type="translation", translation=[2.0, 2.0]),
+                ),
             ),
-        ),
-        Dataset(
-            path="scale1",
-            coordinateTransformations=(
-                VectorScale(type="scale", scale=[8.0, 8.0]),
-                VectorTranslation(type="translation", translation=[4.0, 4.0]),
+            Dataset(
+                path="scale1",
+                coordinateTransformations=(
+                    VectorScale(type="scale", scale=[8.0, 8.0]),
+                    VectorTranslation(type="translation", translation=[4.0, 4.0]),
+                ),
             ),
         ),
     )
