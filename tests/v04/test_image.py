@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 from pydantic_zarr.v2 import ArraySpec
 
 from ome_zarr_models.common.coordinate_transformations import VectorTranslation
@@ -152,4 +153,45 @@ def test_new_image() -> None:
                 compressor=None,
             ),
         },
+    )
+
+
+@pytest.fixture
+def example_image() -> Image:
+    return Image.new(
+        array_specs=[
+            ArraySpec(shape=(5, 5), chunks=(2, 2), dtype=np.uint8),
+            ArraySpec(shape=(3, 3), chunks=(2, 2), dtype=np.uint8),
+        ],
+        paths=["scale0", "scale1"],
+        axes=[
+            Axis(name="x", type="space", unit="km"),
+            Axis(name="y", type="space", unit="km"),
+        ],
+        scales=[(4, 4), (8, 8)],
+        translations=[(2, 2), (4, 4)],
+        name="new_image_test",
+        multiscale_type="local mean",
+        metadata={"key": "val"},
+        global_scale=(-1, 1),
+        global_translation=(10, 10),
+    )
+
+
+def test_get_datasets(example_image: Image) -> None:
+    assert example_image.get_datasets() == (
+        Dataset(
+            path="scale0",
+            coordinateTransformations=(
+                VectorScale(type="scale", scale=[4.0, 4.0]),
+                VectorTranslation(type="translation", translation=[2.0, 2.0]),
+            ),
+        ),
+        Dataset(
+            path="scale1",
+            coordinateTransformations=(
+                VectorScale(type="scale", scale=[8.0, 8.0]),
+                VectorTranslation(type="translation", translation=[4.0, 4.0]),
+            ),
+        ),
     )
