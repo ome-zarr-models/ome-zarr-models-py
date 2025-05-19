@@ -197,3 +197,127 @@ def test_datasets(example_image: Image) -> None:
             ),
         ),
     )
+
+
+def test_add_dataset(example_image: Image) -> None:
+    assert example_image.attributes.multiscales[0].datasets == (
+        Dataset(
+            path="scale0",
+            coordinateTransformations=(
+                VectorScale(type="scale", scale=[4.0, 4.0]),
+                VectorTranslation(type="translation", translation=[2.0, 2.0]),
+            ),
+        ),
+        Dataset(
+            path="scale1",
+            coordinateTransformations=(
+                VectorScale(type="scale", scale=[8.0, 8.0]),
+                VectorTranslation(type="translation", translation=[4.0, 4.0]),
+            ),
+        ),
+    )
+    assert example_image.members == {
+        "scale0": ArraySpec(
+            zarr_version=2,
+            attributes={},
+            shape=(5, 5),
+            chunks=(2, 2),
+            dtype="|u1",
+            fill_value=0,
+            order="C",
+            filters=None,
+            dimension_separator="/",
+            compressor=None,
+        ),
+        "scale1": ArraySpec(
+            zarr_version=2,
+            attributes={},
+            shape=(3, 3),
+            chunks=(2, 2),
+            dtype="|u1",
+            fill_value=0,
+            order="C",
+            filters=None,
+            dimension_separator="/",
+            compressor=None,
+        ),
+    }
+
+    new_dataset = Dataset(
+        path="scale2",
+        coordinateTransformations=(
+            VectorScale(
+                type="scale",
+                scale=[16, 16],
+            ),
+            VectorTranslation(
+                type="translation",
+                translation=[8, 8],
+            ),
+        ),
+    )
+    new_spec = example_image.members["scale1"].model_copy(update={"shape": (1, 1)})
+
+    new_image = example_image.add_dataset(new_dataset, new_spec)
+
+    assert new_image.attributes.multiscales[0].datasets == (
+        Dataset(
+            path="scale0",
+            coordinateTransformations=(
+                VectorScale(type="scale", scale=[4.0, 4.0]),
+                VectorTranslation(type="translation", translation=[2.0, 2.0]),
+            ),
+        ),
+        Dataset(
+            path="scale1",
+            coordinateTransformations=(
+                VectorScale(type="scale", scale=[8.0, 8.0]),
+                VectorTranslation(type="translation", translation=[4.0, 4.0]),
+            ),
+        ),
+        Dataset(
+            path="scale2",
+            coordinateTransformations=(
+                VectorScale(type="scale", scale=[16.0, 16.0]),
+                VectorTranslation(type="translation", translation=[8, 8]),
+            ),
+        ),
+    )
+    assert new_image.members == {
+        "scale0": ArraySpec(
+            zarr_version=2,
+            attributes={},
+            shape=(5, 5),
+            chunks=(2, 2),
+            dtype="|u1",
+            fill_value=0,
+            order="C",
+            filters=None,
+            dimension_separator="/",
+            compressor=None,
+        ),
+        "scale1": ArraySpec(
+            zarr_version=2,
+            attributes={},
+            shape=(3, 3),
+            chunks=(2, 2),
+            dtype="|u1",
+            fill_value=0,
+            order="C",
+            filters=None,
+            dimension_separator="/",
+            compressor=None,
+        ),
+        "scale2": ArraySpec(
+            zarr_version=2,
+            attributes={},
+            shape=(1, 1),
+            chunks=(2, 2),
+            dtype="|u1",
+            fill_value=0,
+            order="C",
+            filters=None,
+            dimension_separator="/",
+            compressor=None,
+        ),
+    }

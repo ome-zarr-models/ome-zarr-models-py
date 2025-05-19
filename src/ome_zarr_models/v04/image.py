@@ -233,3 +233,53 @@ class Image(BaseGroupv04[ImageAttrs]):
             tuple(dataset for dataset in multiscale.datasets)
             for multiscale in self.attributes.multiscales
         )
+
+    def add_dataset(
+        self, dataset: Dataset, array_spec: ArraySpec, multiscale_idx: int = 0
+    ) -> Self:
+        """
+        Return a new Image with an added dataset.
+
+
+        The dataset is added at the end of the multiscales dataset array,
+        so it must be lower resolution than all the existing datasets.
+
+        Parameters
+        ----------
+        dataset :
+            Dataset to add.
+        array_spec :
+            Array specification corresponding to the added dataset.
+        multiscale_idx :
+            Index of the multiscales to add the new dataset to.
+        """
+        new_members = self.members.copy()
+        new_members[dataset.path] = array_spec
+
+        # Copy all multiscales
+        new_multiscales = [
+            self.attributes.multiscales[i].model_copy()
+            for i in range(len(self.attributes.multiscales))
+        ]
+        # Update requested multiscales
+        new_multiscales[multiscale_idx] = new_multiscales[multiscale_idx].model_copy(
+            update={
+                "datasets": (
+                    *new_multiscales[multiscale_idx].datasets,
+                    dataset,
+                )
+            }
+        )
+
+        new_self: Self
+        new_self = self.model_copy(
+            update={
+                "members": new_members,
+                "attributes": self.attributes.model_copy(
+                    update={"multiscales": tuple(new_multiscales)}
+                ),
+            },
+            deep=True,
+        )
+        self.__class__.model_validate(new_self)
+        return new_self
