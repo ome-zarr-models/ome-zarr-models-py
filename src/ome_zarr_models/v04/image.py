@@ -97,7 +97,7 @@ class Image(BaseGroupv04[ImageAttrs]):
 
         Parameters
         ----------
-        arrays :
+        array_specs :
             A sequence of array specifications that collectively represent the same
             image at multiple levels of detail.
         paths :
