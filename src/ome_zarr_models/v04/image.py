@@ -166,7 +166,7 @@ class Image(BaseGroupv04[ImageAttrs]):
         )
 
     @model_validator(mode="after")
-    def check_arrays_compatible(self) -> Self:
+    def _check_arrays_compatible(self) -> Self:
         """
         Check that all the arrays referenced by the `multiscales` metadata meet the
         following criteria:
