@@ -220,3 +220,16 @@ class Image(BaseGroupv04[ImageAttrs]):
         labels_group = self.members["labels"]
 
         return Labels(attributes=labels_group.attributes, members=labels_group.members)
+
+    @property
+    def datasets(self) -> tuple[tuple[Dataset, ...], ...]:
+        """
+        Get datasets stored in this image.
+
+        The first index is for the multiscales.
+        The second index is for the dataset inside that multiscales.
+        """
+        return tuple(
+            tuple(dataset for dataset in multiscale.datasets)
+            for multiscale in self.attributes.multiscales
+        )
