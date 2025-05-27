@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
-from pydantic_zarr.v2 import ArraySpec
 import zarr
+from pydantic_zarr.v2 import ArraySpec
 
 from ome_zarr_models.common.coordinate_transformations import VectorTranslation
 from ome_zarr_models.v04.axes import Axis
