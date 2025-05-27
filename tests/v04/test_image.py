@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 from pydantic_zarr.v2 import ArraySpec
+import zarr
 
 from ome_zarr_models.common.coordinate_transformations import VectorTranslation
 from ome_zarr_models.v04.axes import Axis
@@ -257,7 +258,6 @@ def test_add_dataset(example_image: Image) -> None:
         ),
     )
     new_spec = example_image.members["scale1"].model_copy(update={"shape": (1, 1)})
-
     new_image = example_image.add_dataset(new_dataset, new_spec)
 
     assert new_image.attributes.multiscales[0].datasets == (
@@ -321,3 +321,8 @@ def test_add_dataset(example_image: Image) -> None:
             compressor=None,
         ),
     }
+
+    # Check serialising
+    store = zarr.MemoryStore()
+    group = new_image.to_zarr(store, path="")
+    assert sorted(group.keys()) == ["scale0", "scale1", "scale2"]

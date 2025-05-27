@@ -235,7 +235,7 @@ class Image(BaseGroupv04[ImageAttrs]):
         )
 
     def add_dataset(
-        self, dataset: Dataset, array_spec: ArraySpec, multiscale_idx: int = 0
+        self, dataset: Dataset, array_spec: ArraySpec, *, multiscale_idx: int = 0
     ) -> Self:
         """
         Return a new Image with an added dataset.
@@ -276,7 +276,7 @@ class Image(BaseGroupv04[ImageAttrs]):
             update={
                 "members": new_members,
                 "attributes": self.attributes.model_copy(
-                    update={"multiscales": tuple(new_multiscales)}
+                    update={"multiscales": new_multiscales}
                 ),
             },
             deep=True,
