@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.6
+
+### New features
+
+- Added [ome_zarr_models.v04.Image.datasets][] as a convenience property to get all the datasests in an image.
+
+### Minor improvements
+
+- [ome_zarr_models.v04.Image.new][] now checks that `scales` and `translations` are both the same length as `paths`, and raises an error if they are not.
+
 ## 0.1.5
 
 ### New features
