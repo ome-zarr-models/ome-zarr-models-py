@@ -1,3 +1,5 @@
+import re
+
 import numpy as np
 import pytest
 from pydantic_zarr.v2 import ArraySpec
@@ -197,3 +199,30 @@ def test_datasets(example_image: Image) -> None:
             ),
         ),
     )
+
+
+def test_new_image_wrong_transforms() -> None:
+    with pytest.raises(
+        ValueError,
+        match=re.escape(
+            "Length of 'translations' (1) does not match length of 'paths' (2)"
+        ),
+    ):
+        Image.new(
+            array_specs=[
+                ArraySpec(shape=(5, 5), chunks=(2, 2), dtype=np.uint8),
+                ArraySpec(shape=(3, 3), chunks=(2, 2), dtype=np.uint8),
+            ],
+            paths=["scale0", "scale1"],
+            axes=[
+                Axis(name="x", type="space", unit="km"),
+                Axis(name="y", type="space", unit="km"),
+            ],
+            scales=[(4, 4), (8, 8)],
+            translations=[(2, 2)],
+            name="new_image_test",
+            multiscale_type="local mean",
+            metadata={"key": "val"},
+            global_scale=(-1, 1),
+            global_translation=(10, 10),
+        )

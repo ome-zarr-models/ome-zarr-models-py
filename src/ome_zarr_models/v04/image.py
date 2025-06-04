@@ -146,12 +146,22 @@ class Image(BaseGroupv04[ImageAttrs]):
         else:
             global_transform = _build_transforms(global_scale, global_translation)
 
+        if len(scales) != len(paths):
+            raise ValueError(
+                f"Length of 'scales' ({len(scales)}) does not match "
+                f"length of 'paths' {len(paths)}"
+            )
+        if len(translations) != len(paths):
+            raise ValueError(
+                f"Length of 'translations' ({len(translations)}) does not match "
+                f"length of 'paths' ({len(paths)})"
+            )
         multimeta = Multiscale(
             axes=tuple(axes),
             datasets=tuple(
                 Dataset.build(path=path, scale=scale, translation=translation)
                 for path, scale, translation in zip(
-                    paths, scales, translations, strict=False
+                    paths, scales, translations, strict=True
                 )
             ),
             coordinateTransformations=global_transform,
