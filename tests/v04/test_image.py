@@ -226,3 +226,26 @@ def test_new_image_wrong_transforms() -> None:
             global_scale=(-1, 1),
             global_translation=(10, 10),
         )
+
+
+def test_global_transform(example_image: Image) -> None:
+    model_dict = example_image.model_dump()
+    assert "coordinateTransformations" in model_dict["attributes"]["multiscales"][0]
+
+
+def test_no_global_transform() -> None:
+    new_image = Image.new(
+        array_specs=[
+            ArraySpec(shape=(5, 5), chunks=(2, 2), dtype=np.uint8),
+            ArraySpec(shape=(3, 3), chunks=(2, 2), dtype=np.uint8),
+        ],
+        paths=["scale0", "scale1"],
+        axes=[
+            Axis(name="x", type="space", unit="km"),
+            Axis(name="y", type="space", unit="km"),
+        ],
+        scales=[(4, 4), (8, 8)],
+        translations=[(2, 2), (4, 4)],
+    )
+    model_dict = new_image.model_dump()
+    assert "coordinateTransformations" not in model_dict["attributes"]["multiscales"][0]
