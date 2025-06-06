@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 from collections import Counter
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING, Any, Self
 
 from pydantic import (
     BaseModel,
     Field,
     JsonValue,
+    SerializerFunctionWrapHandler,
     field_validator,
+    model_serializer,
     model_validator,
 )
 
@@ -136,6 +138,17 @@ class MultiscaleBase(BaseAttrs):
     metadata: JsonValue = None
     name: JsonValue | None = None
     type: JsonValue = None
+
+    @model_serializer(mode="wrap")
+    def _serialize(
+        self,
+        serializer: SerializerFunctionWrapHandler,
+    ) -> dict[str, Any]:
+        d: dict[str, Any] = serializer(self)
+        if self.coordinateTransformations is None:
+            d.pop("coordinateTransformations")
+
+        return d
 
     @property
     def ndim(self) -> int:
