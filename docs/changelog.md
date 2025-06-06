@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.7
+
+### Bug fixes
+
+- The `coordinateTransformations` field of multiscales metadata now defaults to an empty tuple instead of `None` if not specified.
+  This fix is to stay compliant with the OME-Zarr specification, that does not explicitly allow `None` for this field.
+
 ## 0.1.6
 
 ### New features

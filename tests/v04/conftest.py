@@ -163,7 +163,7 @@ def from_arrays(
                 paths, scales, translations, strict=False
             )
         ),
-        coordinateTransformations=None,
+        coordinateTransformations=(),
     )
     return Image(
         members=GroupSpec.from_flat(members_flat).members,
@@ -264,7 +264,7 @@ def from_array_props(
                 paths, scales, translations, strict=False
             )
         ),
-        coordinateTransformations=None,
+        coordinateTransformations=(),
     )
     return Image(
         members=GroupSpec.from_flat(members_flat).members,

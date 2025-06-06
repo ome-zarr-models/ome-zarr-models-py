@@ -58,7 +58,7 @@ def test_image() -> None:
                     ),
                 ),
                 version="0.4",
-                coordinateTransformations=None,
+                coordinateTransformations=(),
                 metadata=None,
                 name=None,
                 type=None,

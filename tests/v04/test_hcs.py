@@ -88,7 +88,7 @@ def test_example_hcs() -> None:
                     ),
                 ],
                 version="0.4",
-                coordinateTransformations=None,
+                coordinateTransformations=(),
                 metadata=None,
                 name=None,
                 type=None,

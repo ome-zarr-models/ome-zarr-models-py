@@ -8,6 +8,7 @@ from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.coordinate_transformations import _build_transforms
+from ome_zarr_models.common.multiscales import ValidTransform
 from ome_zarr_models.common.validation import check_array_path
 from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.base import BaseGroupv04
@@ -136,8 +137,9 @@ class Image(BaseGroupv04[ImageAttrs]):
             for key, arr in zip(paths, array_specs, strict=True)
         }
 
+        global_transform: tuple[()] | ValidTransform
         if global_scale is None and global_translation is None:
-            global_transform = None
+            global_transform = ()
         elif global_scale is None:
             raise ValueError(
                 "If global_translation is specified, "

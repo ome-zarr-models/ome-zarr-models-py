@@ -132,7 +132,7 @@ class MultiscaleBase(BaseAttrs):
 
     axes: Axes
     datasets: tuple[Dataset, ...] = Field(..., min_length=1)
-    coordinateTransformations: ValidTransform | None = None
+    coordinateTransformations: ValidTransform | tuple[()] = ()
     metadata: JsonValue = None
     name: JsonValue | None = None
     type: JsonValue = None
