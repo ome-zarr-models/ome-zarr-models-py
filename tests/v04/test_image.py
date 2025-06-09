@@ -249,3 +249,5 @@ def test_no_global_transform() -> None:
     )
     model_dict = new_image.model_dump()
     assert "coordinateTransformations" not in model_dict["attributes"]["multiscales"][0]
+
+    new_image.model_dump(exclude_none=True)

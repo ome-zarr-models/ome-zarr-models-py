@@ -146,7 +146,7 @@ class MultiscaleBase(BaseAttrs):
     ) -> dict[str, Any]:
         d: dict[str, Any] = serializer(self)
         if self.coordinateTransformations is None:
-            d.pop("coordinateTransformations")
+            d.pop("coordinateTransformations", None)
 
         return d
 
