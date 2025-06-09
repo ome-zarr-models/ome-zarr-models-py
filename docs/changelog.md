@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.8
+
+### Bug fixes
+
+- Fixed serialising models with `model_dump(exclude_none=True)`.
+  This (now fixed) bug was introduced in version 0.1.7.
+
 ## 0.1.7
 
 ### Bug fixes
