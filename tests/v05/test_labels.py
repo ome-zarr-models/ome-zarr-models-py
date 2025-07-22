@@ -14,7 +14,7 @@ def test_labels() -> None:
     image_group.attrs.put(
         json_to_zarr_group(json_fname="labels_image_example.json").attrs.asdict()
     )
-    image_group.create_dataset("0", shape=(1, 1, 1, 1, 1), dtype=np.uint64)
+    image_group.create_array("0", shape=(1, 1, 1, 1, 1), dtype=np.uint64)
 
     ome_group = Labels.from_zarr(zarr_group)
     assert ome_group.attributes.ome == LabelsAttrs(
@@ -40,7 +40,7 @@ def test_labels_invalid_dtype() -> None:
     image_group.attrs.put(
         json_to_zarr_group(json_fname="labels_image_example.json").attrs.asdict()
     )
-    image_group.create_dataset("0", shape=(1, 1, 1, 1, 1), dtype=np.float32)
+    image_group.create_array("0", shape=(1, 1, 1, 1, 1), dtype=np.float32)
 
     with pytest.raises(
         ValueError,

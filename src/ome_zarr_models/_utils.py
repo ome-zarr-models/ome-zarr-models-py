@@ -9,7 +9,7 @@ from typing import TypeVar
 
 import pydantic
 from pydantic import create_model
-from zarr.storage import Store
+from zarr.abc.store import Store
 
 T = TypeVar("T")
 

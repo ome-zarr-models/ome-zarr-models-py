@@ -454,8 +454,7 @@ def test_multiscale_group_missing_arrays() -> None:
     with pytest.raises(
         ValidationError,
         match=(
-            "The multiscale metadata references an array that does "
-            "not exist in this "
+            "The multiscale metadata references an array that does not exist in this "
         ),
     ):
         Image(**group_model_broken.model_dump())
@@ -519,6 +518,8 @@ def test_from_zarr_missing_array(store: Literal["memory"]) -> None:
     # make an untyped model, and remove an array before serializing
     removed_array_path = arrays_names[0]
     model_dict = group_model.model_dump(exclude={"members": {removed_array_path: True}})
+    # TODO: this should not need the zarr_format=2 kwarg
+    # https://github.com/zarr-developers/pydantic-zarr/issues/79
     broken_group = GroupSpec(**model_dict).to_zarr(store=store, path=group_path)
     match = (
         f"Expected to find an array at {group_path}/{removed_array_path}, "
@@ -554,7 +555,7 @@ def test_from_zarr_ectopic_group(store: Literal["memory"]) -> None:
     broken_group.create_group(removed_array_path)
     match = (
         f"Expected to find an array at {group_path}/{removed_array_path}, "
-        "but a group was found there instead."
+        "but no array was found there."
     )
     with pytest.raises(ValueError, match=match):
         Image.from_zarr(broken_group)

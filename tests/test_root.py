@@ -23,7 +23,7 @@ def test_load_ome_zarr_group_bad(tmp_path: Path) -> None:
     with pytest.raises(
         RuntimeError,
         match=re.escape(
-            "Could not successfully validate <zarr.hierarchy.Group '/'> "
+            f"Could not successfully validate <Group file://{tmp_path / 'test'}> "
             "with any OME-Zarr group models."
         ),
     ):

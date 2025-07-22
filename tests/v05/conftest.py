@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import TypeVar
 
 import zarr
+import zarr.storage
 
 from ome_zarr_models.base import BaseAttrs
 
@@ -13,7 +14,7 @@ def json_to_zarr_group(*, json_fname: str) -> zarr.Group:
     """
     Create an empty Zarr group, and set attributes from a JSON file.
     """
-    group = zarr.open_group(store=zarr.MemoryStore())
+    group = zarr.open_group(store=zarr.storage.MemoryStore(), zarr_format=3)
     with open(Path(__file__).parent / "data" / json_fname) as f:
         attrs = json.load(f)
 
