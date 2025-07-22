@@ -14,8 +14,12 @@ from tests.v04.conftest import json_to_zarr_group
 
 def test_image() -> None:
     zarr_group = json_to_zarr_group(json_fname="multiscales_example.json")
-    zarr_group.create_dataset("0", shape=(1, 1, 1, 1))
-    zarr_group.create_dataset("1", shape=(1, 1, 1, 1))
+    zarr_group.create_array(
+        "0",
+        shape=(1, 1, 1, 1),
+        dtype="uint8",
+    )
+    zarr_group.create_array("1", shape=(1, 1, 1, 1), dtype="uint8")
 
     ome_group = Image.from_zarr(zarr_group)
     assert ome_group.attributes == ImageAttrs(
@@ -89,7 +93,6 @@ def test_new_image() -> None:
         global_translation=(10, 10),
     )
     assert new_image == Image(
-        zarr_version=2,
         attributes=ImageAttrs(
             multiscales=[
                 Multiscale(
@@ -131,7 +134,6 @@ def test_new_image() -> None:
         ),
         members={
             "scale0": ArraySpec(
-                zarr_version=2,
                 attributes={},
                 shape=(5, 5),
                 chunks=(2, 2),
@@ -143,7 +145,6 @@ def test_new_image() -> None:
                 compressor=None,
             ),
             "scale1": ArraySpec(
-                zarr_version=2,
                 attributes={},
                 shape=(3, 3),
                 chunks=(2, 2),

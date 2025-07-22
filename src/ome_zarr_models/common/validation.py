@@ -49,10 +49,9 @@ def check_array_path(group: zarr.Group, array_path: str) -> ArraySpec:
     try:
         array = zarr.open_array(store=group.store, path=array_path, mode="r")
         array_spec = ArraySpec.from_zarr(array)
-    except zarr.errors.ArrayNotFoundError as e:
+    except FileNotFoundError as e:
         msg = (
-            f"Expected to find an array at {array_path}, "
-            "but no array was found there."
+            f"Expected to find an array at {array_path}, but no array was found there."
         )
         raise ValueError(msg) from e
     except zarr.errors.ContainsGroupError as e:
