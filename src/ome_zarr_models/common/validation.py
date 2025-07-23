@@ -1,10 +1,17 @@
 from collections.abc import Sequence
-from typing import TypeVar
+from typing import TypeAlias, TypeVar, overload
 
 import zarr
 import zarr.errors
 from pydantic import StringConstraints
-from pydantic_zarr.v2 import ArraySpec, GroupSpec
+from pydantic_zarr.v2 import ArraySpec as ArraySpecv2
+from pydantic_zarr.v2 import GroupSpec as GroupSpecv2
+from pydantic_zarr.v3 import ArraySpec as ArraySpecv3
+from pydantic_zarr.v3 import GroupSpec as GroupSpecv3
+
+ArraySpec: TypeAlias = ArraySpecv2 | ArraySpecv3
+GroupSpec: TypeAlias = GroupSpecv2 | GroupSpecv3
+
 
 __all__ = [
     "AlphaNumericConstraint",
@@ -48,7 +55,10 @@ def check_array_path(group: zarr.Group, array_path: str) -> ArraySpec:
     """
     try:
         array = zarr.open_array(store=group.store, path=array_path, mode="r")
-        array_spec = ArraySpec.from_zarr(array)
+        if array.metadata.zarr_format == 2:
+            array_spec = ArraySpecv2.from_zarr(array)
+        else:
+            array_spec = ArraySpecv3.from_zarr(array)
     except FileNotFoundError as e:
         msg = (
             f"Expected to find an array at {array_path}, but no array was found there."
@@ -83,6 +93,14 @@ def check_length(
         raise ValueError(msg)
 
 
+@overload
+def check_array_spec(spec: GroupSpecv2, path: str) -> ArraySpecv2: ...
+
+
+@overload
+def check_array_spec(spec: GroupSpecv3, path: str) -> ArraySpecv3: ...
+
+
 def check_array_spec(spec: GroupSpec, path: str) -> ArraySpec:
     """
     Check that a path within a group is an array.
@@ -98,6 +116,14 @@ def check_array_spec(spec: GroupSpec, path: str) -> ArraySpec:
     return new_spec
 
 
+@overload
+def check_group_spec(spec: GroupSpecv2, path: str) -> GroupSpecv2: ...
+
+
+@overload
+def check_group_spec(spec: GroupSpecv3, path: str) -> GroupSpecv3: ...
+
+
 def check_group_spec(spec: GroupSpec, path: str) -> GroupSpec:
     """
     Check that a path within a group is a group.
@@ -107,6 +133,8 @@ def check_group_spec(spec: GroupSpec, path: str) -> GroupSpec:
     RuntimeError :
         If path is an array.
     """
+    if spec.members is None:
+        raise ValueError("Specification has no members.")
     new_spec = spec.members[path]
     if not isinstance(new_spec, GroupSpec):
         raise RuntimeError(f"Node at path '{path}' is an array, expected an group")
