@@ -9,7 +9,7 @@ from ome_zarr_models.v04.hcs import HCS
 
 
 def test_load_ome_zarr_group() -> None:
-    hcs_group = zarr.open(
+    hcs_group = zarr.open_group(
         Path(__file__).parent / "v04" / "data" / "hcs_example.ome.zarr", mode="r"
     )
     ome_zarr_group = open_ome_zarr(hcs_group)
