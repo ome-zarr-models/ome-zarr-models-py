@@ -111,8 +111,8 @@ array_specs = [ArraySpec.from_array(arr0), ArraySpec.from_array(arr1)]
 
 # or for Zarr arrays:
 
-arr_zarr0 = zarr.zeros(shape=(100, 100), dtype=np.uint16)
-arr_zarr1 = zarr.zeros(shape=(50, 50), dtype=np.uint16)
+arr_zarr0 = zarr.zeros(shape=(100, 100), dtype=np.uint16, zarr_format=2)
+arr_zarr1 = zarr.zeros(shape=(50, 50), dtype=np.uint16, zarr_format=2)
 array_specs = [ArraySpec.from_array(arr_zarr0), ArraySpec.from_array(arr_zarr1)]
 
 # ## Saving datasets
