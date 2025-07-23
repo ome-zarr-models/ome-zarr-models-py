@@ -47,12 +47,14 @@ def _check_valid_dtypes(labels: "Labels") -> "Labels":
         for multiscale in image_spec.attributes.ome.multiscales:
             for dataset in multiscale.datasets:
                 arr_spec = check_array_spec(image_spec, dataset.path)
-                dtype = np.dtype(arr_spec.dtype)
-                if dtype not in VALID_DTYPES:
+                if (
+                    not isinstance(arr_spec.data_type, str)
+                    or np.dtype(arr_spec.data_type) not in VALID_DTYPES
+                ):
                     msg = (
                         "Data type of labels at path "
                         f"'{label_path}/{dataset.path}' is not valid. "
-                        f"Got {dtype}, should be one of "
+                        f"Got {arr_spec.data_type}, should be one of "
                         f"{[str(x) for x in VALID_DTYPES]}."
                     )
                     raise ValueError(msg)
