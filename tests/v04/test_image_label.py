@@ -16,7 +16,7 @@ from tests.v04.conftest import json_to_zarr_group
 
 def test_image_label_example_json() -> None:
     zarr_group = json_to_zarr_group(json_fname="image_label_example.json")
-    zarr_group.create_dataset("0", shape=(1, 1, 1, 1, 1))
+    zarr_group.create_array("0", shape=(1, 1, 1, 1, 1), dtype="uint8")
     ome_group = ImageLabel.from_zarr(zarr_group)
 
     assert ome_group.attributes == ImageLabelAttrs(

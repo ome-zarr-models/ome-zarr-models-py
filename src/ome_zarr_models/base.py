@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Generic, Literal, TypeVar, Union
+from typing import Literal, TypeVar
 
 from pydantic import BaseModel, ConfigDict
-from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 
 class BaseAttrs(BaseModel):
@@ -26,7 +25,7 @@ class BaseAttrs(BaseModel):
 T = TypeVar("T", bound=BaseAttrs)
 
 
-class BaseGroup(GroupSpec[T, Union["ArraySpec", "GroupSpec"]], ABC, Generic[T]):  # type: ignore[misc]
+class BaseGroup(ABC):
     """
     Base class for all OME-Zarr groups.
     """
@@ -37,3 +36,4 @@ class BaseGroup(GroupSpec[T, Union["ArraySpec", "GroupSpec"]], ABC, Generic[T]):
         """
         Version of the OME-Zarr specification that this group corresponds to.
         """
+        raise NotImplementedError

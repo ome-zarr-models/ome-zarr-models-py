@@ -21,7 +21,7 @@ from ome_zarr_models.v04.image import Image
 # OME-Zarr datasets are Zarr groups with specific metadata.
 # To open an OME-Zarr dataset, we first open the Zarr group.
 
-zarr_group = zarr.open(
+zarr_group = zarr.open_group(
     "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0062A/6001240.zarr", mode="r"
 )
 
@@ -63,7 +63,7 @@ pprint(zarr_arr)
 # To finish off this section on accessing data, lets plot the first z-slice of the
 # first channel of this data:
 
-plt.imshow(zarr_arr[0, 0, :, :], cmap="gray")
+plt.imshow(zarr_arr[0, 0, :, :], cmap="gray")  # type: ignore[index]
 
 # ## Creating new datasets
 #
@@ -111,9 +111,9 @@ array_specs = [ArraySpec.from_array(arr0), ArraySpec.from_array(arr1)]
 
 # or for Zarr arrays:
 
-arr0 = zarr.zeros(shape=(100, 100), dtype=np.uint16)
-arr1 = zarr.zeros(shape=(50, 50), dtype=np.uint16)
-array_specs = [ArraySpec.from_array(arr0), ArraySpec.from_array(arr1)]
+arr_zarr0 = zarr.zeros(shape=(100, 100), dtype=np.uint16, zarr_format=2)
+arr_zarr1 = zarr.zeros(shape=(50, 50), dtype=np.uint16, zarr_format=2)
+array_specs = [ArraySpec.from_array(arr_zarr0), ArraySpec.from_array(arr_zarr1)]
 
 # ## Saving datasets
 #
@@ -127,6 +127,6 @@ array_specs = [ArraySpec.from_array(arr0), ArraySpec.from_array(arr1)]
 # to, and then list the directory to show that it has been saved.
 
 with tempfile.TemporaryDirectory() as fp:
-    store = zarr.DirectoryStore(path=fp)
+    store = zarr.storage.LocalStore(fp)
     ome_zarr_image.to_zarr(store=store, path="/")
     print(os.listdir(fp))

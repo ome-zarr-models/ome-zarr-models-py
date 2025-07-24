@@ -9,7 +9,7 @@ from ome_zarr_models.v04.hcs import HCS
 
 
 def test_load_ome_zarr_group() -> None:
-    hcs_group = zarr.open(
+    hcs_group = zarr.open_group(
         Path(__file__).parent / "v04" / "data" / "hcs_example.ome.zarr", mode="r"
     )
     ome_zarr_group = open_ome_zarr(hcs_group)
@@ -23,7 +23,7 @@ def test_load_ome_zarr_group_bad(tmp_path: Path) -> None:
     with pytest.raises(
         RuntimeError,
         match=re.escape(
-            "Could not successfully validate <zarr.hierarchy.Group '/'> "
+            f"Could not successfully validate <Group file://{tmp_path / 'test'}> "
             "with any OME-Zarr group models."
         ),
     ):

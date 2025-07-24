@@ -4,6 +4,7 @@ from typing import Any
 import zarr
 from pydantic import ValidationError
 
+import ome_zarr_models._v05
 import ome_zarr_models.v04.hcs
 import ome_zarr_models.v04.image
 import ome_zarr_models.v04.image_label
@@ -31,7 +32,7 @@ _V04_groups: list[type[BaseGroupv04[Any]]] = [
 ]
 
 
-def open_ome_zarr(group: zarr.Group) -> BaseGroup[Any]:
+def open_ome_zarr(group: zarr.Group) -> BaseGroup:
     """
     Create an ome-zarr-models object from an existing OME-Zarr group.
 
