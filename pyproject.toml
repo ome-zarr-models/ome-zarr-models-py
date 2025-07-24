@@ -4,7 +4,7 @@ dynamic = ["version"]
 description = "A minimal Python package for reading OME-Zarr (meta)data "
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["zarr<3", "pydantic!=2.11.5", "pydantic-zarr"]
+dependencies = ["zarr<3", "pydantic<2.11.5", "pydantic-zarr"]
 maintainers = [{ name = "David Stansby" }]
 license = { file = "LICENSE" }
 classifiers = [
