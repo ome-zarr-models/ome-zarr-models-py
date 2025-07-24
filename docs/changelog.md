@@ -2,6 +2,8 @@
 
 ## 0.1.9
 
+### Bug fixes
+
 - Add a maximum `pydantic` requirement of version 2.11.4.
   This fixes issues using several classes in `ome-zarr-models`.
   We hope to fix and remove this `pydantic` pin in a new release shortly.
