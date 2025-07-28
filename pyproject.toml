@@ -4,7 +4,11 @@ dynamic = ["version"]
 description = "A minimal Python package for reading OME-Zarr (meta)data "
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["zarr<3", "pydantic<2.11.5", "pydantic-zarr"]
+dependencies = [
+    "zarr<3",
+    "pydantic<2.11.5",
+    "pydantic-zarr@git+https://github.com/zarr-developers/pydantic-zarr@815f5b724eb23efff41d23bed2b3c716bcf93370",
+]
 maintainers = [{ name = "David Stansby" }]
 license = { file = "LICENSE" }
 classifiers = [
@@ -34,6 +38,9 @@ docs = [
 
 [tool.hatch.version]
 source = "vcs"
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [build-system]
 requires = ["hatchling", "hatch-vcs"]
