@@ -7,7 +7,7 @@ requires-python = ">=3.11"
 dependencies = [
     # TODO: pin this to >= 3.1.1 when released
     "zarr@git+https://github.com/zarr-developers/zarr-python@5390e1dcae119af54ed6ec015dce7fa5fdff67d9",
-    "pydantic!=2.11.5",
+    "pydantic",
     "pydantic-zarr @ git+https://github.com/zarr-developers/pydantic-zarr.git@2023e6f31357244f94b0956cec9068b64c4d49fa",
 ]
 maintainers = [{ name = "David Stansby" }]
