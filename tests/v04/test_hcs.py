@@ -108,3 +108,25 @@ def test_example_hcs() -> None:
             version="0.4",
         ),
     )
+
+
+def test_non_existent_wells() -> None:
+    """
+    Make sure it's possible to create a HCS that has well paths that don't exist
+    as Zarr groups.
+
+    The relevant part of the OME-Zarr specification (https://ngff.openmicroscopy.org/0.4/index.html#plate-md)
+    does not specify explicitly that the Zarr groups have to exist.
+    """
+    HCS(
+        attributes={
+            "plate": {
+                "acquisitions": [{"id": 1}, {"id": 2}, {"id": 3}],
+                "columns": [{"name": "1"}],
+                "field_count": 10,
+                "rows": [{"name": "A"}],
+                "version": "0.4",
+                "wells": [{"columnIndex": 0, "path": "A/1", "rowIndex": 0}],
+            }
+        }
+    )

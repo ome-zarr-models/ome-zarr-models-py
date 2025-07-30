@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.10
+
+### Bug fixes
+
+- Creating a `HCS` group with well paths that do not point to existing well Zarr groups
+  no longer errors.
+
 ## 0.1.9
 
 ### Bug fixes
