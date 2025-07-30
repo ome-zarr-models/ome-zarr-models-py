@@ -46,7 +46,7 @@ repos:
         additional_dependencies:
           - pydantic
           - pytest
-          - zarr @ git+https://github.com/zarr-developers/zarr-python@5390e1dcae119af54ed6ec015dce7fa5fdff67d9
+          - zarr >= 3.1.1
           - pydantic-zarr @ git+https://github.com/zarr-developers/pydantic-zarr.git@24094d6ebc05ed33e097b98f20ca9792c142e0fa
 
   - repo: https://github.com/crate-ci/typos
