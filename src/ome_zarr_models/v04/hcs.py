@@ -4,6 +4,7 @@ from typing import Self
 from pydantic import model_validator
 
 from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.common.well import WellGroupNotFoundError
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.plate import Plate
 from ome_zarr_models.v04.well import Well
@@ -60,9 +61,18 @@ class HCS(BaseGroupv04[HCSAttrs]):
     def well_groups(self) -> Generator[Well, None, None]:
         """
         Well groups within this HCS group.
+
+        Notes
+        -----
+        Only well groups that exist are returned. This can be less than the number
+        of wells defined in the HCS metadata if some of the well Zarr groups don't
+        exist.
         """
         for i in range(self.n_wells):
-            yield self.get_well_group(i)
+            try:
+                yield self.get_well_group(i)
+            except WellGroupNotFoundError:
+                continue
 
     def get_well_group(self, i: int) -> Well:
         """
@@ -72,12 +82,25 @@ class HCS(BaseGroupv04[HCSAttrs]):
         ----------
         i :
             Index of well group.
+
+        Raises
+        ------
+        WellGroupNotFoundError :
+            If no Zarr group is found at the well path.
         """
         well = self.attributes.plate.wells[i]
         well_path = well.path
         well_path_parts = well_path.split("/")
-        group = self
-        for part in well_path_parts:
-            group = group.members[part]
-
+        if len(well_path_parts) != 2:
+            raise RuntimeError(f"Well path '{well_path_parts}' does not have two parts")
+        row, col = well_path_parts
+        if row not in self.members:
+            raise WellGroupNotFoundError(
+                f"Row '{row}' not found in group members: {self.members}"
+            )
+        if col not in self.members[row].members:
+            raise WellGroupNotFoundError(
+                f"Column '{col}' not found in row group members: {self.members[row]}"
+            )
+        group = self.members[row].members[col]
         return Well(attributes=group.attributes, members=group.members)

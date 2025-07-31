@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.10
+
+### Bug fixes
+
+- Creating a `HCS` group with well paths that do not point to existing well Zarr groups
+  no longer errors.
+
+### Breaking changes
+
+- `HCS.well_groups` will now only return well groups that exist, instead of erroring out if a well group is defined in the HCS metadata but does not exist as a Zarr group.
+
 ## 0.1.9
 
 ### Bug fixes
