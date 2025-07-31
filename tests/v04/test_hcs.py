@@ -14,7 +14,7 @@ from ome_zarr_models.v04.well_types import WellImage, WellMeta
 
 def test_example_hcs() -> None:
     group = zarr.open(Path(__file__).parent / "data" / "hcs_example.ome.zarr", mode="r")
-    hcs = HCS.from_zarr(group)
+    hcs: HCS = HCS.from_zarr(group)
     assert hcs.attributes == HCSAttrs(
         plate=Plate(
             acquisitions=[
@@ -38,7 +38,7 @@ def test_example_hcs() -> None:
 
     well_groups = list(hcs.well_groups)
     assert len(well_groups) == 1
-    well_group = well_groups[0]
+    well_group = hcs.get_well_group(0)
     assert well_group.attributes.well == WellMeta(
         images=[WellImage(path="0", acquisition=None)], version="0.4"
     )

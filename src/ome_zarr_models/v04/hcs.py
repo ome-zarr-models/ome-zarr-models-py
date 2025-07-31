@@ -98,9 +98,9 @@ class HCS(BaseGroupv04[HCSAttrs]):
             raise WellGroupNotFoundError(
                 f"Row '{row}' not found in group members: {self.members}"
             )
-        if col not in self.members[row]:
+        if col not in self.members[row].members:
             raise WellGroupNotFoundError(
                 f"Column '{col}' not found in row group members: {self.members[row]}"
             )
-        group = self.members[row][col]
+        group = self.members[row].members[col]
         return Well(attributes=group.attributes, members=group.members)
