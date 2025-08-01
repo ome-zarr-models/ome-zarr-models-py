@@ -1,5 +1,5 @@
-from ome_zarr_models._v05.base import BaseGroupv05, BaseOMEAttrs
-from ome_zarr_models._v05.well_types import WellMeta
+from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs
+from ome_zarr_models.v05.well_types import WellMeta
 
 __all__ = ["Well", "WellAttrs"]
 

@@ -1,5 +1,5 @@
-from ome_zarr_models._v05.base import BaseGroupv05, BaseOMEAttrs
-from ome_zarr_models._v05.plate import Plate
+from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs
+from ome_zarr_models.v05.plate import Plate
 
 __all__ = ["HCS", "HCSAttrs"]
 
