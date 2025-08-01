@@ -454,8 +454,7 @@ def test_multiscale_group_missing_arrays() -> None:
     with pytest.raises(
         ValidationError,
         match=(
-            "The multiscale metadata references an array that does "
-            "not exist in this "
+            "The multiscale metadata references an array that does not exist in this "
         ),
     ):
         Image(**group_model_broken.model_dump())
@@ -554,7 +553,7 @@ def test_from_zarr_ectopic_group(store: Literal["memory"]) -> None:
     broken_group.create_group(removed_array_path)
     match = (
         f"Expected to find an array at {group_path}/{removed_array_path}, "
-        "but a group was found there instead."
+        "but no array was found there."
     )
     with pytest.raises(ValueError, match=match):
         Image.from_zarr(broken_group)

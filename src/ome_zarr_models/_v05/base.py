@@ -1,5 +1,7 @@
 from typing import Generic, Literal, TypeVar
 
+from pydantic_zarr.v3 import GroupSpec, TBaseItem
+
 from ome_zarr_models.base import BaseAttrs, BaseGroup
 
 T = TypeVar("T", bound="BaseOMEAttrs")
@@ -15,12 +17,13 @@ class BaseZarrAttrs(BaseAttrs, Generic[T]):
 
 class BaseOMEAttrs(BaseAttrs):
     """
-    Base class for attributes under an OME-Zarr group"""
+    Base class for attributes under an OME-Zarr group.
+    """
 
     version: Literal["0.5"]
 
 
-class BaseGroupv05(BaseGroup[BaseZarrAttrs[T]], Generic[T]):
+class BaseGroupv05(BaseGroup, GroupSpec[BaseZarrAttrs[T], TBaseItem], Generic[T]):  # type: ignore[misc]
     """
     Base class for all v0.5 OME-Zarr groups.
     """

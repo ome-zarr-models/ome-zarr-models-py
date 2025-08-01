@@ -7,9 +7,10 @@ import numcodecs
 import numpy as np
 import numpy.typing as npt
 import zarr
+import zarr.storage
 from numcodecs.abc import Codec
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
-from zarr.util import guess_chunks
+from zarr.core.chunk_grids import _guess_chunks as guess_chunks
 
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.v04.axes import Axis
@@ -31,7 +32,7 @@ def json_to_zarr_group(*, json_fname: str) -> zarr.Group:
     """
     Create an empty Zarr group, and set attributes from a JSON file.
     """
-    group = zarr.open_group(store=zarr.MemoryStore())
+    group = zarr.open_group(store=zarr.storage.MemoryStore(), zarr_format=2)
     with open(Path(__file__).parent / "data" / json_fname) as f:
         attrs = json.load(f)
 
