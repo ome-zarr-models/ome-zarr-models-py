@@ -98,7 +98,7 @@ def check_array_spec(spec: GroupSpecv2, path: str) -> ArraySpecv2: ...
 
 
 @overload
-def check_array_spec(spec: GroupSpecv3, path: str) -> ArraySpecv3: ...
+def check_array_spec(spec: GroupSpecv3, path: str) -> ArraySpecv3: ...  # type: ignore[overload-cannot-match]
 
 
 def check_array_spec(spec: GroupSpec, path: str) -> ArraySpec:
@@ -121,7 +121,7 @@ def check_group_spec(spec: GroupSpecv2, path: str) -> GroupSpecv2: ...
 
 
 @overload
-def check_group_spec(spec: GroupSpecv3, path: str) -> GroupSpecv3: ...
+def check_group_spec(spec: GroupSpecv3, path: str) -> GroupSpecv3: ...  # type: ignore[overload-cannot-match]
 
 
 def check_group_spec(spec: GroupSpec, path: str) -> GroupSpec:
