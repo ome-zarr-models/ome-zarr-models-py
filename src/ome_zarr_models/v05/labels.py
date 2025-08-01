@@ -4,8 +4,8 @@ import numpy as np
 import zarr
 from pydantic import Field, ValidationError, model_validator
 
-from ome_zarr_models._v05.base import BaseGroupv05, BaseOMEAttrs
-from ome_zarr_models._v05.image import Image
+from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs
+from ome_zarr_models.v05.image import Image
 from ome_zarr_models.common.validation import check_array_spec, check_group_spec
 
 __all__ = ["Labels", "LabelsAttrs"]

@@ -4,7 +4,7 @@ from typing import Any
 import zarr
 from pydantic import ValidationError
 
-import ome_zarr_models._v05
+import ome_zarr_models.v05
 import ome_zarr_models.v04.hcs
 import ome_zarr_models.v04.image
 import ome_zarr_models.v04.image_label

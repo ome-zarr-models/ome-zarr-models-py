@@ -1,5 +1,5 @@
-from ome_zarr_models._v05.hcs import HCS, HCSAttrs
-from ome_zarr_models._v05.plate import Acquisition, Column, Plate, Row, WellInPlate
+from ome_zarr_models.v05.hcs import HCS, HCSAttrs
+from ome_zarr_models.v05.plate import Acquisition, Column, Plate, Row, WellInPlate
 from tests.v05.conftest import json_to_zarr_group
 
 
