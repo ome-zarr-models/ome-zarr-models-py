@@ -35,6 +35,11 @@ This package has been designed with the following guiding principles:
 
 Developers of this package are active on our [Zulip chat channel](https://imagesc.zulipchat.com/#narrow/channel/469152-ome-zarr-models-py), which is a great place for asking questions and getting help.
 
+## zarr-python support
+
+Versions 0.1.x of `ome-zarr-models` support `zarr-python` version 2 and OME-Zarr 0.4, and support will remain until the beginning of 2026.
+Versions 1.x of `ome-zarr-models` require `zarr-python` version 3, and support versions of OME-Zarr >= 0.4.
+
 ## Known issues
 
 - Because of the way this package is structured, it can't currently distinguish
