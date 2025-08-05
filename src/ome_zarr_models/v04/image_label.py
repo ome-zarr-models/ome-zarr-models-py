@@ -1,10 +1,4 @@
-"""
-For reference, see the [image label section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.4/index.html#label-md).
-"""
-
-from __future__ import annotations
-
-from typing import TYPE_CHECKING, Self
+from typing import Self
 
 import zarr
 from pydantic import Field
@@ -15,13 +9,7 @@ from ome_zarr_models.v04.image import Image
 from ome_zarr_models.v04.image_label_types import Label
 from ome_zarr_models.v04.multiscales import Multiscale
 
-if TYPE_CHECKING:
-    import zarr
-
-__all__ = [
-    "ImageLabel",
-    "ImageLabelAttrs",
-]
+__all__ = ["ImageLabel", "ImageLabelAttrs"]
 
 
 class ImageLabelAttrs(BaseAttrs):
