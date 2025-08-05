@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.0
+
+### Breaking changes
+
+- `ome_zarr_models.common.image_label_types.Label` has moved to [ome_zarr_models.v04.image_label_types.Label][].
+
 ## 0.1.10
 
 ### Bug fixes
