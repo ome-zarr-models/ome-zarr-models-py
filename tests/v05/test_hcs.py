@@ -42,3 +42,5 @@ def test_hcs() -> None:
         ),
         version="0.5",
     )
+    well_groups = list(ome_group.well_groups)
+    assert len(well_groups) == 0

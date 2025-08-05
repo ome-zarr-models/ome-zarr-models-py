@@ -34,3 +34,10 @@ class BaseGroupv05(BaseGroup, GroupSpec[BaseZarrAttrs[T], TBaseItem], Generic[T]
         OME-Zarr version.
         """
         return "0.5"
+
+    @property
+    def ome_attributes(self) -> T:
+        """
+        OME attributes.
+        """
+        return self.attributes.ome  # type: ignore[no-any-return]
