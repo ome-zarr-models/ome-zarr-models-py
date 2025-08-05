@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Literal, TypeVar
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
@@ -22,9 +22,6 @@ class BaseAttrs(BaseModel):
     )
 
 
-T = TypeVar("T", bound=BaseAttrs)
-
-
 class BaseGroup(ABC):
     """
     Base class for all OME-Zarr groups.
@@ -35,5 +32,13 @@ class BaseGroup(ABC):
     def ome_zarr_version(self) -> Literal["0.4", "0.5"]:
         """
         Version of the OME-Zarr specification that this group corresponds to.
+        """
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def ome_attributes(self) -> BaseAttrs:
+        """
+        OME attributes.
         """
         raise NotImplementedError
