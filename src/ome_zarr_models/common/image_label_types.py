@@ -4,14 +4,14 @@ For reference, see the [image label section of the OME-Zarr specification](https
 
 from __future__ import annotations
 
-from typing import Annotated, Literal, Self
+from typing import Annotated, Self
 
 from pydantic import Field, field_validator, model_validator
 
 from ome_zarr_models._utils import duplicates
 from ome_zarr_models.base import BaseAttrs
 
-__all__ = ["RGBA", "Color", "Label", "LabelBase", "Property", "Source", "Uint8"]
+__all__ = ["RGBA", "Color", "LabelBase", "Property", "Source", "Uint8"]
 
 Uint8 = Annotated[int, Field(strict=True, ge=0, le=255)]
 RGBA = tuple[Uint8, Uint8, Uint8, Uint8]
@@ -100,11 +100,3 @@ class LabelBase(BaseAttrs):
             raise ValueError(msg)
 
         return colors
-
-
-class Label(LabelBase):
-    """
-    Metadata for a single image-label.
-    """
-
-    version: Literal["0.4"] | None = None
