@@ -7,12 +7,12 @@ from pydantic import Field, JsonValue, model_validator
 from pydantic_zarr.v3 import ArraySpec, GroupSpec
 
 from ome_zarr_models.common.coordinate_transformations import _build_transforms
-from ome_zarr_models.common.omero import Omero
 from ome_zarr_models.common.validation import check_array_path
 from ome_zarr_models.v05.axes import Axis
 from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs
 from ome_zarr_models.v05.labels import Labels
 from ome_zarr_models.v05.multiscales import Dataset, Multiscale
+from ome_zarr_models.v05.omero import Omero
 
 if TYPE_CHECKING:
     from ome_zarr_models.v05.labels import Labels
