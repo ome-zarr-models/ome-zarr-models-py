@@ -164,11 +164,15 @@ class Image(BaseGroupv05[ImageAttrs]):
             metadata=metadata,
             name=name,
             type=multiscale_type,
-            version="0.5",
         )
         return Image(
             members=GroupSpec.from_flat(members_flat).members,
-            attributes=ImageAttrs(multiscales=(multimeta,), version="0.5"),
+            attributes=ImageAttrs(
+                multiscales=[
+                    multimeta,
+                ],
+                version="0.5",
+            ),
         )
 
     @model_validator(mode="after")
@@ -181,7 +185,7 @@ class Image(BaseGroupv05[ImageAttrs]):
             - they have dimensionality consistent with the number of axes defined in the
               metadata.
         """
-        multimeta = self.attributes.multiscales
+        multimeta = self.ome_attributes.multiscales
         flat_self = self.to_flat()
 
         for multiscale in multimeta:
@@ -227,7 +231,9 @@ class Image(BaseGroupv05[ImageAttrs]):
 
         labels_group = self.members["labels"]
 
-        return Labels(attributes=labels_group.attributes, members=labels_group.members)
+        return Labels(
+            attributes=labels_group.ome_attributes, members=labels_group.members
+        )
 
     @property
     def datasets(self) -> tuple[tuple[Dataset, ...], ...]:
@@ -239,5 +245,5 @@ class Image(BaseGroupv05[ImageAttrs]):
         """
         return tuple(
             tuple(dataset for dataset in multiscale.datasets)
-            for multiscale in self.attributes.multiscales
+            for multiscale in self.ome_attributes.multiscales
         )
