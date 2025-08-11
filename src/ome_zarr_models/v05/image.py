@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import Self
+from typing import TYPE_CHECKING, Optional, Self
 
 import zarr.errors
 from pydantic import Field, JsonValue, model_validator
@@ -12,6 +12,10 @@ from ome_zarr_models.v05.axes import Axis
 from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs
 from ome_zarr_models.v05.labels import Labels
 from ome_zarr_models.v05.multiscales import Dataset, Multiscale
+
+if TYPE_CHECKING:
+    from ome_zarr_models.v05.labels import Labels
+
 
 __all__ = ["Image", "ImageAttrs"]
 
@@ -210,12 +214,14 @@ class Image(BaseGroupv05[ImageAttrs]):
         return self
 
     @property
-    def labels(self) -> Labels | None:
+    def labels(self) -> Optional["Labels"]:
         """
         Any labels datasets contained in this image group.
 
         Returns None if no labels are present.
         """
+        from ome_zarr_models.v05.labels import Labels
+
         if "labels" not in self.members:
             return None
 
