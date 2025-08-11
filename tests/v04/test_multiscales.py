@@ -520,8 +520,8 @@ def test_from_zarr_missing_array(store: Literal["memory"]) -> None:
     model_dict = group_model.model_dump(exclude={"members": {removed_array_path: True}})
     broken_group = GroupSpec(**model_dict).to_zarr(store=store, path=group_path)
     match = (
-        f"Expected to find an array at {group_path}/{removed_array_path}, "
-        "but no array was found there."
+        "The multiscale metadata references an array that does not exist "
+        "in this group: s0"
     )
     with pytest.raises(ValueError, match=match):
         Image.from_zarr(broken_group)
@@ -551,10 +551,7 @@ def test_from_zarr_ectopic_group(store: Literal["memory"]) -> None:
 
     # put a group where the array should be
     broken_group.create_group(removed_array_path)
-    match = (
-        f"Expected to find an array at {group_path}/{removed_array_path}, "
-        "but no array was found there."
-    )
+    match = "The node at s0 is a group, not an array"
     with pytest.raises(ValueError, match=match):
         Image.from_zarr(broken_group)
 

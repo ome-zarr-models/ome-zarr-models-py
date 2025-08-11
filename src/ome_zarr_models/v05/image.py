@@ -1,13 +1,11 @@
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Optional, Self
 
-import zarr.errors
 from pydantic import Field, JsonValue, model_validator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models.common.coordinate_transformations import _build_transforms
 from ome_zarr_models.common.omero import Omero
-from ome_zarr_models.common.validation import check_array_path
 from ome_zarr_models.v05.axes import Axis
 from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs
 from ome_zarr_models.v05.labels import Labels
@@ -37,40 +35,6 @@ class Image(BaseGroupv05[ImageAttrs]):
     """
     An OME-Zarr image dataset.
     """
-
-    @classmethod
-    def from_zarr(cls, group: zarr.Group) -> Self:
-        """
-        Create an instance of an OME-Zarr image from a `zarr.Group`.
-
-        Parameters
-        ----------
-        group : zarr.Group
-            A Zarr group that has valid OME-NGFF image metadata.
-        """
-        # on unlistable storage backends, the members of this group will be {}
-        group_spec = GroupSpec.from_zarr(group, depth=0)
-
-        multi_meta = ImageAttrs.model_validate(group_spec.attributes)
-        members_tree_flat = {}
-        for multiscale in multi_meta.multiscales:
-            for dataset in multiscale.datasets:
-                array_path = f"{group.path}/{dataset.path}"
-                array_spec = check_array_path(group, array_path)
-                members_tree_flat["/" + dataset.path] = array_spec
-
-        try:
-            labels_group = zarr.open_group(store=group.store, path="labels", mode="r")
-            members_tree_flat["/labels"] = GroupSpec.from_zarr(labels_group)
-        except zarr.errors.GroupNotFoundError:
-            pass
-
-        members_normalized = GroupSpec.from_flat(members_tree_flat)
-
-        group_spec = group_spec.model_copy(
-            update={"members": members_normalized.members}
-        )
-        return cls(**group_spec.model_dump())
 
     @classmethod
     def new(
