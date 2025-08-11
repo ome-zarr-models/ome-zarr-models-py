@@ -1,7 +1,3 @@
-"""
-For reference, see the [omero section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.4/#omero-md).
-"""
-
 from typing import Annotated
 
 from ome_zarr_models.base import BaseAttrs
