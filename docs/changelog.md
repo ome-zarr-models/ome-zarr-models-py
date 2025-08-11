@@ -5,6 +5,7 @@
 ### Breaking changes
 
 - `ome_zarr_models.common.image_label_types.Label` has moved to [ome_zarr_models.v04.image_label_types.Label][].
+- `ome_zarr_models.v04.omero` has moved to [ome_zarr_models.common.omero][].
 
 ## 0.1.10
 
