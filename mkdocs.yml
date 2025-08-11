@@ -86,7 +86,8 @@ nav:
               - api/v04/other.md
       - Shared:
           - Base objects: api/common/base.md
-          - api/common/validation.md
+          - Validation: api/common/validation.md
+          - Image: api/common/image.md
   - Changelog: changelog.md
   - Contributing: contributing.md
 
