@@ -1,4 +1,4 @@
-from ome_zarr_models.v04.omero import Channel, Omero, Window
+from ome_zarr_models.common.omero import Channel, Omero, Window
 from tests.v04.conftest import read_in_json
 
 

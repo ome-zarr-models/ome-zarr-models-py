@@ -8,12 +8,12 @@ from pydantic_zarr.v2 import ArraySpec, GroupSpec
 
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.coordinate_transformations import _build_transforms
+from ome_zarr_models.common.omero import Omero
 from ome_zarr_models.common.validation import check_array_path
 from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.labels import Labels
 from ome_zarr_models.v04.multiscales import Dataset, Multiscale
-from ome_zarr_models.v04.omero import Omero
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -24,9 +24,7 @@ __all__ = ["Image", "ImageAttrs"]
 
 class ImageAttrs(BaseAttrs):
     """
-    Model for the metadata of OME-Zarr data.
-
-    See https://ngff.openmicroscopy.org/0.4/#image-layout.
+    Metadata for OME-Zarr image groups.
     """
 
     multiscales: list[Multiscale] = Field(
