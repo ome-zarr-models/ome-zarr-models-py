@@ -97,7 +97,7 @@ class Labels(
         # Check all labels paths are valid multiscales
         for label_path in ret.attributes.ome.labels:
             try:
-                Image.from_zarr(group[label_path])
+                Image.from_zarr(group[label_path])  # type: ignore[arg-type]
             except Exception as err:
                 msg = (
                     f"Error validating the label path '{label_path}' "
