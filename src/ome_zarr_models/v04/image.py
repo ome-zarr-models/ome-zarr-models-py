@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Self
 
+import zarr
 import zarr.errors
 from pydantic import Field, JsonValue, model_validator
 from pydantic_zarr.v2 import ArraySpec, GroupSpec

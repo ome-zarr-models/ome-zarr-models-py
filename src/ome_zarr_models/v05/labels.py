@@ -6,7 +6,6 @@ from pydantic import Field, ValidationError, model_validator
 
 from ome_zarr_models.common.validation import check_array_spec, check_group_spec
 from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs
-from ome_zarr_models.v05.image import Image
 
 __all__ = ["Labels", "LabelsAttrs"]
 
@@ -30,6 +29,8 @@ def _check_valid_dtypes(labels: "Labels") -> "Labels":
     """
     Check that all multiscales levels of a labels image are valid Label data types.
     """
+    from ome_zarr_models.v05.image import Image
+
     for label_path in labels.attributes.ome.labels:
         if label_path not in labels.members:
             raise ValueError(f"Label path '{label_path}' not found in zarr group")
@@ -89,12 +90,14 @@ class Labels(
         group : zarr.Group
             A Zarr group that has valid OME-Zarr label metadata.
         """
+        from ome_zarr_models.v05.image import Image
+
         ret: Self = super().from_zarr(group)
 
         # Check all labels paths are valid multiscales
         for label_path in ret.attributes.ome.labels:
             try:
-                Image.from_zarr(group[label_path])
+                Image.from_zarr(group[label_path])  # type: ignore[arg-type]
             except Exception as err:
                 msg = (
                     f"Error validating the label path '{label_path}' "
