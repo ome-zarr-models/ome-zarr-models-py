@@ -69,6 +69,13 @@ plugins:
               - griffe_pydantic:
                   schema: false
 
+strict: true
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
+
 nav:
   - Home: index.md
   - Tutorial: tutorial.py

@@ -69,7 +69,7 @@
 ### Documentation improvements
 
 - Added a versioning policy to the documentation home page.
-- Added some missing objects to the API documentation for `ome_zarr_models.v04`.
+- Added some missing objects to the API documentation for v04.
 
 ## 0.1.3
 
@@ -80,7 +80,7 @@
 
 ### New features
 
-- The main OME-Zarr classes are now imported into the [ome_zarr_models.v04][] namespace, making them easier to import (e.g., what was `ome_zarr_models.v04.hcs.HCS` can now just be `ome_zarr_models.v04.HCS`).
+- The main OME-Zarr classes are now imported into the `ome_zarr_models.v04` namespace, making them easier to import (e.g., what was `ome_zarr_models.v04.hcs.HCS` can now just be `ome_zarr_models.v04.HCS`).
 
 ## 0.1.2
 
@@ -94,8 +94,8 @@
 
 ### Bug fixes
 
-- Added [ome_zarr_models.v04.image.Image][] to the `__all__` of [ome_zarr_models.v04.image][].
-- Added [ome_zarr_models.v04.well.Well][] to the `__all__` of [ome_zarr_models.v04.well][].
+- Added [ome_zarr_models.v04.image.Image][] to the `__all__` of `ome_zarr_models.v04.image`
+- Added [ome_zarr_models.v04.well.Well][] to the `__all__` of `ome_zarr_models.v04.well`
 
 ## 0.1.1
 
