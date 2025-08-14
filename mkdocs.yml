@@ -42,7 +42,7 @@ markdown_extensions:
 
 plugins:
   - mkdocs-jupyter:
-      execute: false
+      execute: true
       allow_errors: false
   - mkdocstrings:
       handlers:
@@ -68,6 +68,13 @@ plugins:
             extensions:
               - griffe_pydantic:
                   schema: false
+
+strict: true
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
 
 nav:
   - Home: index.md
