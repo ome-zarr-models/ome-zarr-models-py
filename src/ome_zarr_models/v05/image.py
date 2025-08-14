@@ -9,7 +9,7 @@ from pydantic_zarr.v3 import ArraySpec, GroupSpec
 from ome_zarr_models.common.coordinate_transformations import _build_transforms
 from ome_zarr_models.common.validation import check_array_path
 from ome_zarr_models.v05.axes import Axis
-from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs
+from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs, BaseZarrAttrs
 from ome_zarr_models.v05.labels import Labels
 from ome_zarr_models.v05.multiscales import Dataset, Multiscale
 from ome_zarr_models.v05.omero import Omero
@@ -170,11 +170,13 @@ class Image(BaseGroupv05[ImageAttrs]):
         )
         return Image(
             members=GroupSpec.from_flat(members_flat).members,
-            attributes=ImageAttrs(
-                multiscales=[
-                    multimeta,
-                ],
-                version="0.5",
+            attributes=BaseZarrAttrs(
+                ome=ImageAttrs(
+                    multiscales=[
+                        multimeta,
+                    ],
+                    version="0.5",
+                ),
             ),
         )
 
