@@ -1,18 +1,9 @@
-from typing import Generic, Literal, TypeVar
+from typing import Any, Generic, Literal, TypeVar
 
-from pydantic_zarr.v3 import GroupSpec, TBaseItem
+from pydantic import BaseModel
+from pydantic_zarr.v3 import GroupSpec
 
 from ome_zarr_models.base import BaseAttrs, BaseGroup
-
-T = TypeVar("T", bound="BaseOMEAttrs")
-
-
-class BaseZarrAttrs(BaseAttrs, Generic[T]):
-    """
-    Base class for zarr attributes in an OME-Zarr group.
-    """
-
-    ome: T
 
 
 class BaseOMEAttrs(BaseAttrs):
@@ -23,7 +14,21 @@ class BaseOMEAttrs(BaseAttrs):
     version: Literal["0.5"]
 
 
-class BaseGroupv05(BaseGroup, GroupSpec[BaseZarrAttrs[T], TBaseItem], Generic[T]):  # type: ignore[misc]
+T = TypeVar("T", bound="BaseOMEAttrs")
+
+
+class BaseZarrAttrs(BaseModel, Generic[T]):
+    """
+    Base class for zarr attributes in an OME-Zarr group.
+    """
+
+    ome: T
+
+
+# T = TypeVar("T", bound="BaseOMEAttrs")
+
+
+class BaseGroupv05(BaseGroup, GroupSpec[BaseZarrAttrs[T], Any], Generic[T]):
     """
     Base class for all v0.5 OME-Zarr groups.
     """
@@ -40,4 +45,8 @@ class BaseGroupv05(BaseGroup, GroupSpec[BaseZarrAttrs[T], TBaseItem], Generic[T]
         """
         OME attributes.
         """
-        return self.attributes.ome  # type: ignore[no-any-return]
+        return self.attributes.ome
+
+    def _check_members_exist(self) -> None:
+        if self.members is None:
+            raise RuntimeError("Zarr group has no members")
