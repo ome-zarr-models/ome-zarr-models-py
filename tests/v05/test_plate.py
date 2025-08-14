@@ -5,7 +5,7 @@ from pydantic import ValidationError
 
 from ome_zarr_models.v05.hcs import HCS
 from ome_zarr_models.v05.plate import Acquisition, Column, Plate, Row, WellInPlate
-from tests.v05.conftest import json_to_zarr_group, read_in_json
+from tests.v05.conftest import json_to_zarr_group
 
 
 def test_example_plate_json() -> None:
