@@ -21,7 +21,6 @@ from ome_zarr_models.v04.multiscales import (
     Dataset,
     Multiscale,
 )
-from tests.v04.conftest import from_array_props
 
 if TYPE_CHECKING:
     from typing import Literal

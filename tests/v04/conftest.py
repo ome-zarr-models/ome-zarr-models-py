@@ -1,24 +1,11 @@
 import json
-from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, Literal, TypeVar
+from typing import TypeVar
 
-import numcodecs
-import numpy as np
-import numpy.typing as npt
 import zarr
 import zarr.storage
-from numcodecs.abc import Codec
-from pydantic_zarr.v2 import ArraySpec, GroupSpec
-from zarr.core.chunk_grids import _guess_chunks as guess_chunks
 
 from ome_zarr_models.base import BaseAttrs
-from ome_zarr_models.v04.axes import Axis
-from ome_zarr_models.v04.image import Image, ImageAttrs
-from ome_zarr_models.v04.multiscales import (
-    Dataset,
-    Multiscale,
-)
 
 T = TypeVar("T", bound=BaseAttrs)
 
