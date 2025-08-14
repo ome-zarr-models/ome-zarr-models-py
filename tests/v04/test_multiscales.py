@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 import pytest
 from pydantic import ValidationError
-from pydantic_zarr.v2 import ArraySpec, GroupSpec
+from pydantic_zarr.v2 import AnyArraySpec, AnyGroupSpec, ArraySpec, GroupSpec
 
 from ome_zarr_models.common.coordinate_transformations import (
     _build_transforms,
@@ -24,7 +24,7 @@ from ome_zarr_models.v04.multiscales import (
 from tests.v04.conftest import from_array_props, from_arrays
 
 if TYPE_CHECKING:
-    from typing import Literal
+    from zarr.storage import MemoryStore
 
 DEFAULT_UNITS_MAP = {"space": "meter", "time": "second"}
 
@@ -380,7 +380,7 @@ def test_multiscale_group_datasets_exist(
     default_multiscale: Multiscale,
 ) -> None:
     group_attrs = ImageAttrs(multiscales=(default_multiscale,))
-    good_items = {
+    good_items: dict[str, AnyArraySpec] = {
         d.path: ArraySpec(
             shape=(1, 1, 1, 1),
             dtype="uint8",
@@ -390,7 +390,7 @@ def test_multiscale_group_datasets_exist(
     }
     Image(attributes=group_attrs, members=good_items)
 
-    bad_items = {
+    bad_items: dict[str, AnyArraySpec] = {
         d.path + "x": ArraySpec(
             shape=(1, 1, 1, 1),
             dtype="uint8",
@@ -448,6 +448,7 @@ def test_multiscale_group_missing_arrays() -> None:
         translations=((0, 0), (0.5, 0.5)),
     )
     # remove an array, then re-create the model
+    assert group_model.members is not None
     group_model_broken = group_model.model_copy(
         update={"members": {array_names[0]: group_model.members[array_names[0]]}}
     )
@@ -487,10 +488,10 @@ def test_multiscale_group_ectopic_group() -> None:
 
 @pytest.mark.parametrize("store", ["memory"], indirect=True)
 def test_from_zarr_missing_metadata(
-    store: Literal["memory"],
+    store: MemoryStore,
     request: pytest.FixtureRequest,
 ) -> None:
-    group_model = GroupSpec()
+    group_model: AnyGroupSpec = GroupSpec()
     group = group_model.to_zarr(store, path="test")
     # store_path = store.path if hasattr(store, "path") else ""
     match = "multiscales\n  Field required"
@@ -499,7 +500,7 @@ def test_from_zarr_missing_metadata(
 
 
 @pytest.mark.parametrize("store", ["memory"], indirect=True)
-def test_from_zarr_missing_array(store: Literal["memory"]) -> None:
+def test_from_zarr_missing_array(store: MemoryStore) -> None:
     """
     Test that creating a multiscale Group fails when an expected Zarr array is missing
     or is a group instead of an array
@@ -525,7 +526,7 @@ def test_from_zarr_missing_array(store: Literal["memory"]) -> None:
 
 
 @pytest.mark.parametrize("store", ["memory"], indirect=True)
-def test_from_zarr_ectopic_group(store: Literal["memory"]) -> None:
+def test_from_zarr_ectopic_group(store: MemoryStore) -> None:
     """
     Test that creating a multiscale Group fails when an expected Zarr array is missing
     or is a group instead of an array

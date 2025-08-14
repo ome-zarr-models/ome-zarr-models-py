@@ -87,6 +87,9 @@ class HCS(BaseGroupv05[HCSAttrs]):
         WellGroupNotFoundError :
             If no Zarr group is found at the well path.
         """
+        if self.members is None:
+            raise RuntimeError("Zarr group has no members")
+
         well = self.ome_attributes.plate.wells[i]
         well_path = well.path
         well_path_parts = well_path.split("/")

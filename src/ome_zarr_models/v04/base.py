@@ -7,7 +7,7 @@ from ome_zarr_models.base import BaseAttrs, BaseGroup
 T = TypeVar("T", bound=BaseAttrs)
 
 
-class BaseGroupv04(BaseGroup, GroupSpec[T, TBaseItem], Generic[T]):  # type: ignore[misc]
+class BaseGroupv04(BaseGroup, GroupSpec[T, TBaseItem], Generic[T]):
     """
     Base class for all v0.4 OME-Zarr groups.
     """
@@ -24,4 +24,4 @@ class BaseGroupv04(BaseGroup, GroupSpec[T, TBaseItem], Generic[T]):  # type: ign
         """
         OME attributes.
         """
-        return self.attributes  # type: ignore[no-any-return]
+        return self.attributes
