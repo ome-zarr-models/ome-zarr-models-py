@@ -417,17 +417,16 @@ def test_multiscale_group_datasets_ndim() -> None:
     true_ndim = 2
     bad_ndim = 3
     match = (
-        f"The multiscale metadata has {true_ndim} axes "
-        "which does not match the dimensionality of the array "
-        f"found in this group at {bad_ndim} ({bad_ndim}). "
-        "The number of axes must match the array dimensionality."
+        "Length of arrays (got len(array_specs)=3) must be the same as "
+        "length of paths (got len(paths)=2)"
     )
-    with pytest.raises(ValidationError, match=re.escape(match)):
-        _ = from_array_props(
-            shapes=((10,) * true_ndim, (10,) * bad_ndim),
-            chunks=((1,) * true_ndim, (1,) * bad_ndim),
-            dtype="uint8",
-            paths=(str(true_ndim), str(bad_ndim)),
+    with pytest.raises(ValueError, match=re.escape(match)):
+        Image.new(
+            array_specs=[
+                ArraySpec(shape=(10,), chunks=(10,), dtype="uint8")
+                for _ in range(bad_ndim)
+            ],
+            paths=[str(i) for i in range(true_ndim)],
             axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
             scales=((1, 1), (2, 2)),
             translations=((0, 0), (0.5, 0.5)),
