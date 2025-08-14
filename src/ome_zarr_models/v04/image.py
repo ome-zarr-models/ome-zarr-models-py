@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Self
 import zarr
 import zarr.errors
 from pydantic import Field, JsonValue, model_validator
-from pydantic_zarr.v2 import ArraySpec, GroupSpec
+from pydantic_zarr.v2 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.coordinate_transformations import _build_transforms
@@ -42,7 +42,7 @@ class Image(BaseGroupv04[ImageAttrs]):
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group) -> Self:
+    def from_zarr(cls, group: zarr.Group, *, depth: int = -1) -> Self:
         """
         Create an instance of an OME-Zarr image from a `zarr.Group`.
 
@@ -52,7 +52,7 @@ class Image(BaseGroupv04[ImageAttrs]):
             A Zarr group that has valid OME-NGFF image metadata.
         """
         # on unlistable storage backends, the members of this group will be {}
-        group_spec = GroupSpec.from_zarr(group, depth=0)
+        group_spec: AnyGroupSpec = GroupSpec.from_zarr(group, depth=0)
 
         multi_meta = ImageAttrs.model_validate(group_spec.attributes)
         members_tree_flat = {}
@@ -79,7 +79,7 @@ class Image(BaseGroupv04[ImageAttrs]):
     def new(
         cls,
         *,
-        array_specs: Sequence[ArraySpec],
+        array_specs: Sequence[AnyArraySpec],
         paths: Sequence[str],
         axes: Sequence[Axis],
         scales: Sequence[Sequence[float]],
@@ -191,7 +191,7 @@ class Image(BaseGroupv04[ImageAttrs]):
             multiscale_ndim = len(multiscale.axes)
             for dataset in multiscale.datasets:
                 try:
-                    maybe_arr: ArraySpec | GroupSpec = flat_self[
+                    maybe_arr: AnyArraySpec | AnyGroupSpec = flat_self[
                         "/" + dataset.path.lstrip("/")
                     ]
                     if isinstance(maybe_arr, GroupSpec):
@@ -223,10 +223,12 @@ class Image(BaseGroupv04[ImageAttrs]):
 
         Returns None if no labels are present.
         """
-        if "labels" not in self.members:
+        if self.members is None or "labels" not in self.members:
             return None
 
         labels_group = self.members["labels"]
+        if not isinstance(labels_group, GroupSpec):
+            raise RuntimeError("Node at 'labels' is not a group")
 
         return Labels(attributes=labels_group.attributes, members=labels_group.members)
 

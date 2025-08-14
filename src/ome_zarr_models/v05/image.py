@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Optional, Self
 import zarr
 import zarr.errors
 from pydantic import Field, JsonValue, model_validator
-from pydantic_zarr.v3 import ArraySpec, GroupSpec
+from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
 from ome_zarr_models.common.coordinate_transformations import _build_transforms
 from ome_zarr_models.common.validation import check_array_path
@@ -40,7 +40,7 @@ class Image(BaseGroupv05[ImageAttrs]):
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group) -> Self:
+    def from_zarr(cls, group: zarr.Group, *, depth: int = -1) -> Self:
         """
         Create an instance of an OME-Zarr image from a `zarr.Group`.
 
@@ -50,7 +50,7 @@ class Image(BaseGroupv05[ImageAttrs]):
             A Zarr group that has valid OME-NGFF image metadata.
         """
         # on unlistable storage backends, the members of this group will be {}
-        group_spec = GroupSpec.from_zarr(group, depth=0)
+        group_spec: AnyGroupSpec = GroupSpec.from_zarr(group, depth=0)
 
         if "ome" not in group_spec.attributes:
             raise RuntimeError(f"Did not find 'ome' key in {group} attributes")
@@ -79,7 +79,7 @@ class Image(BaseGroupv05[ImageAttrs]):
     def new(
         cls,
         *,
-        array_specs: Sequence[ArraySpec],
+        array_specs: Sequence[AnyArraySpec],
         paths: Sequence[str],
         axes: Sequence[Axis],
         scales: Sequence[Sequence[float]],
@@ -197,7 +197,7 @@ class Image(BaseGroupv05[ImageAttrs]):
             multiscale_ndim = len(multiscale.axes)
             for dataset in multiscale.datasets:
                 try:
-                    maybe_arr: ArraySpec | GroupSpec = flat_self[
+                    maybe_arr: AnyArraySpec | AnyGroupSpec = flat_self[
                         "/" + dataset.path.lstrip("/")
                     ]
                     if isinstance(maybe_arr, GroupSpec):
@@ -231,7 +231,7 @@ class Image(BaseGroupv05[ImageAttrs]):
         """
         from ome_zarr_models.v05.labels import Labels
 
-        if "labels" not in self.members:
+        if self.members is None or "labels" not in self.members:
             return None
 
         labels_group = self.members["labels"]

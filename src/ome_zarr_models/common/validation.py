@@ -4,8 +4,12 @@ from typing import TypeVar, overload
 import zarr
 import zarr.errors
 from pydantic import StringConstraints
+from pydantic_zarr.v2 import AnyArraySpec as AnyArraySpecv2
+from pydantic_zarr.v2 import AnyGroupSpec as AnyGroupSpecv2
 from pydantic_zarr.v2 import ArraySpec as ArraySpecv2
 from pydantic_zarr.v2 import GroupSpec as GroupSpecv2
+from pydantic_zarr.v3 import AnyArraySpec as AnyArraySpecv3
+from pydantic_zarr.v3 import AnyGroupSpec as AnyGroupSpecv3
 from pydantic_zarr.v3 import ArraySpec as ArraySpecv3
 from pydantic_zarr.v3 import GroupSpec as GroupSpecv3
 
@@ -35,7 +39,9 @@ def unique_items_validator(values: list[T]) -> list[T]:
     return values
 
 
-def check_array_path(group: zarr.Group, array_path: str) -> ArraySpecv2 | ArraySpecv3:
+def check_array_path(
+    group: zarr.Group, array_path: str
+) -> AnyArraySpecv2 | AnyArraySpecv3:
     """
     Check if an array exists at a given path in a group.
 
@@ -51,6 +57,7 @@ def check_array_path(group: zarr.Group, array_path: str) -> ArraySpecv2 | ArrayS
     """
     try:
         array = zarr.open_array(store=group.store, path=array_path, mode="r")
+        array_spec: AnyArraySpecv2 | AnyArraySpecv3
         if array.metadata.zarr_format == 2:
             array_spec = ArraySpecv2.from_zarr(array)
         else:
@@ -90,16 +97,16 @@ def check_length(
 
 
 @overload
-def check_array_spec(spec: GroupSpecv2, path: str) -> ArraySpecv2: ...
+def check_array_spec(spec: AnyGroupSpecv2, path: str) -> AnyArraySpecv2: ...
 
 
 @overload
-def check_array_spec(spec: GroupSpecv3, path: str) -> ArraySpecv3: ...  # type: ignore[overload-cannot-match]
+def check_array_spec(spec: AnyGroupSpecv3, path: str) -> AnyArraySpecv3: ...
 
 
 def check_array_spec(
-    spec: GroupSpecv2 | GroupSpecv3, path: str
-) -> ArraySpecv2 | ArraySpecv3:
+    spec: AnyGroupSpecv2 | AnyGroupSpecv3, path: str
+) -> AnyArraySpecv2 | AnyArraySpecv3:
     """
     Check that a path within a group is an array.
 
@@ -108,6 +115,8 @@ def check_array_spec(
     RuntimeError :
         If path is a group.
     """
+    if spec.members is None:
+        raise RuntimeError(f"members=None for {spec}")
     new_spec = spec.members[path]
     if not isinstance(new_spec, ArraySpecv2 | ArraySpecv3):
         raise RuntimeError(f"Node at path '{path}' is a group, expected an array")
@@ -115,16 +124,16 @@ def check_array_spec(
 
 
 @overload
-def check_group_spec(spec: GroupSpecv2, path: str) -> GroupSpecv2: ...
+def check_group_spec(spec: AnyGroupSpecv2, path: str) -> AnyGroupSpecv2: ...
 
 
 @overload
-def check_group_spec(spec: GroupSpecv3, path: str) -> GroupSpecv3: ...  # type: ignore[overload-cannot-match]
+def check_group_spec(spec: AnyGroupSpecv3, path: str) -> AnyGroupSpecv3: ...
 
 
 def check_group_spec(
-    spec: GroupSpecv2 | GroupSpecv3, path: str
-) -> GroupSpecv2 | GroupSpecv3:
+    spec: AnyGroupSpecv2 | AnyGroupSpecv3, path: str
+) -> AnyGroupSpecv2 | AnyGroupSpecv3:
     """
     Check that a path within a group is a group.
 

@@ -27,7 +27,7 @@ class ImageLabel(BaseGroupv04[ImageLabelAttrs]):
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group) -> Self:
+    def from_zarr(cls, group: zarr.Group, *, depth: int = -1) -> Self:
         """
         Create an instance of an OME-Zarr image from a `zarr.Group`.
 
@@ -37,5 +37,5 @@ class ImageLabel(BaseGroupv04[ImageLabelAttrs]):
             A Zarr group that has valid OME-NGFF image label metadata.
         """
         # Use Image.from_zarr() to validate multiscale metadata
-        Image.from_zarr(group)
-        return super().from_zarr(group)  # type: ignore[no-any-return]
+        Image.from_zarr(group, depth=depth)
+        return super().from_zarr(group, depth=depth)

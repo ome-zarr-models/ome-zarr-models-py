@@ -54,7 +54,7 @@ def open_ome_zarr(group: zarr.Group) -> BaseGroup:
     group_cls: type[BaseGroupv04[Any]]
     for group_cls in _V04_groups:
         try:
-            return group_cls.from_zarr(group)  # type: ignore[no-any-return]
+            return group_cls.from_zarr(group)
         except ValidationError:
             continue
 

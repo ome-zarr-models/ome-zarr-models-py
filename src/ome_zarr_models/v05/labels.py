@@ -31,6 +31,9 @@ def _check_valid_dtypes(labels: "Labels") -> "Labels":
     """
     from ome_zarr_models.v05.image import Image
 
+    if labels.members is None:
+        raise RuntimeError(f"{labels.members=}")
+
     for label_path in labels.attributes.ome.labels:
         if label_path not in labels.members:
             raise ValueError(f"Label path '{label_path}' not found in zarr group")
@@ -81,7 +84,7 @@ class Labels(
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group) -> Self:
+    def from_zarr(cls, group: zarr.Group, *, depth: int = -1) -> Self:
         """
         Create an instance of an OME-Zarr image from a `zarr.Group`.
 
@@ -92,12 +95,12 @@ class Labels(
         """
         from ome_zarr_models.v05.image import Image
 
-        ret: Self = super().from_zarr(group)
+        ret: Self = super().from_zarr(group, depth=depth)
 
         # Check all labels paths are valid multiscales
         for label_path in ret.attributes.ome.labels:
             try:
-                Image.from_zarr(group[label_path])  # type: ignore[arg-type]
+                Image.from_zarr(group[label_path], depth=depth)  # type: ignore[arg-type]
             except Exception as err:
                 msg = (
                     f"Error validating the label path '{label_path}' "

@@ -45,4 +45,8 @@ class BaseGroupv05(BaseGroup, GroupSpec[BaseZarrAttrs[T], Any], Generic[T]):
         """
         OME attributes.
         """
-        return self.attributes.ome  # type: ignore[no-any-return]
+        return self.attributes.ome
+
+    def _check_members_exist(self) -> None:
+        if self.members is None:
+            raise RuntimeError("Zarr group has no members")
