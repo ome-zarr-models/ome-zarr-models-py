@@ -42,7 +42,7 @@ markdown_extensions:
 
 plugins:
   - mkdocs-jupyter:
-      execute: true
+      execute: false
       allow_errors: false
   - mkdocstrings:
       handlers:
@@ -75,6 +75,15 @@ nav:
   - How do I...?: how-to.md
   - API reference:
       - api/index.md
+      - v05:
+          - api/v05/groups.md
+          - Metadata classes:
+              - api/v05/hcs.md
+              - api/v05/image.md
+              - api/v05/image-label.md
+              - api/v05/labels.md
+              - api/v05/well.md
+              - api/v05/other.md
       - v04:
           - api/v04/groups.md
           - Metadata classes:
@@ -87,7 +96,6 @@ nav:
       - Shared:
           - Base objects: api/common/base.md
           - Validation: api/common/validation.md
-          - Image: api/common/image.md
   - Changelog: changelog.md
   - Contributing: contributing.md
 
