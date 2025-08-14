@@ -23,7 +23,7 @@ from ome_zarr_models.v04.multiscales import (
 )
 
 if TYPE_CHECKING:
-    from typing import Literal
+    from zarr.abc.store import Store
 
 DEFAULT_UNITS_MAP = {"space": "meter", "time": "second"}
 
@@ -483,9 +483,8 @@ def test_multiscale_group_ectopic_group() -> None:
         Image(**group_model_broken.model_dump())
 
 
-@pytest.mark.parametrize("store", ["memory"], indirect=True)
 def test_from_zarr_missing_metadata(
-    store: Literal["memory"],
+    store: Store,
     request: pytest.FixtureRequest,
 ) -> None:
     group_model = GroupSpec()
@@ -496,8 +495,7 @@ def test_from_zarr_missing_metadata(
         Image.from_zarr(group)
 
 
-@pytest.mark.parametrize("store", ["memory"], indirect=True)
-def test_from_zarr_missing_array(store: Literal["memory"]) -> None:
+def test_from_zarr_missing_array(store: Store) -> None:
     """
     Test that creating a multiscale Group fails when an expected Zarr array is missing
     or is a group instead of an array
@@ -522,8 +520,7 @@ def test_from_zarr_missing_array(store: Literal["memory"]) -> None:
         Image.from_zarr(broken_group)
 
 
-@pytest.mark.parametrize("store", ["memory"], indirect=True)
-def test_from_zarr_ectopic_group(store: Literal["memory"]) -> None:
+def test_from_zarr_ectopic_group(store: Store) -> None:
     """
     Test that creating a multiscale Group fails when an expected Zarr array is missing
     or is a group instead of an array

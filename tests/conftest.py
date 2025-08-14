@@ -2,16 +2,21 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from zarr.abc.store import Store
 import pytest
-from zarr.storage import MemoryStore
+from zarr.storage import LocalStore, MemoryStore
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from zarr.abc.store import Store
 
 
-@pytest.fixture
-def store(request: pytest.FixtureRequest) -> Store:
+@pytest.fixture(params=["MemoryStore", "LocalStore"])
+def store(request: pytest.FixtureRequest, tmp_path: Path) -> Store:
     match request.param:
-        case "memory":
+        case "MemoryStore":
             return MemoryStore()
+        case "LocalStore":
+            return LocalStore(root=tmp_path)
         case _:
-            raise ValueError(f"Invalid store requested: {request.param}")
+            raise RuntimeError(f"Unknown store class: {request.param}")
