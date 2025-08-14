@@ -21,7 +21,7 @@ from ome_zarr_models.v04.multiscales import (
     Dataset,
     Multiscale,
 )
-from tests.v04.conftest import from_array_props, from_arrays
+from tests.v04.conftest import from_array_props
 
 if TYPE_CHECKING:
     from typing import Literal
@@ -440,8 +440,8 @@ def test_multiscale_group_missing_arrays() -> None:
     """
     arrays = np.zeros((10, 10)), np.zeros((5, 5))
     array_names = ("s0", "s1")
-    group_model = from_arrays(
-        arrays=arrays,
+    group_model = Image.new(
+        array_specs=[ArraySpec.from_array(a) for a in arrays],
         axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
         paths=array_names,
         scales=((1, 1), (2, 2)),
@@ -467,8 +467,8 @@ def test_multiscale_group_ectopic_group() -> None:
     """
     arrays = np.zeros((10, 10)), np.zeros((5, 5))
     array_names = ("s0", "s1")
-    group_model = from_arrays(
-        arrays=arrays,
+    group_model = Image.new(
+        array_specs=[ArraySpec.from_array(a) for a in arrays],
         axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
         paths=array_names,
         scales=((1, 1), (2, 2)),
@@ -507,8 +507,8 @@ def test_from_zarr_missing_array(store: Literal["memory"]) -> None:
     arrays = np.zeros((10, 10)), np.zeros((5, 5))
     group_path = "broken"
     arrays_names = ("s0", "s1")
-    group_model = from_arrays(
-        arrays=arrays,
+    group_model = Image.new(
+        array_specs=[ArraySpec.from_array(a) for a in arrays],
         axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
         paths=arrays_names,
         scales=((1, 1), (2, 2)),
@@ -533,8 +533,8 @@ def test_from_zarr_ectopic_group(store: Literal["memory"]) -> None:
     arrays = np.zeros((10, 10)), np.zeros((5, 5))
     group_path = "broken"
     arrays_names = ("s0", "s1")
-    group_model = from_arrays(
-        arrays=arrays,
+    group_model = Image.new(
+        array_specs=[ArraySpec.from_array(a) for a in arrays],
         axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
         paths=arrays_names,
         scales=((1, 1), (2, 2)),
