@@ -3,20 +3,6 @@ from ome_zarr_models.v04.well_types import WellImage, WellMeta
 from tests.v04.conftest import json_to_zarr_group
 
 
-def test_get_paths() -> None:
-    well = WellMeta(
-        images=[
-            WellImage(path="0", acquisition=1),
-            WellImage(path="1", acquisition=1),
-            WellImage(path="2", acquisition=2),
-            WellImage(path="3", acquisition=2),
-        ],
-        version="0.4",
-    )
-
-    assert well.get_acquisition_paths() == {1: ["0", "1"], 2: ["2", "3"]}
-
-
 def test_well() -> None:
     zarr_group = json_to_zarr_group(json_fname="well_example_1.json")
     ome_group = Well.from_zarr(zarr_group)
@@ -43,3 +29,17 @@ def test_well() -> None:
             version="0.4",
         )
     )
+
+
+def test_get_paths() -> None:
+    well = WellMeta(
+        images=[
+            WellImage(path="0", acquisition=1),
+            WellImage(path="1", acquisition=1),
+            WellImage(path="2", acquisition=2),
+            WellImage(path="3", acquisition=2),
+        ],
+        version="0.4",
+    )
+
+    assert well.get_acquisition_paths() == {1: ["0", "1"], 2: ["2", "3"]}
