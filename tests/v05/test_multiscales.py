@@ -487,7 +487,7 @@ def test_from_zarr_missing_metadata(
     store: Store,
     request: pytest.FixtureRequest,
 ) -> None:
-    group_model = GroupSpec()
+    group_model = GroupSpec(attributes={"ome": {}})
     group = group_model.to_zarr(store, path="test")
     # store_path = store.path if hasattr(store, "path") else ""
     match = "multiscales\n  Field required"
