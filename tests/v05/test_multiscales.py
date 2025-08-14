@@ -421,10 +421,7 @@ def test_multiscale_group_datasets_ndim() -> None:
     )
     with pytest.raises(ValueError, match=re.escape(match)):
         Image.new(
-            array_specs=[
-                ArraySpec(shape=(10,), chunks=(10,), dtype="uint8")
-                for _ in range(bad_ndim)
-            ],
+            array_specs=[ArraySpec.from_array(np.arange(10)) for _ in range(bad_ndim)],
             paths=[str(i) for i in range(true_ndim)],
             axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
             scales=((1, 1), (2, 2)),
@@ -543,7 +540,7 @@ def test_from_zarr_ectopic_group(store: Store) -> None:
 
     # put a group where the array should be
     broken_group.create_group(removed_array_path)
-    match = "Expected to find an array at broken/s0, but no array was found there"
+    match = "Invalid value for 'node_type'. Expected 'array'. Got 'group"
     with pytest.raises(ValueError, match=match):
         Image.from_zarr(broken_group)
 
