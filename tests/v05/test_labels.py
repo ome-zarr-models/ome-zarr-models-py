@@ -17,6 +17,7 @@ def test_labels() -> None:
     image_group.create_array("0", shape=(1, 1, 1, 1, 1), dtype=np.uint64)
 
     ome_group = Labels.from_zarr(zarr_group)
+
     assert ome_group.attributes.ome == LabelsAttrs(
         labels=["cell_space_segmentation"], version="0.5"
     )

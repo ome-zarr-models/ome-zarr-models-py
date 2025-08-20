@@ -1,6 +1,11 @@
 {
   "ome": {
     "version": "0.5",
+    "image-label": {
+      "source": {
+        "image": "../../"
+      }
+    },
     "multiscales": [
       {
         "name": "example",
