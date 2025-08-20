@@ -236,9 +236,7 @@ class Image(BaseGroupv05[ImageAttrs]):
 
         labels_group = self.members["labels"]
 
-        return Labels(
-            attributes=labels_group.ome_attributes, members=labels_group.members
-        )
+        return Labels(attributes=labels_group.attributes, members=labels_group.members)
 
     @property
     def datasets(self) -> tuple[tuple[Dataset, ...], ...]:

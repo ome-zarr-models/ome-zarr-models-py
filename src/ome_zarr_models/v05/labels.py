@@ -90,14 +90,14 @@ class Labels(
         group : zarr.Group
             A Zarr group that has valid OME-Zarr label metadata.
         """
-        from ome_zarr_models.v05.image import Image
+        from ome_zarr_models.v05.image_label import ImageLabel
 
         ret: Self = super().from_zarr(group)
 
         # Check all labels paths are valid multiscales
         for label_path in ret.attributes.ome.labels:
             try:
-                Image.from_zarr(group[label_path])  # type: ignore[arg-type]
+                ImageLabel.from_zarr(group[label_path])  # type: ignore[arg-type]
             except Exception as err:
                 msg = (
                     f"Error validating the label path '{label_path}' "
