@@ -55,11 +55,13 @@ class Image(BaseGroupv04[ImageAttrs]):
         group_spec: AnyGroupSpec = GroupSpec.from_zarr(group, depth=0)
 
         multi_meta = ImageAttrs.model_validate(group_spec.attributes)
-        members_tree_flat = {}
+        members_tree_flat: dict[str, AnyGroupSpec | AnyArraySpec] = {}
         for multiscale in multi_meta.multiscales:
             for dataset in multiscale.datasets:
                 array_path = f"{group.path}/{dataset.path}"
-                array_spec = check_array_path(group, array_path)
+                array_spec = check_array_path(
+                    group, array_path, expected_zarr_version=2
+                )
                 members_tree_flat["/" + dataset.path] = array_spec
 
         try:
@@ -68,7 +70,7 @@ class Image(BaseGroupv04[ImageAttrs]):
         except zarr.errors.GroupNotFoundError:
             pass
 
-        members_normalized = GroupSpec.from_flat(members_tree_flat)
+        members_normalized: AnyGroupSpec = GroupSpec.from_flat(members_tree_flat)
 
         group_spec = group_spec.model_copy(
             update={"members": members_normalized.members}
@@ -130,7 +132,7 @@ class Image(BaseGroupv04[ImageAttrs]):
                 f"Length of arrays (got {len(array_specs)=}) must be the same as "
                 f"length of paths (got {len(paths)=})"
             )
-        members_flat = {
+        members_flat: dict[str, AnyArraySpec] = {
             "/" + key.lstrip("/"): arr
             for key, arr in zip(paths, array_specs, strict=True)
         }
@@ -169,8 +171,9 @@ class Image(BaseGroupv04[ImageAttrs]):
             type=multiscale_type,
             version="0.4",
         )
+        # https://github.com/zarr-developers/pydantic-zarr/pull/100 for typing ignore
         return Image(
-            members=GroupSpec.from_flat(members_flat).members,
+            members=GroupSpec.from_flat(members_flat).members,  # type: ignore[arg-type]
             attributes=ImageAttrs(multiscales=(multimeta,)),
         )
 

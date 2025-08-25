@@ -47,7 +47,7 @@ repos:
           - pydantic
           - pytest
           - zarr >= 3.1.1
-          - pydantic-zarr >= 0.8.1
+          - pydantic-zarr >= 0.8.2
 
   - repo: https://github.com/crate-ci/typos
     rev: v1.29.4

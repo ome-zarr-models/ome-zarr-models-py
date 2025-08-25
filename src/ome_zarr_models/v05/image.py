@@ -55,11 +55,13 @@ class Image(BaseGroupv05[ImageAttrs]):
         if "ome" not in group_spec.attributes:
             raise RuntimeError(f"Did not find 'ome' key in {group} attributes")
         multi_meta = ImageAttrs.model_validate(group_spec.attributes["ome"])
-        members_tree_flat = {}
+        members_tree_flat: dict[str, AnyGroupSpec | AnyArraySpec] = {}
         for multiscale in multi_meta.multiscales:
             for dataset in multiscale.datasets:
                 array_path = f"{group.path}/{dataset.path}"
-                array_spec = check_array_path(group, array_path)
+                array_spec = check_array_path(
+                    group, array_path, expected_zarr_version=3
+                )
                 members_tree_flat["/" + dataset.path] = array_spec
 
         try:
@@ -68,7 +70,7 @@ class Image(BaseGroupv05[ImageAttrs]):
         except zarr.errors.GroupNotFoundError:
             pass
 
-        members_normalized = GroupSpec.from_flat(members_tree_flat)
+        members_normalized: AnyGroupSpec = GroupSpec.from_flat(members_tree_flat)
 
         group_spec = group_spec.model_copy(
             update={"members": members_normalized.members}
