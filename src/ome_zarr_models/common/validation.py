@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import TypeVar, overload
+from typing import Literal, TypeVar, overload
 
 import zarr
 import zarr.errors
@@ -39,8 +39,29 @@ def unique_items_validator(values: list[T]) -> list[T]:
     return values
 
 
+@overload
 def check_array_path(
-    group: zarr.Group, array_path: str
+    group: zarr.Group,
+    array_path: str,
+    *,
+    expected_zarr_version: Literal[2],
+) -> AnyArraySpecv2: ...
+
+
+@overload
+def check_array_path(
+    group: zarr.Group,
+    array_path: str,
+    *,
+    expected_zarr_version: Literal[3],
+) -> AnyArraySpecv3: ...
+
+
+def check_array_path(
+    group: zarr.Group,
+    array_path: str,
+    *,
+    expected_zarr_version: Literal[2, 3],
 ) -> AnyArraySpecv2 | AnyArraySpecv3:
     """
     Check if an array exists at a given path in a group.
@@ -59,8 +80,12 @@ def check_array_path(
         array = zarr.open_array(store=group.store, path=array_path, mode="r")
         array_spec: AnyArraySpecv2 | AnyArraySpecv3
         if array.metadata.zarr_format == 2:
+            if expected_zarr_version == 3:
+                raise RuntimeError("Expected Zarr v3 array, but got v2 array")
             array_spec = ArraySpecv2.from_zarr(array)
         else:
+            if expected_zarr_version == 2:
+                raise RuntimeError("Expected Zarr v2 array, but got v3 array")
             array_spec = ArraySpecv3.from_zarr(array)
     except FileNotFoundError as e:
         msg = (
