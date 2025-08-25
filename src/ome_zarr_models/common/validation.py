@@ -1,5 +1,7 @@
-from collections.abc import Sequence
-from typing import Literal, TypeVar, overload
+# Need to import `annotations` for the pydantic_zarr TypeAlias strings to work
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Literal, TypeVar, overload
 
 import zarr
 import zarr.errors
@@ -12,6 +14,10 @@ from pydantic_zarr.v3 import AnyArraySpec as AnyArraySpecv3
 from pydantic_zarr.v3 import AnyGroupSpec as AnyGroupSpecv3
 from pydantic_zarr.v3 import ArraySpec as ArraySpecv3
 from pydantic_zarr.v3 import GroupSpec as GroupSpecv3
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
 
 __all__ = [
     "AlphaNumericConstraint",
