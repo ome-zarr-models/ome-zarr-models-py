@@ -37,6 +37,7 @@ def _check_valid_dtypes(labels: "Labels") -> "Labels":
     for label_path in labels.attributes.ome.labels:
         if label_path not in labels.members:
             raise ValueError(f"Label path '{label_path}' not found in zarr group")
+        print(labels.members)
         label_spec = check_group_spec(labels, label_path)
         try:
             image_spec = Image(
@@ -95,7 +96,7 @@ class Labels(
         """
         from ome_zarr_models.v05.image import Image
 
-        ret: Self = super().from_zarr(group, depth=depth)
+        ret = super().from_zarr(group, depth=depth)
 
         # Check all labels paths are valid multiscales
         for label_path in ret.attributes.ome.labels:

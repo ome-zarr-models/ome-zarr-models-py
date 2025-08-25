@@ -1,7 +1,9 @@
-from typing import Any, Generic, Literal, TypeVar
+from __future__ import annotations
+
+from typing import Generic, Literal, TypeVar, Union
 
 from pydantic import BaseModel
-from pydantic_zarr.v3 import GroupSpec
+from pydantic_zarr.v3 import ArraySpec, GroupSpec
 
 from ome_zarr_models.base import BaseAttrs, BaseGroup
 
@@ -28,7 +30,11 @@ class BaseZarrAttrs(BaseModel, Generic[T]):
 # T = TypeVar("T", bound="BaseOMEAttrs")
 
 
-class BaseGroupv05(BaseGroup, GroupSpec[BaseZarrAttrs[T], Any], Generic[T]):
+class BaseGroupv05(
+    BaseGroup,
+    GroupSpec[BaseZarrAttrs[T], Union["GroupSpec", "ArraySpec"]],  # type: ignore[type-arg]
+    Generic[T],
+):
     """
     Base class for all v0.5 OME-Zarr groups.
     """
