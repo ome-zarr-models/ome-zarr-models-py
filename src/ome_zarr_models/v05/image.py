@@ -1,10 +1,10 @@
 from collections.abc import Sequence
-from typing import TYPE_CHECKING, Optional, Self
+from typing import Any, Self
 
 import zarr
 import zarr.errors
 from pydantic import Field, JsonValue, model_validator
-from pydantic_zarr.v3 import ArraySpec, GroupSpec
+from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
 from ome_zarr_models.common.coordinate_transformations import _build_transforms
 from ome_zarr_models.common.validation import check_array_path
@@ -13,10 +13,6 @@ from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs, BaseZarrAttrs
 from ome_zarr_models.v05.labels import Labels
 from ome_zarr_models.v05.multiscales import Dataset, Multiscale
 from ome_zarr_models.v05.omero import Omero
-
-if TYPE_CHECKING:
-    from ome_zarr_models.v05.labels import Labels
-
 
 __all__ = ["Image", "ImageAttrs"]
 
@@ -40,7 +36,7 @@ class Image(BaseGroupv05[ImageAttrs]):
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group) -> Self:
+    def from_zarr(cls, group: zarr.Group, *, depth: int = -1) -> Self:
         """
         Create an instance of an OME-Zarr image from a `zarr.Group`.
 
@@ -50,16 +46,18 @@ class Image(BaseGroupv05[ImageAttrs]):
             A Zarr group that has valid OME-NGFF image metadata.
         """
         # on unlistable storage backends, the members of this group will be {}
-        group_spec = GroupSpec.from_zarr(group, depth=0)
+        group_spec: GroupSpec[dict[str, Any], Any] = GroupSpec.from_zarr(group, depth=0)
 
         if "ome" not in group_spec.attributes:
             raise RuntimeError(f"Did not find 'ome' key in {group} attributes")
         multi_meta = ImageAttrs.model_validate(group_spec.attributes["ome"])
-        members_tree_flat = {}
+        members_tree_flat: dict[str, AnyGroupSpec | AnyArraySpec] = {}
         for multiscale in multi_meta.multiscales:
             for dataset in multiscale.datasets:
                 array_path = f"{group.path}/{dataset.path}"
-                array_spec = check_array_path(group, array_path)
+                array_spec = check_array_path(
+                    group, array_path, expected_zarr_version=3
+                )
                 members_tree_flat["/" + dataset.path] = array_spec
 
         try:
@@ -68,18 +66,14 @@ class Image(BaseGroupv05[ImageAttrs]):
         except zarr.errors.GroupNotFoundError:
             pass
 
-        members_normalized = GroupSpec.from_flat(members_tree_flat)
-
-        group_spec = group_spec.model_copy(
-            update={"members": members_normalized.members}
-        )
-        return cls(**group_spec.model_dump())
+        members_normalized: AnyGroupSpec = GroupSpec.from_flat(members_tree_flat)
+        return cls(attributes=group_spec.attributes, members=members_normalized.members)
 
     @classmethod
     def new(
         cls,
         *,
-        array_specs: Sequence[ArraySpec],
+        array_specs: Sequence[AnyArraySpec],
         paths: Sequence[str],
         axes: Sequence[Axis],
         scales: Sequence[Sequence[float]],
@@ -197,7 +191,7 @@ class Image(BaseGroupv05[ImageAttrs]):
             multiscale_ndim = len(multiscale.axes)
             for dataset in multiscale.datasets:
                 try:
-                    maybe_arr: ArraySpec | GroupSpec = flat_self[
+                    maybe_arr: AnyArraySpec | AnyGroupSpec = flat_self[
                         "/" + dataset.path.lstrip("/")
                     ]
                     if isinstance(maybe_arr, GroupSpec):
@@ -223,7 +217,7 @@ class Image(BaseGroupv05[ImageAttrs]):
         return self
 
     @property
-    def labels(self) -> Optional["Labels"]:
+    def labels(self) -> Labels | None:
         """
         Any labels datasets contained in this image group.
 
@@ -231,14 +225,14 @@ class Image(BaseGroupv05[ImageAttrs]):
         """
         from ome_zarr_models.v05.labels import Labels
 
-        if "labels" not in self.members:
+        if self.members is None or "labels" not in self.members:
             return None
 
         labels_group = self.members["labels"]
+        if not isinstance(labels_group, GroupSpec):
+            raise ValueError("Node at path 'labels' is not a group")
 
-        return Labels(
-            attributes=labels_group.ome_attributes, members=labels_group.members
-        )
+        return Labels(attributes=labels_group.attributes, members=labels_group.members)
 
     @property
     def datasets(self) -> tuple[tuple[Dataset, ...], ...]:
