@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import TYPE_CHECKING, Optional, Self
+from typing import Any, Self
 
 import zarr
 import zarr.errors
@@ -13,10 +13,6 @@ from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs, BaseZarrAttrs
 from ome_zarr_models.v05.labels import Labels
 from ome_zarr_models.v05.multiscales import Dataset, Multiscale
 from ome_zarr_models.v05.omero import Omero
-
-if TYPE_CHECKING:
-    from ome_zarr_models.v05.labels import Labels
-
 
 __all__ = ["Image", "ImageAttrs"]
 
@@ -50,7 +46,7 @@ class Image(BaseGroupv05[ImageAttrs]):
             A Zarr group that has valid OME-NGFF image metadata.
         """
         # on unlistable storage backends, the members of this group will be {}
-        group_spec: AnyGroupSpec = GroupSpec.from_zarr(group, depth=0)
+        group_spec: GroupSpec[dict[str, Any], Any] = GroupSpec.from_zarr(group, depth=0)
 
         if "ome" not in group_spec.attributes:
             raise RuntimeError(f"Did not find 'ome' key in {group} attributes")
@@ -71,11 +67,7 @@ class Image(BaseGroupv05[ImageAttrs]):
             pass
 
         members_normalized: AnyGroupSpec = GroupSpec.from_flat(members_tree_flat)
-
-        group_spec = group_spec.model_copy(
-            update={"members": members_normalized.members}
-        )
-        return cls(**group_spec.model_dump())
+        return cls(attributes=group_spec.attributes, members=members_normalized.members)
 
     @classmethod
     def new(
@@ -225,7 +217,7 @@ class Image(BaseGroupv05[ImageAttrs]):
         return self
 
     @property
-    def labels(self) -> Optional["Labels"]:
+    def labels(self) -> Labels | None:
         """
         Any labels datasets contained in this image group.
 
@@ -237,10 +229,10 @@ class Image(BaseGroupv05[ImageAttrs]):
             return None
 
         labels_group = self.members["labels"]
+        if not isinstance(labels_group, GroupSpec):
+            raise ValueError("Node at path 'labels' is not a group")
 
-        return Labels(
-            attributes=labels_group.ome_attributes, members=labels_group.members
-        )
+        return Labels(attributes=labels_group.attributes, members=labels_group.members)
 
     @property
     def datasets(self) -> tuple[tuple[Dataset, ...], ...]:
