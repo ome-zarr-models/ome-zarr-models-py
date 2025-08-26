@@ -19,7 +19,7 @@ def test_load_ome_zarr_group() -> None:
 
 
 def test_load_ome_zarr_group_bad(tmp_path: Path) -> None:
-    hcs_group = zarr.group(tmp_path / "test")
+    hcs_group = zarr.create_group(tmp_path / "test")
     with pytest.raises(
         RuntimeError,
         match=re.escape(
