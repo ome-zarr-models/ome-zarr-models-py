@@ -170,14 +170,14 @@ def check_group_spec(
 
     Raises
     ------
-    RuntimeError :
-        If path is an array.
+    ValueError :
+        If the node at *path* is not a group.
     """
     if spec.members is None:
         raise ValueError("Specification has no members.")
     new_spec = spec.members[path]
     if not isinstance(new_spec, GroupSpecv2 | GroupSpecv3):
-        raise RuntimeError(
+        raise ValueError(
             f"Node at path '{path}' is not a GroupSpec (got {type(new_spec)=})"
         )
     return new_spec
