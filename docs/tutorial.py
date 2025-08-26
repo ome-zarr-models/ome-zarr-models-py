@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import zarr
 import zarr.storage
-from pydantic_zarr.v2 import ArraySpec
+from pydantic_zarr.v2 import AnyArraySpec, ArraySpec
 from rich.pretty import pprint
 
 from ome_zarr_models import open_ome_zarr
@@ -77,7 +77,7 @@ plt.imshow(zarr_arr[0, 0, :, :], cmap="gray")  # type: ignore[index]
 # First, we need to create `ArraySpec` objects, which tell `ome-zarr-models`
 # what the structure of the data arrays will be.
 
-array_specs = [
+array_specs: list[AnyArraySpec] = [
     ArraySpec(shape=(100, 100), chunks=(32, 32), dtype=np.uint16),
     ArraySpec(shape=(50, 50), chunks=(32, 32), dtype=np.uint16),
 ]

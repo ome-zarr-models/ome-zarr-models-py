@@ -27,9 +27,6 @@ class BaseZarrAttrs(BaseModel, Generic[T]):
     ome: T
 
 
-# T = TypeVar("T", bound="BaseOMEAttrs")
-
-
 class BaseGroupv05(
     BaseGroup,
     GroupSpec[BaseZarrAttrs[T], Union["GroupSpec", "ArraySpec"]],  # type: ignore[type-arg]
