@@ -227,6 +227,11 @@ class Image(BaseGroupv04[ImageAttrs]):
         Any labels datasets contained in this image group.
 
         Returns None if no labels are present.
+
+        Raises
+        ------
+        RuntimeError
+            If the node at "labels" is not a group.
         """
         if self.members is None or "labels" not in self.members:
             return None
