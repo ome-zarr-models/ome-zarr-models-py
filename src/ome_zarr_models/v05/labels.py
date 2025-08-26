@@ -37,7 +37,6 @@ def _check_valid_dtypes(labels: "Labels") -> "Labels":
     for label_path in labels.attributes.ome.labels:
         if label_path not in labels.members:
             raise ValueError(f"Label path '{label_path}' not found in zarr group")
-        print(labels.members)
         label_spec = check_group_spec(labels, label_path)  # type: ignore[arg-type]
         try:
             image_spec = Image(
