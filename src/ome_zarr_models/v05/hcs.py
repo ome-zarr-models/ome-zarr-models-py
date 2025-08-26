@@ -1,7 +1,8 @@
-from collections.abc import Generator
+from collections.abc import Generator, Mapping
 from typing import Self
 
 from pydantic import model_validator
+from pydantic_zarr.v3 import GroupSpec
 
 from ome_zarr_models.common.well import WellGroupNotFoundError
 from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs
@@ -100,9 +101,13 @@ class HCS(BaseGroupv05[HCSAttrs]):
             raise WellGroupNotFoundError(
                 f"Row '{row}' not found in group members: {self.members}"
             )
-        if col not in self.members[row].members:
+        if (
+            not isinstance(row_group := self.members[row], GroupSpec)
+            or not isinstance(row_group.members, Mapping)
+            or col not in row_group.members
+        ):
             raise WellGroupNotFoundError(
                 f"Column '{col}' not found in row group members: {self.members[row]}"
             )
-        group = self.members[row].members[col]
+        group = row_group.members[col]
         return Well(attributes=group.attributes, members=group.members)
