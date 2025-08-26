@@ -49,7 +49,3 @@ class BaseGroupv05(
         OME attributes.
         """
         return self.attributes.ome
-
-    def _check_members_exist(self) -> None:
-        if self.members is None:
-            raise RuntimeError("Zarr group has no members")
