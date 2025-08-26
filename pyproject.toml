@@ -94,12 +94,6 @@ warn_unreachable = true
 plugins = ['pydantic.mypy']
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 
-[[tool.mypy.overrides]]
-module = [
-    'docs.tutorial',
-]
-disallow_any_generics = false
-
 [tool.pytest.ini_options]
 minversion = "8"
 testpaths = ["tests"]
