@@ -50,6 +50,8 @@ class Image(BaseGroupv04[ImageAttrs]):
         ----------
         group : zarr.Group
             A Zarr group that has valid OME-NGFF image metadata.
+        depth : int
+            Currently not used.
         """
         # on unlistable storage backends, the members of this group will be {}
         group_spec: AnyGroupSpec = GroupSpec.from_zarr(group, depth=0)
