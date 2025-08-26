@@ -80,18 +80,18 @@ def check_array_path(
     Raises
     ------
     ValueError
-        If the array doesn't exist.
+        If the array doesn't exist, or the array is not the expected Zarr version.
     """
     try:
         array = zarr.open_array(store=group.store, path=array_path, mode="r")
         array_spec: AnyArraySpecv2 | AnyArraySpecv3
         if array.metadata.zarr_format == 2:
             if expected_zarr_version == 3:
-                raise RuntimeError("Expected Zarr v3 array, but got v2 array")
+                raise ValueError("Expected Zarr v3 array, but got v2 array")
             array_spec = ArraySpecv2.from_zarr(array)
         else:
             if expected_zarr_version == 2:
-                raise RuntimeError("Expected Zarr v2 array, but got v3 array")
+                raise ValueError("Expected Zarr v2 array, but got v3 array")
             array_spec = ArraySpecv3.from_zarr(array)
     except FileNotFoundError as e:
         msg = (
