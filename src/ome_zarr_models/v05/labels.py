@@ -31,10 +31,13 @@ def _check_valid_dtypes(labels: "Labels") -> "Labels":
     """
     from ome_zarr_models.v05.image import Image
 
+    if labels.members is None:
+        raise RuntimeError(f"{labels.members=}")
+
     for label_path in labels.attributes.ome.labels:
         if label_path not in labels.members:
             raise ValueError(f"Label path '{label_path}' not found in zarr group")
-        label_spec = check_group_spec(labels, label_path)
+        label_spec = check_group_spec(labels, label_path)  # type: ignore[arg-type]
         try:
             image_spec = Image(
                 attributes=label_spec.attributes, members=label_spec.members
@@ -47,7 +50,7 @@ def _check_valid_dtypes(labels: "Labels") -> "Labels":
 
         for multiscale in image_spec.attributes.ome.multiscales:
             for dataset in multiscale.datasets:
-                arr_spec = check_array_spec(image_spec, dataset.path)
+                arr_spec = check_array_spec(image_spec, dataset.path)  # type: ignore[arg-type]
                 if (
                     not isinstance(arr_spec.data_type, str)
                     or np.dtype(arr_spec.data_type) not in VALID_DTYPES
@@ -81,7 +84,7 @@ class Labels(
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group) -> Self:
+    def from_zarr(cls, group: zarr.Group, *, depth: int = -1) -> Self:
         """
         Create an instance of an OME-Zarr image from a `zarr.Group`.
 
@@ -92,12 +95,12 @@ class Labels(
         """
         from ome_zarr_models.v05.image import Image
 
-        ret: Self = super().from_zarr(group)
+        ret = super().from_zarr(group, depth=depth)
 
         # Check all labels paths are valid multiscales
         for label_path in ret.attributes.ome.labels:
             try:
-                Image.from_zarr(group[label_path])  # type: ignore[arg-type]
+                Image.from_zarr(group[label_path], depth=depth)  # type: ignore[arg-type]
             except Exception as err:
                 msg = (
                     f"Error validating the label path '{label_path}' "
