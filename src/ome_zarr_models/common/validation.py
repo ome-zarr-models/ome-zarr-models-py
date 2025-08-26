@@ -38,6 +38,11 @@ T = TypeVar("T")
 def unique_items_validator(values: list[T]) -> list[T]:
     """
     Make sure a list contains unique items.
+
+    Raises
+    ------
+    ValueError
+        If duplicate values are found in *values*.
     """
     for ind, value in enumerate(values, start=1):
         if value in values[ind:]:
@@ -74,7 +79,7 @@ def check_array_path(
 
     Returns
     -------
-    ArraySpec :
+    ArraySpec
         If the path exists, it's ArraySpec is returned.
 
     Raises
@@ -143,14 +148,14 @@ def check_array_spec(
 
     Raises
     ------
-    RuntimeError :
-        If path is a group.
+    ValueError
+        If the node at *path* is not an array.
     """
     if spec.members is None:
-        raise RuntimeError(f"members=None for {spec}")
+        raise ValueError(f"members=None for {spec}")
     new_spec = spec.members[path]
     if not isinstance(new_spec, ArraySpecv2 | ArraySpecv3):
-        raise RuntimeError(f"Node at path '{path}' is a group, expected an array")
+        raise ValueError(f"Node at path '{path}' is a group, expected an array")
     return new_spec
 
 
@@ -170,7 +175,7 @@ def check_group_spec(
 
     Raises
     ------
-    ValueError :
+    ValueError
         If the node at *path* is not a group.
     """
     if spec.members is None:

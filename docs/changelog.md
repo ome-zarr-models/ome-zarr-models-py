@@ -6,8 +6,9 @@
 
 - `ome_zarr_models.common.image_label_types.Label` has moved to [ome_zarr_models.v04.image_label_types.Label][].
 - [ome_zarr_models.common.validation.check_array_path][] now takes a mandatory `expected_zarr_version` keyword-only argument.
-- [ome_zarr_models.common.validation.check_group_spec][] raises a `ValueError` instead of a `RuntimeError`.
-- ## 0.1.10
+- [ome_zarr_models.common.validation.check_group_spec][] and [ome_zarr_models.common.validation.check_array_spec][] raise a `ValueError` instead of a `RuntimeError`.
+
+## 0.1.10
 
 ### Bug fixes
 
