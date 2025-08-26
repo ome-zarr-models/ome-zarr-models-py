@@ -2,17 +2,13 @@ import re
 
 import numpy as np
 import pytest
-from pydantic import ValidationError
 from zarr.abc.store import Store
 
 from ome_zarr_models.v05.labels import Labels, LabelsAttrs
-from tests.conftest import UnlistableStore
 from tests.v05.conftest import json_to_zarr_group
 
 
 def test_labels(store: Store) -> None:
-    if isinstance(store, UnlistableStore):
-        pytest.xfail("Labels does not work on unlistable stores")
     zarr_group = json_to_zarr_group(json_fname="labels_example.json", store=store)
     image_group = zarr_group.create_group("cell_space_segmentation")
     image_group.attrs.put(
@@ -29,11 +25,9 @@ def test_labels(store: Store) -> None:
 
 
 def test_labels_no_images(store: Store) -> None:
-    if isinstance(store, UnlistableStore):
-        pytest.xfail("Labels does not work on unlistable stores")
     zarr_group = json_to_zarr_group(json_fname="labels_example.json", store=store)
     with pytest.raises(
-        ValidationError,
+        ValueError,
         match="Label path 'cell_space_segmentation' not found in zarr group",
     ):
         Labels.from_zarr(zarr_group)
@@ -43,8 +37,6 @@ def test_labels_invalid_dtype(store: Store) -> None:
     """
     Check that an invalid data type raises an error.
     """
-    if isinstance(store, UnlistableStore):
-        pytest.xfail("Labels does not work on unlistable stores")
     zarr_group = json_to_zarr_group(json_fname="labels_example.json", store=store)
     image_group = zarr_group.create_group("cell_space_segmentation")
     image_group.attrs.put(
