@@ -14,7 +14,7 @@ from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.labels import Labels
 from ome_zarr_models.v04.multiscales import Dataset, Multiscale
-from ome_zarr_models.v05.omero import Omero
+from ome_zarr_models.v04.omero import Omero
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
