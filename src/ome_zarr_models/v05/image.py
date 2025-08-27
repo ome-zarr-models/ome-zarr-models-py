@@ -50,9 +50,10 @@ class Image(BaseGroupv05[ImageAttrs]):
 
         if "ome" not in group_spec.attributes:
             raise RuntimeError(f"Did not find 'ome' key in {group} attributes")
-        multi_meta = ImageAttrs.model_validate(group_spec.attributes["ome"])
+        image_attrs = ImageAttrs.model_validate(group_spec.attributes["ome"])
+
         members_tree_flat: dict[str, AnyGroupSpec | AnyArraySpec] = {}
-        for multiscale in multi_meta.multiscales:
+        for multiscale in image_attrs.multiscales:
             for dataset in multiscale.datasets:
                 array_path = f"{group.path}/{dataset.path}"
                 array_spec = check_array_path(
