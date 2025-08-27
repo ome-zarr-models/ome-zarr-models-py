@@ -35,7 +35,7 @@ class ImageLabel(
         Parameters
         ----------
         group : zarr.Group
-            A Zarr group that has valid OME-NGFF image label metadata.
+            A Zarr group that has valid OME-Zarr image label metadata.
         """
         # Use Image.from_zarr() to validate multiscale metadata
         Image.from_zarr(group, depth=depth)
