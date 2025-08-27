@@ -86,7 +86,7 @@ class Labels(
     @classmethod
     def from_zarr(cls, group: zarr.Group, *, depth: int = -1) -> Self:
         """
-        Create an instance of an OME-Zarr image from a `zarr.Group`.
+        Create an OME-Zarr labels model from a `zarr.Group`.
 
         Parameters
         ----------

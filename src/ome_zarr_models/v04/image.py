@@ -44,12 +44,12 @@ class Image(BaseGroupv04[ImageAttrs]):
     @classmethod
     def from_zarr(cls, group: zarr.Group, *, depth: int = -1) -> Self:
         """
-        Create an instance of an OME-Zarr image from a `zarr.Group`.
+        Create an OME-Zarr image model from a `zarr.Group`.
 
         Parameters
         ----------
         group : zarr.Group
-            A Zarr group that has valid OME-NGFF image metadata.
+            A Zarr group that has valid OME-Zarr image metadata.
         depth : int
             Currently not used.
         """
