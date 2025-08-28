@@ -1,9 +1,7 @@
-import pytest
 from zarr.abc.store import Store
 
 from ome_zarr_models.v04.image import Image
 from ome_zarr_models.v04.labels import LabelsAttrs
-from tests.conftest import UnlistableStore
 from tests.v04.conftest import json_to_zarr_group
 
 
