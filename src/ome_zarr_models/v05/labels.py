@@ -84,7 +84,7 @@ class Labels(
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group, *, depth: int = -1) -> Self:
+    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
         """
         Create an OME-Zarr labels model from a `zarr.Group`.
 
@@ -95,12 +95,12 @@ class Labels(
         """
         from ome_zarr_models.v05.image import Image
 
-        ret = super().from_zarr(group, depth=depth)
+        ret = super().from_zarr(group)
 
         # Check all labels paths are valid multiscales
         for label_path in ret.attributes.ome.labels:
             try:
-                Image.from_zarr(group[label_path], depth=depth)  # type: ignore[arg-type]
+                Image.from_zarr(group[label_path])  # type: ignore[arg-type]
             except Exception as err:
                 msg = (
                     f"Error validating the label path '{label_path}' "

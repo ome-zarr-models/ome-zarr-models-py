@@ -42,7 +42,7 @@ class Image(BaseGroupv04[ImageAttrs]):
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group, *, depth: int = -1) -> Self:
+    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
         """
         Create an OME-Zarr image model from a `zarr.Group`.
 
@@ -50,8 +50,6 @@ class Image(BaseGroupv04[ImageAttrs]):
         ----------
         group : zarr.Group
             A Zarr group that has valid OME-Zarr image metadata.
-        depth : int
-            Currently not used.
         """
         # on unlistable storage backends, the members of this group will be {}
         group_spec: AnyGroupSpec = GroupSpec.from_zarr(group, depth=0)

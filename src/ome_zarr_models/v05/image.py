@@ -36,7 +36,7 @@ class Image(BaseGroupv05[ImageAttrs]):
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group, *, depth: int = -1) -> Self:
+    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
         """
         Create an OME-Zarr image model from a `zarr.Group`.
 
