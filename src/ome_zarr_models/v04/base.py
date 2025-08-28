@@ -22,11 +22,6 @@ class BaseGroupv04(BaseGroup, GroupSpec[T, TBaseItem], Generic[T]):
         ----------
         group : zarr.Group
             A Zarr group that has valid OME-Zarr image metadata.
-
-        Notes
-        -----
-        Creating models from unlistable stores is currently unsupported for this
-        OME-Zarr model class.
         """
         return super().from_zarr(group)
 
