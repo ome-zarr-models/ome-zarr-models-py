@@ -66,7 +66,7 @@ class Image(BaseGroupv04[ImageAttrs]):
 
         try:
             labels_group = zarr.open_group(store=group.store, path="labels", mode="r")
-            members_tree_flat["/labels"] = GroupSpec.from_zarr(labels_group)
+            members_tree_flat["/labels"] = Labels.from_zarr(labels_group)
         except zarr.errors.GroupNotFoundError:
             pass
 
