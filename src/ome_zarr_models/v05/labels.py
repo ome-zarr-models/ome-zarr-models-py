@@ -1,4 +1,4 @@
-from typing import Any, Self
+from typing import TYPE_CHECKING, Any, Self
 
 import numpy as np
 import zarr
@@ -8,6 +8,9 @@ from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
 from ome_zarr_models.common.validation import check_array_spec, check_group_spec
 from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs
+
+if TYPE_CHECKING:
+    from ome_zarr_models.v05.image import Image
 
 __all__ = ["Labels", "LabelsAttrs"]
 
@@ -105,23 +108,45 @@ class Labels(
         for label_path in label_attrs.labels:
             try:
                 image_group = zarr.open_group(
-                    store=group.store, path=label_path, mode="r"
+                    store=group.store_path / label_path, mode="r"
                 )
-                image_model = Image.from_zarr(image_group).to_flat()
-                for path in image_model:
-                    members_tree_flat["/" + label_path + path] = image_model[path]
             except zarr.errors.GroupNotFoundError as err:
                 raise ValueError(
                     f"Label path '{label_path}' not found in zarr group"
                 ) from err
+            try:
+                image_model = Image.from_zarr(image_group).to_flat()
             except Exception as err:
                 msg = (
                     f"Error validating the label path '{label_path}' "
                     "as a OME-Zarr multiscales group."
                 )
                 raise RuntimeError(msg) from err
+            for path in image_model:
+                members_tree_flat["/" + label_path + path] = image_model[path]
 
         members_normalized: AnyGroupSpec = GroupSpec.from_flat(members_tree_flat)
         return cls(attributes=attrs_dict, members=members_normalized.members)
 
     _check_valid_dtypes = model_validator(mode="after")(_check_valid_dtypes)
+
+    @property
+    def label_paths(self) -> list[str]:
+        """
+        List of paths to image-label groups within this labels group.
+        """
+        return self.attributes.ome.labels
+
+    def get_image_labels_group(self, path: str) -> "Image":
+        """
+        Get a image labels group at a given path.
+        """
+        from ome_zarr_models.v05.image import Image
+
+        if self.members is None:
+            raise RuntimeError(f"{self.members=}")
+        spec = self.members[path]
+        if not isinstance(spec, GroupSpec):
+            raise RuntimeError(f"Node at {path} is not a group")
+
+        return Image(attributes=spec.attributes, members=spec.members)

@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import TypeVar
+from typing import Any, TypeVar
 
 import zarr
 import zarr.storage
@@ -9,6 +9,11 @@ from zarr.abc.store import Store
 from ome_zarr_models.base import BaseAttrs
 
 T = TypeVar("T", bound=BaseAttrs)
+
+
+def json_to_dict(*, json_fname: str) -> Any:
+    with open(Path(__file__).parent / "data" / json_fname) as f:
+        return json.load(f)
 
 
 def read_in_json(*, json_fname: str, model_cls: type[T]) -> T:
