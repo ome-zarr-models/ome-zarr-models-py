@@ -5,14 +5,15 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pytest
+import zarr
 from pydantic import ValidationError
-from pydantic_zarr.v3 import AnyGroupSpec, ArraySpec, GroupSpec
+from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, ArraySpec, GroupSpec
 
 from ome_zarr_models.common.coordinate_transformations import (
     _build_transforms,
 )
-from ome_zarr_models.v04.axes import Axis
-from ome_zarr_models.v04.coordinate_transformations import (
+from ome_zarr_models.v05.axes import Axis
+from ome_zarr_models.v05.coordinate_transformations import (
     VectorScale,
     VectorTranslation,
 )
@@ -402,10 +403,16 @@ def test_multiscale_group_missing_arrays() -> None:
     """
     Test that creating a multiscale group fails when an expected Zarr array is missing
     """
-    arrays = np.zeros((10, 10)), np.zeros((5, 5))
+    arrays = (
+        zarr.zeros((10, 10)),
+        zarr.zeros((5, 5)),
+    )
     array_names = ("s0", "s1")
+    array_specs: list[AnyArraySpec] = [
+        ArraySpec.from_array(a, dimension_names=["x", "y"]) for a in arrays
+    ]
     group_model = Image.new(
-        array_specs=[ArraySpec.from_array(a) for a in arrays],
+        array_specs=array_specs,
         axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
         paths=array_names,
         scales=((1, 1), (2, 2)),
@@ -430,10 +437,15 @@ def test_multiscale_group_ectopic_group() -> None:
     Test that creating a multiscale group fails when an expected Zarr array
     is actually a group
     """
-    arrays = np.zeros((10, 10)), np.zeros((5, 5))
+    arrays = (
+        zarr.zeros((10, 10)),
+        zarr.zeros((5, 5)),
+    )
     array_names = ("s0", "s1")
     group_model = Image.new(
-        array_specs=[ArraySpec.from_array(a) for a in arrays],
+        array_specs=[
+            ArraySpec.from_array(a, dimension_names=["x", "y"]) for a in arrays
+        ],
         axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
         paths=array_names,
         scales=((1, 1), (2, 2)),
@@ -471,7 +483,9 @@ def test_from_zarr_missing_array(store: Store) -> None:
     group_path = "broken"
     arrays_names = ("s0", "s1")
     group_model = Image.new(
-        array_specs=[ArraySpec.from_array(a) for a in arrays],
+        array_specs=[
+            ArraySpec.from_array(a, dimension_names=["x", "y"]) for a in arrays
+        ],
         axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
         paths=arrays_names,
         scales=((1, 1), (2, 2)),
@@ -496,7 +510,9 @@ def test_from_zarr_ectopic_group(store: Store) -> None:
     group_path = "broken"
     arrays_names = ("s0", "s1")
     group_model = Image.new(
-        array_specs=[ArraySpec.from_array(a) for a in arrays],
+        array_specs=[
+            ArraySpec.from_array(a, dimension_names=["x", "y"]) for a in arrays
+        ],
         axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
         paths=arrays_names,
         scales=((1, 1), (2, 2)),
