@@ -1,3 +1,5 @@
+from zarr.abc.store import Store
+
 from ome_zarr_models.v05.axes import Axis
 from ome_zarr_models.v05.coordinate_transformations import VectorScale
 from ome_zarr_models.v05.image import Image, ImageAttrs
@@ -5,8 +7,8 @@ from ome_zarr_models.v05.multiscales import Dataset, Multiscale
 from tests.v05.conftest import json_to_zarr_group
 
 
-def test_image() -> None:
-    zarr_group = json_to_zarr_group(json_fname="image_example.json")
+def test_image(store: Store) -> None:
+    zarr_group = json_to_zarr_group(json_fname="image_example.json", store=store)
     zarr_group.create_array(
         "0",
         shape=(1, 1, 1, 1, 1),

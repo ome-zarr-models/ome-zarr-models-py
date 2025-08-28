@@ -3,6 +3,7 @@ import re
 import numpy as np
 import pytest
 from pydantic_zarr.v2 import ArraySpec
+from zarr.abc.store import Store
 
 from ome_zarr_models.common.coordinate_transformations import VectorTranslation
 from ome_zarr_models.v04.axes import Axis
@@ -12,8 +13,8 @@ from ome_zarr_models.v04.multiscales import Dataset, Multiscale
 from tests.v04.conftest import json_to_zarr_group
 
 
-def test_image() -> None:
-    zarr_group = json_to_zarr_group(json_fname="multiscales_example.json")
+def test_image(store: Store) -> None:
+    zarr_group = json_to_zarr_group(json_fname="multiscales_example.json", store=store)
     zarr_group.create_array(
         "0",
         shape=(1, 1, 1, 1),

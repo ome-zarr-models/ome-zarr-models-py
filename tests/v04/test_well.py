@@ -1,10 +1,16 @@
+import pytest
+from zarr.abc.store import Store
+
 from ome_zarr_models.v04.well import Well, WellAttrs
 from ome_zarr_models.v04.well_types import WellImage, WellMeta
+from tests.conftest import UnlistableStore
 from tests.v04.conftest import json_to_zarr_group
 
 
-def test_well() -> None:
-    zarr_group = json_to_zarr_group(json_fname="well_example_1.json")
+def test_well(store: Store) -> None:
+    if isinstance(store, UnlistableStore):
+        pytest.xfail("ImageLabel does not work on unlistable stores")
+    zarr_group = json_to_zarr_group(json_fname="well_example_1.json", store=store)
     ome_group = Well.from_zarr(zarr_group)
     assert ome_group.attributes == WellAttrs(
         well=WellMeta(
@@ -18,7 +24,7 @@ def test_well() -> None:
         )
     )
 
-    zarr_group = json_to_zarr_group(json_fname="well_example_2.json")
+    zarr_group = json_to_zarr_group(json_fname="well_example_2.json", store=store)
     ome_group = Well.from_zarr(zarr_group)
     assert ome_group.attributes == WellAttrs(
         well=WellMeta(

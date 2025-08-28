@@ -2,14 +2,20 @@ import re
 
 import pytest
 from pydantic import ValidationError
+from zarr.abc.store import Store
 
 from ome_zarr_models.v05.hcs import HCS
 from ome_zarr_models.v05.plate import Acquisition, Column, Plate, Row, WellInPlate
+from tests.conftest import UnlistableStore
 from tests.v05.conftest import json_to_zarr_group
 
 
-def test_example_plate_json() -> None:
-    hcs: HCS = HCS.from_zarr(json_to_zarr_group(json_fname="plate_example_1.json"))
+def test_example_plate_json(store: Store) -> None:
+    if isinstance(store, UnlistableStore):
+        pytest.xfail("HCS does not work on unlistable stores")
+    hcs: HCS = HCS.from_zarr(
+        json_to_zarr_group(json_fname="plate_example_1.json", store=store)
+    )
     plate = hcs.ome_attributes.plate
     assert plate == Plate(
         acquisitions=[
@@ -46,8 +52,12 @@ def test_example_plate_json() -> None:
     )
 
 
-def test_example_plate_json_2() -> None:
-    hcs: HCS = HCS.from_zarr(json_to_zarr_group(json_fname="plate_example_2.json"))
+def test_example_plate_json_2(store: Store) -> None:
+    if isinstance(store, UnlistableStore):
+        pytest.xfail("HCS does not work on unlistable stores")
+    hcs: HCS = HCS.from_zarr(
+        json_to_zarr_group(json_fname="plate_example_2.json", store=store)
+    )
     plate = hcs.ome_attributes.plate
     assert plate == Plate(
         acquisitions=[
