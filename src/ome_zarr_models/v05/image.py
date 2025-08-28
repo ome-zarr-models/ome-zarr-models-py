@@ -61,8 +61,13 @@ class Image(BaseGroupv05[ImageAttrs]):
                 members_tree_flat["/" + dataset.path] = array_spec
 
         try:
-            labels_group = zarr.open_group(store=group.store, path="labels", mode="r")
-            members_tree_flat["/labels"] = GroupSpec.from_zarr(labels_group)
+            labels_group = zarr.open_group(store=group.store_path / "labels", mode="r")
+            labels = Labels.from_zarr(labels_group)
+            # members_tree_flat["/labels"] = labels
+            labels_flat = labels.to_flat()
+            for path in labels_flat:
+                members_tree_flat[f"/labels{path}"] = labels_flat[path]
+
         except zarr.errors.GroupNotFoundError:
             pass
 
@@ -237,6 +242,41 @@ class Image(BaseGroupv05[ImageAttrs]):
 
         return self
 
+    @model_validator(mode="after")
+    def _check_label_multiscales(self) -> Self:
+        """
+        Check that the number of multiscale levels in any labels are the same as
+        the base image.
+        """
+        if (labels := self.labels) is None:
+            return self
+
+        multimeta = self.ome_attributes.multiscales
+        if len(multimeta) != 1:
+            # If there's more than one multiscales, we can't check the labels
+            # levels because we don't know which multiscales to check against
+            # TODO: add a warning
+            return self
+
+        multiscales = multimeta[0]
+        n_levels = len(multiscales.datasets)
+        for path in labels.label_paths:
+            image_label = labels.get_image_labels_group(path)
+            if len(image_label.ome_attributes.multiscales) != 1:
+                # If there's more than one multiscales, we can't check the labels
+                # levels because we don't know which multiscales to check against
+                # TODO: add a warning
+                continue
+            else:
+                n_label_levels = len(image_label.ome_attributes.multiscales[0].datasets)
+                if n_levels != n_label_levels:
+                    raise RuntimeError(
+                        f"Number of image label multiscale levels ({n_label_levels}) "
+                        f"doesn't match number of image multiscale levels ({n_levels})."
+                    )
+
+        return self
+
     @property
     def labels(self) -> Labels | None:
         """
@@ -244,8 +284,6 @@ class Image(BaseGroupv05[ImageAttrs]):
 
         Returns None if no labels are present.
         """
-        from ome_zarr_models.v05.labels import Labels
-
         if self.members is None or "labels" not in self.members:
             return None
 
