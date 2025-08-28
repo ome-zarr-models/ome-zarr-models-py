@@ -16,7 +16,7 @@ class ImageLabelAttrs(BaseOMEAttrs):
     Attributes for an image label object.
     """
 
-    image_label: Label = Field(..., alias="image-label")
+    image_label: Label | None = Field(alias="image-label", default=None)
     multiscales: list[Multiscale]
 
 
@@ -38,5 +38,5 @@ class ImageLabel(
             A Zarr group that has valid OME-Zarr image label metadata.
         """
         # Use Image.from_zarr() to validate multiscale metadata
-        Image.from_zarr(group)
-        return super().from_zarr(group)
+        image = Image.from_zarr(group)
+        return cls(attributes=image.attributes.model_dump(), members=image.members)

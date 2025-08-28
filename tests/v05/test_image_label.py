@@ -103,4 +103,5 @@ def test_image_label(store: Store) -> None:
             )
         ],
         version="0.5",
+        omero=None,
     )
