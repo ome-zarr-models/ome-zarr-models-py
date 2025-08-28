@@ -1,6 +1,6 @@
 # ome-zarr-models
 
-A Python package that provides validation and a Pythonic interface for OME-Zarr datasets.
+A Python package for loading and validating OME-Zarr data.
 
 ## Installing
 
@@ -16,11 +16,9 @@ conda install -c conda-forge ome-zarr-models
 
 ## Getting started
 
-Useful places to get started are:
-
-- [The tutorial](tutorial.py), which gives a worked example of using this package
-- [How do I...?](how-to.md), which explains how to do common tasks
-- [The API reference](api/index.md), which explains how this package is structured
+- [The tutorial](tutorial.py) gives a worked example of using this package
+- [How do I...?](how-to.md) explains how to do common tasks
+- [The API reference](api/index.md) explains how this package is structured
 
 ## Design
 
@@ -29,11 +27,13 @@ This package has been designed with the following guiding principles:
 - Strict adherence to the [OME-Zarr specification](https://ngff.openmicroscopy.org/), with the goal of being a reference implementation.
 - A usable set of Python classes for reading, writing, and interacting with OME-Zarr metadata.
 - The ability to work with multiple versions of the OME-Zarr spec at the same time.
-- Array reading and writing operations are out of scope.
+
+Array reading and writing operations are out of scope, although the classes defined here make it easy to read array data from OME-Zarr groups.
 
 ## Getting help
 
-Developers of this package are active on our [Zulip chat channel](https://imagesc.zulipchat.com/#narrow/channel/469152-ome-zarr-models-py), which is a great place for asking questions and getting help.
+Developers of this package are active on the [Zulip chat channel](https://imagesc.zulipchat.com/#narrow/channel/469152-ome-zarr-models-py), and happy to help.
+Issues can also be opened on the [GitHub issue tracker](https://github.com/ome-zarr-models/ome-zarr-models-py/issues).
 
 ## zarr-python support
 
@@ -51,11 +51,8 @@ Versions 1.x of `ome-zarr-models` require `zarr-python` version 3, and support v
 
 ### OME-Zarr 0.5
 
-_Note:_ support for OME-Zarr 0.5 is not complete, but when it is the following issues will apply:
-
-- Since the first release of OME-Zarr 0.5 (commit [8a0f886](https://github.com/ome/ngff/tree/8a0f886aac791060e329874b624126d3530c2b6f)), the specification has edited without the version number in OME-Zarr datasets being changed.
-  A diff between the 'current' 0.5 specification and 'original' 0.5 specification [can be seen here](https://github.com/ome/ngff/compare/0.5.0...main#diff-6e0c0575683d2ac5c07564e6828e9c71ae3b93b6eacc36575055150af6c5ef73).
-  As an implementation we have no way of knowing which version of the specification data that contains version "0.5" was written to, so **we have chosen to validate against the original release of OME-Zarr 0.5** (commit [8a0f886](https://github.com/ome/ngff/tree/8a0f886aac791060e329874b624126d3530c2b6f)). As of writing, this means `ome-zarr-models` does not validate omero metadata, and does not require the "dimension_names" attribute to be present in multiscale Zarr array metadata.
+- Since the first release of the OME-Zarr version 0.5 specification (commit [8a0f886](https://github.com/ome/ngff/tree/8a0f886aac791060e329874b624126d3530c2b6f)), the specification has been edited without the version number in OME-Zarr datasets being changed.
+  As an implementation we have no way of knowing which version of the specification data that contains version "0.5" was written to, so **we have chosen to validate against the original release of OME-Zarr 0.5** (commit [8a0f886](https://github.com/ome/ngff/tree/8a0f886aac791060e329874b624126d3530c2b6f)).
 - For labels, [the OME-Zarr specification says](https://ngff.openmicroscopy.org/0.5/index.html#labels-md) "Intermediate groups between "labels" and the images within it are allowed, but these MUST NOT contain metadata.". Because it is not clear what "metadata" means in this sentence, we do not validate this part of the specification.
 
 ## Versioning
@@ -67,11 +64,9 @@ _Note:_ support for OME-Zarr 0.5 is not complete, but when it is the following i
 
 Minor versions are released often with new improvements and bugfixes.
 
-Before version 1.0 is released, the version number will be 0.major.minor, and version 1.0 will be released when support for version 0.5 of the OME-Zarr specification is complete.
-
 ## Roadmap
 
-- Support for OME-Zarr version 0.5.
+- Support for open OME-Zarr RFCs.
 - Emitting warnings when data violates "SHOULD" statements in the specification.
 
 Is something missing from this list?
