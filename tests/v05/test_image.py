@@ -1,3 +1,7 @@
+import re
+
+import pytest
+from pydantic import ValidationError
 from zarr.abc.store import Store
 
 from ome_zarr_models.v05.axes import Axis
@@ -13,9 +17,20 @@ def test_image(store: Store) -> None:
         "0",
         shape=(1, 1, 1, 1, 1),
         dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
     )
-    zarr_group.create_array("1", shape=(1, 1, 1, 1, 1), dtype="uint8")
-    zarr_group.create_array("2", shape=(1, 1, 1, 1, 1), dtype="uint8")
+    zarr_group.create_array(
+        "1",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
+    zarr_group.create_array(
+        "2",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
     ome_group = Image.from_zarr(zarr_group)
 
     assert ome_group.attributes.ome == ImageAttrs(
@@ -66,3 +81,57 @@ def test_image(store: Store) -> None:
         ],
         version="0.5",
     )
+
+
+def test_image_no_dim_names(store: Store) -> None:
+    zarr_group = json_to_zarr_group(json_fname="image_example.json", store=store)
+    zarr_group.create_array(
+        "0",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
+    arr1 = zarr_group.create_array("1", shape=(1, 1, 1, 1, 1), dtype="uint8")
+    assert arr1.metadata.dimension_names is None  # type: ignore[union-attr]
+    zarr_group.create_array(
+        "2",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
+    with pytest.raises(
+        ValidationError,
+        match="The array in this group at  '1' has no dimension_names metadata",
+    ):
+        Image.from_zarr(zarr_group)
+
+
+def test_image_wrong_dim_names(store: Store) -> None:
+    zarr_group = json_to_zarr_group(json_fname="image_example.json", store=store)
+    zarr_group.create_array(
+        "0",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
+    zarr_group.create_array(
+        "1",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "x", "y"],
+    )
+    zarr_group.create_array(
+        "2",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
+    with pytest.raises(
+        ValidationError,
+        match=re.escape(
+            "The multiscale metadata has ('t', 'c', 'z', 'y', 'x') axes names "
+            "which does not match the dimension names of the array "
+            "found in this group at path '1' (('t', 'c', 'z', 'x', 'y'))"
+        ),
+    ):
+        Image.from_zarr(zarr_group)

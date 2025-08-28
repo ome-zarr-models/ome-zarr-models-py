@@ -20,7 +20,12 @@ def test_labels(store: Store) -> None:
             json_fname="labels_image_example.json", store=store
         ).attrs.asdict()
     )
-    image_group.create_array("0", shape=(1, 1, 1, 1, 1), dtype=np.uint64)
+    image_group.create_array(
+        "0",
+        shape=(1, 1, 1, 1, 1),
+        dtype=np.uint64,
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
 
     ome_group = Labels.from_zarr(zarr_group)
     assert ome_group.attributes.ome == LabelsAttrs(
@@ -52,7 +57,12 @@ def test_labels_invalid_dtype(store: Store) -> None:
             json_fname="labels_image_example.json", store=store
         ).attrs.asdict()
     )
-    image_group.create_array("0", shape=(1, 1, 1, 1, 1), dtype=np.float32)
+    image_group.create_array(
+        "0",
+        shape=(1, 1, 1, 1, 1),
+        dtype=np.float32,
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
 
     with pytest.raises(
         ValueError,

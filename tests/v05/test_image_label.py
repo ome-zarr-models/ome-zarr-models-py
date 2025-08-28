@@ -14,9 +14,24 @@ def test_image_label(store: Store) -> None:
     if isinstance(store, UnlistableStore):
         pytest.xfail("ImageLabel does not work on unlistable stores")
     zarr_group = json_to_zarr_group(json_fname="image_label_example.json", store=store)
-    zarr_group.create_array("0", shape=(1, 1, 1, 1, 1), dtype="uint8")
-    zarr_group.create_array("1", shape=(1, 1, 1, 1, 1), dtype="uint8")
-    zarr_group.create_array("2", shape=(1, 1, 1, 1, 1), dtype="uint8")
+    zarr_group.create_array(
+        "0",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
+    zarr_group.create_array(
+        "1",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
+    zarr_group.create_array(
+        "2",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
     ome_group = ImageLabel.from_zarr(zarr_group)
     assert ome_group.attributes.ome == ImageLabelAttrs(
         image_label=Label(
