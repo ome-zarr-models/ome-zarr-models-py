@@ -66,7 +66,7 @@ class Image(BaseGroupv04[ImageAttrs]):
 
         try:
             labels_group = zarr.open_group(store=group.store, path="labels", mode="r")
-            members_tree_flat["/labels"] = GroupSpec.from_zarr(labels_group)
+            members_tree_flat["/labels"] = GroupSpec.from_zarr(labels_group, depth=0)
         except zarr.errors.GroupNotFoundError:
             pass
 
@@ -222,9 +222,9 @@ class Image(BaseGroupv04[ImageAttrs]):
     @property
     def labels(self) -> Labels | None:
         """
-        Any labels datasets contained in this image group.
+        Labels group contained within this image group.
 
-        Returns None if no labels are present.
+        Returns `None` if no labels are present.
 
         Raises
         ------

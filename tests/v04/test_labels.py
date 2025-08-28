@@ -8,9 +8,6 @@ from tests.v04.conftest import json_to_zarr_group
 
 
 def test_image_with_labels(store: Store) -> None:
-    if isinstance(store, UnlistableStore):
-        pytest.xfail("Labels do not work on unlistable stores")
-
     zarr_group = json_to_zarr_group(json_fname="multiscales_example.json", store=store)
     zarr_group.create_group("labels")
     zarr_group["labels"].create_array("labels0", shape=(1, 1), dtype="uint8")  # type: ignore[union-attr]
