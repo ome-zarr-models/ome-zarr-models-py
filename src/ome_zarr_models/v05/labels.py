@@ -2,7 +2,9 @@ from typing import Any, Self
 
 import numpy as np
 import zarr
+import zarr.errors
 from pydantic import Field, ValidationError, model_validator
+from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
 from ome_zarr_models.common.validation import check_array_spec, check_group_spec
 from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs
@@ -95,12 +97,23 @@ class Labels(
         """
         from ome_zarr_models.v05.image import Image
 
-        ret = super().from_zarr(group)
+        attrs_dict = group.attrs.asdict()
+        label_attrs = LabelsAttrs.model_validate(group.attrs.asdict()["ome"])
 
-        # Check all labels paths are valid multiscales
-        for label_path in ret.attributes.ome.labels:
+        # Extract Zarr Image paths from multiscale metadata
+        members_tree_flat: dict[str, AnyGroupSpec | AnyArraySpec] = {}
+        for label_path in label_attrs.labels:
             try:
-                Image.from_zarr(group[label_path])  # type: ignore[arg-type]
+                image_group = zarr.open_group(
+                    store=group.store, path=label_path, mode="r"
+                )
+                image_model = Image.from_zarr(image_group).to_flat()
+                for path in image_model:
+                    members_tree_flat["/" + label_path + path] = image_model[path]
+            except zarr.errors.GroupNotFoundError as err:
+                raise ValueError(
+                    f"Label path '{label_path}' not found in zarr group"
+                ) from err
             except Exception as err:
                 msg = (
                     f"Error validating the label path '{label_path}' "
@@ -108,6 +121,7 @@ class Labels(
                 )
                 raise RuntimeError(msg) from err
 
-        return ret
+        members_normalized: AnyGroupSpec = GroupSpec.from_flat(members_tree_flat)
+        return cls(attributes=attrs_dict, members=members_normalized.members)
 
     _check_valid_dtypes = model_validator(mode="after")(_check_valid_dtypes)
