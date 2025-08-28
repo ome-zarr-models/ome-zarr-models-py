@@ -10,7 +10,6 @@ from ome_zarr_models.common.validation import check_array_spec, check_group_spec
 from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs
 
 if TYPE_CHECKING:
-    from ome_zarr_models.v05.image import Image
     from ome_zarr_models.v05.image_label import ImageLabel
 
 
