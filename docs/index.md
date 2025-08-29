@@ -12,7 +12,11 @@ The core of this package is a set of classes for representing different OME-Zarr
 | [`ImageLabel`][ome_zarr_models.v05.ImageLabel] | [`ImageLabel`][ome_zarr_models.v04.ImageLabel] |
 | [`Well`][ome_zarr_models.v05.Well]             | [`Well`][ome_zarr_models.v04.Well]             |
 
-Each class has a `.from_zarr()` method to read and validate groups, and a `.to_zarr()` method to write out metadata to Zarr groups.
+Each class has
+
+- a `.from_zarr()` method to read and validate groups
+- easy access to all the OME-Zarr metadata
+- a `.to_zarr()` method to write out metadata to Zarr groups.
 
 ## Installing
 
