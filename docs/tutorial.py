@@ -23,7 +23,6 @@ from ome_zarr_models.v05.image import Image
 zarr_group = zarr.open_group(
     "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr",
     mode="r",
-    zarr_format=3,
 )
 # If you're not sure what type or OME-Zarr version of data you have, you can
 # use `open_ome_zarr()` to automatically 'guess' the correct group:
@@ -63,7 +62,6 @@ pprint(zarr_arr)
 # To finish off this section on accessing data, lets plot this image:
 
 plt.imshow(zarr_arr, cmap="gray")
-plt.show()
 
 # ## Creating new datasets
 #
