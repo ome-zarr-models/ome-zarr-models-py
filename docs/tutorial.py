@@ -124,7 +124,7 @@ ome_zarr_image = Image.new(
     scales=[[p * 1 for p in pixel_size], [p * 2 for p in pixel_size]],
     translations=[[0, 0], [p * 0.5 for p in pixel_size]],
 )
-print(ome_zarr_image)
+pprint(ome_zarr_image)
 
 # It's also possible to create array metadata from existing arrays.
 #
