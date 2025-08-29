@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generic, Literal, Self, TypeVar, Union
 
+import pydantic_zarr
+import pydantic_zarr.v3
 from pydantic import BaseModel
-from pydantic_zarr.v3 import ArraySpec, GroupSpec
 
 from ome_zarr_models.base import BaseAttrs, BaseGroup
 
@@ -19,7 +20,7 @@ class BaseOMEAttrs(BaseAttrs):
     version: Literal["0.5"]
 
 
-T = TypeVar("T", bound="BaseOMEAttrs")
+T = TypeVar("T", bound=BaseOMEAttrs)
 
 
 class BaseZarrAttrs(BaseModel, Generic[T]):
@@ -32,7 +33,10 @@ class BaseZarrAttrs(BaseModel, Generic[T]):
 
 class BaseGroupv05(
     BaseGroup,
-    GroupSpec[BaseZarrAttrs[T], Union["GroupSpec", "ArraySpec"]],  # type: ignore[type-arg]
+    pydantic_zarr.v3.GroupSpec[
+        BaseZarrAttrs[T],
+        Union["pydantic_zarr.v3.GroupSpec", "pydantic_zarr.v3.ArraySpec"],  # type: ignore[type-arg]
+    ],
     Generic[T],
 ):
     """

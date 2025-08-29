@@ -1,5 +1,7 @@
 from typing import Self
 
+# Import needed for pydantic type resolution
+import pydantic_zarr  # noqa: F401
 import zarr
 from pydantic import Field
 

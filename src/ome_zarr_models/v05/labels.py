@@ -1,6 +1,9 @@
 from typing import TYPE_CHECKING, Any, Self
 
 import numpy as np
+
+# Import needed for pydantic type resolution
+import pydantic_zarr  # noqa: F401
 import zarr
 import zarr.errors
 from pydantic import Field, ValidationError, model_validator

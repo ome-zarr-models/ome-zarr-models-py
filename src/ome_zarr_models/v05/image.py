@@ -1,6 +1,8 @@
 from collections.abc import Sequence
 from typing import Any, Self
 
+# Import needed for pydantic type resolution
+import pydantic_zarr  # noqa: F401
 import zarr
 import zarr.errors
 from pydantic import Field, JsonValue, model_validator
