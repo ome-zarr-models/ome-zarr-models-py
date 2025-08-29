@@ -1,6 +1,8 @@
 from collections.abc import Generator, Mapping
 from typing import Self
 
+# Import needed for pydantic type resolution
+import pydantic_zarr  # noqa: F401
 from pydantic import model_validator
 from pydantic_zarr.v3 import GroupSpec
 
