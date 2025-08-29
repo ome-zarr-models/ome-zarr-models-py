@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import zarr
 import zarr.storage
-from pydantic_zarr.v3 import AnyArraySpec, ArraySpec
+from pydantic_zarr.v3 import AnyArraySpec, ArraySpec, NamedConfig
 from rich.pretty import pprint
 
 from ome_zarr_models import open_ome_zarr
@@ -63,6 +63,7 @@ pprint(zarr_arr)
 # To finish off this section on accessing data, lets plot this image:
 
 plt.imshow(zarr_arr, cmap="gray")
+plt.show()
 
 # ## Creating new datasets
 #
@@ -78,8 +79,34 @@ plt.imshow(zarr_arr, cmap="gray")
 
 
 array_specs: list[AnyArraySpec] = [
-    ArraySpec(shape=(100, 100), chunks=(32, 32), dtype=np.uint16),
-    ArraySpec(shape=(50, 50), chunks=(32, 32), dtype=np.uint16),
+    ArraySpec(
+        shape=(100, 100),
+        data_type=np.uint16,
+        chunk_grid=NamedConfig(
+            name="regular",
+            configuration={"chunk_shape": [32, 32]},
+        ),
+        chunk_key_encoding=NamedConfig(
+            name="default", configuration={"separator": "/"}
+        ),
+        fill_value=0,
+        codecs=[NamedConfig(name="bytes")],
+        dimension_names=["y", "x"],
+    ),
+    ArraySpec(
+        shape=(100, 100),
+        data_type=np.uint16,
+        chunk_grid=NamedConfig(
+            name="regular",
+            configuration={"chunk_shape": [32, 32]},
+        ),
+        chunk_key_encoding=NamedConfig(
+            name="default", configuration={"separator": "/"}
+        ),
+        fill_value=0,
+        codecs=[NamedConfig(name="bytes")],
+        dimension_names=["y", "x"],
+    ),
 ]
 
 # Next, we'll set some metadata values
