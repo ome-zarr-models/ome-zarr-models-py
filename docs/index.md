@@ -2,6 +2,18 @@
 
 A Python package for loading and validating OME-Zarr data.
 
+The core of this package is a set of classes for representing different OME-Zarr groups:
+
+| OME-Zarr 0.5                                   | OME-Zarr 0.4                                   |
+| ---------------------------------------------- | ---------------------------------------------- |
+| [`HCS`][ome_zarr_models.v05.HCS]               | [`HCS`][ome_zarr_models.v04.HCS]               |
+| [`Image`][ome_zarr_models.v05.Image]           | [`Image`][ome_zarr_models.v04.Image]           |
+| [`Labels`][ome_zarr_models.v05.Labels]         | [`Labels`][ome_zarr_models.v04.Labels]         |
+| [`ImageLabel`][ome_zarr_models.v05.ImageLabel] | [`ImageLabel`][ome_zarr_models.v04.ImageLabel] |
+| [`Well`][ome_zarr_models.v05.Well]             | [`Well`][ome_zarr_models.v04.Well]             |
+
+Each class has a `.from_zarr()` method to read and validate groups, and a `.to_zarr()` method to write out metadata to Zarr groups.
+
 ## Installing
 
 ```sh
