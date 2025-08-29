@@ -48,7 +48,7 @@ pprint(metadata)
 # And as an example of getting more specific metadata, lets get the metadata
 # for all the datasets in this multiscales:
 
-pprint(metadata.multiscales[0].datasets)
+pprint(ome_zarr_image.datasets[0])
 
 # ## Accessing data
 #
@@ -56,7 +56,7 @@ pprint(metadata.multiscales[0].datasets)
 # the Zarr arrays using the `zarr-python` library.
 # For example, to get the highest resolution image:
 
-zarr_arr = zarr_group[metadata.multiscales[0].datasets[3].path]
+zarr_arr = zarr_group[ome_zarr_image.datasets[0][3].path]
 pprint(zarr_arr)
 
 # To finish off this section on accessing data, lets plot this image:
