@@ -21,6 +21,7 @@ class Axis(BaseAttrs):
 
     name: str | None = None
     type: str | None = None
+    # Unit probably intended to be str, but the spec doesn't explicitly specify
     unit: str | JsonValue | None = None
 
 
