@@ -2,16 +2,20 @@ from importlib.metadata import PackageNotFoundError, version
 from typing import Any
 
 import zarr
-from pydantic import ValidationError
 
 import ome_zarr_models.v04.hcs
 import ome_zarr_models.v04.image
 import ome_zarr_models.v04.image_label
 import ome_zarr_models.v04.labels
 import ome_zarr_models.v04.well
-import ome_zarr_models.v05
+import ome_zarr_models.v05.hcs
+import ome_zarr_models.v05.image
+import ome_zarr_models.v05.image_label
+import ome_zarr_models.v05.labels
+import ome_zarr_models.v05.well
 from ome_zarr_models.base import BaseGroup
 from ome_zarr_models.v04.base import BaseGroupv04
+from ome_zarr_models.v05.base import BaseGroupv05
 
 try:
     __version__ = version("ome_zarr_models")
@@ -31,6 +35,18 @@ _V04_groups: list[type[BaseGroupv04[Any]]] = [
     ome_zarr_models.v04.well.Well,
 ]
 
+_V05_groups: list[type[BaseGroupv05[Any]]] = [
+    ome_zarr_models.v05.hcs.HCS,
+    # Important that ImageLabel is higher than Image
+    # otherwise Image will happily parse an ImageLabel
+    # dataset without parsing the image-label bit of
+    # metadata
+    ome_zarr_models.v05.image_label.ImageLabel,
+    ome_zarr_models.v05.image.Image,
+    ome_zarr_models.v05.labels.Labels,
+    ome_zarr_models.v05.well.Well,
+]
+
 
 def open_ome_zarr(group: zarr.Group) -> BaseGroup:
     """
@@ -40,6 +56,8 @@ def open_ome_zarr(group: zarr.Group) -> BaseGroup:
     trying to validate each group metadata definition against your data.
     If validation is successful, that data class is returned without
     trying any more.
+
+    It tries more recent versions of OME-Zarr first.
 
     Parameters
     ----------
@@ -51,11 +69,11 @@ def open_ome_zarr(group: zarr.Group) -> BaseGroup:
     RuntimeError
         If the passed group cannot be validated with any of the OME-Zarr group models.
     """
-    group_cls: type[BaseGroupv04[Any]]
-    for group_cls in _V04_groups:
+    group_cls: type[BaseGroup]
+    for group_cls in _V05_groups + _V04_groups:
         try:
             return group_cls.from_zarr(group)
-        except ValidationError:
+        except Exception:
             continue
 
     raise RuntimeError(
