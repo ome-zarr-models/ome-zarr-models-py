@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import zarr
 
 from ome_zarr_models.common.omero import Channel, Omero, Window
@@ -10,11 +8,12 @@ from ome_zarr_models.v04.image import ImageAttrs
 from ome_zarr_models.v04.multiscales import Dataset, Multiscale
 from ome_zarr_models.v04.plate import Acquisition, Column, Plate, Row, WellInPlate
 from ome_zarr_models.v04.well_types import WellImage, WellMeta
+from tests.conftest import get_examples_path
 
 
 def test_example_hcs() -> None:
     group = zarr.open_group(
-        Path(__file__).parent / "data" / "hcs_example.ome.zarr", mode="r"
+        get_examples_path(version="0.4") / "hcs_example.ome.zarr", mode="r"
     )
     hcs: HCS = HCS.from_zarr(group)
     assert hcs.attributes == HCSAttrs(
