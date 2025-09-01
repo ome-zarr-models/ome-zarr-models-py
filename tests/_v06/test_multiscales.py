@@ -9,18 +9,18 @@ import zarr
 from pydantic import ValidationError
 from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, ArraySpec, GroupSpec
 
-from ome_zarr_models.common.coordinate_transformations import (
-    _build_transforms,
-)
-from ome_zarr_models.v06.axes import Axis
-from ome_zarr_models.v06.coordinate_transformations import (
+from ome_zarr_models._v06.axes import Axis
+from ome_zarr_models._v06.coordinate_transformations import (
     VectorScale,
     VectorTranslation,
 )
-from ome_zarr_models.v06.image import Image
-from ome_zarr_models.v06.multiscales import (
+from ome_zarr_models._v06.image import Image
+from ome_zarr_models._v06.multiscales import (
     Dataset,
     Multiscale,
+)
+from ome_zarr_models.common.coordinate_transformations import (
+    _build_transforms,
 )
 
 if TYPE_CHECKING:

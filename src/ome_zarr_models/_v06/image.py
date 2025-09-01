@@ -8,12 +8,12 @@ import zarr.errors
 from pydantic import Field, JsonValue, model_validator
 from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
+from ome_zarr_models._v06.axes import Axis
+from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs, BaseZarrAttrs
+from ome_zarr_models._v06.labels import Labels
+from ome_zarr_models._v06.multiscales import Dataset, Multiscale
 from ome_zarr_models.common.coordinate_transformations import _build_transforms
 from ome_zarr_models.common.validation import check_array_path
-from ome_zarr_models.v06.axes import Axis
-from ome_zarr_models.v06.base import BaseGroupv06, BaseOMEAttrs, BaseZarrAttrs
-from ome_zarr_models.v06.labels import Labels
-from ome_zarr_models.v06.multiscales import Dataset, Multiscale
 
 __all__ = ["Image", "ImageAttrs"]
 

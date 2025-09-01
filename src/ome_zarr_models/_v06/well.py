@@ -1,8 +1,8 @@
 # Import needed for pydantic type resolution
 import pydantic_zarr  # noqa: F401
 
-from ome_zarr_models.v06.base import BaseGroupv06, BaseOMEAttrs
-from ome_zarr_models.v06.well_types import WellMeta
+from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs
+from ome_zarr_models._v06.well_types import WellMeta
 
 __all__ = ["Well", "WellAttrs"]
 
