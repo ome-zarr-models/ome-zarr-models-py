@@ -18,9 +18,16 @@ If you think you've found an issue or bug with this package, please report it on
 The request for comment (RFC) process in the OME-Zarr spec allows major changes or additions to be proposed to the specification.
 We encourage RFC authors to implement OME-Zarr RFCs in this package, as a mechanism to see what the RFC looks like in practice before it is merged.
 
-For every OME-Zarr RFC we will open an issue.
-If you would like to implement it, please comment on that issue (so we can avoid duplication of work).
-Then submit the changes to `ome-zarr-models-py` required to implement the RFC as a PR, and mention the PR in a comment on the issue.
+For every OME-Zarr RFC we will open an issue and a new branch.
+If you would like to implement an RFC, please comment on that issue so we can avoid duplication of work.
+
+`ome-zarr-models` will always contain a in-progress implementation of the next version of OME-Zarr specification.
+RFC implementations should modify this version.
+In addition, please open implementation PRs against the RFC branch.
+
+We will review the work as normal, and then merge it into the RFC branch.
+This means the diff between the RFC branch and the `main` branch shows the implementation of the RFC.
+Once RFCs are accepted into the OME-Zarr specification, the RFC branch will be merged, adding support of that RFC to `ome-zarr-models`.
 
 ## Contributing code
 
