@@ -4,10 +4,10 @@ import pytest
 from pydantic import ValidationError
 from zarr.abc.store import Store
 
-from ome_zarr_models.v05.hcs import HCS
-from ome_zarr_models.v05.plate import Acquisition, Column, Plate, Row, WellInPlate
+from ome_zarr_models.v06.hcs import HCS
+from ome_zarr_models.v06.plate import Acquisition, Column, Plate, Row, WellInPlate
 from tests.conftest import UnlistableStore
-from tests.v05.conftest import json_to_zarr_group
+from tests.v06.conftest import json_to_zarr_group
 
 
 def test_example_plate_json(store: Store) -> None:
@@ -48,7 +48,7 @@ def test_example_plate_json(store: Store) -> None:
             WellInPlate(path="B/2", rowIndex=1, columnIndex=1),
             WellInPlate(path="B/3", rowIndex=1, columnIndex=2),
         ],
-        version="0.5",
+        version="0.6",
     )
 
 
@@ -100,7 +100,7 @@ def test_example_plate_json_2(store: Store) -> None:
             WellInPlate(path="C/5", rowIndex=2, columnIndex=4),
             WellInPlate(path="D/7", rowIndex=3, columnIndex=6),
         ],
-        version="0.5",
+        version="0.6",
     )
 
 

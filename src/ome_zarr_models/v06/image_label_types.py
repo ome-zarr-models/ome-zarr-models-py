@@ -17,4 +17,4 @@ class Label(LabelBase):
     Metadata for a single image-label.
     """
 
-    version: Literal["0.5"] | None = None
+    version: Literal["0.6"] | None = None

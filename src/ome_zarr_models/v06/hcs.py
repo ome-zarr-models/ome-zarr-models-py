@@ -7,9 +7,9 @@ from pydantic import model_validator
 from pydantic_zarr.v3 import GroupSpec
 
 from ome_zarr_models.common.well import WellGroupNotFoundError
-from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs
-from ome_zarr_models.v05.plate import Plate
-from ome_zarr_models.v05.well import Well
+from ome_zarr_models.v06.base import BaseGroupv06, BaseOMEAttrs
+from ome_zarr_models.v06.plate import Plate
+from ome_zarr_models.v06.well import Well
 
 __all__ = ["HCS", "HCSAttrs"]
 
@@ -22,7 +22,7 @@ class HCSAttrs(BaseOMEAttrs):
     plate: Plate
 
 
-class HCS(BaseGroupv05[HCSAttrs]):
+class HCS(BaseGroupv06[HCSAttrs]):
     """
     An OME-Zarr high content screening (HCS) dataset.
     """

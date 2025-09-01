@@ -1,10 +1,10 @@
 import pytest
 from zarr.abc.store import Store
 
-from ome_zarr_models.v05.hcs import HCS, HCSAttrs
-from ome_zarr_models.v05.plate import Acquisition, Column, Plate, Row, WellInPlate
+from ome_zarr_models.v06.hcs import HCS, HCSAttrs
+from ome_zarr_models.v06.plate import Acquisition, Column, Plate, Row, WellInPlate
 from tests.conftest import UnlistableStore
-from tests.v05.conftest import json_to_zarr_group
+from tests.v06.conftest import json_to_zarr_group
 
 
 def test_hcs(store: Store) -> None:
@@ -44,9 +44,9 @@ def test_hcs(store: Store) -> None:
                 WellInPlate(path="B/2", rowIndex=1, columnIndex=1),
                 WellInPlate(path="B/3", rowIndex=1, columnIndex=2),
             ],
-            version="0.5",
+            version="0.6",
         ),
-        version="0.5",
+        version="0.6",
     )
     well_groups = list(ome_group.well_groups)
     assert len(well_groups) == 0

@@ -5,10 +5,10 @@ import pydantic_zarr  # noqa: F401
 import zarr
 from pydantic import Field
 
-from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs
-from ome_zarr_models.v05.image import Image
-from ome_zarr_models.v05.image_label_types import Label
-from ome_zarr_models.v05.multiscales import Multiscale
+from ome_zarr_models.v06.base import BaseGroupv06, BaseOMEAttrs
+from ome_zarr_models.v06.image import Image
+from ome_zarr_models.v06.image_label_types import Label
+from ome_zarr_models.v06.multiscales import Multiscale
 
 __all__ = ["ImageLabel", "ImageLabelAttrs"]
 
@@ -23,7 +23,7 @@ class ImageLabelAttrs(BaseOMEAttrs):
 
 
 class ImageLabel(
-    BaseGroupv05[ImageLabelAttrs],
+    BaseGroupv06[ImageLabelAttrs],
 ):
     """
     An OME-Zarr image label dataset.

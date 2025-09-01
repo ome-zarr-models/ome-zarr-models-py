@@ -12,13 +12,13 @@ from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, ArraySpec, GroupSpec
 from ome_zarr_models.common.coordinate_transformations import (
     _build_transforms,
 )
-from ome_zarr_models.v05.axes import Axis
-from ome_zarr_models.v05.coordinate_transformations import (
+from ome_zarr_models.v06.axes import Axis
+from ome_zarr_models.v06.coordinate_transformations import (
     VectorScale,
     VectorTranslation,
 )
-from ome_zarr_models.v05.image import Image
-from ome_zarr_models.v05.multiscales import (
+from ome_zarr_models.v06.image import Image
+from ome_zarr_models.v06.multiscales import (
     Dataset,
     Multiscale,
 )

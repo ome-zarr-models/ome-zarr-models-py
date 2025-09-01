@@ -10,10 +10,10 @@ from pydantic import Field, ValidationError, model_validator
 from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
 from ome_zarr_models.common.validation import check_array_spec, check_group_spec
-from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs
+from ome_zarr_models.v06.base import BaseGroupv06, BaseOMEAttrs
 
 if TYPE_CHECKING:
-    from ome_zarr_models.v05.image_label import ImageLabel
+    from ome_zarr_models.v06.image_label import ImageLabel
 
 
 __all__ = ["Labels", "LabelsAttrs"]
@@ -38,7 +38,7 @@ def _check_valid_dtypes(labels: "Labels") -> "Labels":
     """
     Check that all multiscales levels of a labels image are valid Label data types.
     """
-    from ome_zarr_models.v05.image_label import ImageLabel
+    from ome_zarr_models.v06.image_label import ImageLabel
 
     if labels.members is None:
         raise RuntimeError(f"{labels.members=}")
@@ -86,7 +86,7 @@ class LabelsAttrs(BaseOMEAttrs):
 
 
 class Labels(
-    BaseGroupv05[LabelsAttrs],
+    BaseGroupv06[LabelsAttrs],
 ):
     """
     An OME-Zarr labels dataset.
@@ -102,7 +102,7 @@ class Labels(
         group : zarr.Group
             A Zarr group that has valid OME-Zarr label metadata.
         """
-        from ome_zarr_models.v05.image_label import ImageLabel
+        from ome_zarr_models.v06.image_label import ImageLabel
 
         attrs_dict = group.attrs.asdict()
         label_attrs = LabelsAttrs.model_validate(group.attrs.asdict()["ome"])
@@ -145,7 +145,7 @@ class Labels(
         """
         Get a image labels group at a given path.
         """
-        from ome_zarr_models.v05.image_label import ImageLabel
+        from ome_zarr_models.v06.image_label import ImageLabel
 
         if self.members is None:
             raise RuntimeError(f"{self.members=}")

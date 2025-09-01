@@ -17,7 +17,7 @@ class BaseOMEAttrs(BaseAttrs):
     Base class for attributes under an OME-Zarr group.
     """
 
-    version: Literal["0.5"]
+    version: Literal["0.6"]
 
 
 T = TypeVar("T", bound=BaseOMEAttrs)
@@ -31,7 +31,7 @@ class BaseZarrAttrs(BaseModel, Generic[T]):
     ome: T
 
 
-class BaseGroupv05(
+class BaseGroupv06(
     BaseGroup,
     pydantic_zarr.v3.GroupSpec[
         BaseZarrAttrs[T],
@@ -40,7 +40,7 @@ class BaseGroupv05(
     Generic[T],
 ):
     """
-    Base class for all v0.5 OME-Zarr groups.
+    Base class for all v0.6 OME-Zarr groups.
     """
 
     @classmethod
@@ -56,11 +56,11 @@ class BaseGroupv05(
         return super().from_zarr(group)
 
     @property
-    def ome_zarr_version(self) -> Literal["0.5"]:
+    def ome_zarr_version(self) -> Literal["0.6"]:
         """
         OME-Zarr version.
         """
-        return "0.5"
+        return "0.6"
 
     @property
     def ome_attributes(self) -> T:

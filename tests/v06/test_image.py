@@ -4,12 +4,12 @@ import pytest
 from pydantic import ValidationError
 from zarr.abc.store import Store
 
-from ome_zarr_models.v05.axes import Axis
-from ome_zarr_models.v05.coordinate_transformations import VectorScale
-from ome_zarr_models.v05.image import Image, ImageAttrs
-from ome_zarr_models.v05.labels import LabelsAttrs
-from ome_zarr_models.v05.multiscales import Dataset, Multiscale
-from tests.v05.conftest import json_to_dict, json_to_zarr_group
+from ome_zarr_models.v06.axes import Axis
+from ome_zarr_models.v06.coordinate_transformations import VectorScale
+from ome_zarr_models.v06.image import Image, ImageAttrs
+from ome_zarr_models.v06.labels import LabelsAttrs
+from ome_zarr_models.v06.multiscales import Dataset, Multiscale
+from tests.v06.conftest import json_to_dict, json_to_zarr_group
 
 
 def test_image(store: Store) -> None:
@@ -80,7 +80,7 @@ def test_image(store: Store) -> None:
                 type="gaussian",
             )
         ],
-        version="0.5",
+        version="0.6",
     )
 
 
@@ -195,7 +195,7 @@ def test_image_with_labels(store: Store) -> None:
     image = Image.from_zarr(zarr_group)
     assert image.labels is not None
     assert image.labels.attributes.ome == LabelsAttrs(
-        version="0.5", labels=["cell_space_segmentation"]
+        version="0.6", labels=["cell_space_segmentation"]
     )
 
 

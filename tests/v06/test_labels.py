@@ -4,8 +4,8 @@ import numpy as np
 import pytest
 from zarr.abc.store import Store
 
-from ome_zarr_models.v05.labels import Labels, LabelsAttrs
-from tests.v05.conftest import json_to_zarr_group
+from ome_zarr_models.v06.labels import Labels, LabelsAttrs
+from tests.v06.conftest import json_to_zarr_group
 
 
 def test_labels(store: Store) -> None:
@@ -25,7 +25,7 @@ def test_labels(store: Store) -> None:
 
     ome_group = Labels.from_zarr(zarr_group)
     assert ome_group.attributes.ome == LabelsAttrs(
-        labels=["cell_space_segmentation"], version="0.5"
+        labels=["cell_space_segmentation"], version="0.6"
     )
 
 
