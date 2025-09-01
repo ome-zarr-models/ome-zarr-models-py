@@ -19,9 +19,10 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound=BaseAttrs)
 
 EXAMPLES_PATH = Path(__file__).parent / "data" / "examples"
+Version = Literal["0.4", "0.5", "0.6"]
 
 
-def get_examples_path(*, version: Literal["0.4", "0.5"]) -> Path:
+def get_examples_path(*, version: Version) -> Path:
     """
     Get path to directory with example data.
     """
@@ -29,11 +30,13 @@ def get_examples_path(*, version: Literal["0.4", "0.5"]) -> Path:
         return EXAMPLES_PATH / "v04"
     elif version == "0.5":
         return EXAMPLES_PATH / "v05"
+    elif version == "0.6":
+        return EXAMPLES_PATH / "v06"
     else:
         raise ValueError(f"Unknown value for {version=}")
 
 
-def json_to_dict(*, version: Literal["0.4", "0.5"], json_fname: str) -> Any:
+def json_to_dict(*, version: Version, json_fname: str) -> Any:
     """
     Load an example JSON file and return as a dictionary.
     """
@@ -41,9 +44,7 @@ def json_to_dict(*, version: Literal["0.4", "0.5"], json_fname: str) -> Any:
         return json.load(f)
 
 
-def read_in_json(
-    *, version: Literal["0.4", "0.5"], json_fname: str, model_cls: type[T]
-) -> T:
+def read_in_json(*, version: Version, json_fname: str, model_cls: type[T]) -> T:
     """
     Load an example JSON file into a ome-zarr-models base attributes class.
     """
@@ -52,7 +53,7 @@ def read_in_json(
 
 
 def json_to_zarr_group(
-    *, version: Literal["0.4", "0.5"], json_fname: str, store: Store
+    *, version: Version, json_fname: str, store: Store
 ) -> zarr.Group:
     """
     Create an empty Zarr group, and set the attributes from an example JSON file.
@@ -60,7 +61,7 @@ def json_to_zarr_group(
     zarr_format: Literal[2, 3]
     if version == "0.4":
         zarr_format = 2
-    elif version == "0.5":
+    elif version in ["0.5", "0.6"]:
         zarr_format = 3
     else:
         raise ValueError(f"Unknown value for {version=}")
