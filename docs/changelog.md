@@ -2,6 +2,18 @@
 
 ## 1.0.0
 
+### New Features
+
+This is the first release to support OME-Zarr 0.5 🎉
+
+### Updated dependencies
+
+To support OME-Zarr 0.5, minimum dependencies have been updated to:
+
+- `zarr` 3.1.1
+- `pydantic` 2.11.5
+- `pydantic-zarr` 0.8.2
+
 ### Breaking changes
 
 - `ome_zarr_models.common.image_label_types.Label` has moved to [ome_zarr_models.v04.image_label_types.Label][].
