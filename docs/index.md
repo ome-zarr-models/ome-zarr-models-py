@@ -69,6 +69,8 @@ Versions 1.x of `ome-zarr-models` require `zarr-python` version 3, and support v
 
 - Since the first release of the OME-Zarr version 0.5 specification (commit [8a0f886](https://github.com/ome/ngff/tree/8a0f886aac791060e329874b624126d3530c2b6f)), the specification has been edited without the version number in OME-Zarr datasets being changed.
   As an implementation we have no way of knowing which version of the specification data that contains version "0.5" was written to, so **we have chosen to validate against the original release of OME-Zarr 0.5** (commit [8a0f886](https://github.com/ome/ngff/tree/8a0f886aac791060e329874b624126d3530c2b6f)).
+  This means we do not:
+  - Validate "omero" metadata.
 - For labels, [the OME-Zarr specification says](https://ngff.openmicroscopy.org/0.5/index.html#labels-md) "Intermediate groups between "labels" and the images within it are allowed, but these MUST NOT contain metadata.". Because it is not clear what "metadata" means in this sentence, we do not validate this part of the specification.
 
 ## Versioning
