@@ -14,7 +14,6 @@ from ome_zarr_models.v05.axes import Axis
 from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs, BaseZarrAttrs
 from ome_zarr_models.v05.labels import Labels
 from ome_zarr_models.v05.multiscales import Dataset, Multiscale
-from ome_zarr_models.v05.omero import Omero
 
 __all__ = ["Image", "ImageAttrs"]
 
@@ -29,7 +28,6 @@ class ImageAttrs(BaseOMEAttrs):
         description="The multiscale datasets for this image",
         min_length=1,
     )
-    omero: Omero | None = None
 
 
 class Image(BaseGroupv05[ImageAttrs]):

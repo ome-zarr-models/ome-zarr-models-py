@@ -13,7 +13,3 @@
 ## Axes metadata
 
 ::: ome_zarr_models.v05.axes
-
-## OMERO metadata
-
-::: ome_zarr_models.v05.omero
