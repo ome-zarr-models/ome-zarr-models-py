@@ -5,7 +5,12 @@
       {
         "name": "example",
         "axes": [
-          { "name": "t", "type": "time", "unit": "millisecond" },
+          {
+            "name": "t",
+            "type": "time",
+            "unit": "millisecond",
+            "anatomicalOrientation": "left-to-right"
+          },
           { "name": "c", "type": "channel" },
           { "name": "z", "type": "space", "unit": "micrometer" },
           { "name": "y", "type": "space", "unit": "micrometer" },
