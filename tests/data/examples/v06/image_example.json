@@ -17,7 +17,7 @@
             "name": "x",
             "type": "space",
             "unit": "micrometer",
-            "orientation": "left-to-right"
+            "orientation": { "type": "anatomical", "value": "left-to-right" }
           }
         ],
         "datasets": [

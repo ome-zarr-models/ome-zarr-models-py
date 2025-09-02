@@ -61,7 +61,10 @@ def test_image(store: Store) -> None:
                         name="x",
                         type="space",
                         unit="micrometer",
-                        orientation="left-to-right",
+                        orientation={
+                            "type": "anatomical",
+                            "value": "left-to-right",
+                        },
                     ),
                 ],
                 datasets=(
@@ -277,13 +280,13 @@ def test_invalid_orientations() -> None:
                     name="z",
                     type="space",
                     unit="micrometer",
-                    orientation="left-to-right",
+                    orientation={"type": "anatomical", "value": "left-to-right"},
                 ),
                 Axis(
                     name="y",
                     type="space",
                     unit="micrometer",
-                    orientation="right-to-left",
+                    orientation={"type": "anatomical", "value": "right-to-left"},
                 ),
             ],
             datasets=(
