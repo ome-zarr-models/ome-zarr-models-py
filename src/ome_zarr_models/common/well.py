@@ -8,3 +8,9 @@ class WellAttrs(BaseAttrs):
     """
 
     well: WellMeta
+
+
+class WellGroupNotFoundError(RuntimeError):
+    """
+    Raised if a well Zarr group is not found.
+    """

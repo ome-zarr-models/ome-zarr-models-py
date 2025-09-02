@@ -1,20 +1,21 @@
-from pathlib import Path
-
 import zarr
 
+from ome_zarr_models.common.omero import Channel, Omero, Window
 from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.coordinate_transformations import VectorScale
 from ome_zarr_models.v04.hcs import HCS, HCSAttrs
 from ome_zarr_models.v04.image import ImageAttrs
 from ome_zarr_models.v04.multiscales import Dataset, Multiscale
-from ome_zarr_models.v04.omero import Channel, Omero, Window
 from ome_zarr_models.v04.plate import Acquisition, Column, Plate, Row, WellInPlate
 from ome_zarr_models.v04.well_types import WellImage, WellMeta
+from tests.conftest import get_examples_path
 
 
 def test_example_hcs() -> None:
-    group = zarr.open(Path(__file__).parent / "data" / "hcs_example.ome.zarr", mode="r")
-    hcs = HCS.from_zarr(group)
+    group = zarr.open_group(
+        get_examples_path(version="0.4") / "hcs_example.ome.zarr", mode="r"
+    )
+    hcs: HCS = HCS.from_zarr(group)
     assert hcs.attributes == HCSAttrs(
         plate=Plate(
             acquisitions=[
@@ -38,7 +39,7 @@ def test_example_hcs() -> None:
 
     well_groups = list(hcs.well_groups)
     assert len(well_groups) == 1
-    well_group = well_groups[0]
+    well_group = hcs.get_well_group(0)
     assert well_group.attributes.well == WellMeta(
         images=[WellImage(path="0", acquisition=None)], version="0.4"
     )
@@ -107,4 +108,26 @@ def test_example_hcs() -> None:
             name="TBD",
             version="0.4",
         ),
+    )
+
+
+def test_non_existent_wells() -> None:
+    """
+    Make sure it's possible to create a HCS that has well paths that don't exist
+    as Zarr groups.
+
+    The relevant part of the OME-Zarr specification (https://ngff.openmicroscopy.org/0.4/index.html#plate-md)
+    does not specify explicitly that the Zarr groups have to exist.
+    """
+    HCS(
+        attributes={
+            "plate": {
+                "acquisitions": [{"id": 1}, {"id": 2}, {"id": 3}],
+                "columns": [{"name": "1"}],
+                "field_count": 10,
+                "rows": [{"name": "A"}],
+                "version": "0.4",
+                "wells": [{"columnIndex": 0, "path": "A/1", "rowIndex": 0}],
+            }
+        }
     )

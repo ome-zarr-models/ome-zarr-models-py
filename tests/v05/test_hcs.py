@@ -1,10 +1,16 @@
-from ome_zarr_models._v05.hcs import HCS, HCSAttrs
-from ome_zarr_models._v05.plate import Acquisition, Column, Plate, Row, WellInPlate
+import pytest
+from zarr.abc.store import Store
+
+from ome_zarr_models.v05.hcs import HCS, HCSAttrs
+from ome_zarr_models.v05.plate import Acquisition, Column, Plate, Row, WellInPlate
+from tests.conftest import UnlistableStore
 from tests.v05.conftest import json_to_zarr_group
 
 
-def test_hcs() -> None:
-    zarr_group = json_to_zarr_group(json_fname="hcs_example.json")
+def test_hcs(store: Store) -> None:
+    if isinstance(store, UnlistableStore):
+        pytest.xfail("HCS does not work on unlistable stores")
+    zarr_group = json_to_zarr_group(json_fname="hcs_example.json", store=store)
     ome_group = HCS.from_zarr(zarr_group)
     assert ome_group.attributes.ome == HCSAttrs(
         plate=Plate(
@@ -42,3 +48,5 @@ def test_hcs() -> None:
         ),
         version="0.5",
     )
+    well_groups = list(ome_group.well_groups)
+    assert len(well_groups) == 0

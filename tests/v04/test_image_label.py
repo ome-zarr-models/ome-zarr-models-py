@@ -1,5 +1,6 @@
 import pytest
 from pydantic import ValidationError
+from zarr.abc.store import Store
 
 from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.coordinate_transformations import VectorScale
@@ -11,12 +12,16 @@ from ome_zarr_models.v04.image_label_types import (
     Source,
 )
 from ome_zarr_models.v04.multiscales import Dataset, Multiscale
+from tests.conftest import UnlistableStore
 from tests.v04.conftest import json_to_zarr_group
 
 
-def test_image_label_example_json() -> None:
-    zarr_group = json_to_zarr_group(json_fname="image_label_example.json")
-    zarr_group.create_dataset("0", shape=(1, 1, 1, 1, 1))
+def test_image_label_example_json(store: Store) -> None:
+    if isinstance(store, UnlistableStore):
+        pytest.xfail("ImageLabel does not work on unlistable stores")
+
+    zarr_group = json_to_zarr_group(json_fname="image_label_example.json", store=store)
+    zarr_group.create_array("0", shape=(1, 1, 1, 1, 1), dtype="uint8")
     ome_group = ImageLabel.from_zarr(zarr_group)
 
     assert ome_group.attributes == ImageLabelAttrs(

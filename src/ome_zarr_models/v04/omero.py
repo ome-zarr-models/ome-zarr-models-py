@@ -1,38 +1,3 @@
-"""
-For reference, see the [omero section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.4/#omero-md).
-"""
-
-from typing import Annotated
-
-from ome_zarr_models.base import BaseAttrs
-from ome_zarr_models.common.validation import RGBHexConstraint
+from ome_zarr_models.common.omero import Channel, Omero, Window
 
 __all__ = ["Channel", "Omero", "Window"]
-
-
-class Window(BaseAttrs):
-    """
-    A single window.
-    """
-
-    max: float
-    min: float
-    start: float
-    end: float
-
-
-class Channel(BaseAttrs):
-    """
-    A single omero channel.
-    """
-
-    color: Annotated[str, RGBHexConstraint]
-    window: Window
-
-
-class Omero(BaseAttrs):
-    """
-    omero model.
-    """
-
-    channels: list[Channel]

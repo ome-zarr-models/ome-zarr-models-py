@@ -50,7 +50,7 @@ plugins:
           paths: [src]
           import:
             - https://docs.python.org/3/objects.inv
-            - https://zarr.dev/pydantic-zarr/objects.inv
+            - https://pydantic-zarr.readthedocs.io/stable/objects.inv
             - https://docs.pydantic.dev/latest/objects.inv
 
           options:
@@ -69,12 +69,28 @@ plugins:
               - griffe_pydantic:
                   schema: false
 
+strict: true
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
+
 nav:
   - Home: index.md
   - Tutorial: tutorial.py
   - How do I...?: how-to.md
   - API reference:
       - api/index.md
+      - v05:
+          - api/v05/groups.md
+          - Metadata classes:
+              - api/v05/hcs.md
+              - api/v05/image.md
+              - api/v05/image-label.md
+              - api/v05/labels.md
+              - api/v05/well.md
+              - api/v05/other.md
       - v04:
           - api/v04/groups.md
           - Metadata classes:
@@ -86,7 +102,7 @@ nav:
               - api/v04/other.md
       - Shared:
           - Base objects: api/common/base.md
-          - api/common/validation.md
+          - Validation: api/common/validation.md
   - Changelog: changelog.md
   - Contributing: contributing.md
 

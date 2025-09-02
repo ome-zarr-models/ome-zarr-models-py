@@ -1,21 +1,9 @@
-import json
-from pathlib import Path
-from typing import TypeVar
+from functools import partial
+from typing import Literal
 
-import zarr
+from tests import conftest
 
-from ome_zarr_models.base import BaseAttrs
-
-T = TypeVar("T", bound=BaseAttrs)
-
-
-def json_to_zarr_group(*, json_fname: str) -> zarr.Group:
-    """
-    Create an empty Zarr group, and set attributes from a JSON file.
-    """
-    group = zarr.open_group(store=zarr.MemoryStore())
-    with open(Path(__file__).parent / "data" / json_fname) as f:
-        attrs = json.load(f)
-
-    group.attrs.put(attrs)
-    return group
+VERSION: Literal["0.5"] = "0.5"
+json_to_dict = partial(conftest.json_to_dict, version=VERSION)
+read_in_json = partial(conftest.read_in_json, version=VERSION)
+json_to_zarr_group = partial(conftest.json_to_zarr_group, version=VERSION)

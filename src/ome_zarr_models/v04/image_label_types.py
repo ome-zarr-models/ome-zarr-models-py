@@ -1,15 +1,20 @@
-"""
-For reference, see the [image label section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.4/index.html#label-md).
-"""
+from typing import Literal
 
 from ome_zarr_models.common.image_label_types import (
     RGBA,
     Color,
-    Label,
     LabelBase,
     Property,
     Source,
     Uint8,
 )
 
-__all__ = ["RGBA", "Color", "Label", "LabelBase", "Property", "Source", "Uint8"]
+__all__ = ["RGBA", "Color", "LabelBase", "Property", "Source", "Uint8"]
+
+
+class Label(LabelBase):
+    """
+    Metadata for a single image-label.
+    """
+
+    version: Literal["0.4"] | None = None

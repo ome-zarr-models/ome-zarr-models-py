@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 import pytest
 from pydantic import ValidationError
-from pydantic_zarr.v2 import ArraySpec, GroupSpec
+from pydantic_zarr.v2 import AnyArraySpec, AnyGroupSpec, ArraySpec, GroupSpec
 
 from ome_zarr_models.common.coordinate_transformations import (
     _build_transforms,
@@ -21,10 +21,9 @@ from ome_zarr_models.v04.multiscales import (
     Dataset,
     Multiscale,
 )
-from tests.v04.conftest import from_array_props, from_arrays
 
 if TYPE_CHECKING:
-    from typing import Literal
+    from zarr.abc.store import Store
 
 DEFAULT_UNITS_MAP = {"space": "meter", "time": "second"}
 
@@ -380,7 +379,7 @@ def test_multiscale_group_datasets_exist(
     default_multiscale: Multiscale,
 ) -> None:
     group_attrs = ImageAttrs(multiscales=(default_multiscale,))
-    good_items = {
+    good_items: dict[str, AnyArraySpec] = {
         d.path: ArraySpec(
             shape=(1, 1, 1, 1),
             dtype="uint8",
@@ -390,7 +389,7 @@ def test_multiscale_group_datasets_exist(
     }
     Image(attributes=group_attrs, members=good_items)
 
-    bad_items = {
+    bad_items: dict[str, AnyArraySpec] = {
         d.path + "x": ArraySpec(
             shape=(1, 1, 1, 1),
             dtype="uint8",
@@ -417,17 +416,16 @@ def test_multiscale_group_datasets_ndim() -> None:
     true_ndim = 2
     bad_ndim = 3
     match = (
-        f"The multiscale metadata has {true_ndim} axes "
-        "which does not match the dimensionality of the array "
-        f"found in this group at {bad_ndim} ({bad_ndim}). "
-        "The number of axes must match the array dimensionality."
+        "Length of arrays (got len(array_specs)=3) must be the same as "
+        "length of paths (got len(paths)=2)"
     )
-    with pytest.raises(ValidationError, match=re.escape(match)):
-        _ = from_array_props(
-            shapes=((10,) * true_ndim, (10,) * bad_ndim),
-            chunks=((1,) * true_ndim, (1,) * bad_ndim),
-            dtype="uint8",
-            paths=(str(true_ndim), str(bad_ndim)),
+    with pytest.raises(ValueError, match=re.escape(match)):
+        Image.new(
+            array_specs=[
+                ArraySpec(shape=(10,), chunks=(10,), dtype="uint8")
+                for _ in range(bad_ndim)
+            ],
+            paths=[str(i) for i in range(true_ndim)],
             axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
             scales=((1, 1), (2, 2)),
             translations=((0, 0), (0.5, 0.5)),
@@ -440,14 +438,15 @@ def test_multiscale_group_missing_arrays() -> None:
     """
     arrays = np.zeros((10, 10)), np.zeros((5, 5))
     array_names = ("s0", "s1")
-    group_model = from_arrays(
-        arrays=arrays,
+    group_model = Image.new(
+        array_specs=[ArraySpec.from_array(a) for a in arrays],
         axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
         paths=array_names,
         scales=((1, 1), (2, 2)),
         translations=((0, 0), (0.5, 0.5)),
     )
     # remove an array, then re-create the model
+    assert group_model.members is not None
     group_model_broken = group_model.model_copy(
         update={"members": {array_names[0]: group_model.members[array_names[0]]}}
     )
@@ -467,8 +466,8 @@ def test_multiscale_group_ectopic_group() -> None:
     """
     arrays = np.zeros((10, 10)), np.zeros((5, 5))
     array_names = ("s0", "s1")
-    group_model = from_arrays(
-        arrays=arrays,
+    group_model = Image.new(
+        array_specs=[ArraySpec.from_array(a) for a in arrays],
         axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
         paths=array_names,
         scales=((1, 1), (2, 2)),
@@ -485,12 +484,11 @@ def test_multiscale_group_ectopic_group() -> None:
         Image(**group_model_broken.model_dump())
 
 
-@pytest.mark.parametrize("store", ["memory"], indirect=True)
 def test_from_zarr_missing_metadata(
-    store: Literal["memory"],
+    store: Store,
     request: pytest.FixtureRequest,
 ) -> None:
-    group_model = GroupSpec()
+    group_model: AnyGroupSpec = GroupSpec()
     group = group_model.to_zarr(store, path="test")
     # store_path = store.path if hasattr(store, "path") else ""
     match = "multiscales\n  Field required"
@@ -498,8 +496,7 @@ def test_from_zarr_missing_metadata(
         Image.from_zarr(group)
 
 
-@pytest.mark.parametrize("store", ["memory"], indirect=True)
-def test_from_zarr_missing_array(store: Literal["memory"]) -> None:
+def test_from_zarr_missing_array(store: Store) -> None:
     """
     Test that creating a multiscale Group fails when an expected Zarr array is missing
     or is a group instead of an array
@@ -507,8 +504,8 @@ def test_from_zarr_missing_array(store: Literal["memory"]) -> None:
     arrays = np.zeros((10, 10)), np.zeros((5, 5))
     group_path = "broken"
     arrays_names = ("s0", "s1")
-    group_model = from_arrays(
-        arrays=arrays,
+    group_model = Image.new(
+        array_specs=[ArraySpec.from_array(a) for a in arrays],
         axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
         paths=arrays_names,
         scales=((1, 1), (2, 2)),
@@ -519,16 +516,12 @@ def test_from_zarr_missing_array(store: Literal["memory"]) -> None:
     removed_array_path = arrays_names[0]
     model_dict = group_model.model_dump(exclude={"members": {removed_array_path: True}})
     broken_group = GroupSpec(**model_dict).to_zarr(store=store, path=group_path)
-    match = (
-        f"Expected to find an array at {group_path}/{removed_array_path}, "
-        "but no array was found there."
-    )
+    match = "Expected to find an array at broken/s0, but no array was found there"
     with pytest.raises(ValueError, match=match):
         Image.from_zarr(broken_group)
 
 
-@pytest.mark.parametrize("store", ["memory"], indirect=True)
-def test_from_zarr_ectopic_group(store: Literal["memory"]) -> None:
+def test_from_zarr_ectopic_group(store: Store) -> None:
     """
     Test that creating a multiscale Group fails when an expected Zarr array is missing
     or is a group instead of an array
@@ -536,8 +529,8 @@ def test_from_zarr_ectopic_group(store: Literal["memory"]) -> None:
     arrays = np.zeros((10, 10)), np.zeros((5, 5))
     group_path = "broken"
     arrays_names = ("s0", "s1")
-    group_model = from_arrays(
-        arrays=arrays,
+    group_model = Image.new(
+        array_specs=[ArraySpec.from_array(a) for a in arrays],
         axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
         paths=arrays_names,
         scales=((1, 1), (2, 2)),
@@ -551,10 +544,7 @@ def test_from_zarr_ectopic_group(store: Literal["memory"]) -> None:
 
     # put a group where the array should be
     broken_group.create_group(removed_array_path)
-    match = (
-        f"Expected to find an array at {group_path}/{removed_array_path}, "
-        "but a group was found there instead."
-    )
+    match = "Expected to find an array at broken/s0, but no array was found there"
     with pytest.raises(ValueError, match=match):
         Image.from_zarr(broken_group)
 

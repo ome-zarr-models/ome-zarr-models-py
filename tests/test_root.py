@@ -6,11 +6,12 @@ import zarr
 
 from ome_zarr_models import open_ome_zarr
 from ome_zarr_models.v04.hcs import HCS
+from tests.conftest import get_examples_path
 
 
 def test_load_ome_zarr_group() -> None:
-    hcs_group = zarr.open(
-        Path(__file__).parent / "v04" / "data" / "hcs_example.ome.zarr", mode="r"
+    hcs_group = zarr.open_group(
+        get_examples_path(version="0.4") / "hcs_example.ome.zarr", mode="r"
     )
     ome_zarr_group = open_ome_zarr(hcs_group)
 
@@ -19,11 +20,11 @@ def test_load_ome_zarr_group() -> None:
 
 
 def test_load_ome_zarr_group_bad(tmp_path: Path) -> None:
-    hcs_group = zarr.group(tmp_path / "test")
+    hcs_group = zarr.create_group(tmp_path / "test")
     with pytest.raises(
         RuntimeError,
         match=re.escape(
-            "Could not successfully validate <zarr.hierarchy.Group '/'> "
+            f"Could not successfully validate <Group file://{tmp_path / 'test'}> "
             "with any OME-Zarr group models."
         ),
     ):

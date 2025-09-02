@@ -1,13 +1,33 @@
-from ome_zarr_models._v05.axes import Axis
-from ome_zarr_models._v05.coordinate_transformations import VectorScale
-from ome_zarr_models._v05.image_label import ImageLabel, ImageLabelAttrs
-from ome_zarr_models._v05.image_label_types import Color, Label, Source
-from ome_zarr_models._v05.multiscales import Dataset, Multiscale
+from zarr.abc.store import Store
+
+from ome_zarr_models.v05.axes import Axis
+from ome_zarr_models.v05.coordinate_transformations import VectorScale
+from ome_zarr_models.v05.image_label import ImageLabel, ImageLabelAttrs
+from ome_zarr_models.v05.image_label_types import Color, Label, Source
+from ome_zarr_models.v05.multiscales import Dataset, Multiscale
 from tests.v05.conftest import json_to_zarr_group
 
 
-def test_image_label() -> None:
-    zarr_group = json_to_zarr_group(json_fname="image_label_example.json")
+def test_image_label(store: Store) -> None:
+    zarr_group = json_to_zarr_group(json_fname="image_label_example.json", store=store)
+    zarr_group.create_array(
+        "0",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
+    zarr_group.create_array(
+        "1",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
+    zarr_group.create_array(
+        "2",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
     ome_group = ImageLabel.from_zarr(zarr_group)
     assert ome_group.attributes.ome == ImageLabelAttrs(
         image_label=Label(

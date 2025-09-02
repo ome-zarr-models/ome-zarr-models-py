@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Self
 
+import zarr
 import zarr.errors
 from pydantic import Field, JsonValue, model_validator
-from pydantic_zarr.v2 import ArraySpec, GroupSpec
+from pydantic_zarr.v2 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.coordinate_transformations import _build_transforms
@@ -24,9 +25,7 @@ __all__ = ["Image", "ImageAttrs"]
 
 class ImageAttrs(BaseAttrs):
     """
-    Model for the metadata of OME-Zarr data.
-
-    See https://ngff.openmicroscopy.org/0.4/#image-layout.
+    Metadata for OME-Zarr image groups.
     """
 
     multiscales: list[Multiscale] = Field(
@@ -43,33 +42,35 @@ class Image(BaseGroupv04[ImageAttrs]):
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group) -> Self:
+    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
         """
-        Create an instance of an OME-Zarr image from a `zarr.Group`.
+        Create an OME-Zarr image model from a `zarr.Group`.
 
         Parameters
         ----------
         group : zarr.Group
-            A Zarr group that has valid OME-NGFF image metadata.
+            A Zarr group that has valid OME-Zarr image metadata.
         """
         # on unlistable storage backends, the members of this group will be {}
-        group_spec = GroupSpec.from_zarr(group, depth=0)
+        group_spec: AnyGroupSpec = GroupSpec.from_zarr(group, depth=0)
 
         multi_meta = ImageAttrs.model_validate(group_spec.attributes)
-        members_tree_flat = {}
+        members_tree_flat: dict[str, AnyGroupSpec | AnyArraySpec] = {}
         for multiscale in multi_meta.multiscales:
             for dataset in multiscale.datasets:
                 array_path = f"{group.path}/{dataset.path}"
-                array_spec = check_array_path(group, array_path)
+                array_spec = check_array_path(
+                    group, array_path, expected_zarr_version=2
+                )
                 members_tree_flat["/" + dataset.path] = array_spec
 
         try:
             labels_group = zarr.open_group(store=group.store, path="labels", mode="r")
-            members_tree_flat["/labels"] = GroupSpec.from_zarr(labels_group)
+            members_tree_flat["/labels"] = GroupSpec.from_zarr(labels_group, depth=0)
         except zarr.errors.GroupNotFoundError:
             pass
 
-        members_normalized = GroupSpec.from_flat(members_tree_flat)
+        members_normalized: AnyGroupSpec = GroupSpec.from_flat(members_tree_flat)
 
         group_spec = group_spec.model_copy(
             update={"members": members_normalized.members}
@@ -80,7 +81,7 @@ class Image(BaseGroupv04[ImageAttrs]):
     def new(
         cls,
         *,
-        array_specs: Sequence[ArraySpec],
+        array_specs: Sequence[AnyArraySpec],
         paths: Sequence[str],
         axes: Sequence[Axis],
         scales: Sequence[Sequence[float]],
@@ -97,7 +98,7 @@ class Image(BaseGroupv04[ImageAttrs]):
 
         Parameters
         ----------
-        arrays :
+        array_specs :
             A sequence of array specifications that collectively represent the same
             image at multiple levels of detail.
         paths :
@@ -131,7 +132,7 @@ class Image(BaseGroupv04[ImageAttrs]):
                 f"Length of arrays (got {len(array_specs)=}) must be the same as "
                 f"length of paths (got {len(paths)=})"
             )
-        members_flat = {
+        members_flat: dict[str, AnyArraySpec] = {
             "/" + key.lstrip("/"): arr
             for key, arr in zip(paths, array_specs, strict=True)
         }
@@ -146,12 +147,22 @@ class Image(BaseGroupv04[ImageAttrs]):
         else:
             global_transform = _build_transforms(global_scale, global_translation)
 
+        if len(scales) != len(paths):
+            raise ValueError(
+                f"Length of 'scales' ({len(scales)}) does not match "
+                f"length of 'paths' {len(paths)}"
+            )
+        if len(translations) != len(paths):
+            raise ValueError(
+                f"Length of 'translations' ({len(translations)}) does not match "
+                f"length of 'paths' ({len(paths)})"
+            )
         multimeta = Multiscale(
             axes=tuple(axes),
             datasets=tuple(
                 Dataset.build(path=path, scale=scale, translation=translation)
                 for path, scale, translation in zip(
-                    paths, scales, translations, strict=False
+                    paths, scales, translations, strict=True
                 )
             ),
             coordinateTransformations=global_transform,
@@ -160,13 +171,14 @@ class Image(BaseGroupv04[ImageAttrs]):
             type=multiscale_type,
             version="0.4",
         )
+        # https://github.com/zarr-developers/pydantic-zarr/pull/100 for typing ignore
         return Image(
             members=GroupSpec.from_flat(members_flat).members,
             attributes=ImageAttrs(multiscales=(multimeta,)),
         )
 
     @model_validator(mode="after")
-    def check_arrays_compatible(self) -> Self:
+    def _check_arrays_compatible(self) -> Self:
         """
         Check that all the arrays referenced by the `multiscales` metadata meet the
         following criteria:
@@ -182,7 +194,7 @@ class Image(BaseGroupv04[ImageAttrs]):
             multiscale_ndim = len(multiscale.axes)
             for dataset in multiscale.datasets:
                 try:
-                    maybe_arr: ArraySpec | GroupSpec = flat_self[
+                    maybe_arr: AnyArraySpec | AnyGroupSpec = flat_self[
                         "/" + dataset.path.lstrip("/")
                     ]
                     if isinstance(maybe_arr, GroupSpec):
@@ -210,13 +222,33 @@ class Image(BaseGroupv04[ImageAttrs]):
     @property
     def labels(self) -> Labels | None:
         """
-        Any labels datasets contained in this image group.
+        Labels group contained within this image group.
 
-        Returns None if no labels are present.
+        Returns `None` if no labels are present.
+
+        Raises
+        ------
+        RuntimeError
+            If the node at "labels" is not a group.
         """
-        if "labels" not in self.members:
+        if self.members is None or "labels" not in self.members:
             return None
 
         labels_group = self.members["labels"]
+        if not isinstance(labels_group, GroupSpec):
+            raise RuntimeError("Node at 'labels' is not a group")
 
         return Labels(attributes=labels_group.attributes, members=labels_group.members)
+
+    @property
+    def datasets(self) -> tuple[tuple[Dataset, ...], ...]:
+        """
+        Get datasets stored in this image.
+
+        The first index is for the multiscales.
+        The second index is for the dataset inside that multiscales.
+        """
+        return tuple(
+            tuple(dataset for dataset in multiscale.datasets)
+            for multiscale in self.attributes.multiscales
+        )
