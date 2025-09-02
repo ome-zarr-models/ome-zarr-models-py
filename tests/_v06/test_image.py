@@ -43,7 +43,6 @@ def test_image(store: Store) -> None:
                         name="t",
                         type="time",
                         unit="millisecond",
-                        orientation="left-to-right",
                     ),
                     Axis(name="c", type="channel", unit=None, orientation=None),
                     Axis(
@@ -62,7 +61,7 @@ def test_image(store: Store) -> None:
                         name="x",
                         type="space",
                         unit="micrometer",
-                        orientation=None,
+                        orientation="left-to-right",
                     ),
                 ],
                 datasets=(
