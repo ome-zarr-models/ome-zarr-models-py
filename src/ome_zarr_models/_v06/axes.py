@@ -34,7 +34,7 @@ class Axis(BaseAxis):
     Model for an element of multiscale axes.
     """
 
-    anatomicalOrientation: Orientation | None = None
+    orientation: Orientation | None = None
 
 
 Axes = Sequence[Axis]

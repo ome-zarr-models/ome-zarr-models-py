@@ -21,9 +21,7 @@ class Multiscale(MultiscaleBase):
         Validate anatomical orientations.
         """
         orientations: list[Orientation] = [
-            a.anatomicalOrientation
-            for a in self.axes
-            if a.anatomicalOrientation is not None
+            a.orientation for a in self.axes if a.orientation is not None
         ]
         _check_only_one_value(
             orientations=orientations, values=["right-to-left", "left-to-right"]

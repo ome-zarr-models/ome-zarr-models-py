@@ -9,7 +9,7 @@
             "name": "t",
             "type": "time",
             "unit": "millisecond",
-            "anatomicalOrientation": "left-to-right"
+            "orientation": "left-to-right"
           },
           { "name": "c", "type": "channel" },
           { "name": "z", "type": "space", "unit": "micrometer" },
