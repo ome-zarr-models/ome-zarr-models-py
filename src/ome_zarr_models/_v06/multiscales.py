@@ -13,7 +13,7 @@ from pydantic import (
     model_validator,
 )
 
-from ome_zarr_models._v06.axes import Axes
+from ome_zarr_models._v06.axes import Axes, Orientation
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.coordinate_transformations import (
     Transform,
@@ -193,6 +193,44 @@ class Multiscale(BaseAttrs):
             raise ValueError(f"Axis names must be unique. Got {axis_names}") from None
         return axes
 
+    @model_validator(mode="after")
+    def _ensure_valid_orientations(self: Self) -> Self:
+        """
+        Validate anatomical orientations.
+        """
+        orientations: list[Orientation] = [
+            a.anatomicalOrientation
+            for a in self.axes
+            if a.anatomicalOrientation is not None
+        ]
+        _check_only_one_value(
+            orientations=orientations, values=["right-to-left", "left-to-right"]
+        )
+        _check_only_one_value(
+            orientations=orientations,
+            values=["anterior-to-posterior", "posterior-to-anterior"],
+        )
+        _check_only_one_value(
+            orientations=orientations,
+            values=[
+                "inferior-to-superior",
+                "superior-to-inferior",
+                "dorsal-to-ventral",
+                "ventral-to-dorsal",
+                "dorsal-to-palmar",
+                "palmar-to-dorsal",
+                "dorsal-to-plantar",
+                "plantar-to-dorsal",
+                "rostral-to-caudal",
+                "caudal-to-rostral",
+                "cranial-to-caudal",
+                "caudal-to-cranial",
+                "proximal-to-distal",
+                "distal-to-proximal",
+            ],
+        )
+        return self
+
 
 class Dataset(BaseAttrs):
     """
@@ -282,3 +320,15 @@ class Dataset(BaseAttrs):
             )
             raise ValueError(msg)
         return transforms
+
+
+def _check_only_one_value(
+    *, orientations: list[Orientation], values: list[Orientation]
+) -> None:
+    counter = 0
+    for value in values:
+        if value in orientations:
+            counter += 1
+
+    if counter > 1:
+        raise ValueError(f"Only one of {values} allowed in a set of axes.")
