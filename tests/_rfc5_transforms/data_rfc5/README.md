@@ -6,7 +6,7 @@ Use the following command to update the submodules in this repository:
 git submodule update --init --recursive
 ```
 
-An extra step is required to enable sparse checkout for the `ngff` submodule
+An extra step (shown later below) is required to enable sparse checkout for the `ngff` submodule
 (otherwise tests will fail because they will mix tests for `ome-zarr-models-py` and
 tests for `ngff`).
 
