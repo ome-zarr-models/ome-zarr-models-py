@@ -2,9 +2,9 @@ import json
 import re
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any, TypeVar
-
-import zarr
+from typing import Any, TypeVar, Literal
+from functools import partial
+from tests import conftest
 
 from ome_zarr_models._rfc5_transforms.axes import Axis
 from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
@@ -20,16 +20,11 @@ T = TypeVar("T", bound=BaseAttrs)
 COORDINATE_SYSTEM_NAME_FOR_TESTS = "coordinate_system_name_reserved_for_tests"
 
 
-def json_to_zarr_group(*, json_fname: str) -> zarr.Group:
-    """
-    Create an empty Zarr group, and set attributes from a JSON file.
-    """
-    group = zarr.open_group(store=zarr.MemoryStore())
-    with open(Path(__file__).parent / "data_rfc5" / json_fname) as f:
-        attrs = json.load(f)
-
-    group.attrs.put(attrs)
-    return group
+# TODO: remove after _rfc5_transform is moved into _v6
+VERSION: Literal["0.5"] = "0.5"
+# json_to_dict = partial(conftest.json_to_dict, version=VERSION)
+# read_in_json = partial(conftest.read_in_json, version=VERSION)
+json_to_zarr_group = partial(conftest.json_to_zarr_group, version=VERSION)
 
 
 def get_data_file_path(*, folder: str, json_fname: str) -> Path:
