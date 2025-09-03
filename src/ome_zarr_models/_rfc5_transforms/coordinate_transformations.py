@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from abc import ABC
 from typing import Literal, Self
 
 from pydantic import Field, field_validator, model_validator
@@ -24,13 +23,14 @@ class CoordinateSystem(BaseAttrs):
         return axes
 
 
-class CoordinateTransformation(BaseAttrs, ABC):
+class CoordinateTransformationBase(BaseAttrs):
     type: str
-    input: str | None
-    output: str | None
+    input: str | None = None
+    output: str | None = None
+    name: str | None = None
 
     @model_validator(mode="after")
-    def ensure_input_output_omitted_or_both_defined(self: Self) -> Self:
+    def _ensure_consistent_input_output(self: Self) -> Self:
         """
         Ensures that either both input and output are defined or both are omitted.
         """
@@ -43,13 +43,13 @@ class CoordinateTransformation(BaseAttrs, ABC):
         return self
 
 
-class Identity(CoordinateTransformation):
+class Identity(CoordinateTransformationBase):
     """Identity transformation."""
 
     type: Literal["identity"] = "identity"
 
 
-class Scale(CoordinateTransformation):
+class Scale(CoordinateTransformationBase):
     """Scale transformation."""
 
     type: Literal["scale"] = "scale"
@@ -63,7 +63,7 @@ class Scale(CoordinateTransformation):
         return len(self.scale)
 
 
-class Translation(CoordinateTransformation):
+class Translation(CoordinateTransformationBase):
     """Translation transformation."""
 
     type: Literal["translation"] = "translation"
@@ -77,11 +77,11 @@ class Translation(CoordinateTransformation):
         return len(self.translation)
 
 
-class Sequence(CoordinateTransformation):
+class Sequence(CoordinateTransformationBase):
     """Sequence transformation."""
 
     type: Literal["sequence"] = "sequence"
-    transformations: list[CoordinateTransformationType]
+    transformations: list[CoordinateTransformation]
 
 
-CoordinateTransformationType = Identity | Scale | Translation | Sequence
+CoordinateTransformation = Identity | Scale | Translation | Sequence

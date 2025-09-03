@@ -12,7 +12,7 @@ from pydantic import (
 
 from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
     CoordinateSystem,
-    CoordinateTransformationType,
+    CoordinateTransformation,
     Scale,
     Translation,
 )
@@ -31,7 +31,7 @@ class Dataset(BaseAttrs):
     # TODO: suggest John not to have a tuple for the coordinate transformations of a
     #  dataset, since it's either a single scale or a single sequence (with a scale
     #  and a translation)
-    coordinateTransformations: list[CoordinateTransformationType] = Field(
+    coordinateTransformations: list[CoordinateTransformation] = Field(
         ..., min_length=1, max_length=1
     )
 
@@ -51,7 +51,7 @@ class Dataset(BaseAttrs):
         # see more: ome_zarr_models.common.multiscales.Dataset
 
         class Transforms(BaseModel):
-            transforms: list[CoordinateTransformationType]
+            transforms: list[CoordinateTransformation]
 
         transforms = Transforms(transforms=transforms_obj).transforms
         check_length(transforms, valid_lengths=[1], variable_name="transforms")
@@ -93,8 +93,8 @@ class Dataset(BaseAttrs):
     @classmethod
     def _ensure_transform_dimensionality(
         cls,
-        transforms: tuple[CoordinateTransformationType, ...],
-    ) -> tuple[CoordinateTransformationType, ...]:
+        transforms: tuple[CoordinateTransformation, ...],
+    ) -> tuple[CoordinateTransformation, ...]:
         """
         Ensures that the dimensionality of the scale and translation (when both present)
         match
@@ -123,7 +123,7 @@ class Multiscale(BaseAttrs):
 
     coordinateSystems: tuple[CoordinateSystem, ...] = Field(..., min_length=1)
     datasets: tuple[Dataset, ...] = Field(..., min_length=1)
-    coordinateTransformations: tuple[CoordinateTransformationType, ...] | None = None
+    coordinateTransformations: tuple[CoordinateTransformation, ...] | None = None
     metadata: JsonValue = None
     name: JsonValue | None = None
     type: JsonValue = None
@@ -143,6 +143,16 @@ class Multiscale(BaseAttrs):
                 break
         assert output_cs is not None
         return len(output_cs.axes)
+
+    @property
+    def default_coordinate_system(self) -> CoordinateSystem:
+        """
+        Property returning the default coordinate system (i.e. the first entry).
+
+        The default coordinate system should be used for viewing and processing unless
+        a use case dictates otherwise
+        """
+        return self.coordinateSystems[0]
 
     @model_validator(mode="after")
     def _ensure_same_output_cs_for_all_datasets(data: Self) -> Self:
