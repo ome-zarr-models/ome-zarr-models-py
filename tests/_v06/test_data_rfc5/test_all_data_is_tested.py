@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from tests._rfc5_transforms.conftest import TESTS_FILE_TO_DATA_MAPPING
+from tests._v06.conftest import TESTS_FILE_TO_DATA_MAPPING
 
 
 @pytest.mark.parametrize("test_file, data_folder", TESTS_FILE_TO_DATA_MAPPING.items())
@@ -25,7 +25,7 @@ def test_all_files_have_functions(test_file: str, data_folder: str) -> None:
     ), "Only one of JSON or Zarr files should be present."
 
     module = importlib.import_module(
-        "tests._rfc5_transforms." + test_file.replace(".py", "").replace("/", ".")
+        "tests._v06." + test_file.replace(".py", "").replace("/", ".")
     )
     test_functions = [name for name in module.__dir__() if name.startswith("test_")]
 

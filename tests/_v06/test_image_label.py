@@ -1,7 +1,10 @@
 from zarr.abc.store import Store
 
 from ome_zarr_models._v06.axes import Axis
-from ome_zarr_models._v06.coordinate_transformations import VectorScale
+from ome_zarr_models._v06.coordinate_transformations import (
+    CoordinateSystem,
+    VectorScale,
+)
 from ome_zarr_models._v06.image_label import ImageLabel, ImageLabelAttrs
 from ome_zarr_models._v06.image_label_types import Color, Label, Source
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
@@ -53,35 +56,66 @@ def test_image_label(store: Store) -> None:
         ),
         multiscales=[
             Multiscale(
-                axes=[
-                    Axis(name="t", type="time", unit="millisecond"),
-                    Axis(name="c", type="channel", unit=None),
-                    Axis(name="z", type="space", unit="micrometer"),
-                    Axis(name="y", type="space", unit="micrometer"),
-                    Axis(name="x", type="space", unit="micrometer"),
-                ],
+                coordinateSystems=(
+                    CoordinateSystem(
+                        name="example",
+                        axes=[
+                            Axis(name="t", type="time", unit="millisecond"),
+                            Axis(name="c", type="channel", unit=None),
+                            Axis(name="z", type="space", unit="micrometer"),
+                            Axis(name="y", type="space", unit="micrometer"),
+                            Axis(name="x", type="space", unit="micrometer"),
+                        ],
+                    ),
+                    CoordinateSystem(
+                        name="example2",
+                        axes=[
+                            Axis(name="t", type="time", unit="millisecond"),
+                            Axis(name="c", type="channel", unit=None),
+                            Axis(name="z", type="space", unit="micrometer"),
+                            Axis(name="y", type="space", unit="micrometer"),
+                            Axis(name="x", type="space", unit="micrometer"),
+                        ],
+                    ),
+                ),
                 datasets=(
                     Dataset(
                         path="0",
-                        coordinateTransformations=(
-                            VectorScale(type="scale", scale=[1.0, 1.0, 0.5, 0.5, 0.5]),
-                        ),
+                        coordinateTransformations=[
+                            VectorScale(
+                                scale=[1.0, 1.0, 0.5, 0.5, 0.5],
+                                input="/0",
+                                output="example",
+                            )
+                        ],
                     ),
                     Dataset(
                         path="1",
-                        coordinateTransformations=(
-                            VectorScale(type="scale", scale=[1.0, 1.0, 1.0, 1.0, 1.0]),
-                        ),
+                        coordinateTransformations=[
+                            VectorScale(
+                                scale=[1.0, 1.0, 1.0, 1.0, 1.0],
+                                input="/1",
+                                output="example",
+                            )
+                        ],
                     ),
                     Dataset(
                         path="2",
-                        coordinateTransformations=(
-                            VectorScale(type="scale", scale=[1.0, 1.0, 2.0, 2.0, 2.0]),
-                        ),
+                        coordinateTransformations=[
+                            VectorScale(
+                                scale=[1.0, 1.0, 2.0, 2.0, 2.0],
+                                input="/2",
+                                output="example",
+                            )
+                        ],
                     ),
                 ),
                 coordinateTransformations=(
-                    VectorScale(type="scale", scale=[0.1, 1.0, 1.0, 1.0, 1.0]),
+                    VectorScale(
+                        scale=[0.1, 1.0, 1.0, 1.0, 1.0],
+                        input="example",
+                        output="example2",
+                    ),
                 ),
                 metadata={
                     "description": (

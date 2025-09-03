@@ -32,12 +32,28 @@
     "multiscales": [
       {
         "name": "example",
-        "axes": [
-          { "name": "t", "type": "time", "unit": "millisecond" },
-          { "name": "c", "type": "channel" },
-          { "name": "z", "type": "space", "unit": "micrometer" },
-          { "name": "y", "type": "space", "unit": "micrometer" },
-          { "name": "x", "type": "space", "unit": "micrometer" }
+        "type": "gaussian",
+        "coordinateSystems": [
+          {
+            "name": "example",
+            "axes": [
+              { "name": "t", "type": "time", "unit": "millisecond" },
+              { "name": "c", "type": "channel" },
+              { "name": "z", "type": "space", "unit": "micrometer" },
+              { "name": "y", "type": "space", "unit": "micrometer" },
+              { "name": "x", "type": "space", "unit": "micrometer" }
+            ]
+          },
+          {
+            "name": "example2",
+            "axes": [
+              { "name": "t", "type": "time", "unit": "millisecond" },
+              { "name": "c", "type": "channel" },
+              { "name": "z", "type": "space", "unit": "micrometer" },
+              { "name": "y", "type": "space", "unit": "micrometer" },
+              { "name": "x", "type": "space", "unit": "micrometer" }
+            ]
+          }
         ],
         "datasets": [
           {
@@ -45,7 +61,9 @@
             "coordinateTransformations": [
               {
                 "type": "scale",
-                "scale": [1.0, 1.0, 0.5, 0.5, 0.5]
+                "scale": [1.0, 1.0, 0.5, 0.5, 0.5],
+                "input": "/0",
+                "output": "example"
               }
             ]
           },
@@ -54,7 +72,9 @@
             "coordinateTransformations": [
               {
                 "type": "scale",
-                "scale": [1.0, 1.0, 1.0, 1.0, 1.0]
+                "scale": [1.0, 1.0, 1.0, 1.0, 1.0],
+                "input": "/1",
+                "output": "example"
               }
             ]
           },
@@ -63,7 +83,9 @@
             "coordinateTransformations": [
               {
                 "type": "scale",
-                "scale": [1.0, 1.0, 2.0, 2.0, 2.0]
+                "scale": [1.0, 1.0, 2.0, 2.0, 2.0],
+                "input": "/2",
+                "output": "example"
               }
             ]
           }
@@ -71,10 +93,11 @@
         "coordinateTransformations": [
           {
             "type": "scale",
-            "scale": [0.1, 1.0, 1.0, 1.0, 1.0]
+            "scale": [0.1, 1.0, 1.0, 1.0, 1.0],
+            "input": "example",
+            "output": "example2"
           }
         ],
-        "type": "gaussian",
         "metadata": {
           "description": "the fields in metadata depend on the downscaling implementation. Here, the parameters passed to the skimage function are given",
           "method": "skimage.transform.pyramid_gaussian",

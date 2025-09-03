@@ -27,14 +27,14 @@ The current approach is to use `git sparse-checkout`. This requires the followin
 git config core.sparseCheckout true
 
 # Create or edit the sparse-checkout file and add the desired paths
-INFO=".git/modules/tests/_rfc5_transforms/data_rfc5/ngff/info"
+INFO=".git/modules/tests/data/examples/v06/ngff/info"
 echo "0.6-dev/examples/coordSystems" > "$INFO"/sparse-checkout
 echo "0.6-dev/examples/multiscales_strict" >> "$INFO"/sparse-checkout
 echo "0.6-dev/examples/subspace" >> "$INFO"/sparse-checkout
 echo "0.6-dev/examples/transformations" >> "$INFO"/sparse-checkout
 
 # Navigate to the submodule directory
-cd tests/_rfc5_transforms/data_rfc5/ngff
+cd tests/data/examples/v06/ngff
 
 # Apply the sparse checkout configuration (i.e., filters the files to keep only the ones specified)
 git read-tree -mu HEAD
