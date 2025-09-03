@@ -41,4 +41,7 @@ git read-tree -mu HEAD
 
 # Verify that you only have the 0.6-dev folder
 ls
+
+# Troubleshooting: if you don't see just the folder 0.6-dev, you might try to clone
+# again the repository (with the submodules)
 ```
