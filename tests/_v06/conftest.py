@@ -155,18 +155,6 @@ def _parse_data(folder: str, in_memory: T) -> Callable[..., Any]:
     return wrapper
 
 
-def test_examples_rfc5_are_downloaded() -> None:
-    if not (
-        Path(__file__).parent
-        / "data_rfc5/ngff_rfc5_coordinate_transformation_examples/zarr2"
-    ).exists():
-        raise ValueError(
-            "RFC5 full examples are not downloaded. Please consult the README in "
-            "`tests/_rfc5_transforms/data_rfc5/README.md` for information on how"
-            " to obtain the data."
-        )
-
-
 def _gen_dataset(
     output_coordinate_system: str,
     scale_factors: list[float],
