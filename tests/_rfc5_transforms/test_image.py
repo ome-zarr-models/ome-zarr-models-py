@@ -1,3 +1,5 @@
+from zarr.abc.store import Store
+
 from ome_zarr_models._rfc5_transforms.axes import Axis
 from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
     CoordinateSystem,
@@ -6,29 +8,28 @@ from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
 from ome_zarr_models._rfc5_transforms.image import Image, ImageAttrs
 from ome_zarr_models._rfc5_transforms.multiscales import Dataset, Multiscale
 from tests._rfc5_transforms.conftest import json_to_zarr_group
-from zarr.abc.store import Store
 
 
 def test_image(store: Store) -> None:
     zarr_group = json_to_zarr_group(json_fname="image_example.json", store=store)
-    # zarr_group.create_array(
-    #     "0",
-    #     shape=(1, 1, 1, 1, 1),
-    #     dtype="uint8",
-    #     dimension_names=["t", "c", "z", "y", "x"],
-    # )
-    # zarr_group.create_array(
-    #     "1",
-    #     shape=(1, 1, 1, 1, 1),
-    #     dtype="uint8",
-    #     dimension_names=["t", "c", "z", "y", "x"],
-    # )
-    # zarr_group.create_array(
-    #     "2",
-    #     shape=(1, 1, 1, 1, 1),
-    #     dtype="uint8",
-    #     dimension_names=["t", "c", "z", "y", "x"],
-    # )
+    zarr_group.create_array(
+        "0",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
+    zarr_group.create_array(
+        "1",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
+    zarr_group.create_array(
+        "2",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
     ome_group = Image.from_zarr(zarr_group)
     image_attrs = ImageAttrs(
         multiscales=[

@@ -1,6 +1,3 @@
-from ome_zarr_models._rfc5_transforms.base import BaseGroupv05, BaseOMEAttrs
-from ome_zarr_models._rfc5_transforms.multiscales import Multiscale
-from ome_zarr_models._rfc5_transforms.labels import Labels
 from typing import Any, Self
 
 import pydantic_zarr  # noqa: F401
@@ -9,6 +6,9 @@ import zarr.errors
 from pydantic import Field
 from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
+from ome_zarr_models._rfc5_transforms.base import BaseGroupv05, BaseOMEAttrs
+from ome_zarr_models._rfc5_transforms.labels import Labels
+from ome_zarr_models._rfc5_transforms.multiscales import Multiscale
 from ome_zarr_models.common.validation import check_array_path
 
 __all__ = ["Image", "ImageAttrs"]
@@ -30,6 +30,7 @@ class Image(BaseGroupv05[ImageAttrs]):
     """
     An OME-Zarr image dataset.
     """
+
     @classmethod
     def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
         """
