@@ -239,6 +239,7 @@ def test_ensure_ordered_scales() -> None:
             ),
         )
 
+
 # TODO: all these tests have been copied over from v05, and needs to be adjusted
 # def test_ordered_multiscales() -> None:
 #     """
@@ -253,11 +254,13 @@ def test_ensure_ordered_scales() -> None:
 #     datasets = (
 #         Dataset(
 #             path="0",
-#             coordinateTransformations=(VectorScale(type="scale", scale=(2, 2, 2, 2)),),
+#             coordinateTransformations=(VectorScale(type="scale",
+#             scale=(2, 2, 2, 2)),),
 #         ),
 #         Dataset(
 #             path="1",
-#             coordinateTransformations=(VectorScale(type="scale", scale=(2, 2, 1, 2)),),
+#             coordinateTransformations=(VectorScale(type="scale",
+#             scale=(2, 2, 1, 2)),),
 #         ),
 #     )
 #     with pytest.raises(
@@ -288,7 +291,8 @@ def test_ensure_ordered_scales() -> None:
 #     )
 #     with pytest.raises(ValueError, match=re.escape(match)):
 #         Image.new(
-#             array_specs=[ArraySpec.from_array(np.arange(10)) for _ in range(bad_ndim)],
+#             array_specs=[
+#             ArraySpec.from_array(np.arange(10)) for _ in range(bad_ndim)],
 #             paths=[str(i) for i in range(true_ndim)],
 #             axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
 #             scales=((1, 1), (2, 2)),
@@ -391,7 +395,8 @@ def test_ensure_ordered_scales() -> None:
 #
 #     # make an untyped model, and remove an array before serializing
 #     removed_array_path = arrays_names[0]
-#     model_dict = group_model.model_dump(exclude={"members": {removed_array_path: True}})
+#     model_dict = group_model.model_dump(exclude={
+#     "members": {removed_array_path: True}})
 #     broken_group = GroupSpec(**model_dict).to_zarr(store=store, path=group_path)
 #     match = "Expected to find an array at broken/s0, but no array was found there"
 #     with pytest.raises(ValueError, match=match):
@@ -418,7 +423,8 @@ def test_ensure_ordered_scales() -> None:
 #
 #     # make an untyped model, and remove an array before serializing
 #     removed_array_path = arrays_names[0]
-#     model_dict = group_model.model_dump(exclude={"members": {removed_array_path: True}})
+#     model_dict = group_model.model_dump(exclude={"members": {removed_array_path:
+#     True}})
 #     broken_group = GroupSpec(**model_dict).to_zarr(store=store, path=group_path)
 #
 #     # put a group where the array should be

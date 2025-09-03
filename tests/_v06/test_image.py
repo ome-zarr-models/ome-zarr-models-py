@@ -1,7 +1,6 @@
 import re
 
 import pytest
-from pydantic import ValidationError
 from zarr.abc.store import Store
 
 from ome_zarr_models._v06.axes import Axis
@@ -12,7 +11,7 @@ from ome_zarr_models._v06.coordinate_transformations import (
 from ome_zarr_models._v06.image import Image, ImageAttrs
 from ome_zarr_models._v06.labels import LabelsAttrs
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
-from tests._v06.conftest import json_to_zarr_group, json_to_dict
+from tests._v06.conftest import json_to_dict, json_to_zarr_group
 
 
 def test_image(store: Store) -> None:
