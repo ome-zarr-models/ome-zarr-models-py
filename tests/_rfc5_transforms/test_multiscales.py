@@ -4,7 +4,7 @@ from pydantic import ValidationError
 from ome_zarr_models._rfc5_transforms.axes import Axis
 from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
     CoordinateSystem,
-    CoordinateTransformationType,
+    CoordinateTransformation,
     Scale,
     Sequence,
     Translation,
@@ -17,7 +17,7 @@ from tests._rfc5_transforms.conftest import (
 
 def test_ensure_scale_translation() -> None:
     def _gen_multiscale(
-        coordinateTransformations: tuple[CoordinateTransformationType, ...],
+        coordinateTransformations: tuple[CoordinateTransformation, ...],
     ) -> Multiscale:
         extra_cs = CoordinateSystem(
             name=COORDINATE_SYSTEM_NAME_FOR_TESTS,

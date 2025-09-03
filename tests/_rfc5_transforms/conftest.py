@@ -11,7 +11,7 @@ import zarr.storage
 from ome_zarr_models._rfc5_transforms.axes import Axis
 from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
     CoordinateSystem,
-    CoordinateTransformationType,
+    CoordinateTransformation,
     Scale,
 )
 from ome_zarr_models._rfc5_transforms.multiscales import Dataset, Multiscale
@@ -201,7 +201,7 @@ def _gen_dataset(
 
 def wrap_coordinate_transformations_and_systems_into_multiscale(
     coordinate_systems: tuple[CoordinateSystem, ...],
-    coordinate_transformations: tuple[CoordinateTransformationType, ...],
+    coordinate_transformations: tuple[CoordinateTransformation, ...],
 ) -> Multiscale:
     extra_cs = CoordinateSystem(
         name=COORDINATE_SYSTEM_NAME_FOR_TESTS,
