@@ -44,4 +44,4 @@ Run `mkdocs serve`, and open up the URL that your terminal prints.
 
 ### Running the tests for RFC-5 (transformations)
 
-Please see [this README](tests/_rfc5_transforms/data_rfc5/README.md)
+Please see [this README](../tests/_rfc5_transforms/data_rfc5/README.md)
