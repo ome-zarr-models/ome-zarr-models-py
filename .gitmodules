@@ -4,3 +4,4 @@
 [submodule "tests/data/examples/v06/ngff"]
 	path = tests/data/examples/v06/ngff
 	url = https://github.com/bogovicj/ngff.git
+	branch = dev

@@ -7,18 +7,6 @@ import pytest
 from tests._v06.conftest import TESTS_FILE_TO_DATA_MAPPING
 
 
-def test_examples_rfc5_are_downloaded() -> None:
-    if not (
-        Path(__file__).parent
-        / "data_rfc5/ngff_rfc5_coordinate_transformation_examples/zarr2"
-    ).exists():
-        raise ValueError(
-            "RFC5 full examples are not downloaded. Please consult the README in "
-            "`tests/data/examples/v06/README.md` for information on how"
-            " to obtain the data."
-        )
-
-
 @pytest.mark.parametrize("test_file, data_folder", TESTS_FILE_TO_DATA_MAPPING.items())
 def test_all_files_have_functions(test_file: str, data_folder: str) -> None:
     json_files = [
