@@ -13,4 +13,3 @@ Submodule from the repo data https://github.com/bogovicj/ngff-rfc5-coordinate-tr
 ## Data in `from_specification`
 
 The data in `from_specification` is the one [introduced in the PR](https://github.com/bogovicj/ngff/tree/coord-transforms/latest/examples) from @bogovicj. Note that we need to call pytest with `--ignore=tests/data/examples/v06/ngff/tests` to avoid the tests in that folder interfering with our tests. This option is included in `pyproject.toml`.
-
