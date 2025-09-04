@@ -8,16 +8,17 @@ from ome_zarr_models._v06.coordinate_transformations import (
 from tests._v06.conftest import (
     T,
     _parse_data,
-    get_data_folder,
+    get_data_folder_for_current_tests_file,
     wrap_coordinate_transformations_and_systems_into_multiscale,
 )
 
-FOLDER = get_data_folder(__file__)
+FOLDER = get_data_folder_for_current_tests_file(__file__)
 
 
 @_parse_data(
     folder=FOLDER,
-    in_memory=wrap_coordinate_transformations_and_systems_into_multiscale(
+    wrap_into_multiscale=True,
+    expected=wrap_coordinate_transformations_and_systems_into_multiscale(
         coordinate_systems=(
             CoordinateSystem(
                 name="in",

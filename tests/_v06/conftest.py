@@ -19,60 +19,19 @@ from tests import conftest
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+T = TypeVar("T", bound=BaseAttrs)
 
 VERSION: Literal["0.6"] = "0.6"
 json_to_dict = partial(conftest.json_to_dict, version=VERSION)
-# read_in_json is reimplemented below, since the json files from the tag 0.6-dev of the
-# NGFF repo are not complete valid 0.6 files, but only focus on the transformations part
-# read_in_json = partial(conftest.read_in_json, version=VERSION)
+read_in_json = partial(conftest.read_in_json, version=VERSION)
 json_to_zarr_group = partial(conftest.json_to_zarr_group, version=VERSION)
 
-T = TypeVar("T", bound=BaseAttrs)
 
-COORDINATE_SYSTEM_NAME_FOR_TESTS = "coordinate_system_name_reserved_for_tests"
-
-
-def get_data_file_path(*, folder: str, json_fname: str) -> Path:
-    return Path(__file__).parent / folder / json_fname
-
-
-def read_in_json(*, file_path: Path, model_cls: type[T]) -> T:
-    with open(file_path) as f:
-        d = json.load(f)
-        extra_cs = {
-            "name": COORDINATE_SYSTEM_NAME_FOR_TESTS,
-            "axes": [{"name": "j"}, {"name": "i"}],
-        }
-        d["coordinateSystems"].append(extra_cs)
-        wrapped = d | {
-            "datasets": [
-                {
-                    "path": "0",
-                    "coordinateTransformations": [
-                        {
-                            "type": "scale",
-                            "scale": [1.0, 1.0],
-                            "input": "/0",
-                            "output": COORDINATE_SYSTEM_NAME_FOR_TESTS,
-                        }
-                    ],
-                }
-            ]
-        }
-
-        wrapped_json = json.dumps(wrapped)
-
-        return model_cls.model_validate_json(wrapped_json)
-
-
-def read_in_zarr(*, file_path: Path, model_cls: type[T]) -> T:
-    # TODO: now this is available, so we can implement this function
-    raise NotImplementedError(
-        "The tests require NGFF 0.5 support since the data is the in Zarr v3 format. "
-        "Tracked here https://github.com/ome-zarr-models/ome-zarr-models-py/issues/88"
-    )
-
-
+# explanation of these paths and the dictionary below:
+# - we have external data that we want to test against, from different sources and
+#   located in different folders
+# - for each folder of data, we will have a single .py test file testing that data
+# - to keep track of which test file goes with which data folder, we use the dict below
 EXAMPLES_PATH = Path(__file__).parent.parent / "data/examples/v06"
 NGFF_06_EXAMPLES_PATH = str(EXAMPLES_PATH / "ngff/examples")
 RFC5_EXAMPLES_PATH = str(
@@ -117,7 +76,12 @@ TESTS_FILE_TO_DATA_MAPPING = {
 }
 
 
-def get_data_folder(test_file: str) -> str:
+def get_data_folder_for_current_tests_file(test_file: str) -> str:
+    """
+    Given the absolute path to a test file, returns the corresponding data folder.
+
+    TESTS_FILE_TO_DATA_MAPPING is used to map test files to data folders.
+    """
     path = Path(test_file)
     rel_path = path.relative_to(path.parents[2])
     for file, folder in TESTS_FILE_TO_DATA_MAPPING.items():
@@ -128,26 +92,54 @@ def get_data_folder(test_file: str) -> str:
     )
 
 
-def _parse_data(folder: str, in_memory: T) -> Callable[..., Any]:
+def _parse_data(
+    folder: str, expected: T, wrap_into_multiscale: bool = False
+) -> Callable[..., Any]:
+    """
+    Helper decorator for testing external JSON data against expected Pydantic models.
+
+    This decorator is called with three arguments:
+        - folder: The folder where the data to be tested is located.
+        - expected: The expected Pydantic model instance that the parsed data should be
+            equal to.
+        - wrap_into_multiscale: Whether to wrap the JSON data into a multiscale
+            object. This is needed only for tests where the JSON data does not
+            represent a full multiscale object but only contains coordinate systems and
+            transformations.
+
+    The decorator performs the following steps:
+        1. Derives the name of the data file to be tested from the test function name.
+        2. Loads the corresponding JSON file from the specified folder.
+        3. If `wrap_into_multiscale` is True, wraps the JSON data into the JSON data as
+            if it was contained in a multiscale object.
+        4. Parses the JSON data into a Pydantic model of the same type as `expected`.
+        5. Asserts that the parsed model is equal to the `expected` model.
+    """
+
     def wrapper(func: Callable[..., Any]) -> Callable[..., Any]:
         def inner(*args: Any, **kwargs: Any) -> Any:
             test_name = re.sub(r"^test_", "", func.__name__)
-            model_cls = type(in_memory)
-            file_path_json = get_data_file_path(
-                folder=folder, json_fname=f"{test_name}.json"
-            )
-            file_path_zarr = get_data_file_path(
-                folder=folder, json_fname=f"{test_name}.zarr"
-            )
+            model_cls = type(expected)
+            file_path_json = Path(__file__).parent / folder / f"{test_name}.json"
+            file_path_zarr = Path(__file__).parent / folder / f"{test_name}.zarr"
+            d: dict[str, Any]
             if file_path_json.exists():
-                parsed = read_in_json(file_path=file_path_json, model_cls=model_cls)
+                d = json_to_dict(json_fname=str(file_path_json))
             elif file_path_zarr.exists():
-                parsed = read_in_zarr(file_path=file_path_zarr, model_cls=model_cls)
+                raise NotImplementedError(
+                    "Currently only comparison against JSON examples is supported"
+                )
             else:
                 raise FileNotFoundError(
                     f"Neither {file_path_json} nor {file_path_zarr} exists."
                 )
-            assert parsed == in_memory
+            if wrap_into_multiscale:
+                assert model_cls is Multiscale
+                d = wrap_json_dict_into_multiscale_dict(d)
+
+            json_str = json.dumps(d)
+            parsed = model_cls.model_validate_json(json_str)
+            assert parsed == expected
             return func(*args, parsed=parsed, **kwargs)
 
         return inner
@@ -155,11 +147,44 @@ def _parse_data(folder: str, in_memory: T) -> Callable[..., Any]:
     return wrapper
 
 
+COORDINATE_SYSTEM_NAME_FOR_TESTS = "coordinate_system_name_reserved_for_tests"
+
+
+def wrap_json_dict_into_multiscale_dict(d: dict[str, Any]) -> dict[str, Any]:
+    """
+    Wraps a JSON dict of coord systems and transformations into a multiscale JSON dict.
+    """
+    extra_cs = {
+        "name": COORDINATE_SYSTEM_NAME_FOR_TESTS,
+        "axes": [{"name": "j"}, {"name": "i"}],
+    }
+    d["coordinateSystems"].append(extra_cs)
+    wrapped = d | {
+        "datasets": [
+            {
+                "path": "0",
+                "coordinateTransformations": [
+                    {
+                        "type": "scale",
+                        "scale": [1.0, 1.0],
+                        "input": "/0",
+                        "output": COORDINATE_SYSTEM_NAME_FOR_TESTS,
+                    }
+                ],
+            }
+        ]
+    }
+    return wrapped
+
+
 def _gen_dataset(
     output_coordinate_system: str,
     scale_factors: list[float],
     path: str = "0",
 ) -> Dataset:
+    """
+    Helper function for wrap_coordinate_transformations_and_systems_into_multiscale.
+    """
     return Dataset(
         path=path,
         coordinateTransformations=[
@@ -176,6 +201,9 @@ def wrap_coordinate_transformations_and_systems_into_multiscale(
     coordinate_systems: tuple[CoordinateSystem, ...],
     coordinate_transformations: tuple[CoordinateTransformation, ...],
 ) -> Multiscale:
+    """
+    Wraps coordinate systems and transformations into a multiscale object.
+    """
     extra_cs = CoordinateSystem(
         name=COORDINATE_SYSTEM_NAME_FOR_TESTS,
         axes=[

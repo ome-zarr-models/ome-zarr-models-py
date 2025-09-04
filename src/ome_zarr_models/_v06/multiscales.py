@@ -143,6 +143,7 @@ class Multiscale(BaseAttrs):
         Dimensionality of the data described by this metadata.
         """
         output_cs_name = self.datasets[0].coordinateTransformations[0].output
+        assert output_cs_name is not None
         output_cs = self.get_coordinate_system(name=output_cs_name)
         return len(output_cs.axes)
 
@@ -172,6 +173,8 @@ class Multiscale(BaseAttrs):
                 "All `Dataset` instances of a `Multiscale`  must have the same output "
                 f"coordinate system. Got {output_cs_names}."
             )
+        if output_cs_names.pop() is None:
+            raise ValueError("Output coordinate system cannot be None.")
         return data
 
     @field_validator("datasets", mode="after")
@@ -191,7 +194,7 @@ class Multiscale(BaseAttrs):
                 assert transformation.type == "sequence" and isinstance(
                     transformation.transformations[0], VectorScale
                 )
-                dim = transformation.transformations[0].scale.ndim
+                dim = transformation.transformations[0].ndim
             dims.append(dim)
         if len(set(dims)) > 1:
             raise ValueError(

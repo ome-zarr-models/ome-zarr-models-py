@@ -27,6 +27,7 @@ def test_coordinate_system_axes_unique_names() -> None:
             axes=[Axis(name="x"), Axis(name="y"), Axis(name="x")],
         )
 
+
 def test_coordinate_system_ndim() -> None:
     cs = CoordinateSystem(
         name="test",

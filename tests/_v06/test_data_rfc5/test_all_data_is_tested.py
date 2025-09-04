@@ -9,6 +9,18 @@ from tests._v06.conftest import TESTS_FILE_TO_DATA_MAPPING
 
 @pytest.mark.parametrize("test_file, data_folder", TESTS_FILE_TO_DATA_MAPPING.items())
 def test_all_files_have_functions(test_file: str, data_folder: str) -> None:
+    """
+    Ensures that for each external data file we have a test covering it.
+
+    The external files are either in JSON or Zarr format and they are arranged in
+    several folders. All the tests within for data within the same folder are grouped
+    into a single test file (.py). The locations of these test files are specified as
+    the keys of the TESTS_FILE_TO_DATA_MAPPING dictionary, and the values of the
+    dictionary are the corresponding data folders.
+
+    This function checks that for each JSON or Zarr file there is a corresponding test
+    function in the associated test file.
+    """
     json_files = [
         f
         for f in os.listdir(Path(__file__).parent.parent / data_folder)
@@ -41,8 +53,7 @@ def test_all_files_have_functions(test_file: str, data_folder: str) -> None:
             missing_functions.append(zarr_file)
 
     if missing_functions:
-        file_type = "JSON" if json_files else "Zarr"
-        print(f"Missing test functions for the following {file_type} files:")
+        print("Missing test functions for the following JSON/Zarr files:")
         for missing in missing_functions:
             print(f"- {missing}")
         raise AssertionError("Some test functions are missing.")
