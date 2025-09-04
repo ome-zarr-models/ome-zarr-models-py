@@ -68,6 +68,13 @@ def open_ome_zarr(group: zarr.Group) -> BaseGroup:
     ------
     RuntimeError
         If the passed group cannot be validated with any of the OME-Zarr group models.
+
+    Warnings
+    --------
+    This will try and load your data with every version of every OME-Zarr group type,
+    until a match is found. If data access is slow (e.g., in a remote store), this may
+    take a long time. It will be quicker to directly use the OME-Zarr group class if you
+    know which version and group you expect.
     """
     group_cls: type[BaseGroup]
     for group_cls in _V05_groups + _V04_groups:
