@@ -21,7 +21,7 @@ We encourage RFC authors to implement OME-Zarr RFCs in this package, as a mechan
 For every OME-Zarr RFC we will open an issue and a new branch.
 If you would like to implement an RFC, please comment on that issue so we can avoid duplication of work.
 
-`ome-zarr-models` will always contain a in-progress implementation of the next version of OME-Zarr specification.
+`ome-zarr-models` will always contain an in-progress implementation of the next version of the OME-Zarr specification.
 RFC implementations should modify this version.
 In addition, please open implementation PRs against the RFC branch.
 
