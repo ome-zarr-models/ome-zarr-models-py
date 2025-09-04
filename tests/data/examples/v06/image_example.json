@@ -8,13 +8,17 @@
           {
             "name": "t",
             "type": "time",
-            "unit": "millisecond",
-            "anatomicalOrientation": "left-to-right"
+            "unit": "millisecond"
           },
           { "name": "c", "type": "channel" },
           { "name": "z", "type": "space", "unit": "micrometer" },
           { "name": "y", "type": "space", "unit": "micrometer" },
-          { "name": "x", "type": "space", "unit": "micrometer" }
+          {
+            "name": "x",
+            "type": "space",
+            "unit": "micrometer",
+            "orientation": { "type": "anatomical", "value": "left-to-right" }
+          }
         ],
         "datasets": [
           {

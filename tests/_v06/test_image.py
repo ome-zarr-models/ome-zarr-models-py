@@ -43,28 +43,28 @@ def test_image(store: Store) -> None:
                         name="t",
                         type="time",
                         unit="millisecond",
-                        anatomicalOrientation="left-to-right",
                     ),
-                    Axis(
-                        name="c", type="channel", unit=None, anatomicalOrientation=None
-                    ),
+                    Axis(name="c", type="channel", unit=None, orientation=None),
                     Axis(
                         name="z",
                         type="space",
                         unit="micrometer",
-                        anatomicalOrientation=None,
+                        orientation=None,
                     ),
                     Axis(
                         name="y",
                         type="space",
                         unit="micrometer",
-                        anatomicalOrientation=None,
+                        orientation=None,
                     ),
                     Axis(
                         name="x",
                         type="space",
                         unit="micrometer",
-                        anatomicalOrientation=None,
+                        orientation={
+                            "type": "anatomical",
+                            "value": "left-to-right",
+                        },
                     ),
                 ],
                 datasets=(
@@ -280,13 +280,13 @@ def test_invalid_orientations() -> None:
                     name="z",
                     type="space",
                     unit="micrometer",
-                    anatomicalOrientation="left-to-right",
+                    orientation={"type": "anatomical", "value": "left-to-right"},
                 ),
                 Axis(
                     name="y",
                     type="space",
                     unit="micrometer",
-                    anatomicalOrientation="right-to-left",
+                    orientation={"type": "anatomical", "value": "right-to-left"},
                 ),
             ],
             datasets=(
