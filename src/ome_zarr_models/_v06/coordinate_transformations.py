@@ -36,6 +36,13 @@ class CoordinateSystem(BaseAttrs):
         unique_items_validator([a.name for a in axes])
         return axes
 
+    @property
+    def ndim(self) -> int:
+        """
+        The dimensionality of the coordinate system (length of its axes array).
+        """
+        return len(self.axes)
+
 
 class CoordinateTransformationBase(BaseAttrs):
     type: str

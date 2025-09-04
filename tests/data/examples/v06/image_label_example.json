@@ -35,7 +35,7 @@
         "type": "gaussian",
         "coordinateSystems": [
           {
-            "name": "example",
+            "name": "coord_sys0",
             "axes": [
               { "name": "t", "type": "time", "unit": "millisecond" },
               { "name": "c", "type": "channel" },
@@ -45,7 +45,7 @@
             ]
           },
           {
-            "name": "example2",
+            "name": "coord_sys1",
             "axes": [
               { "name": "t", "type": "time", "unit": "millisecond" },
               { "name": "c", "type": "channel" },
@@ -63,7 +63,7 @@
                 "type": "scale",
                 "scale": [1.0, 1.0, 0.5, 0.5, 0.5],
                 "input": "/0",
-                "output": "example"
+                "output": "coord_sys0"
               }
             ]
           },
@@ -74,7 +74,7 @@
                 "type": "scale",
                 "scale": [1.0, 1.0, 1.0, 1.0, 1.0],
                 "input": "/1",
-                "output": "example"
+                "output": "coord_sys0"
               }
             ]
           },
@@ -85,7 +85,7 @@
                 "type": "scale",
                 "scale": [1.0, 1.0, 2.0, 2.0, 2.0],
                 "input": "/2",
-                "output": "example"
+                "output": "coord_sys0"
               }
             ]
           }
@@ -94,8 +94,8 @@
           {
             "type": "scale",
             "scale": [0.1, 1.0, 1.0, 1.0, 1.0],
-            "input": "example",
-            "output": "example2"
+            "input": "coord_sys0",
+            "output": "coord_sys1"
           }
         ],
         "metadata": {

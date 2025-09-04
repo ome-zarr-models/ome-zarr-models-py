@@ -27,6 +27,13 @@ def test_coordinate_system_axes_unique_names() -> None:
             axes=[Axis(name="x"), Axis(name="y"), Axis(name="x")],
         )
 
+def test_coordinate_system_ndim() -> None:
+    cs = CoordinateSystem(
+        name="test",
+        axes=[Axis(name="x"), Axis(name="y"), Axis(name="z")],
+    )
+    assert cs.ndim == 3
+
 
 def test_input_output_coordinate_system_valid_for_transformation() -> None:
     axis_names = ["a", "b", "c"]

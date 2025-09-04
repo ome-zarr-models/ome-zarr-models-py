@@ -128,20 +128,22 @@ class Multiscale(BaseAttrs):
     name: JsonValue | None = None
     type: JsonValue = None
 
+    def get_coordinate_system(self, name: str) -> CoordinateSystem:
+        """
+        Get a coordinate system by name.
+        """
+        for cs in self.coordinateSystems:
+            if cs.name == name:
+                return cs
+        raise ValueError(f"No coordinate system with name {name} found.")
+
     @property
     def ndim(self) -> int:
         """
         Dimensionality of the data described by this metadata.
-
-        Determined by the length of the axes attribute.
         """
         output_cs_name = self.datasets[0].coordinateTransformations[0].output
-        output_cs: CoordinateSystem | None = None
-        for cs in self.coordinateSystems:
-            if cs.name == output_cs_name:
-                output_cs = cs
-                break
-        assert output_cs is not None
+        output_cs = self.get_coordinate_system(name=output_cs_name)
         return len(output_cs.axes)
 
     @property
@@ -189,7 +191,7 @@ class Multiscale(BaseAttrs):
                 assert transformation.type == "sequence" and isinstance(
                     transformation.transformations[0], VectorScale
                 )
-                dim = len(transformation.transformations[0].scale)
+                dim = transformation.transformations[0].scale.ndim
             dims.append(dim)
         if len(set(dims)) > 1:
             raise ValueError(

@@ -40,7 +40,7 @@ def test_image(store: Store) -> None:
             Multiscale(
                 coordinateSystems=(
                     CoordinateSystem(
-                        name="example",
+                        name="coord_sys0",
                         axes=[
                             Axis(name="t", type="time", unit="millisecond"),
                             Axis(name="c", type="channel", unit=None),
@@ -50,7 +50,7 @@ def test_image(store: Store) -> None:
                         ],
                     ),
                     CoordinateSystem(
-                        name="example2",
+                        name="coord_sys1",
                         axes=[
                             Axis(name="t", type="time", unit="millisecond"),
                             Axis(name="c", type="channel", unit=None),
@@ -67,7 +67,7 @@ def test_image(store: Store) -> None:
                             VectorScale(
                                 scale=[1.0, 1.0, 0.5, 0.5, 0.5],
                                 input="/0",
-                                output="example",
+                                output="coord_sys0",
                             )
                         ],
                     ),
@@ -77,7 +77,7 @@ def test_image(store: Store) -> None:
                             VectorScale(
                                 scale=[1.0, 1.0, 1.0, 1.0, 1.0],
                                 input="/1",
-                                output="example",
+                                output="coord_sys0",
                             )
                         ],
                     ),
@@ -87,7 +87,7 @@ def test_image(store: Store) -> None:
                             VectorScale(
                                 scale=[1.0, 1.0, 2.0, 2.0, 2.0],
                                 input="/2",
-                                output="example",
+                                output="coord_sys0",
                             )
                         ],
                     ),
@@ -95,8 +95,8 @@ def test_image(store: Store) -> None:
                 coordinateTransformations=(
                     VectorScale(
                         scale=[0.1, 1.0, 1.0, 1.0, 1.0],
-                        input="example",
-                        output="example2",
+                        input="coord_sys0",
+                        output="coord_sys1",
                     ),
                 ),
                 metadata={
