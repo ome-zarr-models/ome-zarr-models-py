@@ -215,7 +215,7 @@ class MultiscaleBase(BaseAttrs):
             if not is_ordered:
                 raise ValueError(
                     f"Dataset {i} has a lower resolution (scales = {s1}) "
-                    f"than dataset {i+1} (scales = {s2})."
+                    f"than dataset {i + 1} (scales = {s2})."
                 )
 
         return datasets

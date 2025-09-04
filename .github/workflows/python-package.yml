@@ -6,9 +6,9 @@ concurrency:
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "rfc*"]
   pull_request:
-    branches: ["main"]
+    branches: ["main", "rfc*"]
   workflow_dispatch:
 
 jobs:
@@ -21,6 +21,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Update submodules for tests data
+        run: git submodule update --init --recursive
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
