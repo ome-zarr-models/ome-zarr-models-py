@@ -73,7 +73,7 @@ def read_in_zarr(*, file_path: Path, model_cls: type[T]) -> T:
     )
 
 
-EXAMPLES_PATH = Path("../data/examples/v06")
+EXAMPLES_PATH = Path(__file__).parent.parent / "data/examples/v06"
 NGFF_06_EXAMPLES_PATH = str(EXAMPLES_PATH / "ngff/examples")
 RFC5_EXAMPLES_PATH = str(
     EXAMPLES_PATH / "ngff-rfc5-coordinate-transformation-examples/zarr2"
