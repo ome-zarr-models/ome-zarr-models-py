@@ -13,7 +13,7 @@ from pydantic import (
     model_validator,
 )
 
-from ome_zarr_models._v06.axes import Axes, Orientation
+from ome_zarr_models._v06.axes import Axes
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.coordinate_transformations import (
     Transform,
@@ -198,10 +198,8 @@ class Multiscale(BaseAttrs):
         """
         Validate anatomical orientations.
         """
-        orientations: list[Orientation] = [
-            a.anatomicalOrientation
-            for a in self.axes
-            if a.anatomicalOrientation is not None
+        orientations: list[JsonValue] = [
+            a.orientation.value for a in self.axes if a.orientation is not None
         ]
         _check_only_one_value(
             orientations=orientations, values=["right-to-left", "left-to-right"]
@@ -323,7 +321,7 @@ class Dataset(BaseAttrs):
 
 
 def _check_only_one_value(
-    *, orientations: list[Orientation], values: list[Orientation]
+    *, orientations: list[JsonValue], values: list[JsonValue]
 ) -> None:
     counter = 0
     for value in values:
