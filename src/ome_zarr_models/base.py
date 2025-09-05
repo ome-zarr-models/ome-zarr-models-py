@@ -23,7 +23,14 @@ class BaseAttrs(BaseModel):
 
     def get_array_paths(self) -> list[str]:
         """
-        Get a list of all array paths expected to live in the Group
+        Get a list of all array paths expected and required to live in the Group
+        with these attributes.
+        """
+        return []
+
+    def get_optional_array_paths(self) -> list[str]:
+        """
+        Get a list of all array paths expected but not required to live in the Group
         with these attributes.
         """
         return []

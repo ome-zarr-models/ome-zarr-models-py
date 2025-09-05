@@ -27,11 +27,7 @@ class WellAttrs(BaseAttrs):
 
     well: WellMeta
 
-    def get_array_paths(self) -> list[str]:
-        """
-        Get a list of all array paths expected to live in this Well group
-        with these attributes.
-        """
+    def get_optional_array_paths(self) -> list[str]:  # noqa: D102
         return [im.path for im in self.well.images]
 
 
@@ -50,7 +46,7 @@ class Well(BaseGroupv04[WellAttrs]):
         group : zarr.Group
             A Zarr group that has valid OME-Zarr image metadata.
         """
-        return _from_zarr(group, cls, WellAttrs, allow_missing_nodes=True)
+        return _from_zarr(group, cls, WellAttrs)
 
     def get_image(self, i: int) -> Image:
         """
