@@ -32,7 +32,9 @@ class WellMeta(BaseAttrs):
     Metadata for a single well.
     """
 
-    images: Annotated[list[WellImage], AfterValidator(unique_items_validator)]
+    images: Annotated[list[WellImage], AfterValidator(unique_items_validator)] = Field(
+        ..., description="Images within a well"
+    )
     version: str | None = Field(None, description="Version of the well specification")
 
     def get_acquisition_paths(self) -> dict[int, list[str]]:
