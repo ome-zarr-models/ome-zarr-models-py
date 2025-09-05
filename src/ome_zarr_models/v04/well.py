@@ -2,7 +2,7 @@
 For reference, see the [well section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.4/#well-md).
 """
 
-from collections.abc import Callable, Generator
+from collections.abc import Generator
 from typing import TYPE_CHECKING, Any, Self, TypeVar
 
 import zarr
@@ -28,6 +28,13 @@ class WellAttrs(BaseAttrs):
 
     well: WellMeta
 
+    def get_array_paths(self) -> list[str]:
+        """
+        Get a list of all array paths expected to live in this Well group
+        with these attributes.
+        """
+        return [im.path for im in self.well.images]
+
 
 TCls = TypeVar("TCls", bound=BaseGroupv04[Any])
 TAttrs = TypeVar("TAttrs", bound=BaseAttrs)
@@ -37,7 +44,6 @@ def _from_zarr(
     group: zarr.Group,
     group_cls: type[TCls],
     attrs_cls: type[TAttrs],
-    get_array_paths: Callable[[TAttrs], list[str]],
     *,
     allow_missing_nodes: bool = False,
 ) -> TCls:
@@ -52,8 +58,6 @@ def _from_zarr(
         Class of the Group to return.
     attrs_cls :
         Attributes class.
-    get_array_paths :
-        A function that takes group attributes, and returns all the expected array paths.
     allow_missing_nodes :
         If True, allow arrays or groups specified by the paths to be missing.
     """
@@ -62,7 +66,7 @@ def _from_zarr(
     attributes = attrs_cls.model_validate(group_spec.attributes)
 
     members_tree_flat: dict[str, AnyGroupSpec | AnyArraySpec] = {}
-    expected_array_paths = get_array_paths(attributes)
+    expected_array_paths = attrs_cls.get_array_paths(attributes)
 
     for array_path in expected_array_paths:
         try:
@@ -92,13 +96,7 @@ class Well(BaseGroupv04[WellAttrs]):
         group : zarr.Group
             A Zarr group that has valid OME-Zarr image metadata.
         """
-
-        def get_array_paths(attrs: WellAttrs) -> list[str]:
-            return [im.path for im in attrs.well.images]
-
-        return _from_zarr(
-            group, cls, WellAttrs, get_array_paths, allow_missing_nodes=True
-        )
+        return _from_zarr(group, cls, WellAttrs, allow_missing_nodes=True)
 
     def get_image(self, i: int) -> Image:
         """

@@ -21,6 +21,13 @@ class BaseAttrs(BaseModel):
         frozen=True,
     )
 
+    def get_array_paths(self) -> list[str]:
+        """
+        Get a list of all array paths expected to live in the Group
+        with these attributes.
+        """
+        return []
+
 
 class BaseGroup(ABC):
     """
