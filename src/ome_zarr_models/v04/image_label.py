@@ -34,8 +34,8 @@ class ImageLabel(BaseGroupv04[ImageLabelAttrs]):
         Parameters
         ----------
         group : zarr.Group
-            A Zarr group that has valid OME-NGFF image label metadata.
+            A Zarr group that has valid OME-Zarr image label metadata.
         """
         # Use Image.from_zarr() to validate multiscale metadata
-        Image.from_zarr(group)
-        return super().from_zarr(group)
+        image = Image.from_zarr(group)
+        return cls(attributes=image.attributes.model_dump(), members=image.members)
