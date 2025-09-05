@@ -1,6 +1,12 @@
 # Changelog
 
-## 1.0.0
+## 1.1
+
+### New Features
+
+- [ome_zarr_models.v04.ImageLabel][] now supports being created from a Zarr array backed by an un-listable store.
+
+## 1.0
 
 ### New Features
 
