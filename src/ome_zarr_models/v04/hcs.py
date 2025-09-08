@@ -42,6 +42,7 @@ class HCS(BaseGroupv04[HCSAttrs]):
             A Zarr group that has valid OME-Zarr image metadata.
         """
         hcs = _from_zarr(group, cls, HCSAttrs)
+        # Traverse all the Well groups, which themselves contain Image groups
         hcs_flat = hcs.to_flat()
         for well in hcs.attributes.plate.wells:
             well_group = group[well.path]
