@@ -171,9 +171,8 @@ class Image(BaseGroupv04[ImageAttrs]):
             type=multiscale_type,
             version="0.4",
         )
-        # https://github.com/zarr-developers/pydantic-zarr/pull/100 for typing ignore
         return Image(
-            members=GroupSpec.from_flat(members_flat).members,  # type: ignore[arg-type]
+            members=GroupSpec.from_flat(members_flat).members,
             attributes=ImageAttrs(multiscales=(multimeta,)),
         )
 
