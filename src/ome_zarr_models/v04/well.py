@@ -36,12 +36,12 @@ class Well(BaseGroupv04[WellAttrs]):
     @classmethod
     def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
         """
-        Create an OME-Zarr image model from a `zarr.Group`.
+        Create an OME-Zarr well model from a `zarr.Group`.
 
         Parameters
         ----------
         group : zarr.Group
-            A Zarr group that has valid OME-Zarr image metadata.
+            A Zarr group that has valid OME-Zarr well metadata.
         """
         return _from_zarr(group, cls, WellAttrs)
 
