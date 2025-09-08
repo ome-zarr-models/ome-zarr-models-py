@@ -2,14 +2,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Self
 
-import zarr
-import zarr.errors
 from pydantic import Field, JsonValue, model_validator
 from pydantic_zarr.v2 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.coordinate_transformations import _build_transforms
-from ome_zarr_models.common.validation import check_array_path
+from ome_zarr_models.v04._shared import _from_zarr
 from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.labels import Labels
@@ -18,6 +16,8 @@ from ome_zarr_models.v04.omero import Omero
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
+    import zarr
 
 
 __all__ = ["Image", "ImageAttrs"]
@@ -42,8 +42,8 @@ class ImageAttrs(BaseAttrs):
                 paths.append(dataset.path)
         return paths
 
-    def get_optional_array_paths(self) -> list[str]:  # noqa: D102
-        return ["labels"]
+    def get_optional_group_paths(self) -> dict[str, type[AnyGroupSpec]]:  # noqa: D102
+        return {"labels": Labels}
 
 
 class Image(BaseGroupv04[ImageAttrs]):
@@ -61,31 +61,7 @@ class Image(BaseGroupv04[ImageAttrs]):
         group : zarr.Group
             A Zarr group that has valid OME-Zarr image metadata.
         """
-        # on unlistable storage backends, the members of this group will be {}
-        group_spec: AnyGroupSpec = GroupSpec.from_zarr(group, depth=0)
-
-        multi_meta = ImageAttrs.model_validate(group_spec.attributes)
-        members_tree_flat: dict[str, AnyGroupSpec | AnyArraySpec] = {}
-        for multiscale in multi_meta.multiscales:
-            for dataset in multiscale.datasets:
-                array_path = f"{group.path}/{dataset.path}"
-                array_spec = check_array_path(
-                    group, array_path, expected_zarr_version=2
-                )
-                members_tree_flat["/" + dataset.path] = array_spec
-
-        try:
-            labels_group = zarr.open_group(store=group.store, path="labels", mode="r")
-            members_tree_flat["/labels"] = GroupSpec.from_zarr(labels_group, depth=0)
-        except zarr.errors.GroupNotFoundError:
-            pass
-
-        members_normalized: AnyGroupSpec = GroupSpec.from_flat(members_tree_flat)
-
-        group_spec = group_spec.model_copy(
-            update={"members": members_normalized.members}
-        )
-        return cls(**group_spec.model_dump())
+        return _from_zarr(group, cls, ImageAttrs)
 
     @classmethod
     def new(

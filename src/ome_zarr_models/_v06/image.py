@@ -54,9 +54,8 @@ class Image(BaseGroupv06[ImageAttrs]):
         members_tree_flat: dict[str, AnyGroupSpec | AnyArraySpec] = {}
         for multiscale in multi_meta.multiscales:
             for dataset in multiscale.datasets:
-                array_path = f"{group.path}/{dataset.path}"
                 array_spec = check_array_path(
-                    group, array_path, expected_zarr_version=3
+                    group, dataset.path, expected_zarr_version=3
                 )
                 members_tree_flat["/" + dataset.path] = array_spec
 
