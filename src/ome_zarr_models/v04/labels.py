@@ -3,9 +3,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Self
 
 from pydantic import Field
-from pydantic_zarr.v2 import AnyGroupSpec, GroupSpec
 
 from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.v04._shared import _from_zarr
 from ome_zarr_models.v04.base import BaseGroupv04
 
 if TYPE_CHECKING:
@@ -39,5 +39,4 @@ class Labels(BaseGroupv04[LabelsAttrs]):
         group : zarr.Group
             A Zarr group that has valid OME-Zarr labels metadata.
         """
-        gs: AnyGroupSpec = GroupSpec.from_zarr(group, depth=0)
-        return cls(attributes=gs.attributes, members=gs.members)
+        return _from_zarr(group, cls, LabelsAttrs)
