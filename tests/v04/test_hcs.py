@@ -36,6 +36,8 @@ def test_example_hcs() -> None:
             wells=[WellInPlate(path="B/03", rowIndex=0, columnIndex=0)],
         )
     )
+    assert hcs.members is not None
+    assert list(hcs.members.keys()) == ["B"]
 
     well_groups = list(hcs.well_groups)
     assert len(well_groups) == 1

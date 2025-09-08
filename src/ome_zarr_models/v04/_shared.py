@@ -61,9 +61,9 @@ def _from_zarr(
     required_groups = attrs_cls.get_group_paths(attributes)
     for group_path in required_groups:
         group_spec = check_group_path(group, group_path, expected_zarr_version=2)
-        members_tree_flat["/" + group_path] = required_groups[group_path](
-            attributes=group_spec.attributes, members=group_spec.members
-        )
+        group_flat = required_groups[group_path].from_zarr(group[group_path]).to_flat()  # type: ignore[arg-type]
+        for path in group_flat:
+            members_tree_flat["/" + group_path + path] = group_flat[path]
 
     # Optional group paths
     optional_groups = attrs_cls.get_optional_group_paths(attributes)
@@ -72,9 +72,9 @@ def _from_zarr(
             group_spec = check_group_path(group, group_path, expected_zarr_version=2)
         except FileNotFoundError:
             continue
-        members_tree_flat["/" + group_path] = optional_groups[group_path](
-            attributes=group_spec.attributes, members=group_spec.members
-        )
+        group_flat = optional_groups[group_path].from_zarr(group[group_path]).to_flat()  # type: ignore[arg-type]
+        for path in group_flat:
+            members_tree_flat["/" + group_path + path] = group_flat[path]
 
     members_normalized: AnyGroupSpec = GroupSpec.from_flat(members_tree_flat)
     return group_cls(members=members_normalized.members, attributes=attributes)
