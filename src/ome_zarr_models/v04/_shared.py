@@ -68,7 +68,6 @@ def _from_zarr(
     # Optional group paths
     optional_groups = attrs_cls.get_optional_group_paths(attributes)
     for group_path in optional_groups:
-        print(group_path)
         try:
             group_spec = check_group_path(group, group_path, expected_zarr_version=2)
         except FileNotFoundError:
