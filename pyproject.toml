@@ -106,6 +106,7 @@ addopts = [
     "--cov",
     "--cov-report=xml",
     "-vv",
+    "--ignore=tests/data/examples/v06/ngff/tests",
 ]
 filterwarnings = ["error"]
 
