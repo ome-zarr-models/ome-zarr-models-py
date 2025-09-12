@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
+from pydantic_zarr.v2 import AnyGroupSpec
 
 
 class BaseAttrs(BaseModel):
@@ -20,6 +21,38 @@ class BaseAttrs(BaseModel):
         populate_by_name=True,
         frozen=True,
     )
+
+    def get_array_paths(self) -> list[str]:
+        """
+        Get a list of all array paths expected and required to live in the Group
+        with these attributes.
+        """
+        return []
+
+    def get_optional_array_paths(self) -> list[str]:
+        """
+        Get a list of all array paths expected but not required to live in the Group
+        with these attributes.
+        """
+        return []
+
+    def get_group_paths(self) -> dict[str, type[AnyGroupSpec]]:
+        """
+        Get a list of all group paths expected and required to live in the Group
+        with these attributes.
+
+        Must return a dictionary mapping paths to their GroupSpec class.
+        """
+        return {}
+
+    def get_optional_group_paths(self) -> dict[str, type[AnyGroupSpec]]:
+        """
+        Get a list of all group paths expected but not required to live in the Group
+        with these attributes.
+
+        Must return a dictionary mapping paths to their GroupSpec class.
+        """
+        return {}
 
 
 class BaseGroup(ABC):

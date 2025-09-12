@@ -88,29 +88,92 @@ def check_array_path(
         If the array doesn't exist, or the array is not the expected Zarr version.
     """
     try:
-        array = zarr.open_array(store=group.store, path=array_path, mode="r")
-        array_spec: AnyArraySpecv2 | AnyArraySpecv3
-        if array.metadata.zarr_format == 2:
-            if expected_zarr_version == 3:
-                raise ValueError("Expected Zarr v3 array, but got v2 array")
-            array_spec = ArraySpecv2.from_zarr(array)
-        else:
-            if expected_zarr_version == 2:
-                raise ValueError("Expected Zarr v2 array, but got v3 array")
-            array_spec = ArraySpecv3.from_zarr(array)
+        array = zarr.open_array(store=group.store_path, path=array_path, mode="r")
     except FileNotFoundError as e:
         msg = (
             f"Expected to find an array at {array_path}, but no array was found there."
         )
         raise ValueError(msg) from e
-    except zarr.errors.ContainsGroupError as e:
+    except (zarr.errors.ContainsGroupError, zarr.errors.NodeTypeValidationError) as e:
         msg = (
             f"Expected to find an array at {array_path}, "
             "but a group was found there instead."
         )
         raise ValueError(msg) from e
 
+    array_spec: AnyArraySpecv2 | AnyArraySpecv3
+    if array.metadata.zarr_format == 2:
+        if expected_zarr_version == 3:
+            raise ValueError("Expected Zarr v3 array, but got v2 array")
+        array_spec = ArraySpecv2.from_zarr(array)
+    else:
+        if expected_zarr_version == 2:
+            raise ValueError("Expected Zarr v2 array, but got v3 array")
+        array_spec = ArraySpecv3.from_zarr(array)
+
     return array_spec
+
+
+@overload
+def check_group_path(
+    group: zarr.Group,
+    group_path: str,
+    *,
+    expected_zarr_version: Literal[2],
+) -> AnyGroupSpecv2: ...
+
+
+@overload
+def check_group_path(
+    group: zarr.Group,
+    group_path: str,
+    *,
+    expected_zarr_version: Literal[3],
+) -> AnyGroupSpecv3: ...
+
+
+def check_group_path(
+    group: zarr.Group,
+    group_path: str,
+    *,
+    expected_zarr_version: Literal[2, 3],
+) -> AnyGroupSpecv2 | AnyGroupSpecv3:
+    """
+    Check if a group exists at a given path in a group.
+
+    Returns
+    -------
+    GroupSpec
+        If the path exists, it's GroupSpec is returned.
+
+    Raises
+    ------
+    ValueError
+        If the group doesn't exist, or the group is not the expected Zarr version.
+    """
+    try:
+        group = zarr.open_group(store=group.store_path, path=group_path, mode="r")
+    except FileNotFoundError as e:
+        msg = f"Expected to find a group at {group_path}, but no group was found there."
+        raise FileNotFoundError(msg) from e
+    except zarr.errors.ContainsArrayError as e:
+        msg = (
+            f"Expected to find an group at {group_path}, "
+            "but an array was found there instead."
+        )
+        raise zarr.errors.ContainsArrayError(msg) from e
+
+    group_spec: AnyGroupSpecv2 | AnyGroupSpecv3
+    if group.metadata.zarr_format == 2:
+        if expected_zarr_version == 3:
+            raise ValueError("Expected Zarr v3 array, but got v2 array")
+        group_spec = GroupSpecv2.from_zarr(group, depth=0)
+    else:
+        if expected_zarr_version == 2:
+            raise ValueError("Expected Zarr v2 array, but got v3 array")
+        group_spec = GroupSpecv3.from_zarr(group, depth=0)
+
+    return group_spec
 
 
 def check_length(

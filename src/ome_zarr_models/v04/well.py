@@ -3,16 +3,16 @@ For reference, see the [well section of the OME-Zarr specification](https://ngff
 """
 
 from collections.abc import Generator
-from typing import TYPE_CHECKING
+from typing import Self
+
+import zarr
+from pydantic_zarr.v2 import AnyGroupSpec
 
 from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.v04._shared import _from_zarr
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.image import Image
 from ome_zarr_models.v04.well_types import WellMeta
-
-if TYPE_CHECKING:
-    from pydantic_zarr.v2 import AnyGroupSpec
-
 
 __all__ = ["Well", "WellAttrs"]
 
@@ -24,11 +24,26 @@ class WellAttrs(BaseAttrs):
 
     well: WellMeta
 
+    def get_optional_group_paths(self) -> dict[str, type[AnyGroupSpec]]:  # noqa: D102
+        return {im.path: Image for im in self.well.images}
+
 
 class Well(BaseGroupv04[WellAttrs]):
     """
     An OME-Zarr well group.
     """
+
+    @classmethod
+    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
+        """
+        Create an OME-Zarr well model from a `zarr.Group`.
+
+        Parameters
+        ----------
+        group : zarr.Group
+            A Zarr group that has valid OME-Zarr well metadata.
+        """
+        return _from_zarr(group, cls, WellAttrs)
 
     def get_image(self, i: int) -> Image:
         """
