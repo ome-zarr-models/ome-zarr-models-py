@@ -11,6 +11,7 @@ The core of this package is a set of classes for representing different OME-Zarr
 | [`Labels`][ome_zarr_models.v05.Labels]         | [`Labels`][ome_zarr_models.v04.Labels]         |
 | [`ImageLabel`][ome_zarr_models.v05.ImageLabel] | [`ImageLabel`][ome_zarr_models.v04.ImageLabel] |
 | [`Well`][ome_zarr_models.v05.Well]             | [`Well`][ome_zarr_models.v04.Well]             |
+| [`Plate`][ome_zarr_models.v05.Plate]           | [`Plate`][ome_zarr_models.v04.Plate]           |
 
 Each class has
 
@@ -22,6 +23,8 @@ Each class has
 
 ```sh
 pip install ome-zarr-models
+# or ... with zarr io support
+pip install ome-zarr-models[zarr]
 ```
 
 or

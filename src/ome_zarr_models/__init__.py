@@ -1,7 +1,7 @@
-from importlib.metadata import PackageNotFoundError, version
-from typing import Any
+from __future__ import annotations
 
-import zarr
+from importlib.metadata import PackageNotFoundError, version
+from typing import TYPE_CHECKING, Any
 
 import ome_zarr_models.v04.hcs
 import ome_zarr_models.v04.image
@@ -16,6 +16,9 @@ import ome_zarr_models.v05.well
 from ome_zarr_models.base import BaseGroup
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v05.base import BaseGroupv05
+
+if TYPE_CHECKING:
+    import zarr
 
 try:
     __version__ = version("ome_zarr_models")

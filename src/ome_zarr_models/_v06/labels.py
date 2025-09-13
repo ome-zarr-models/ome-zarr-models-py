@@ -1,11 +1,11 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any, Self
 
 import numpy as np
 
 # Import needed for pydantic type resolution
 import pydantic_zarr  # noqa: F401
-import zarr
-import zarr.errors
 from pydantic import Field, ValidationError, model_validator
 from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
@@ -13,6 +13,8 @@ from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs
 from ome_zarr_models.common.validation import check_array_spec, check_group_spec
 
 if TYPE_CHECKING:
+    import zarr
+
     from ome_zarr_models._v06.image_label import ImageLabel
 
 
@@ -34,7 +36,7 @@ VALID_DTYPES: list[np.dtype[Any]] = [
 ]
 
 
-def _check_valid_dtypes(labels: "Labels") -> "Labels":
+def _check_valid_dtypes(labels: Labels) -> Labels:
     """
     Check that all multiscales levels of a labels image are valid Label data types.
     """
@@ -102,6 +104,12 @@ class Labels(
         group : zarr.Group
             A Zarr group that has valid OME-Zarr label metadata.
         """
+        try:
+            import zarr
+            import zarr.errors
+        except ImportError as e:
+            raise ImportError("zarr is required to use this function") from e
+
         from ome_zarr_models._v06.image_label import ImageLabel
 
         attrs_dict = group.attrs.asdict()
@@ -141,7 +149,7 @@ class Labels(
         """
         return self.attributes.ome.labels
 
-    def get_image_labels_group(self, path: str) -> "ImageLabel":
+    def get_image_labels_group(self, path: str) -> ImageLabel:
         """
         Get a image labels group at a given path.
         """

@@ -2,14 +2,19 @@
 Private utilities.
 """
 
+from __future__ import annotations
+
 from collections import Counter
-from collections.abc import Hashable, Iterable
 from dataclasses import MISSING, fields, is_dataclass
-from typing import TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 import pydantic
 from pydantic import create_model
-from zarr.abc.store import Store
+
+if TYPE_CHECKING:
+    from collections.abc import Hashable, Iterable
+
+    from zarr.abc.store import Store
 
 T = TypeVar("T")
 
