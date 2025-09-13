@@ -1,7 +1,8 @@
-from collections.abc import Generator, Mapping
-from typing import Self
+from __future__ import annotations
 
-import zarr
+from collections.abc import Generator, Mapping
+from typing import TYPE_CHECKING, Self
+
 from pydantic import model_validator
 from pydantic_zarr.v2 import AnyGroupSpec, GroupSpec
 
@@ -11,6 +12,9 @@ from ome_zarr_models.v04._shared import _from_zarr
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.plate import Plate
 from ome_zarr_models.v04.well import Well
+
+if TYPE_CHECKING:
+    import zarr
 
 __all__ = ["HCS", "HCSAttrs"]
 

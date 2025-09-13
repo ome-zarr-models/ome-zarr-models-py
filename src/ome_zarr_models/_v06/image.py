@@ -1,10 +1,9 @@
-from collections.abc import Sequence
-from typing import Any, Self
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Self
 
 # Import needed for pydantic type resolution
 import pydantic_zarr  # noqa: F401
-import zarr
-import zarr.errors
 from pydantic import Field, JsonValue, model_validator
 from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
@@ -14,6 +13,12 @@ from ome_zarr_models._v06.labels import Labels
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
 from ome_zarr_models.common.coordinate_transformations import _build_transforms
 from ome_zarr_models.common.validation import check_array_path
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    import zarr
+
 
 __all__ = ["Image", "ImageAttrs"]
 
@@ -45,6 +50,12 @@ class Image(BaseGroupv06[ImageAttrs]):
         group : zarr.Group
             A Zarr group that has valid OME-Zarr image metadata.
         """
+        try:
+            import zarr
+            import zarr.errors
+        except ImportError as e:
+            raise ImportError("zarr is required to use this function") from e
+
         # on unlistable storage backends, the members of this group will be {}
         group_spec: GroupSpec[dict[str, Any], Any] = GroupSpec.from_zarr(group, depth=0)
 
@@ -87,7 +98,7 @@ class Image(BaseGroupv06[ImageAttrs]):
         metadata: JsonValue | None = None,
         global_scale: Sequence[float] | None = None,
         global_translation: Sequence[float] | None = None,
-    ) -> "Image":
+    ) -> Image:
         """
         Create a new `Image` from a sequence of multiscale arrays
         and spatial metadata.

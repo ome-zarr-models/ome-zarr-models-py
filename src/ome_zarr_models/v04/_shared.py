@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any, TypeVar
 
-import zarr
 from pydantic_zarr.v2 import AnyGroupSpec, GroupSpec
 
 from ome_zarr_models.base import BaseAttrs
@@ -14,6 +15,7 @@ TCls = TypeVar("TCls", bound=BaseGroupv04[Any])
 TAttrs = TypeVar("TAttrs", bound=BaseAttrs)
 
 if TYPE_CHECKING:
+    import zarr
     from pydantic_zarr.v2 import AnyArraySpec, AnyGroupSpec
 
 
