@@ -1,4 +1,6 @@
-from zarr.abc.store import Store
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from ome_zarr_models.v05.axes import Axis
 from ome_zarr_models.v05.coordinate_transformations import VectorScale
@@ -6,6 +8,9 @@ from ome_zarr_models.v05.image_label import ImageLabel, ImageLabelAttrs
 from ome_zarr_models.v05.image_label_types import Color, Label, Source
 from ome_zarr_models.v05.multiscales import Dataset, Multiscale
 from tests.v05.conftest import json_to_zarr_group
+
+if TYPE_CHECKING:
+    from zarr.abc.store import Store
 
 
 def test_image_label(store: Store) -> None:

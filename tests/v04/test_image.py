@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import re
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
 from pydantic_zarr.v2 import ArraySpec
-from zarr.abc.store import Store
 
 from ome_zarr_models.common.coordinate_transformations import VectorTranslation
 from ome_zarr_models.v04.axes import Axis
@@ -11,6 +13,9 @@ from ome_zarr_models.v04.coordinate_transformations import VectorScale
 from ome_zarr_models.v04.image import Image, ImageAttrs
 from ome_zarr_models.v04.multiscales import Dataset, Multiscale
 from tests.v04.conftest import json_to_zarr_group
+
+if TYPE_CHECKING:
+    from zarr.abc.store import Store
 
 
 def test_image(store: Store) -> None:

@@ -1,17 +1,21 @@
+from __future__ import annotations
+
 import re
+from typing import TYPE_CHECKING
 
 import pytest
 from pydantic import ValidationError
-from zarr.abc.store import Store
 
 from ome_zarr_models._v06.hcs import HCS
 from ome_zarr_models._v06.plate import Acquisition, Column, Plate, Row, WellInPlate
 from tests._v06.conftest import json_to_zarr_group
-from tests.conftest import UnlistableStore
+
+if TYPE_CHECKING:
+    from zarr.abc.store import Store
 
 
 def test_example_plate_json(store: Store) -> None:
-    if isinstance(store, UnlistableStore):
+    if store.__class__.__name__ == "UnlistableStore":
         pytest.xfail("HCS does not work on unlistable stores")
     hcs: HCS = HCS.from_zarr(
         json_to_zarr_group(json_fname="plate_example_1.json", store=store)
@@ -53,7 +57,7 @@ def test_example_plate_json(store: Store) -> None:
 
 
 def test_example_plate_json_2(store: Store) -> None:
-    if isinstance(store, UnlistableStore):
+    if store.__class__.__name__ == "UnlistableStore":
         pytest.xfail("HCS does not work on unlistable stores")
     hcs: HCS = HCS.from_zarr(
         json_to_zarr_group(json_fname="plate_example_2.json", store=store)

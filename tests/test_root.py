@@ -2,7 +2,6 @@ import re
 from pathlib import Path
 
 import pytest
-import zarr
 
 from ome_zarr_models import open_ome_zarr
 from ome_zarr_models.v04.hcs import HCS
@@ -10,6 +9,7 @@ from tests.conftest import get_examples_path
 
 
 def test_load_ome_zarr_group() -> None:
+    zarr = pytest.importorskip("zarr")
     hcs_group = zarr.open_group(
         get_examples_path(version="0.4") / "hcs_example.ome.zarr", mode="r"
     )
@@ -20,6 +20,7 @@ def test_load_ome_zarr_group() -> None:
 
 
 def test_load_ome_zarr_group_bad(tmp_path: Path) -> None:
+    zarr = pytest.importorskip("zarr")
     hcs_group = zarr.create_group(tmp_path / "test")
     with pytest.raises(
         RuntimeError,

@@ -2,14 +2,19 @@
 General tests.
 """
 
+from __future__ import annotations
+
 import re
+from typing import TYPE_CHECKING
 
 import pytest
 from pydantic import ValidationError
-from zarr.abc.store import Store
 
 from ome_zarr_models._v06.image import Image
 from tests._v06.conftest import json_to_zarr_group
+
+if TYPE_CHECKING:
+    from zarr.abc.store import Store
 
 
 def test_no_ome_version_fails(store: Store) -> None:
