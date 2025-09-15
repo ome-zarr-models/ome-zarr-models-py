@@ -268,7 +268,7 @@ class Image(BaseGroupv05[ImageAttrs]):
                 continue
             else:
                 n_label_levels = len(image_label.ome_attributes.multiscales[0].datasets)
-                if n_levels != n_label_levels:
+                if n_levels > n_label_levels:
                     raise RuntimeError(
                         f"Number of image label multiscale levels ({n_label_levels}) "
                         f"doesn't match number of image multiscale levels ({n_levels})."

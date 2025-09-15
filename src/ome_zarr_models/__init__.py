@@ -77,16 +77,16 @@ def open_ome_zarr(group: zarr.Group) -> BaseGroup:
     know which version and group you expect.
     """
     group_cls: type[BaseGroup]
+    errors: list[Exception] = []
     for group_cls in _V05_groups + _V04_groups:
         try:
             return group_cls.from_zarr(group)
-        except Exception:
-            continue
+        except Exception as e:
+            errors.append(e)
 
     raise RuntimeError(
-        f"Could not successfully validate {group} with any OME-Zarr group models.\n"
+        f"Could not successfully validate {group} against any OME-Zarr group model.\n"
         "\n"
-        "If you know what type of group you are trying to open, using the "
-        "<group class>.from_zarr() method will give you a more informative "
-        "error message explaining why validation failed."
+        "The following errors were encountered while trying to validate:\n\n"
+        + "\n\n".join(f"- {type(e).__name__}: {e}" for e in errors)
     )

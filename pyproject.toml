@@ -32,6 +32,9 @@ docs = [
     "fsspec[http]",
 ]
 
+[project.scripts]
+ome-zarr-models = "ome_zarr_models.cli:main"
+
 [tool.hatch.version]
 source = "vcs"
 
