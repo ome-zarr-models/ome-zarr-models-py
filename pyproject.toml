@@ -33,7 +33,7 @@ docs = [
 ]
 
 [project.scripts]
-ome-zarr-models = "ome_zarr_models.cli:main"
+ome-zarr-models = "ome_zarr_models._cli:main"
 
 [tool.hatch.version]
 source = "vcs"

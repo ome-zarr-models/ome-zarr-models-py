@@ -3,9 +3,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, cast
 
 import pytest
+import zarr
 from zarr.storage import LocalStore
 
-from ome_zarr_models.cli import main
+from ome_zarr_models._cli import main
 
 from .conftest import Version, json_to_zarr_group
 
@@ -13,8 +14,6 @@ if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
     from pathlib import Path
     from typing import Any
-
-    import zarr
 
 
 def populate_fake_data(
@@ -75,12 +74,13 @@ def create_multiscales_data(
     ],
 )
 @pytest.mark.parametrize("cmd", ["validate", "info"])
-def test_cli(
+def test_cli_validate(
     version: Version,
     json_fname: str,
     cmd: str,
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
 ) -> None:
     """Test the CLI commands."""
 
@@ -90,3 +90,21 @@ def test_cli(
     populate_fake_data(zarr_group)
     monkeypatch.setattr("sys.argv", ["ome-zarr-models", cmd, str(tmp_path)])
     main()
+    if cmd == "validate":
+        assert "Valid OME-Zarr" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("cmd", ["validate", "info"])
+def test_cli_invalid(
+    tmp_path: Path,
+    cmd: str,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Test the CLI with no command."""
+    zarr.create_group(tmp_path)
+    monkeypatch.setattr("sys.argv", ["ome-zarr-models", cmd, str(tmp_path)])
+    with pytest.raises(SystemExit) as excinfo:
+        main()
+    assert excinfo.value.code == 1
+    assert "Invalid OME-Zarr" in capsys.readouterr().out
