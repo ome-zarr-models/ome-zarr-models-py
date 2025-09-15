@@ -15,7 +15,6 @@ from ome_zarr_models.cli import main
 @pytest.mark.parametrize("cmd", ["validate", "info"])
 def test_cli(url: str, cmd: str, monkeypatch: pytest.MonkeyPatch) -> None:
     """Test the CLI commands."""
-    pytest.importorskip("zarr")
     aiohttp_exceptions = pytest.importorskip("aiohttp.client_exceptions")
 
     monkeypatch.setattr("sys.argv", ["ome-zarr-models", cmd, url])
