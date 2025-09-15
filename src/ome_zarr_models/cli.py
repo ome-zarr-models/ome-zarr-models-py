@@ -26,7 +26,7 @@ def main() -> None:
     # info sub-command
     info_cmd = subparsers.add_parser("info", help="Get information about an OME-Zarr")
     info_cmd.add_argument(
-        "path", type=str, help="Path to zarr to get information about"
+        "path", type=str, help="Path to OME-Zarr group to get information about"
     )
 
     args = parser.parse_args()
