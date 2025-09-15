@@ -1,24 +1,92 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, cast
+
 import pytest
+from zarr.storage import LocalStore
 
 from ome_zarr_models.cli import main
 
-# "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0062A/6001240_labels.zarr" # invalid
-# "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0010/76-45.ome.zarr"  # invalid
+from .conftest import Version, json_to_zarr_group
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping, Sequence
+    from pathlib import Path
+    from typing import Any
+
+    import zarr
+
+
+def populate_fake_data(
+    zarr_group: zarr.Group,
+    default_dtype: str = "uint8",
+) -> None:
+    # Get the ome metadata from the group attributes
+    # version 0.4 uses the root attributes, version 0.5 uses the "ome" attribute
+    ome_attrs = cast("Mapping[str, Any]", zarr_group.attrs.get("ome", zarr_group.attrs))
+    multiscales = ome_attrs.get("multiscales")
+    if isinstance(multiscales, list):
+        create_multiscales_data(zarr_group, multiscales, default_dtype)
+        return
+
+    # TODO?  could support fake data for other node types
+
+
+def create_multiscales_data(
+    zarr_group: zarr.Group,
+    multiscales: Sequence[Mapping[str, Any]],
+    default_dtype: str = "uint8",
+) -> None:
+    # Use the first multiscale (most common case)
+    for multiscale in multiscales:
+        if not (axes := multiscale.get("axes")):
+            raise ValueError(
+                f"No axes found in multiscale metadata from {zarr_group.store_path}"
+            )
+        if not (datasets := multiscale.get("datasets")):
+            raise ValueError(
+                f"No datasets found in multiscale metadata from {zarr_group.store_path}"
+            )
+
+        dimension_names = [axis["name"] for axis in axes]
+        shape = (1,) * len(dimension_names)
+        kwargs = {}
+        if zarr_group.metadata.zarr_format >= 3:
+            kwargs.update({"dimension_names": dimension_names})
+
+        # Create arrays for each dataset path
+        for dataset in datasets:
+            if path := dataset.get("path"):
+                zarr_group.create_array(
+                    path,
+                    shape=shape,
+                    dtype=default_dtype,
+                    **kwargs,  # type: ignore[arg-type]
+                )
 
 
 @pytest.mark.parametrize(
-    "url",
+    "version,json_fname",
     [
-        "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr",
+        ("0.4", "multiscales_example.json"),
+        ("0.5", "image_example.json"),
+        ("0.5", "image_label_example.json"),
+        ("0.5", "plate_example_1.json"),
     ],
 )
 @pytest.mark.parametrize("cmd", ["validate", "info"])
-def test_cli(url: str, cmd: str, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_cli(
+    version: Version,
+    json_fname: str,
+    cmd: str,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
     """Test the CLI commands."""
-    aiohttp_exceptions = pytest.importorskip("aiohttp.client_exceptions")
 
-    monkeypatch.setattr("sys.argv", ["ome-zarr-models", cmd, url])
-    try:
-        main()
-    except aiohttp_exceptions.ClientConnectorError:
-        pytest.xfail(reason="connection error")
+    zarr_group = json_to_zarr_group(
+        version=version, json_fname=json_fname, store=LocalStore(root=tmp_path)
+    )
+    populate_fake_data(zarr_group)
+    monkeypatch.setattr("sys.argv", ["ome-zarr-models", cmd, str(tmp_path)])
+    main()
