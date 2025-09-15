@@ -14,5 +14,5 @@ class WellMeta(ome_zarr_models.common.well_types.WellMeta):
     """
 
     version: Literal["0.5"] | None = Field(
-        default="0.5", description="Version of the well specification"
+        None, description="Version of the well specification"
     )

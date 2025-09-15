@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Literal, Self
+from typing import TYPE_CHECKING, Any, Self
 
 import numpy as np
 
@@ -80,7 +80,6 @@ class LabelsAttrs(BaseOMEAttrs):
     Attributes for an OME-Zarr labels dataset.
     """
 
-    version: Literal["0.5"] = "0.5"  # https://github.com/ome/ngff/pull/324
     labels: list[str] = Field(
         ..., description="List of paths to labels arrays within a labels dataset."
     )
