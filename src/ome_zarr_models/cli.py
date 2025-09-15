@@ -21,7 +21,7 @@ def main() -> None:
 
     # validate sub-command
     validate_cmd = subparsers.add_parser("validate", help="Validate an OME-Zarr")
-    validate_cmd.add_argument("path", type=str, help="Path to zarr to validate")
+    validate_cmd.add_argument("path", type=str, help="Path to OME-Zarr group to validate")
 
     # info sub-command
     info_cmd = subparsers.add_parser("info", help="Get information about an OME-Zarr")
