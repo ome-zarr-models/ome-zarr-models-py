@@ -135,17 +135,17 @@ def _from_zarr_v3(
     """
     # on unlistable storage backends, the members of this group will be {}
     group_spec: AnyGroupSpecv3 = GroupSpecv3.from_zarr(group, depth=0)
-    attributes = attrs_cls.model_validate(group_spec.attributes)
+    ome_attributes = attrs_cls.model_validate(group.attrs.asdict()["ome"])
 
     members_tree_flat: dict[str, AnyGroupSpecv3 | AnyArraySpecv3] = {}
 
     # Required array paths
-    for array_path in attrs_cls.get_array_paths(attributes):
+    for array_path in attrs_cls.get_array_paths(ome_attributes):
         array_spec = check_array_path(group, array_path, expected_zarr_version=3)
         members_tree_flat["/" + array_path] = array_spec
 
     # Optional array paths
-    for array_path in attrs_cls.get_optional_array_paths(attributes):
+    for array_path in attrs_cls.get_optional_array_paths(ome_attributes):
         try:
             array_spec = check_array_path(group, array_path, expected_zarr_version=3)
         except ValueError:
@@ -153,7 +153,7 @@ def _from_zarr_v3(
         members_tree_flat["/" + array_path] = array_spec
 
     # Required group paths
-    required_groups = attrs_cls.get_group_paths(attributes)
+    required_groups = attrs_cls.get_group_paths(ome_attributes)
     for group_path in required_groups:
         group_spec = check_group_path(group, group_path, expected_zarr_version=3)
         group_flat = required_groups[group_path].from_zarr(group[group_path]).to_flat()  # type: ignore[arg-type]
@@ -161,7 +161,7 @@ def _from_zarr_v3(
             members_tree_flat["/" + group_path + path] = group_flat[path]
 
     # Optional group paths
-    optional_groups = attrs_cls.get_optional_group_paths(attributes)
+    optional_groups = attrs_cls.get_optional_group_paths(ome_attributes)
     for group_path in optional_groups:
         try:
             group_spec = check_group_path(group, group_path, expected_zarr_version=3)
@@ -172,7 +172,9 @@ def _from_zarr_v3(
             members_tree_flat["/" + group_path + path] = group_flat[path]
 
     members_normalized: AnyGroupSpecv3 = GroupSpecv3.from_flat(members_tree_flat)
-    return group_cls(members=members_normalized.members, attributes=attributes)
+    return group_cls(
+        members=members_normalized.members, attributes=group_spec.attributes
+    )
 
 
 def get_store_path(store: Store) -> str:
