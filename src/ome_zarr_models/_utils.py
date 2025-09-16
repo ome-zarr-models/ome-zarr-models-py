@@ -29,13 +29,13 @@ if TYPE_CHECKING:
     )
 
 TBaseGroup04 = TypeVar("TBaseGroup04", bound=BaseGroupv04[Any])
-TAttrs = TypeVar("TAttrs", bound=BaseAttrsv2)
+TAttrsv2 = TypeVar("TAttrsv2", bound=BaseAttrsv2)
 
 
 def _from_zarr_v2(
     group: zarr.Group,
     group_cls: type[TBaseGroup04],
-    attrs_cls: type[TAttrs],
+    attrs_cls: type[TAttrsv2],
 ) -> TBaseGroup04:
     """
     Create a GroupSpec from a potentially unlistable Zarr group.
