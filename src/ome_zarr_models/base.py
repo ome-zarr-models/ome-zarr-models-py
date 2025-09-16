@@ -61,6 +61,12 @@ class BaseAttrsv2(BaseAttrs):
         return {}
 
 
+class BaseAttrsv3(BaseAttrs):
+    """
+    Base attribute model for Zarr v3 groups (ie OME-Zarr 0.5+).
+    """
+
+
 class BaseGroup(ABC):
     """
     Base class for all OME-Zarr groups.

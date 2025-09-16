@@ -6,15 +6,15 @@ import pydantic_zarr
 import pydantic_zarr.v3
 from pydantic import BaseModel
 
-from ome_zarr_models.base import BaseAttrs, BaseGroup
+from ome_zarr_models.base import BaseAttrsv3, BaseGroup
 
 if TYPE_CHECKING:
     import zarr
 
 
-class BaseOMEAttrs(BaseAttrs):
+class BaseOMEAttrs(BaseAttrsv3):
     """
-    Base class for attributes under an OME-Zarr group.
+    Base class for OME-Zarr 0.5 attributes.
     """
 
     version: Literal["0.5"]
