@@ -1,8 +1,13 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 from pydantic import BaseModel, ConfigDict
-from pydantic_zarr.v2 import AnyGroupSpec
+
+if TYPE_CHECKING:
+    import pydantic_zarr.v2
+    import pydantic_zarr.v3
 
 
 class BaseAttrs(BaseModel):
@@ -42,7 +47,7 @@ class BaseAttrsv2(BaseAttrs):
         """
         return []
 
-    def get_group_paths(self) -> dict[str, type[AnyGroupSpec]]:
+    def get_group_paths(self) -> dict[str, type[pydantic_zarr.v2.AnyGroupSpec]]:
         """
         Get a list of all group paths expected and required to live in the Group
         with these attributes.
@@ -51,7 +56,9 @@ class BaseAttrsv2(BaseAttrs):
         """
         return {}
 
-    def get_optional_group_paths(self) -> dict[str, type[AnyGroupSpec]]:
+    def get_optional_group_paths(
+        self,
+    ) -> dict[str, type[pydantic_zarr.v2.AnyGroupSpec]]:
         """
         Get a list of all group paths expected but not required to live in the Group
         with these attributes.
@@ -65,6 +72,40 @@ class BaseAttrsv3(BaseAttrs):
     """
     Base attribute model for Zarr v3 groups (ie OME-Zarr 0.5+).
     """
+
+    def get_array_paths(self) -> list[str]:
+        """
+        Get a list of all array paths expected and required to live in the Group
+        with these attributes.
+        """
+        return []
+
+    def get_optional_array_paths(self) -> list[str]:
+        """
+        Get a list of all array paths expected but not required to live in the Group
+        with these attributes.
+        """
+        return []
+
+    def get_group_paths(self) -> dict[str, type[pydantic_zarr.v3.AnyGroupSpec]]:
+        """
+        Get a list of all group paths expected and required to live in the Group
+        with these attributes.
+
+        Must return a dictionary mapping paths to their GroupSpec class.
+        """
+        return {}
+
+    def get_optional_group_paths(
+        self,
+    ) -> dict[str, type[pydantic_zarr.v3.AnyGroupSpec]]:
+        """
+        Get a list of all group paths expected but not required to live in the Group
+        with these attributes.
+
+        Must return a dictionary mapping paths to their GroupSpec class.
+        """
+        return {}
 
 
 class BaseGroup(ABC):
