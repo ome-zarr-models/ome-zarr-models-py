@@ -51,7 +51,7 @@ _V05_groups: list[type[BaseGroupv05[Any]]] = [
 
 
 def open_ome_zarr(
-    group: zarr.Group, version: Literal["0.4", "0.5"] | None = None
+    group: zarr.Group, *, version: Literal["0.4", "0.5"] | None = None
 ) -> BaseGroup:
     """
     Create an ome-zarr-models object from an existing OME-Zarr group.
