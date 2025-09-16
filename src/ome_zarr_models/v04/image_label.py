@@ -3,7 +3,7 @@ from typing import Self
 import zarr
 from pydantic import Field
 
-from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.base import BaseAttrsv2
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.image import Image
 from ome_zarr_models.v04.image_label_types import Label
@@ -12,7 +12,7 @@ from ome_zarr_models.v04.multiscales import Multiscale
 __all__ = ["ImageLabel", "ImageLabelAttrs"]
 
 
-class ImageLabelAttrs(BaseAttrs):
+class ImageLabelAttrs(BaseAttrsv2):
     """
     Attributes for an image label object.
     """

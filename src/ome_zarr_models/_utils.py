@@ -13,7 +13,7 @@ from pydantic import create_model
 from pydantic_zarr.v2 import GroupSpec as GroupSpecv2
 from zarr.abc.store import Store
 
-from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.base import BaseAttrsv2
 from ome_zarr_models.common.validation import (
     check_array_path,
     check_group_path,
@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     )
 
 TBaseGroup04 = TypeVar("TBaseGroup04", bound=BaseGroupv04[Any])
-TAttrs = TypeVar("TAttrs", bound=BaseAttrs)
+TAttrs = TypeVar("TAttrs", bound=BaseAttrsv2)
 
 
 def _from_zarr_v2(

@@ -6,7 +6,7 @@ from pydantic import model_validator
 from pydantic_zarr.v2 import AnyGroupSpec, GroupSpec
 
 from ome_zarr_models._utils import _from_zarr_v2
-from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.base import BaseAttrsv2
 from ome_zarr_models.common.well import WellGroupNotFoundError
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.plate import Plate
@@ -15,7 +15,7 @@ from ome_zarr_models.v04.well import Well
 __all__ = ["HCS", "HCSAttrs"]
 
 
-class HCSAttrs(BaseAttrs):
+class HCSAttrs(BaseAttrsv2):
     """
     HCS metadtata attributes.
     """

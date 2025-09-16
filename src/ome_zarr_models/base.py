@@ -22,6 +22,12 @@ class BaseAttrs(BaseModel):
         frozen=True,
     )
 
+
+class BaseAttrsv2(BaseAttrs):
+    """
+    Base attribute model for Zarr v2 groups (ie OME-Zarr 0.4).
+    """
+
     def get_array_paths(self) -> list[str]:
         """
         Get a list of all array paths expected and required to live in the Group

@@ -9,7 +9,7 @@ import zarr
 from pydantic_zarr.v2 import AnyGroupSpec
 
 from ome_zarr_models._utils import _from_zarr_v2
-from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.base import BaseAttrsv2
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.image import Image
 from ome_zarr_models.v04.well_types import WellMeta
@@ -17,7 +17,7 @@ from ome_zarr_models.v04.well_types import WellMeta
 __all__ = ["Well", "WellAttrs"]
 
 
-class WellAttrs(BaseAttrs):
+class WellAttrs(BaseAttrsv2):
     """
     Attributes for a well group.
     """

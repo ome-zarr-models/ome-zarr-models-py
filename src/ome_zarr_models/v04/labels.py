@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Self
 from pydantic import Field
 
 from ome_zarr_models._utils import _from_zarr_v2
-from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.base import BaseAttrsv2
 from ome_zarr_models.v04.base import BaseGroupv04
 
 if TYPE_CHECKING:
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 __all__ = ["Labels", "LabelsAttrs"]
 
 
-class LabelsAttrs(BaseAttrs):
+class LabelsAttrs(BaseAttrsv2):
     """
     Attributes for an OME-Zarr labels dataset.
     """

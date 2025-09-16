@@ -6,7 +6,7 @@ from pydantic import Field, JsonValue, model_validator
 from pydantic_zarr.v2 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
 from ome_zarr_models._utils import _from_zarr_v2
-from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.base import BaseAttrsv2
 from ome_zarr_models.common.coordinate_transformations import _build_transforms
 from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.base import BaseGroupv04
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 __all__ = ["Image", "ImageAttrs"]
 
 
-class ImageAttrs(BaseAttrs):
+class ImageAttrs(BaseAttrsv2):
     """
     Metadata for OME-Zarr image groups.
     """
