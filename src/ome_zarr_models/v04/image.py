@@ -5,9 +5,9 @@ from typing import TYPE_CHECKING, Self
 from pydantic import Field, JsonValue, model_validator
 from pydantic_zarr.v2 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
+from ome_zarr_models._utils import _from_zarr_v2
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.coordinate_transformations import _build_transforms
-from ome_zarr_models.v04._shared import _from_zarr
 from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.labels import Labels
@@ -61,7 +61,7 @@ class Image(BaseGroupv04[ImageAttrs]):
         group : zarr.Group
             A Zarr group that has valid OME-Zarr image metadata.
         """
-        return _from_zarr(group, cls, ImageAttrs)
+        return _from_zarr_v2(group, cls, ImageAttrs)
 
     @classmethod
     def new(
