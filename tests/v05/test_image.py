@@ -192,6 +192,7 @@ def test_image_with_labels(store: Store) -> None:
         dtype="uint8",
         dimension_names=["t", "c", "z", "y", "x"],
     )
+    print(zarr_group.attrs.asdict())
     image = Image.from_zarr(zarr_group)
     assert image.labels is not None
     assert image.labels.attributes.ome == LabelsAttrs(
