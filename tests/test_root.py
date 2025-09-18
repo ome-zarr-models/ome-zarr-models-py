@@ -26,7 +26,6 @@ def test_load_ome_zarr_group_bad(tmp_path: Path) -> None:
         RuntimeError,
         match=re.escape(
             f"Could not successfully validate <Group file://{tmp_path / 'test'}> "
-            "with any OME-Zarr group models."
         ),
     ):
         open_ome_zarr(hcs_group)

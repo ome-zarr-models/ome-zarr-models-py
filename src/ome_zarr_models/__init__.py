@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from importlib.metadata import PackageNotFoundError, version
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal
 
 import ome_zarr_models.v04.hcs
 import ome_zarr_models.v04.image
@@ -25,6 +25,8 @@ try:
 except PackageNotFoundError:  # pragma: no cover
     __version__ = "uninstalled"
 
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 _V04_groups: list[type[BaseGroupv04[Any]]] = [
     ome_zarr_models.v04.hcs.HCS,
@@ -51,7 +53,9 @@ _V05_groups: list[type[BaseGroupv05[Any]]] = [
 ]
 
 
-def open_ome_zarr(group: zarr.Group) -> BaseGroup:
+def open_ome_zarr(
+    group: zarr.Group, *, version: Literal["0.4", "0.5"] | None = None
+) -> BaseGroup:
     """
     Create an ome-zarr-models object from an existing OME-Zarr group.
 
@@ -66,6 +70,10 @@ def open_ome_zarr(group: zarr.Group) -> BaseGroup:
     ----------
     group : zarr.Group
         Zarr group containing OME-Zarr data.
+    version : Literal['0.4', '0.5'], optional
+        If you know which version of OME-Zarr your data is, you can
+        specify it here. If not specified, all versions will be tried.
+        The default is None, which means all versions will be tried.
 
     Raises
     ------
@@ -79,17 +87,31 @@ def open_ome_zarr(group: zarr.Group) -> BaseGroup:
     take a long time. It will be quicker to directly use the OME-Zarr group class if you
     know which version and group you expect.
     """
-    group_cls: type[BaseGroup]
-    for group_cls in _V05_groups + _V04_groups:
+    # because 'from_zarr' isn't defined on a shared super-class, list all variants here
+    groups: Sequence[type[BaseGroupv05[Any] | BaseGroupv04[Any]]]
+    match version:
+        case None:
+            groups = [*_V05_groups, *_V04_groups]
+        case "0.4":
+            groups = _V04_groups
+        case "0.5":
+            groups = _V05_groups
+        case _:
+            _versions = ("0.4", "0.5")  # type: ignore[unreachable]
+            raise ValueError(
+                f"Unsupported version '{version}', must be one of {_versions}, or None"
+            )
+
+    errors: list[Exception] = []
+    for group_cls in groups:
         try:
             return group_cls.from_zarr(group)
-        except Exception:
-            continue
+        except Exception as e:
+            errors.append(e)
 
     raise RuntimeError(
-        f"Could not successfully validate {group} with any OME-Zarr group models.\n"
+        f"Could not successfully validate {group} against any OME-Zarr group model.\n"
         "\n"
-        "If you know what type of group you are trying to open, using the "
-        "<group class>.from_zarr() method will give you a more informative "
-        "error message explaining why validation failed."
+        "The following errors were encountered while trying to validate:\n\n"
+        + "\n\n".join(f"- {type(e).__name__}: {e}" for e in errors)
     )

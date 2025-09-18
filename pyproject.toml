@@ -24,6 +24,9 @@ Repository = "https://github.com/ome-zarr-models/ome-zarr-models-py"
 zarr = ["zarr>= 3.1.1"]
 
 
+[project.scripts]
+ome-zarr-models = "ome_zarr_models._cli:main"
+
 [tool.hatch.version]
 source = "vcs"
 
