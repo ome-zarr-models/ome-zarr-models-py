@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, cast
 
 import pytest
-from zarr.storage import LocalStore
 
 from ome_zarr_models._cli import main
 
@@ -84,9 +83,9 @@ def test_cli_validate(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     """Test the CLI commands."""
-    pytest.importorskip("zarr")
+    zarr = pytest.importorskip("zarr")
     zarr_group = json_to_zarr_group(
-        version=version, json_fname=json_fname, store=LocalStore(root=tmp_path)
+        version=version, json_fname=json_fname, store=zarr.LocalStore(root=tmp_path)
     )
     populate_fake_data(zarr_group)
     monkeypatch.setattr("sys.argv", ["ome-zarr-models", cmd, str(tmp_path)])

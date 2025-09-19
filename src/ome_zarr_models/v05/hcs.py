@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 from collections.abc import Generator, Mapping
 from typing import TYPE_CHECKING, Self
 
 # Import needed for pydantic type resolution
 import pydantic_zarr  # noqa: F401
-import zarr
 from pydantic import model_validator
 from pydantic_zarr.v3 import GroupSpec
 
@@ -14,6 +15,7 @@ from ome_zarr_models.v05.plate import Plate
 from ome_zarr_models.v05.well import Well
 
 if TYPE_CHECKING:
+    import zarr
     from pydantic_zarr.v3 import AnyGroupSpec
 
 

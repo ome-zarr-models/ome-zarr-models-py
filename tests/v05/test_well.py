@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from zarr.abc.store import Store
-
 from ome_zarr_models.v05.well import Well, WellAttrs
 from ome_zarr_models.v05.well_types import WellImage, WellMeta
 from tests.v05.conftest import json_to_zarr_group
