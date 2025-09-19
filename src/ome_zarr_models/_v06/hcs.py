@@ -1,15 +1,20 @@
 from collections.abc import Generator, Mapping
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
 # Import needed for pydantic type resolution
 import pydantic_zarr  # noqa: F401
+import zarr
 from pydantic import model_validator
 from pydantic_zarr.v3 import GroupSpec
 
+from ome_zarr_models._utils import _from_zarr_v3
 from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs
 from ome_zarr_models._v06.plate import Plate
 from ome_zarr_models._v06.well import Well
 from ome_zarr_models.common.well import WellGroupNotFoundError
+
+if TYPE_CHECKING:
+    from pydantic_zarr.v3 import AnyGroupSpec
 
 __all__ = ["HCS", "HCSAttrs"]
 
@@ -21,11 +26,37 @@ class HCSAttrs(BaseOMEAttrs):
 
     plate: Plate
 
+    def get_optional_group_paths(self) -> dict[str, type[Well]]:
+        return {well.path: Well for well in self.plate.wells}
+
 
 class HCS(BaseGroupv06[HCSAttrs]):
     """
     An OME-Zarr high content screening (HCS) dataset.
     """
+
+    @classmethod
+    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
+        """
+        Create an OME-Zarr image model from a `zarr.Group`.
+
+        Parameters
+        ----------
+        group : zarr.Group
+            A Zarr group that has valid OME-Zarr image metadata.
+        """
+        hcs = _from_zarr_v3(group, cls, HCSAttrs)
+        # Traverse all the Well groups, which themselves contain Image groups
+        hcs_flat = hcs.to_flat()
+        for well in hcs.ome_attributes.plate.wells:
+            if well.path in group:
+                well_group = group[well.path]
+                well_group_flat = Well.from_zarr(well_group).to_flat()  # type: ignore[arg-type]
+                for path in well_group_flat:
+                    hcs_flat["/" + well.path + path] = well_group_flat[path]
+
+        hcs_unflat: AnyGroupSpec = GroupSpec.from_flat(hcs_flat)
+        return cls(attributes=hcs_unflat.attributes, members=hcs_unflat.members)
 
     @model_validator(mode="after")
     def _check_valid_acquisitions(self) -> Self:
