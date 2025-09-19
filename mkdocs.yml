@@ -42,7 +42,7 @@ markdown_extensions:
 
 plugins:
   - mkdocs-jupyter:
-      execute: true
+      execute: false
       allow_errors: false
   - mkdocstrings:
       handlers:
@@ -78,7 +78,8 @@ validation:
 
 nav:
   - Home: index.md
-  - Tutorial: tutorial.py
+  - Command line: cli.md
+  - Python tutorial: tutorial.py
   - How do I...?: how-to.md
   - API reference:
       - api/index.md
