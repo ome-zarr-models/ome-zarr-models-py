@@ -8,7 +8,7 @@ import pydantic_zarr  # noqa: F401
 from ome_zarr_models._utils import _from_zarr_v3
 from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs
 from ome_zarr_models.v05.image import Image
-from ome_zarr_models.v05.well_types import WellMeta  # noqa: TC001
+from ome_zarr_models.v05.well_types import WellMeta
 
 if TYPE_CHECKING:
     import zarr
