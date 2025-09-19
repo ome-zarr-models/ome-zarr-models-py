@@ -4,13 +4,13 @@ from typing import TYPE_CHECKING, Generic, Literal, Self, TypeVar
 
 from pydantic_zarr.v2 import GroupSpec, TBaseItem
 
-from ome_zarr_models.base import BaseAttrs, BaseGroup
+from ome_zarr_models.base import BaseAttrsv2, BaseGroup
 
 if TYPE_CHECKING:
     import zarr
 
 
-T = TypeVar("T", bound=BaseAttrs)
+T = TypeVar("T", bound=BaseAttrsv2)
 
 
 class BaseGroupv04(BaseGroup, GroupSpec[T, TBaseItem], Generic[T]):

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import pytest
+from zarr.abc.store import Store
 
 from ome_zarr_models.v05.hcs import HCS, HCSAttrs
 from ome_zarr_models.v05.plate import Acquisition, Column, Plate, Row, WellInPlate
@@ -13,8 +13,6 @@ if TYPE_CHECKING:
 
 
 def test_hcs(store: Store) -> None:
-    if store.__class__.__name__ == "UnlistableStore":
-        pytest.xfail("HCS does not work on unlistable stores")
     zarr_group = json_to_zarr_group(json_fname="hcs_example.json", store=store)
     ome_group = HCS.from_zarr(zarr_group)
     assert ome_group.attributes.ome == HCSAttrs(

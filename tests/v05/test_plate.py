@@ -15,8 +15,6 @@ if TYPE_CHECKING:
 
 
 def test_example_plate_json(store: Store) -> None:
-    if store.__class__.__name__ == "UnlistableStore":
-        pytest.xfail("HCS does not work on unlistable stores")
     hcs: HCS = HCS.from_zarr(
         json_to_zarr_group(json_fname="plate_example_1.json", store=store)
     )
@@ -57,8 +55,6 @@ def test_example_plate_json(store: Store) -> None:
 
 
 def test_example_plate_json_2(store: Store) -> None:
-    if store.__class__.__name__ == "UnlistableStore":
-        pytest.xfail("HCS does not work on unlistable stores")
     hcs: HCS = HCS.from_zarr(
         json_to_zarr_group(json_fname="plate_example_2.json", store=store)
     )

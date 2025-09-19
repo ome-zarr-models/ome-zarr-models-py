@@ -4,7 +4,7 @@
 
 ### New Features
 
-- [ome_zarr_models.v04.ImageLabel][] now supports being created from a Zarr array backed by an un-listable store.
+- All models now support being created from Zarr groups in remote HTTP stores, and more generally from any groups stored in any unlistable store.
 
 ## 1.0
 
