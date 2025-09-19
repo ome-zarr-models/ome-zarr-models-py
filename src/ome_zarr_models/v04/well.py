@@ -24,7 +24,7 @@ class WellAttrs(BaseAttrsv2):
 
     well: WellMeta
 
-    def get_optional_group_paths(self) -> dict[str, type[AnyGroupSpec]]:  # noqa: D102
+    def get_optional_group_paths(self) -> dict[str, type[AnyGroupSpec]]:
         return {im.path: Image for im in self.well.images}
 
 

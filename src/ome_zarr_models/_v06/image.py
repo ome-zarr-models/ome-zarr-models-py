@@ -36,7 +36,7 @@ class ImageAttrs(BaseOMEAttrs):
                 paths.append(dataset.path)
         return paths
 
-    def get_optional_group_paths(self) -> dict[str, type[AnyGroupSpec]]:
+    def get_optional_group_paths(self) -> dict[str, type[Labels]]:  # type: ignore[override]
         return {"labels": Labels}
 
 

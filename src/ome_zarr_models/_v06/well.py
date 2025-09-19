@@ -18,7 +18,7 @@ class WellAttrs(BaseOMEAttrs):
 
     well: WellMeta
 
-    def get_optional_group_paths(self) -> dict[str, type[Image]]:
+    def get_optional_group_paths(self) -> dict[str, type[Image]]:  # type: ignore[override]
         return {im.path: Image for im in self.well.images}
 
 

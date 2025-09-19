@@ -27,7 +27,7 @@ class HCSAttrs(BaseOMEAttrs):
 
     plate: Plate
 
-    def get_optional_group_paths(self) -> dict[str, type[Well]]:  # noqa: D102
+    def get_optional_group_paths(self) -> dict[str, type[Well]]:  # type: ignore[override]
         return {well.path: Well for well in self.plate.wells}
 
 

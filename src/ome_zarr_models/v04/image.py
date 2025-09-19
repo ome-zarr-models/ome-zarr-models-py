@@ -35,14 +35,14 @@ class ImageAttrs(BaseAttrsv2):
     )
     omero: Omero | None = None
 
-    def get_array_paths(self) -> list[str]:  # noqa: D102
+    def get_array_paths(self) -> list[str]:
         paths = []
         for multiscale in self.multiscales:
             for dataset in multiscale.datasets:
                 paths.append(dataset.path)
         return paths
 
-    def get_optional_group_paths(self) -> dict[str, type[AnyGroupSpec]]:  # noqa: D102
+    def get_optional_group_paths(self) -> dict[str, type[AnyGroupSpec]]:
         return {"labels": Labels}
 
 
