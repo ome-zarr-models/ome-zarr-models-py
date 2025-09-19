@@ -11,8 +11,6 @@ from tests.v05.conftest import json_to_zarr_group
 
 
 def test_example_plate_json(store: Store) -> None:
-    if isinstance(store, UnlistableStore):
-        pytest.xfail("HCS does not work on unlistable stores")
     hcs: HCS = HCS.from_zarr(
         json_to_zarr_group(json_fname="plate_example_1.json", store=store)
     )
