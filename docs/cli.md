@@ -39,7 +39,7 @@ The group can be specified as any string that can be parsed by **link to zarr.op
 ## Info
 
 To get information about an OME-Zarr group, pass the path to a group to `ome-zarr-models info`.
-This will print the metdata (see below for an example).
+This will print the metadata (see below for an example).
 If you have the `rich` Python package installed, a more readable output will be produced.
 
 ```sh
