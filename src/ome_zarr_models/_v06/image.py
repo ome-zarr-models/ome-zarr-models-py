@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import Any, Self
+from typing import Self
 
 # Import needed for pydantic type resolution
 import pydantic_zarr  # noqa: F401
@@ -8,12 +8,12 @@ import zarr.errors
 from pydantic import Field, JsonValue, model_validator
 from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
+from ome_zarr_models._utils import _from_zarr_v3
 from ome_zarr_models._v06.axes import Axis
 from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs, BaseZarrAttrs
 from ome_zarr_models._v06.labels import Labels
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
 from ome_zarr_models.common.coordinate_transformations import _build_transforms
-from ome_zarr_models.common.validation import check_array_path
 
 __all__ = ["Image", "ImageAttrs"]
 
@@ -28,6 +28,16 @@ class ImageAttrs(BaseOMEAttrs):
         description="The multiscale datasets for this image",
         min_length=1,
     )
+
+    def get_array_paths(self) -> list[str]:
+        paths = []
+        for multiscale in self.multiscales:
+            for dataset in multiscale.datasets:
+                paths.append(dataset.path)
+        return paths
+
+    def get_optional_group_paths(self) -> dict[str, type[Labels]]:  # type: ignore[override]
+        return {"labels": Labels}
 
 
 class Image(BaseGroupv06[ImageAttrs]):
@@ -45,33 +55,7 @@ class Image(BaseGroupv06[ImageAttrs]):
         group : zarr.Group
             A Zarr group that has valid OME-Zarr image metadata.
         """
-        # on unlistable storage backends, the members of this group will be {}
-        group_spec: GroupSpec[dict[str, Any], Any] = GroupSpec.from_zarr(group, depth=0)
-
-        if "ome" not in group_spec.attributes:
-            raise RuntimeError(f"Did not find 'ome' key in {group} attributes")
-        multi_meta = ImageAttrs.model_validate(group_spec.attributes["ome"])
-        members_tree_flat: dict[str, AnyGroupSpec | AnyArraySpec] = {}
-        for multiscale in multi_meta.multiscales:
-            for dataset in multiscale.datasets:
-                array_spec = check_array_path(
-                    group, dataset.path, expected_zarr_version=3
-                )
-                members_tree_flat["/" + dataset.path] = array_spec
-
-        try:
-            labels_group = zarr.open_group(store=group.store_path / "labels", mode="r")
-            labels = Labels.from_zarr(labels_group)
-            # members_tree_flat["/labels"] = labels
-            labels_flat = labels.to_flat()
-            for path in labels_flat:
-                members_tree_flat[f"/labels{path}"] = labels_flat[path]
-
-        except zarr.errors.GroupNotFoundError:
-            pass
-
-        members_normalized: AnyGroupSpec = GroupSpec.from_flat(members_tree_flat)
-        return cls(attributes=group_spec.attributes, members=members_normalized.members)
+        return _from_zarr_v3(group, cls, ImageAttrs)
 
     @classmethod
     def new(

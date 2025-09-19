@@ -8,8 +8,8 @@ from typing import Self
 import zarr
 from pydantic_zarr.v2 import AnyGroupSpec
 
-from ome_zarr_models.base import BaseAttrs
-from ome_zarr_models.v04._shared import _from_zarr
+from ome_zarr_models._utils import _from_zarr_v2
+from ome_zarr_models.base import BaseAttrsv2
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.image import Image
 from ome_zarr_models.v04.well_types import WellMeta
@@ -17,14 +17,14 @@ from ome_zarr_models.v04.well_types import WellMeta
 __all__ = ["Well", "WellAttrs"]
 
 
-class WellAttrs(BaseAttrs):
+class WellAttrs(BaseAttrsv2):
     """
     Attributes for a well group.
     """
 
     well: WellMeta
 
-    def get_optional_group_paths(self) -> dict[str, type[AnyGroupSpec]]:  # noqa: D102
+    def get_optional_group_paths(self) -> dict[str, type[AnyGroupSpec]]:
         return {im.path: Image for im in self.well.images}
 
 
@@ -43,7 +43,7 @@ class Well(BaseGroupv04[WellAttrs]):
         group : zarr.Group
             A Zarr group that has valid OME-Zarr well metadata.
         """
-        return _from_zarr(group, cls, WellAttrs)
+        return _from_zarr_v2(group, cls, WellAttrs)
 
     def get_image(self, i: int) -> Image:
         """

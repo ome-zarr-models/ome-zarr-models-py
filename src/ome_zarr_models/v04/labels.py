@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING, Self
 
 from pydantic import Field
 
-from ome_zarr_models.base import BaseAttrs
-from ome_zarr_models.v04._shared import _from_zarr
+from ome_zarr_models._utils import _from_zarr_v2
+from ome_zarr_models.base import BaseAttrsv2
 from ome_zarr_models.v04.base import BaseGroupv04
 
 if TYPE_CHECKING:
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 __all__ = ["Labels", "LabelsAttrs"]
 
 
-class LabelsAttrs(BaseAttrs):
+class LabelsAttrs(BaseAttrsv2):
     """
     Attributes for an OME-Zarr labels dataset.
     """
@@ -39,4 +39,4 @@ class Labels(BaseGroupv04[LabelsAttrs]):
         group : zarr.Group
             A Zarr group that has valid OME-Zarr labels metadata.
         """
-        return _from_zarr(group, cls, LabelsAttrs)
+        return _from_zarr_v2(group, cls, LabelsAttrs)

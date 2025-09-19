@@ -1,15 +1,11 @@
-import pytest
 from zarr.abc.store import Store
 
 from ome_zarr_models._v06.well import Well, WellAttrs
 from ome_zarr_models._v06.well_types import WellImage, WellMeta
 from tests._v06.conftest import json_to_zarr_group
-from tests.conftest import UnlistableStore
 
 
 def test_well(store: Store) -> None:
-    if isinstance(store, UnlistableStore):
-        pytest.xfail("Well does not work on unlistable stores")
     zarr_group = json_to_zarr_group(json_fname="well_example.json", store=store)
     ome_group = Well.from_zarr(zarr_group)
     assert ome_group.attributes.ome == WellAttrs(

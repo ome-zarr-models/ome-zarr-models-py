@@ -5,9 +5,9 @@ import zarr
 from pydantic import model_validator
 from pydantic_zarr.v2 import AnyGroupSpec, GroupSpec
 
-from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models._utils import _from_zarr_v2
+from ome_zarr_models.base import BaseAttrsv2
 from ome_zarr_models.common.well import WellGroupNotFoundError
-from ome_zarr_models.v04._shared import _from_zarr
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.plate import Plate
 from ome_zarr_models.v04.well import Well
@@ -15,14 +15,14 @@ from ome_zarr_models.v04.well import Well
 __all__ = ["HCS", "HCSAttrs"]
 
 
-class HCSAttrs(BaseAttrs):
+class HCSAttrs(BaseAttrsv2):
     """
     HCS metadtata attributes.
     """
 
     plate: Plate
 
-    def get_optional_group_paths(self) -> dict[str, type[AnyGroupSpec]]:  # noqa: D102
+    def get_optional_group_paths(self) -> dict[str, type[AnyGroupSpec]]:
         return {well.path: Well for well in self.plate.wells}
 
 
@@ -41,7 +41,7 @@ class HCS(BaseGroupv04[HCSAttrs]):
         group : zarr.Group
             A Zarr group that has valid OME-Zarr image metadata.
         """
-        hcs = _from_zarr(group, cls, HCSAttrs)
+        hcs = _from_zarr_v2(group, cls, HCSAttrs)
         # Traverse all the Well groups, which themselves contain Image groups
         hcs_flat = hcs.to_flat()
         for well in hcs.attributes.plate.wells:
