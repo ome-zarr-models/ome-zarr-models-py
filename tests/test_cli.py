@@ -83,9 +83,11 @@ def test_cli_validate(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     """Test the CLI commands."""
-    zarr = pytest.importorskip("zarr")
+    zarr_storage = pytest.importorskip("zarr.storage")
     zarr_group = json_to_zarr_group(
-        version=version, json_fname=json_fname, store=zarr.LocalStore(root=tmp_path)
+        version=version,
+        json_fname=json_fname,
+        store=zarr_storage.LocalStore(root=tmp_path),
     )
     populate_fake_data(zarr_group)
     monkeypatch.setattr("sys.argv", ["ome-zarr-models", cmd, str(tmp_path)])
