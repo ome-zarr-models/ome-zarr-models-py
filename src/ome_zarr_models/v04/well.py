@@ -2,17 +2,21 @@
 For reference, see the [well section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.4/#well-md).
 """
 
-from collections.abc import Generator
-from typing import Self
+from __future__ import annotations
 
-import zarr
-from pydantic_zarr.v2 import AnyGroupSpec
+from typing import TYPE_CHECKING, Self
 
 from ome_zarr_models._utils import _from_zarr_v2
 from ome_zarr_models.base import BaseAttrsv2
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v04.image import Image
 from ome_zarr_models.v04.well_types import WellMeta
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    import zarr
+    from pydantic_zarr.v2 import AnyGroupSpec
 
 __all__ = ["Well", "WellAttrs"]
 

@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 from collections.abc import Generator, Mapping
 from typing import TYPE_CHECKING, Self
 
 # Import needed for pydantic type resolution
 import pydantic_zarr  # noqa: F401
-import zarr
 from pydantic import model_validator
 from pydantic_zarr.v3 import GroupSpec
 
@@ -14,6 +15,7 @@ from ome_zarr_models._v06.well import Well
 from ome_zarr_models.common.well import WellGroupNotFoundError
 
 if TYPE_CHECKING:
+    import zarr
     from pydantic_zarr.v3 import AnyGroupSpec
 
 __all__ = ["HCS", "HCSAttrs"]

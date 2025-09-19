@@ -1,4 +1,4 @@
-import zarr
+import pytest
 
 from ome_zarr_models.common.omero import Channel, Omero, Window
 from ome_zarr_models.v04.axes import Axis
@@ -12,6 +12,7 @@ from tests.conftest import get_examples_path
 
 
 def test_example_hcs() -> None:
+    zarr = pytest.importorskip("zarr")
     group = zarr.open_group(
         get_examples_path(version="0.4") / "hcs_example.ome.zarr", mode="r"
     )

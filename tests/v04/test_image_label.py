@@ -1,6 +1,9 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 from pydantic import ValidationError
-from zarr.abc.store import Store
 
 from ome_zarr_models.v04.axes import Axis
 from ome_zarr_models.v04.coordinate_transformations import VectorScale
@@ -13,6 +16,9 @@ from ome_zarr_models.v04.image_label_types import (
 )
 from ome_zarr_models.v04.multiscales import Dataset, Multiscale
 from tests.v04.conftest import json_to_zarr_group
+
+if TYPE_CHECKING:
+    from zarr.abc.store import Store
 
 
 def test_image_label_example_json(store: Store) -> None:

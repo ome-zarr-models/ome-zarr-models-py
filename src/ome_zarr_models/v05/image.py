@@ -1,10 +1,10 @@
+from __future__ import annotations
+
 from collections.abc import Sequence
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
 # Import needed for pydantic type resolution
 import pydantic_zarr  # noqa: F401
-import zarr
-import zarr.errors
 from pydantic import Field, JsonValue, model_validator
 from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
@@ -14,6 +14,11 @@ from ome_zarr_models.v05.axes import Axis
 from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs, BaseZarrAttrs
 from ome_zarr_models.v05.labels import Labels
 from ome_zarr_models.v05.multiscales import Dataset, Multiscale
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    import zarr
 
 __all__ = ["Image", "ImageAttrs"]
 
@@ -71,7 +76,7 @@ class Image(BaseGroupv05[ImageAttrs]):
         metadata: JsonValue | None = None,
         global_scale: Sequence[float] | None = None,
         global_translation: Sequence[float] | None = None,
-    ) -> "Image":
+    ) -> Image:
         """
         Create a new `Image` from a sequence of multiscale arrays
         and spatial metadata.

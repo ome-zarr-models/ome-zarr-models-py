@@ -1,8 +1,13 @@
-from zarr.abc.store import Store
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from ome_zarr_models.v04.well import Well, WellAttrs
 from ome_zarr_models.v04.well_types import WellImage, WellMeta
 from tests.v04.conftest import json_to_zarr_group
+
+if TYPE_CHECKING:
+    from zarr.abc.store import Store
 
 
 def test_well(store: Store) -> None:
