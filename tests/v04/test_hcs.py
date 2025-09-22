@@ -13,7 +13,9 @@ from tests.conftest import get_examples_path
 
 def test_example_hcs() -> None:
     group = zarr.open_group(
-        get_examples_path(version="0.4") / "hcs_example.ome.zarr", mode="r"
+        get_examples_path(version="0.4") / "hcs_example.ome.zarr",
+        mode="r",
+        zarr_format=2,
     )
     hcs: HCS = HCS.from_zarr(group)
     assert hcs.attributes == HCSAttrs(

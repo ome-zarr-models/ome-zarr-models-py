@@ -14,7 +14,9 @@ from tests.v05.test_image import make_valid_image_group
 
 def test_load_ome_zarr_group() -> None:
     hcs_group = zarr.open_group(
-        get_examples_path(version="0.4") / "hcs_example.ome.zarr", mode="r"
+        get_examples_path(version="0.4") / "hcs_example.ome.zarr",
+        mode="r",
+        zarr_format=2,
     )
     ome_zarr_group = open_ome_zarr(hcs_group)
 
