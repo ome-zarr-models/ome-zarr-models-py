@@ -53,6 +53,11 @@ _V05_groups: list[type[BaseGroupv05[Any]]] = [
     ome_zarr_models.v05.well.Well,
 ]
 
+_ome_zarr_zarr_map: dict[str, Literal[2, 3]] = {
+    "0.4": 2,
+    "0.5": 3,
+}
+
 
 def open_ome_zarr(
     group: zarr.Group | zarr.storage.StoreLike,
@@ -92,7 +97,8 @@ def open_ome_zarr(
     know which version and group you expect.
     """
     if not isinstance(group, zarr.Group):
-        group = zarr.open_group(group)
+        zarr_format = _ome_zarr_zarr_map.get(version, None)  # type: ignore[arg-type]
+        group = zarr.open_group(group, zarr_format=zarr_format)
 
     # because 'from_zarr' isn't defined on a shared super-class, list all variants here
     groups: Sequence[type[BaseGroupv05[Any] | BaseGroupv04[Any]]]
