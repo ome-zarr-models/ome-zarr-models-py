@@ -59,6 +59,9 @@ _ome_zarr_zarr_map: dict[str, Literal[2, 3]] = {
 }
 
 
+_AnyGroup = type[BaseGroupv05[Any] | BaseGroupv04[Any]]
+
+
 def open_ome_zarr(
     group: zarr.Group | zarr.storage.StoreLike,
     *,
@@ -101,7 +104,7 @@ def open_ome_zarr(
         group = zarr.open_group(group, zarr_format=zarr_format, mode="r")
 
     # because 'from_zarr' isn't defined on a shared super-class, list all variants here
-    groups: Sequence[type[BaseGroupv05[Any] | BaseGroupv04[Any]]]
+    groups: Sequence[_AnyGroup]
     match version:
         case None:
             groups = [*_V05_groups, *_V04_groups]
@@ -115,13 +118,14 @@ def open_ome_zarr(
                 f"Unsupported version '{version}', must be one of {_versions}, or None"
             )
 
-    errors: list[Exception] = []
+    errors: list[tuple[_AnyGroup, Exception]] = []
     grp = None
     for group_cls in groups:
         try:
             grp = group_cls.from_zarr(group)
+            break
         except Exception as e:
-            errors.append(e)
+            errors.append((group_cls, e))
 
     # See if we have ImageLabel instead of an Image
     if (
@@ -141,6 +145,9 @@ def open_ome_zarr(
             "against any OME-Zarr group model.\n"
             "\n"
             "The following errors were encountered while trying to validate:\n\n"
-            + "\n\n".join(f"- {type(e).__name__}: {e}" for e in errors)
+            + "\n\n".join(
+                f"{e[0].__module__}.{e[0].__name__}\n{type(e[1]).__name__}: {e[1]}"
+                for e in errors
+            )
         )
     return grp
