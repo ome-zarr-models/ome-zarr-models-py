@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2
+
+### New Features
+
+- [ome_zarr_models.open_ome_zarr][] now accepts any store containing a group that can be opened with [zarr.open_group][].
+- Various optimisations have been made to reduce the number of file requests when creating a model class from an existing [zarr.Group][].
+
 ## 1.1
 
 ### New Features

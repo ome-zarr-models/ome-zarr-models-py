@@ -88,7 +88,12 @@ def check_array_path(
         If the array doesn't exist, or the array is not the expected Zarr version.
     """
     try:
-        array = zarr.open_array(store=group.store_path, path=array_path, mode="r")
+        array = zarr.open_array(
+            store=group.store_path,
+            path=array_path,
+            mode="r",
+            zarr_format=expected_zarr_version,
+        )
     except FileNotFoundError as e:
         msg = (
             f"Expected to find an array at {array_path}, but no array was found there."
@@ -152,7 +157,12 @@ def check_group_path(
         If the group doesn't exist, or the group is not the expected Zarr version.
     """
     try:
-        group = zarr.open_group(store=group.store_path, path=group_path, mode="r")
+        group = zarr.open_group(
+            store=group.store_path,
+            path=group_path,
+            mode="r",
+            zarr_format=expected_zarr_version,
+        )
     except FileNotFoundError as e:
         msg = f"Expected to find a group at {group_path}, but no group was found there."
         raise FileNotFoundError(msg) from e

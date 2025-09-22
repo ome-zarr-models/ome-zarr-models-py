@@ -33,7 +33,7 @@ jobs:
 
       - name: Run tests
         # For example, using `pytest`
-        run: uv run pytest
+        run: uv run pytest --record-mode=none
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5

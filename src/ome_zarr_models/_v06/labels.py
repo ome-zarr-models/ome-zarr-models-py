@@ -112,7 +112,7 @@ class Labels(
         for label_path in label_attrs.labels:
             try:
                 image_group = zarr.open_group(
-                    store=group.store_path / label_path, mode="r"
+                    store=group.store_path / label_path, mode="r", zarr_format=3
                 )
             except zarr.errors.GroupNotFoundError as err:
                 raise ValueError(

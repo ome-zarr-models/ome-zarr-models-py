@@ -2,6 +2,7 @@ from importlib.metadata import PackageNotFoundError, version
 from typing import TYPE_CHECKING, Any, Literal
 
 import zarr
+import zarr.storage
 
 import ome_zarr_models.v04.hcs
 import ome_zarr_models.v04.image
@@ -52,9 +53,16 @@ _V05_groups: list[type[BaseGroupv05[Any]]] = [
     ome_zarr_models.v05.well.Well,
 ]
 
+_ome_zarr_zarr_map: dict[str, Literal[2, 3]] = {
+    "0.4": 2,
+    "0.5": 3,
+}
+
 
 def open_ome_zarr(
-    group: zarr.Group, *, version: Literal["0.4", "0.5"] | None = None
+    group: zarr.Group | zarr.storage.StoreLike,
+    *,
+    version: Literal["0.4", "0.5"] | None = None,
 ) -> BaseGroup:
     """
     Create an ome-zarr-models object from an existing OME-Zarr group.
@@ -68,8 +76,9 @@ def open_ome_zarr(
 
     Parameters
     ----------
-    group : zarr.Group
-        Zarr group containing OME-Zarr data.
+    group : zarr.Group, zarr.storage.StoreLike
+        Zarr group containing OME-Zarr data. Alternatively any object that can be
+        parsed by [zarr.open_group][].
     version : Literal['0.4', '0.5'], optional
         If you know which version of OME-Zarr your data is, you can
         specify it here. If not specified, all versions will be tried.
@@ -87,6 +96,10 @@ def open_ome_zarr(
     take a long time. It will be quicker to directly use the OME-Zarr group class if you
     know which version and group you expect.
     """
+    if not isinstance(group, zarr.Group):
+        zarr_format = _ome_zarr_zarr_map.get(version, None)  # type: ignore[arg-type]
+        group = zarr.open_group(group, zarr_format=zarr_format, mode="r")
+
     # because 'from_zarr' isn't defined on a shared super-class, list all variants here
     groups: Sequence[type[BaseGroupv05[Any] | BaseGroupv04[Any]]]
     match version:

@@ -14,7 +14,9 @@ from tests.v05.test_image import make_valid_image_group
 
 def test_load_ome_zarr_group() -> None:
     hcs_group = zarr.open_group(
-        get_examples_path(version="0.4") / "hcs_example.ome.zarr", mode="r"
+        get_examples_path(version="0.4") / "hcs_example.ome.zarr",
+        mode="r",
+        zarr_format=2,
     )
     ome_zarr_group = open_ome_zarr(hcs_group)
 
@@ -46,3 +48,12 @@ def test_load_ome_zarr_group_bad(tmp_path: Path) -> None:
         ),
     ):
         open_ome_zarr(hcs_group)
+
+
+@pytest.mark.vcr
+def test_load_remote_data() -> None:
+    grp = open_ome_zarr(
+        "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpA_VIP_ASLM_on.zarr",
+        version="0.5",
+    )
+    assert isinstance(grp, ome_zarr_models.v05.Image)
