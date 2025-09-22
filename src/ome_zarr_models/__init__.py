@@ -39,11 +39,14 @@ _V04_groups: list[type[BaseGroupv04[Any]]] = [
 
 _V05_groups: list[type[BaseGroupv05[Any]]] = [
     ome_zarr_models.v05.hcs.HCS,
-    # Important that ImageLabel is higher than Image
-    # otherwise Image will happily parse an ImageLabel
-    # dataset without parsing the image-label bit of
-    # metadata
-    ome_zarr_models.v05.image_label.ImageLabel,
+    # ImageLabel does not appear here, as it is impossible to tell the
+    # difference between an ImageLabel and Image group from the metadata
+    #
+    # Instead some custom logic is used to try and construct an
+    # ImageLabel object in open_ome_zarr() below.
+    #
+    # See https://github.com/ome/ngff/issues/339 for more information
+    # and discussion on this change from OME-Zarr 0.4
     ome_zarr_models.v05.image.Image,
     ome_zarr_models.v05.labels.Labels,
     ome_zarr_models.v05.well.Well,
@@ -100,15 +103,31 @@ def open_ome_zarr(
             )
 
     errors: list[Exception] = []
+    grp = None
     for group_cls in groups:
         try:
-            return group_cls.from_zarr(group)
+            grp = group_cls.from_zarr(group)
         except Exception as e:
             errors.append(e)
 
-    raise RuntimeError(
-        f"Could not successfully validate {group} against any OME-Zarr group model.\n"
-        "\n"
-        "The following errors were encountered while trying to validate:\n\n"
-        + "\n\n".join(f"- {type(e).__name__}: {e}" for e in errors)
-    )
+    # See if we have ImageLabel instead of an Image
+    if (
+        isinstance(grp, ome_zarr_models.v05.image.Image)
+        and "image-label" in grp.ome_attributes.model_dump()
+    ):
+        try:
+            return ome_zarr_models.v05.image_label.ImageLabel(
+                attributes=grp.attributes.model_dump(), members=grp.members
+            )
+        except Exception:
+            raise
+
+    if grp is None:
+        raise RuntimeError(
+            f"Could not successfully validate {group} "
+            "against any OME-Zarr group model.\n"
+            "\n"
+            "The following errors were encountered while trying to validate:\n\n"
+            + "\n\n".join(f"- {type(e).__name__}: {e}" for e in errors)
+        )
+    return grp
