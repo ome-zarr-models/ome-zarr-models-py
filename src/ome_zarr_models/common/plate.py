@@ -38,8 +38,12 @@ class Acquisition(BaseAttrs):
         description="Maximum number of fields of view for the acquisition",
     )
     description: str | None = None
-    starttime: int | None = None
-    endtime: int | None = None
+    starttime: int | None = Field(
+        default=None, description="Integer epoch timestamp of acquisition start time"
+    )
+    endtime: int | None = Field(
+        default=None, description="Integer epoch timestamp of acquisition end time"
+    )
 
 
 class WellInPlate(BaseAttrs):
