@@ -1,0 +1,49 @@
+interactions:
+- request:
+    body: null
+    headers: {}
+    method: GET
+    uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpA_VIP_ASLM_on.zarr/zarr.json
+  response:
+    body:
+      string: '{"attributes": {"ome": {"version": "0.5", "_creator": {"name": "ome2024-ngff-challenge",
+        "version": "1.0.2", "notes": null}, "multiscales": [{"axes": [{"name": "z",
+        "type": "space", "unit": "micrometer"}, {"name": "y", "type": "space", "unit":
+        "micrometer"}, {"name": "x", "type": "space", "unit": "micrometer"}], "datasets":
+        [{"coordinateTransformations": [{"scale": [5.0, 6.550032422660492, 6.550032422660492],
+        "type": "scale"}], "path": "0"}, {"coordinateTransformations": [{"scale":
+        [5.0, 13.100064845320984, 13.100064845320984], "type": "scale"}], "path":
+        "1"}, {"coordinateTransformations": [{"scale": [5.0, 26.20012969064197, 26.20012969064197],
+        "type": "scale"}], "path": "2"}, {"coordinateTransformations": [{"scale":
+        [5.0, 52.40025938128394, 52.40025938128394], "type": "scale"}], "path": "3"},
+        {"coordinateTransformations": [{"scale": [5.0, 104.80051876256788, 104.80051876256788],
+        "type": "scale"}], "path": "4"}, {"coordinateTransformations": [{"scale":
+        [5.0, 209.60103752513575, 209.60103752513575], "type": "scale"}], "path":
+        "5"}], "name": "/"}], "omero": {"channels": [{"active": true, "coefficient":
+        1.0, "color": "FFFFFF", "family": "linear", "inverted": false, "label": "tdTomato",
+        "window": {"end": 1507.0, "max": 65535.0, "min": 0.0, "start": 0.0}}], "id":
+        1, "rdefs": {"defaultT": 0, "defaultZ": 968, "model": "greyscale"}}}}, "zarr_format":
+        3, "node_type": "group"}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '1389'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 22 Sep 2025 16:27:01 GMT
+      Etag:
+      - '"0c05937fd6ec1c3ecb35d5cc3d3f1962"'
+      Last-Modified:
+      - Thu, 21 Nov 2024 23:47:07 GMT
+      x-amz-request-id:
+      - tx0000000000000155dc341-0068d178d5-7548e961-default
+      x-rgw-object-type:
+      - Normal
+    status:
+      code: 200
+      message: OK
+version: 1
