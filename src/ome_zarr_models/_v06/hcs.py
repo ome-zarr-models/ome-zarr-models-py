@@ -118,7 +118,7 @@ class HCS(BaseGroupv06[HCSAttrs]):
 
         Raises
         ------
-        WellGroupNotFoundError :
+        WellGroupNotFoundError
             If no Zarr group is found at the well path.
         """
         if self.members is None:
