@@ -4,7 +4,7 @@ This package contains a number of classes representing _OME-Zarr groups_.
 Each of these classes represent a single OME-Zarr group.
 
 Each group has a set of associated _metadata attributes_, which provide a listing of the OME-Zarr attributes available for each group.
-To access these, use the `.attributes` property on the group objects.
+To access these, use the `.ome_attributes` property on the group objects.
 
 A listing of the group objects and associated metadata objects is given below for each version of the OME-Zarr specification.
 
