@@ -157,7 +157,12 @@ def check_group_path(
         If the group doesn't exist, or the group is not the expected Zarr version.
     """
     try:
-        group = zarr.open_group(store=group.store_path, path=group_path, mode="r")
+        group = zarr.open_group(
+            store=group.store_path,
+            path=group_path,
+            mode="r",
+            zarr_format=expected_zarr_version,
+        )
     except FileNotFoundError as e:
         msg = f"Expected to find a group at {group_path}, but no group was found there."
         raise FileNotFoundError(msg) from e
