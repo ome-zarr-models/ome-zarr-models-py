@@ -4,6 +4,8 @@
 
 ### New Features
 
+- Added a command line interface (CLI) for validating and viewing metadata of OME-Zarr groups.
+  See [the CLI docs page](cli.md) for more info.
 - All models now support being created from Zarr groups in remote HTTP stores, and more generally from any groups stored in any unlistable store.
 
 ### Fixes
