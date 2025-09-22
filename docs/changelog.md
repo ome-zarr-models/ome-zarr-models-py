@@ -6,6 +6,11 @@
 
 - All models now support being created from Zarr groups in remote HTTP stores, and more generally from any groups stored in any unlistable store.
 
+### Fixes
+
+- Opening an OME-Zarr 0.5 Image group that had an integer data type with [ome_zarr_models.open_ome_zarr][] previously identified the group as an ImageLabel group.
+  Image groups are now always identified as image groups, unless they contain the "image-label" metadata field.
+
 ## 1.0
 
 ### New Features
