@@ -98,7 +98,7 @@ def open_ome_zarr(
     """
     if not isinstance(group, zarr.Group):
         zarr_format = _ome_zarr_zarr_map.get(version, None)  # type: ignore[arg-type]
-        group = zarr.open_group(group, zarr_format=zarr_format)
+        group = zarr.open_group(group, zarr_format=zarr_format, mode="r")
 
     # because 'from_zarr' isn't defined on a shared super-class, list all variants here
     groups: Sequence[type[BaseGroupv05[Any] | BaseGroupv04[Any]]]
