@@ -4,7 +4,11 @@
 
 ### New Features
 
+- Added a command line interface (CLI) for validating and viewing metadata of OME-Zarr groups.
+  See [the CLI docs page](cli.md) for more info.
 - All models now support being created from Zarr groups in remote HTTP stores, and more generally from any groups stored in any unlistable store.
+- [ome_zarr_models.open_ome_zarr][] now has an optional `version` argument that can be used to specify the OME-Zarr version of the group you are trying to open.
+- If [ome_zarr_models.open_ome_zarr][] fails to load the Zarr group, validation error messages will now be printed to help with debugging why the Zarr group might not be valid OME-Zarr data.
 
 ### Fixes
 
