@@ -5,7 +5,11 @@
 ### New Features
 
 - [ome_zarr_models.open_ome_zarr][] now accepts any store containing a group that can be opened with [zarr.open_group][].
+
+### Improvements
+
 - Various optimisations have been made to reduce the number of file requests when creating a model class from an existing [zarr.Group][].
+- [ome_zarr_models.open_ome_zarr][] now includes the name of the group it was trying to validate alongside the validation error message.
 
 ## 1.1
 
