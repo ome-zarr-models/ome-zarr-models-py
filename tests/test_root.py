@@ -3,10 +3,13 @@ from pathlib import Path
 
 import pytest
 import zarr
+from zarr.abc.store import Store
 
+import ome_zarr_models.v04
+import ome_zarr_models.v05
 from ome_zarr_models import open_ome_zarr
-from ome_zarr_models.v04.hcs import HCS
 from tests.conftest import get_examples_path
+from tests.v05.test_image import make_valid_image_group
 
 
 def test_load_ome_zarr_group() -> None:
@@ -15,8 +18,23 @@ def test_load_ome_zarr_group() -> None:
     )
     ome_zarr_group = open_ome_zarr(hcs_group)
 
-    assert isinstance(ome_zarr_group, HCS)
+    assert isinstance(ome_zarr_group, ome_zarr_models.v04.HCS)
     assert ome_zarr_group.ome_zarr_version == "0.4"
+
+
+def test_load_ome_zarr_group_v05_image_label(store: Store) -> None:
+    # Check that images and image-labels are distinguished correctly
+    image_group = make_valid_image_group(store)
+    ome_zarr_group = open_ome_zarr(image_group)
+
+    assert isinstance(ome_zarr_group, ome_zarr_models.v05.Image)
+
+    # Turn into an image labels by adding the image-label metadata
+    attrs = image_group.attrs.asdict()
+    attrs["ome"]["image-label"] = {}  # type: ignore[index]
+    image_group.update_attributes(attrs)
+    ome_zarr_group = open_ome_zarr(image_group)
+    assert isinstance(ome_zarr_group, ome_zarr_models.v05.ImageLabel)
 
 
 def test_load_ome_zarr_group_bad(tmp_path: Path) -> None:

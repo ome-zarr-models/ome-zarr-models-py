@@ -1,6 +1,7 @@
 import re
 
 import pytest
+import zarr
 from pydantic import ValidationError
 from zarr.abc.store import Store
 
@@ -12,7 +13,7 @@ from ome_zarr_models.v05.multiscales import Dataset, Multiscale
 from tests.v05.conftest import json_to_dict, json_to_zarr_group
 
 
-def test_image(store: Store) -> None:
+def make_valid_image_group(store: Store) -> zarr.Group:
     zarr_group = json_to_zarr_group(json_fname="image_example.json", store=store)
     zarr_group.create_array(
         "0",
@@ -32,6 +33,11 @@ def test_image(store: Store) -> None:
         dtype="uint8",
         dimension_names=["t", "c", "z", "y", "x"],
     )
+    return zarr_group
+
+
+def test_image(store: Store) -> None:
+    zarr_group = make_valid_image_group(store)
     ome_group = Image.from_zarr(zarr_group)
 
     assert ome_group.attributes.ome == ImageAttrs(
