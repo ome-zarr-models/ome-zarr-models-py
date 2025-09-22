@@ -2,6 +2,12 @@
 
 ## Validate an OME-Zarr group
 
+### Command line
+
+Use `ome-zarr-models validate <path to group>`.
+
+### Python
+
 If you know what type of group it is, use the `from_zarr()` method on [one of the group objects](api/index.md):
 
 ```python

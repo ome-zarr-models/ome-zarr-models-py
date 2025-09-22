@@ -1,6 +1,5 @@
-# # Tutorial
-#
-# This tutorial provides a full worked example of using `ome-zarr-models`
+# This tutorial provides a full worked example of using `ome-zarr-models` in Python
+
 import os
 import tempfile
 
@@ -24,6 +23,7 @@ zarr_group = zarr.open_group(
     "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr",
     mode="r",
 )
+
 # If you're not sure what type or OME-Zarr version of data you have, you can
 # use `open_ome_zarr()` to automatically 'guess' the correct group:
 
@@ -74,7 +74,6 @@ plt.imshow(zarr_arr, cmap="gray")
 #
 # First, we need to create `ArraySpec` objects, which tell `ome-zarr-models`
 # what the structure of the data arrays will be.
-
 
 array_specs: list[AnyArraySpec] = [
     ArraySpec(
