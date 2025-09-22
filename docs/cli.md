@@ -1,6 +1,7 @@
 # Command line interface
 
-`ome-zarr-models` has a command line interface.
+`ome-zarr-models` can validate and show metadata using a command line interface.
+
 To see available commands,
 
 ```sh
@@ -34,13 +35,13 @@ ome-zarr-models validate https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/E
 ✅ Valid OME-Zarr
 ```
 
-The group can be specified as any string that can be parsed by **link to zarr.open_group**.
+The group can be specified as any string that can be parsed by [zarr.open_group][].
 
 ## Info
 
 To get information about an OME-Zarr group, pass the path to a group to `ome-zarr-models info`.
 This will print the metadata (see below for an example).
-If you have the `rich` Python package installed, a more readable output will be produced.
+If you have the [`rich`](https://rich.readthedocs.io) Python package installed, a more readable output will be produced.
 
 ```sh
 ome-zarr-models info https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr
