@@ -47,25 +47,51 @@ ome-zarr-models info https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_
 ```
 
 ```
-ImageLabel(
+Image(
     zarr_format=3,
     node_type='group',
-    attributes=BaseZarrAttrs[ImageLabelAttrs](
-        ome=ImageLabelAttrs(
+    attributes=BaseZarrAttrs[ImageAttrs](
+        ome=ImageAttrs(
             version='0.5',
-            image_label=None,
             multiscales=[
                 Multiscale(
-                    axes=[Axis(name='y', type='space', unit='micrometer'), Axis(name='x', type='space', unit='micrometer')],
+                    axes=[
+                        Axis(name='y', type='space', unit='micrometer'),
+                        Axis(name='x', type='space', unit='micrometer')
+                    ],
                     datasets=(
-                        Dataset(path='0', coordinateTransformations=(VectorScale(type='scale', scale=[1.6, 1.6]),)),
-                        Dataset(path='1', coordinateTransformations=(VectorScale(type='scale', scale=[3.2, 3.2]),)),
-                        Dataset(path='2', coordinateTransformations=(VectorScale(type='scale', scale=[6.4, 6.4]),)),
-                        Dataset(path='3', coordinateTransformations=(VectorScale(type='scale', scale=[12.8, 12.8]),)),
-                        Dataset(path='4', coordinateTransformations=(VectorScale(type='scale', scale=[25.6, 25.6]),)),
-                        Dataset(path='5', coordinateTransformations=(VectorScale(type='scale', scale=[51.2, 51.2]),)),
-                        Dataset(path='6', coordinateTransformations=(VectorScale(type='scale', scale=[102.4, 102.4]),)),
-                        Dataset(path='7', coordinateTransformations=(VectorScale(type='scale', scale=[204.8, 204.8]),))
+                        Dataset(
+                            path='0',
+                            coordinateTransformations=(VectorScale(type='scale', scale=[1.6, 1.6]),)
+                        ),
+                        Dataset(
+                            path='1',
+                            coordinateTransformations=(VectorScale(type='scale', scale=[3.2, 3.2]),)
+                        ),
+                        Dataset(
+                            path='2',
+                            coordinateTransformations=(VectorScale(type='scale', scale=[6.4, 6.4]),)
+                        ),
+                        Dataset(
+                            path='3',
+                            coordinateTransformations=(VectorScale(type='scale', scale=[12.8, 12.8]),)
+                        ),
+                        Dataset(
+                            path='4',
+                            coordinateTransformations=(VectorScale(type='scale', scale=[25.6, 25.6]),)
+                        ),
+                        Dataset(
+                            path='5',
+                            coordinateTransformations=(VectorScale(type='scale', scale=[51.2, 51.2]),)
+                        ),
+                        Dataset(
+                            path='6',
+                            coordinateTransformations=(VectorScale(type='scale', scale=[102.4, 102.4]),)
+                        ),
+                        Dataset(
+                            path='7',
+                            coordinateTransformations=(VectorScale(type='scale', scale=[204.8, 204.8]),)
+                        )
                     ),
                     coordinateTransformations=None,
                     metadata=None,
@@ -119,8 +145,23 @@ ImageLabel(
                     'name': 'sharding_indexed',
                     'configuration': {
                         'chunk_shape': (256, 256),
-                        'codecs': ({'name': 'bytes'}, {'name': 'blosc', 'configuration': {'typesize': 1, 'cname': 'zstd', 'clevel': 5, 'shuffle': 'bitshuffle', 'blocksize': 0}}),
-                        'index_codecs': ({'name': 'bytes', 'configuration': {'endian': 'little'}}, {'name': 'crc32c'}),
+                        'codecs': (
+                            {'name': 'bytes'},
+                            {
+                                'name': 'blosc',
+                                'configuration': {
+                                    'typesize': 1,
+                                    'cname': 'zstd',
+                                    'clevel': 5,
+                                    'shuffle': 'bitshuffle',
+                                    'blocksize': 0
+                                }
+                            }
+                        ),
+                        'index_codecs': (
+                            {'name': 'bytes', 'configuration': {'endian': 'little'}},
+                            {'name': 'crc32c'}
+                        ),
                         'index_location': 'end'
                     }
                 },
@@ -155,8 +196,23 @@ ImageLabel(
                     'name': 'sharding_indexed',
                     'configuration': {
                         'chunk_shape': (256, 256),
-                        'codecs': ({'name': 'bytes'}, {'name': 'blosc', 'configuration': {'typesize': 1, 'cname': 'zstd', 'clevel': 5, 'shuffle': 'bitshuffle', 'blocksize': 0}}),
-                        'index_codecs': ({'name': 'bytes', 'configuration': {'endian': 'little'}}, {'name': 'crc32c'}),
+                        'codecs': (
+                            {'name': 'bytes'},
+                            {
+                                'name': 'blosc',
+                                'configuration': {
+                                    'typesize': 1,
+                                    'cname': 'zstd',
+                                    'clevel': 5,
+                                    'shuffle': 'bitshuffle',
+                                    'blocksize': 0
+                                }
+                            }
+                        ),
+                        'index_codecs': (
+                            {'name': 'bytes', 'configuration': {'endian': 'little'}},
+                            {'name': 'crc32c'}
+                        ),
                         'index_location': 'end'
                     }
                 },
@@ -191,8 +247,23 @@ ImageLabel(
                     'name': 'sharding_indexed',
                     'configuration': {
                         'chunk_shape': (256, 256),
-                        'codecs': ({'name': 'bytes'}, {'name': 'blosc', 'configuration': {'typesize': 1, 'cname': 'zstd', 'clevel': 5, 'shuffle': 'bitshuffle', 'blocksize': 0}}),
-                        'index_codecs': ({'name': 'bytes', 'configuration': {'endian': 'little'}}, {'name': 'crc32c'}),
+                        'codecs': (
+                            {'name': 'bytes'},
+                            {
+                                'name': 'blosc',
+                                'configuration': {
+                                    'typesize': 1,
+                                    'cname': 'zstd',
+                                    'clevel': 5,
+                                    'shuffle': 'bitshuffle',
+                                    'blocksize': 0
+                                }
+                            }
+                        ),
+                        'index_codecs': (
+                            {'name': 'bytes', 'configuration': {'endian': 'little'}},
+                            {'name': 'crc32c'}
+                        ),
                         'index_location': 'end'
                     }
                 },
@@ -227,8 +298,23 @@ ImageLabel(
                     'name': 'sharding_indexed',
                     'configuration': {
                         'chunk_shape': (256, 256),
-                        'codecs': ({'name': 'bytes'}, {'name': 'blosc', 'configuration': {'typesize': 1, 'cname': 'zstd', 'clevel': 5, 'shuffle': 'bitshuffle', 'blocksize': 0}}),
-                        'index_codecs': ({'name': 'bytes', 'configuration': {'endian': 'little'}}, {'name': 'crc32c'}),
+                        'codecs': (
+                            {'name': 'bytes'},
+                            {
+                                'name': 'blosc',
+                                'configuration': {
+                                    'typesize': 1,
+                                    'cname': 'zstd',
+                                    'clevel': 5,
+                                    'shuffle': 'bitshuffle',
+                                    'blocksize': 0
+                                }
+                            }
+                        ),
+                        'index_codecs': (
+                            {'name': 'bytes', 'configuration': {'endian': 'little'}},
+                            {'name': 'crc32c'}
+                        ),
                         'index_location': 'end'
                     }
                 },
@@ -263,8 +349,23 @@ ImageLabel(
                     'name': 'sharding_indexed',
                     'configuration': {
                         'chunk_shape': (256, 256),
-                        'codecs': ({'name': 'bytes'}, {'name': 'blosc', 'configuration': {'typesize': 1, 'cname': 'zstd', 'clevel': 5, 'shuffle': 'bitshuffle', 'blocksize': 0}}),
-                        'index_codecs': ({'name': 'bytes', 'configuration': {'endian': 'little'}}, {'name': 'crc32c'}),
+                        'codecs': (
+                            {'name': 'bytes'},
+                            {
+                                'name': 'blosc',
+                                'configuration': {
+                                    'typesize': 1,
+                                    'cname': 'zstd',
+                                    'clevel': 5,
+                                    'shuffle': 'bitshuffle',
+                                    'blocksize': 0
+                                }
+                            }
+                        ),
+                        'index_codecs': (
+                            {'name': 'bytes', 'configuration': {'endian': 'little'}},
+                            {'name': 'crc32c'}
+                        ),
                         'index_location': 'end'
                     }
                 },
@@ -299,8 +400,23 @@ ImageLabel(
                     'name': 'sharding_indexed',
                     'configuration': {
                         'chunk_shape': (256, 256),
-                        'codecs': ({'name': 'bytes'}, {'name': 'blosc', 'configuration': {'typesize': 1, 'cname': 'zstd', 'clevel': 5, 'shuffle': 'bitshuffle', 'blocksize': 0}}),
-                        'index_codecs': ({'name': 'bytes', 'configuration': {'endian': 'little'}}, {'name': 'crc32c'}),
+                        'codecs': (
+                            {'name': 'bytes'},
+                            {
+                                'name': 'blosc',
+                                'configuration': {
+                                    'typesize': 1,
+                                    'cname': 'zstd',
+                                    'clevel': 5,
+                                    'shuffle': 'bitshuffle',
+                                    'blocksize': 0
+                                }
+                            }
+                        ),
+                        'index_codecs': (
+                            {'name': 'bytes', 'configuration': {'endian': 'little'}},
+                            {'name': 'crc32c'}
+                        ),
                         'index_location': 'end'
                     }
                 },
@@ -335,8 +451,23 @@ ImageLabel(
                     'name': 'sharding_indexed',
                     'configuration': {
                         'chunk_shape': (256, 256),
-                        'codecs': ({'name': 'bytes'}, {'name': 'blosc', 'configuration': {'typesize': 1, 'cname': 'zstd', 'clevel': 5, 'shuffle': 'bitshuffle', 'blocksize': 0}}),
-                        'index_codecs': ({'name': 'bytes', 'configuration': {'endian': 'little'}}, {'name': 'crc32c'}),
+                        'codecs': (
+                            {'name': 'bytes'},
+                            {
+                                'name': 'blosc',
+                                'configuration': {
+                                    'typesize': 1,
+                                    'cname': 'zstd',
+                                    'clevel': 5,
+                                    'shuffle': 'bitshuffle',
+                                    'blocksize': 0
+                                }
+                            }
+                        ),
+                        'index_codecs': (
+                            {'name': 'bytes', 'configuration': {'endian': 'little'}},
+                            {'name': 'crc32c'}
+                        ),
                         'index_location': 'end'
                     }
                 },
@@ -371,8 +502,23 @@ ImageLabel(
                     'name': 'sharding_indexed',
                     'configuration': {
                         'chunk_shape': (256, 256),
-                        'codecs': ({'name': 'bytes'}, {'name': 'blosc', 'configuration': {'typesize': 1, 'cname': 'zstd', 'clevel': 5, 'shuffle': 'bitshuffle', 'blocksize': 0}}),
-                        'index_codecs': ({'name': 'bytes', 'configuration': {'endian': 'little'}}, {'name': 'crc32c'}),
+                        'codecs': (
+                            {'name': 'bytes'},
+                            {
+                                'name': 'blosc',
+                                'configuration': {
+                                    'typesize': 1,
+                                    'cname': 'zstd',
+                                    'clevel': 5,
+                                    'shuffle': 'bitshuffle',
+                                    'blocksize': 0
+                                }
+                            }
+                        ),
+                        'index_codecs': (
+                            {'name': 'bytes', 'configuration': {'endian': 'little'}},
+                            {'name': 'crc32c'}
+                        ),
                         'index_location': 'end'
                     }
                 },
