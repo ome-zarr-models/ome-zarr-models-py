@@ -58,7 +58,7 @@ test = ["pytest>=8.3.3", "pytest-cov >=7.0.0", "pytest-recording"]
 
 # TEMPORARY: remove before merge
 [tool.uv.sources]
-pydantic-zarr = { git = "https://github.com/tlambert03/pydantic-zarr", rev = "drop-zarr" }
+pydantic-zarr = { git = "https://github.com/zarr-developers/pydantic-zarr", rev = "main" }
 
 # Ruff configuration for linting and formatting
 # https://docs.astral.sh/ruff
