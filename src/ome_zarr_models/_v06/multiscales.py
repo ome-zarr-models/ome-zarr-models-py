@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter
-from typing import TYPE_CHECKING, Any, Literal, Self
+from typing import TYPE_CHECKING, Any, Self
 
 from pydantic import (
     BaseModel,
@@ -16,9 +16,8 @@ from pydantic import (
 from ome_zarr_models._v06.axes import Axes
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.coordinate_transformations import (
-    ScaleTransform,
     Transform,
-    TranslationTransform,
+    ValidTransform,
     VectorScale,
     VectorTransform,
     _build_transforms,
@@ -38,7 +37,6 @@ __all__ = ["Dataset", "Multiscale"]
 
 
 VALID_NDIM = (2, 3, 4, 5)
-ValidTransform = tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform]
 
 
 class Multiscale(BaseAttrs):

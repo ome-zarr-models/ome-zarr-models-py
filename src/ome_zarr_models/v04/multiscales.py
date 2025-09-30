@@ -15,9 +15,8 @@ from pydantic import (
 
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.coordinate_transformations import (
-    ScaleTransform,
     Transform,
-    TranslationTransform,
+    ValidTransform,
     VectorScale,
     VectorTransform,
     _build_transforms,
@@ -38,7 +37,6 @@ __all__ = ["Dataset", "Multiscale"]
 
 
 VALID_NDIM = (2, 3, 4, 5)
-ValidTransform = tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform]
 
 
 class Multiscale(BaseAttrs):
