@@ -15,6 +15,8 @@ from pydantic_zarr.v3 import AnyGroupSpec as AnyGroupSpecv3
 from pydantic_zarr.v3 import ArraySpec as ArraySpecv3
 from pydantic_zarr.v3 import GroupSpec as GroupSpecv3
 
+from ome_zarr_models.common.coordinate_transformations import VectorScale
+
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
@@ -259,3 +261,23 @@ def check_group_spec(
             f"Node at path '{path}' is not a GroupSpec (got {type(new_spec)=})"
         )
     return new_spec
+
+
+def check_ordered_scales(scales: list[VectorScale]) -> None:
+    """
+    Given a list of scales, make sure they are ordered from low to high.
+
+    Raises
+    ------
+    ValueError
+        If any items in one set of scales is smaller than any item in
+        the preceding set of scales.
+    """
+    for i in range(len(scales) - 1):
+        s1, s2 = scales[i].scale, scales[i + 1].scale
+        is_ordered = all(s1[j] <= s2[j] for j in range(len(s1)))
+        if not is_ordered:
+            raise ValueError(
+                f"Dataset {i} has a lower resolution (scales = {s1}) "
+                f"than dataset {i + 1} (scales = {s2})."
+            )

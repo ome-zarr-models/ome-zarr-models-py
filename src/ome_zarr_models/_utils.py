@@ -20,7 +20,7 @@ from ome_zarr_models.common.validation import (
 )
 
 if TYPE_CHECKING:
-    from collections.abc import Hashable, Iterable
+    from collections.abc import Iterable
 
     import zarr
     from zarr.abc.store import Store
@@ -184,7 +184,10 @@ def get_store_path(store: Store) -> str:
     return ""
 
 
-def duplicates(values: Iterable[Hashable]) -> dict[Hashable, int]:
+T = TypeVar("T")
+
+
+def duplicates(values: Iterable[T]) -> dict[T, int]:
     """
     Takes a sequence of hashable elements and returns a dict where the keys are the
     elements of the input that occurred at least once, and the values are the
