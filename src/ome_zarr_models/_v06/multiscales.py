@@ -25,7 +25,7 @@ from ome_zarr_models.common.coordinate_transformations import (
     _build_transforms,
     _ndim,
 )
-from ome_zarr_models.common.validation import check_length
+from ome_zarr_models.common.validation import check_length, check_ordered_scales
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -120,16 +120,7 @@ class Multiscale(BaseAttrs):
         scale_vector_transforms = [
             t for t in scale_transforms if isinstance(t, VectorScale)
         ]
-        scales = [s.scale for s in scale_vector_transforms]
-        for i in range(len(scales) - 1):
-            s1, s2 = scales[i], scales[i + 1]
-            is_ordered = all(s1[j] <= s2[j] for j in range(len(s1)))
-            if not is_ordered:
-                raise ValueError(
-                    f"Dataset {i} has a lower resolution (scales = {s1}) "
-                    f"than dataset {i + 1} (scales = {s2})."
-                )
-
+        check_ordered_scales(scale_vector_transforms)
         return datasets
 
     @field_validator("axes", mode="after")
