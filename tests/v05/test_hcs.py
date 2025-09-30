@@ -78,7 +78,7 @@ def test_non_existent_wells() -> None:
                 },
                 "version": "0.5",
             }
-        }
+        },
     )
 
 
