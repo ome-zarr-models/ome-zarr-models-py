@@ -97,15 +97,14 @@ class Multiscale(BaseAttrs):
         """
         Ensure that the length of the axes matches the dimensionality of the transforms
         """
-        self_ndim = len(data.axes)
         for ds_idx, ds in enumerate(data.datasets):
             for tx in ds.coordinateTransformations:
-                if hasattr(tx, "ndim") and self_ndim != tx.ndim:
+                if hasattr(tx, "ndim") and data.ndim != tx.ndim:
                     msg = (
                         f"The length of axes does not match the dimensionality of "
                         f"the {tx.type} transform in "
                         f"datasets[{ds_idx}].coordinateTransformations. "
-                        f"Got {self_ndim} axes, but the {tx.type} transform has "
+                        f"Got {data.ndim} axes, but the {tx.type} transform has "
                         f"dimensionality {tx.ndim}"
                     )
                     raise ValueError(msg)
