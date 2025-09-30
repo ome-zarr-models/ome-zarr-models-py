@@ -53,7 +53,7 @@ dev = [
     "pre-commit",
     "ome-zarr-models[zarr]",
 ]
-test = ["pytest>=8.3.3", "pytest-cov >=7.0.0", "pytest-recording"]
+test = ["pytest>=8.3.3", "pytest-cov >=7.0.0", "pytest-recording", "fsspec[http] >=2025", "typos>=0.6.0"]
 
 
 # TEMPORARY: remove before merge
