@@ -65,6 +65,7 @@ def test_non_existent_wells() -> None:
     does not specify explicitly that the Zarr groups have to exist.
     """
     HCS(
+        members={},
         attributes={
             "ome": {
                 "plate": {
