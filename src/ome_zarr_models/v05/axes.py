@@ -16,10 +16,7 @@ class Axis(BaseAttrs):
     Model for an element of `Multiscale.axes`.
     """
 
-    # Explicitly name could be any JsonValue, but implicitly it must match Zarr array
-    # dimension_names which limits it to str | None
-
-    name: str | None
+    name: str
     type: str | None = None
     # Unit probably intended to be str, but the spec doesn't explicitly specify
     unit: str | JsonValue | None = None
