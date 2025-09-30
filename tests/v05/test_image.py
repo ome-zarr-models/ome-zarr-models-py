@@ -4,7 +4,6 @@ import re
 from typing import TYPE_CHECKING
 
 import pytest
-import zarr
 from pydantic import ValidationError
 
 from ome_zarr_models.v05.axes import Axis

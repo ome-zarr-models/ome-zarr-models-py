@@ -89,6 +89,7 @@ array_specs: list[AnyArraySpec] = [
         fill_value=0,
         codecs=[NamedConfig(name="bytes")],
         dimension_names=["y", "x"],
+        attributes={},
     ),
     ArraySpec(
         shape=(100, 100),
@@ -103,6 +104,7 @@ array_specs: list[AnyArraySpec] = [
         fill_value=0,
         codecs=[NamedConfig(name="bytes")],
         dimension_names=["y", "x"],
+        attributes={},
     ),
 ]
 

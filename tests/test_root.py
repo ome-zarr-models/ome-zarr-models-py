@@ -59,6 +59,7 @@ def test_load_ome_zarr_group_bad(tmp_path: Path) -> None:
 
 @pytest.mark.vcr
 def test_load_remote_data() -> None:
+    pytest.importorskip("zarr")
     grp = open_ome_zarr(
         "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpA_VIP_ASLM_on.zarr",
         version="0.5",
