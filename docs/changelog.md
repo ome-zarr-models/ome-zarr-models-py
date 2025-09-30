@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3
+
+### Bug fixes
+
+- Fixed opening a HCS dataset with some well groups missing from the HCS Zarr group.
+
 ## 1.2
 
 ### New Features

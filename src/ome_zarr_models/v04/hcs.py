@@ -45,10 +45,11 @@ class HCS(BaseGroupv04[HCSAttrs]):
         # Traverse all the Well groups, which themselves contain Image groups
         hcs_flat = hcs.to_flat()
         for well in hcs.attributes.plate.wells:
-            well_group = group[well.path]
-            well_group_flat = Well.from_zarr(well_group).to_flat()  # type: ignore[arg-type]
-            for path in well_group_flat:
-                hcs_flat["/" + well.path + path] = well_group_flat[path]
+            if well.path in group:
+                well_group = group[well.path]
+                well_group_flat = Well.from_zarr(well_group).to_flat()  # type: ignore[arg-type]
+                for path in well_group_flat:
+                    hcs_flat["/" + well.path + path] = well_group_flat[path]
 
         hcs_unflat: AnyGroupSpec = GroupSpec.from_flat(hcs_flat)
         return cls(attributes=hcs_unflat.attributes, members=hcs_unflat.members)
