@@ -14,6 +14,7 @@ from ome_zarr_models.v05.multiscales import Dataset, Multiscale
 from tests.v05.conftest import json_to_dict, json_to_zarr_group
 
 if TYPE_CHECKING:
+    import zarr
     from zarr.abc.store import Store
 
 

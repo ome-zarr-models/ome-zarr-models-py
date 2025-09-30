@@ -14,7 +14,7 @@ import pydantic_zarr.v3
 from pydantic import create_model
 
 if TYPE_CHECKING:
-    from collections.abc import Hashable, Iterable
+    from collections.abc import Iterable
 
     from zarr.abc.store import Store
 

@@ -15,7 +15,6 @@ from ome_zarr_models.v04.well_types import WellImage, WellMeta
 from tests.conftest import get_examples_path
 
 if TYPE_CHECKING:
-    import zarr
     from pydantic import JsonValue
 
 
