@@ -13,7 +13,6 @@ from pydantic import (
     model_validator,
 )
 
-from ome_zarr_models._utils import duplicates
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.coordinate_transformations import (
     ScaleTransform,
@@ -24,7 +23,11 @@ from ome_zarr_models.common.coordinate_transformations import (
     _build_transforms,
     _ndim,
 )
-from ome_zarr_models.common.validation import check_length, check_ordered_scales
+from ome_zarr_models.common.validation import (
+    check_length,
+    check_ordered_scales,
+    unique_items_validator,
+)
 from ome_zarr_models.v04.axes import Axes
 
 if TYPE_CHECKING:
@@ -188,13 +191,10 @@ class Multiscale(BaseAttrs):
         """
         Ensures that the names of the axes are unique.
         """
-        name_dupes = duplicates(a.name for a in axes)
-        if len(name_dupes) > 0:
-            msg = (
-                f"Axis names must be unique. Axis names {tuple(name_dupes.keys())} are "
-                "repeated."
-            )
-            raise ValueError(msg)
+        try:
+            unique_items_validator(axis_names := [a.name for a in axes])
+        except ValueError:
+            raise ValueError(f"Axis names must be unique. Got {axis_names}") from None
         return axes
 
 
