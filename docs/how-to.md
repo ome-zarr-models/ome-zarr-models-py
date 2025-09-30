@@ -22,7 +22,7 @@ If you don't know what type of group it is, use `open_ome_zarr()`:
 
 ```python
 import zarr
-import ome_zarr_models.v04
+import ome_zarr_models
 
 zarr_group = zarr.open(path_to_group, mode="r")
 ome_group = ome_zarr_models.open_ome_zarr(zarr_group)
