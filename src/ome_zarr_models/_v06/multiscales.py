@@ -52,7 +52,6 @@ class Multiscale(BaseAttrs):
     metadata: JsonValue = None
     name: JsonValue | None = None
     type: JsonValue = None
-    version: Literal["0.4"] | None = None
 
     @model_serializer(mode="wrap")
     def _serialize(
