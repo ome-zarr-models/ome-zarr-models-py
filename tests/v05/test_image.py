@@ -4,6 +4,7 @@ import re
 from typing import TYPE_CHECKING
 
 import pytest
+import zarr
 from pydantic import ValidationError
 
 from ome_zarr_models.v05.axes import Axis
@@ -17,7 +18,7 @@ if TYPE_CHECKING:
     from zarr.abc.store import Store
 
 
-def test_image(store: Store) -> None:
+def make_valid_image_group(store: Store) -> zarr.Group:
     zarr_group = json_to_zarr_group(json_fname="image_example.json", store=store)
     zarr_group.create_array(
         "0",
@@ -37,6 +38,11 @@ def test_image(store: Store) -> None:
         dtype="uint8",
         dimension_names=["t", "c", "z", "y", "x"],
     )
+    return zarr_group
+
+
+def test_image(store: Store) -> None:
+    zarr_group = make_valid_image_group(store)
     ome_group = Image.from_zarr(zarr_group)
 
     assert ome_group.attributes.ome == ImageAttrs(

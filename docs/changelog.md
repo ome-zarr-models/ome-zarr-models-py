@@ -1,10 +1,40 @@
 # Changelog
 
+## 1.3
+
+### Bug fixes
+
+- Fixed opening a HCS dataset with some well groups missing from the HCS Zarr group.
+
+## 1.2
+
+### New Features
+
+- [ome_zarr_models.open_ome_zarr][] now accepts any store containing a group that can be opened with [zarr.open_group][].
+
+### Improvements
+
+- Various optimisations have been made to reduce the number of file requests when creating a model class from an existing [zarr.Group][].
+- [ome_zarr_models.open_ome_zarr][] now includes the name of the group it was trying to validate alongside the validation error message.
+
+## Bug fixes
+
+- Axes metadata for version 0.4 and 0.5 has been fixed to require the `name` field.
+
 ## 1.1
 
 ### New Features
 
+- Added a command line interface (CLI) for validating and viewing metadata of OME-Zarr groups.
+  See [the CLI docs page](cli.md) for more info.
 - All models now support being created from Zarr groups in remote HTTP stores, and more generally from any groups stored in any unlistable store.
+- [ome_zarr_models.open_ome_zarr][] now has an optional `version` argument that can be used to specify the OME-Zarr version of the group you are trying to open.
+- If [ome_zarr_models.open_ome_zarr][] fails to load the Zarr group, validation error messages will now be printed to help with debugging why the Zarr group might not be valid OME-Zarr data.
+
+### Fixes
+
+- Opening an OME-Zarr 0.5 Image group that had an integer data type with [ome_zarr_models.open_ome_zarr][] previously identified the group as an ImageLabel group.
+  Image groups are now always identified as image groups, unless they contain the "image-label" metadata field.
 
 ## 1.0
 

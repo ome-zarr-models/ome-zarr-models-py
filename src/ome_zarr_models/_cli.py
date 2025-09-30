@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse
 import sys
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 from ome_zarr_models import __version__, open_ome_zarr
 
@@ -52,7 +52,7 @@ def main() -> None:
             sys.exit(1)
 
 
-def validate(path: StoreLike, version: str | None = None) -> None:
+def validate(path: StoreLike, version: Literal["0.4", "0.5"] | None = None) -> None:
     """Validate an OME-Zarr at the given path.
 
     Parameters
@@ -69,11 +69,8 @@ def validate(path: StoreLike, version: str | None = None) -> None:
     ome-zarr-models validate https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr
     ```
     """
-    import zarr
-
-    group = zarr.open_group(path, mode="r")
     try:
-        open_ome_zarr(group, version=version)  # type: ignore[arg-type]
+        open_ome_zarr(path, version=version)
     except Exception as e:
         print(f"{e}\n")
         print(f"❌ Invalid OME-Zarr: {path}")

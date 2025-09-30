@@ -25,7 +25,7 @@ from ome_zarr_models.common.validation import (
 )
 
 if TYPE_CHECKING:
-    from collections.abc import Hashable, Iterable
+    from collections.abc import Iterable
 
     import zarr
     from zarr.abc.store import Store
@@ -172,9 +172,8 @@ def _from_zarr_v3(
         for path in group_flat:
             members_tree_flat["/" + group_path + path] = group_flat[path]
 
-    members_normalized: pydantic_zarr.v3.AnyGroupSpec = (
-        pydantic_zarr.v3.GroupSpec.from_flat(members_tree_flat)
-    )
+    members_normalized: pydantic_zarr.v3.AnyGroupSpec
+    members_normalized = pydantic_zarr.v3.GroupSpec.from_flat(members_tree_flat)
     return group_cls(  # type: ignore[return-value]
         members=members_normalized.members, attributes=group_spec_in.attributes
     )
@@ -190,7 +189,10 @@ def get_store_path(store: Store) -> str:
     return ""
 
 
-def duplicates(values: Iterable[Hashable]) -> dict[Hashable, int]:
+T = TypeVar("T")
+
+
+def duplicates(values: Iterable[T]) -> dict[T, int]:
     """
     Takes a sequence of hashable elements and returns a dict where the keys are the
     elements of the input that occurred at least once, and the values are the

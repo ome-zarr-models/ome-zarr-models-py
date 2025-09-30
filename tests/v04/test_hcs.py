@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 
 from ome_zarr_models.common.omero import Channel, Omero, Window
@@ -10,11 +14,17 @@ from ome_zarr_models.v04.plate import Acquisition, Column, Plate, Row, WellInPla
 from ome_zarr_models.v04.well_types import WellImage, WellMeta
 from tests.conftest import get_examples_path
 
+if TYPE_CHECKING:
+    import zarr
+    from pydantic import JsonValue
+
 
 def test_example_hcs() -> None:
     zarr = pytest.importorskip("zarr")
     group = zarr.open_group(
-        get_examples_path(version="0.4") / "hcs_example.ome.zarr", mode="r"
+        get_examples_path(version="0.4") / "hcs_example.ome.zarr",
+        mode="r",
+        zarr_format=2,
     )
     hcs: HCS = HCS.from_zarr(group)
     assert hcs.attributes == HCSAttrs(
@@ -134,3 +144,22 @@ def test_non_existent_wells() -> None:
             }
         }
     )
+
+
+def test_non_existent_wells_from_zarr() -> None:
+    """
+    Same as above, but using from_zarr(...)
+    """
+    zarr = pytest.importorskip("zarr")
+    plate: dict[str, JsonValue] = {
+        "columns": [{"name": "1"}],
+        "rows": [{"name": "A"}],
+        "wells": [{"path": "A/1", "rowIndex": 0, "columnIndex": 0}],
+        "version": "0.4",
+    }
+    group = group = zarr.create_group(
+        store={},
+        zarr_format=2,
+        attributes={"plate": plate, "version": "0.4"},
+    )
+    HCS.from_zarr(group)

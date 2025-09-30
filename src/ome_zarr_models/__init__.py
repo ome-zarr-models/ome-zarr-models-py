@@ -19,6 +19,7 @@ from ome_zarr_models.v05.base import BaseGroupv05
 
 if TYPE_CHECKING:
     import zarr
+    import zarr.storage
 
 try:
     __version__ = version("ome_zarr_models")
@@ -42,19 +43,32 @@ _V04_groups: list[type[BaseGroupv04[Any]]] = [
 
 _V05_groups: list[type[BaseGroupv05[Any]]] = [
     ome_zarr_models.v05.hcs.HCS,
-    # Important that ImageLabel is higher than Image
-    # otherwise Image will happily parse an ImageLabel
-    # dataset without parsing the image-label bit of
-    # metadata
-    ome_zarr_models.v05.image_label.ImageLabel,
+    # ImageLabel does not appear here, as it is impossible to tell the
+    # difference between an ImageLabel and Image group from the metadata
+    #
+    # Instead some custom logic is used to try and construct an
+    # ImageLabel object in open_ome_zarr() below.
+    #
+    # See https://github.com/ome/ngff/issues/339 for more information
+    # and discussion on this change from OME-Zarr 0.4
     ome_zarr_models.v05.image.Image,
     ome_zarr_models.v05.labels.Labels,
     ome_zarr_models.v05.well.Well,
 ]
 
+_ome_zarr_zarr_map: dict[str, Literal[2, 3]] = {
+    "0.4": 2,
+    "0.5": 3,
+}
+
+
+_AnyGroup = type[BaseGroupv05[Any] | BaseGroupv04[Any]]
+
 
 def open_ome_zarr(
-    group: zarr.Group, *, version: Literal["0.4", "0.5"] | None = None
+    group: zarr.Group | zarr.storage.StoreLike,
+    *,
+    version: Literal["0.4", "0.5"] | None = None,
 ) -> BaseGroup:
     """
     Create an ome-zarr-models object from an existing OME-Zarr group.
@@ -68,8 +82,9 @@ def open_ome_zarr(
 
     Parameters
     ----------
-    group : zarr.Group
-        Zarr group containing OME-Zarr data.
+    group : zarr.Group, zarr.storage.StoreLike
+        Zarr group containing OME-Zarr data. Alternatively any object that can be
+        parsed by [zarr.open_group][].
     version : Literal['0.4', '0.5'], optional
         If you know which version of OME-Zarr your data is, you can
         specify it here. If not specified, all versions will be tried.
@@ -87,8 +102,20 @@ def open_ome_zarr(
     take a long time. It will be quicker to directly use the OME-Zarr group class if you
     know which version and group you expect.
     """
+    try:
+        import zarr
+    except ImportError as e:
+        raise ImportError(
+            "zarr must be installed to use open_ome_zarr(). "
+            "You can install it with 'pip install ome-zarr-models[zarr]'"
+        ) from e
+
+    if not isinstance(group, zarr.Group):
+        zarr_format = _ome_zarr_zarr_map.get(version, None)  # type: ignore[arg-type]
+        group = zarr.open_group(group, zarr_format=zarr_format, mode="r")
+
     # because 'from_zarr' isn't defined on a shared super-class, list all variants here
-    groups: Sequence[type[BaseGroupv05[Any] | BaseGroupv04[Any]]]
+    groups: Sequence[_AnyGroup]
     match version:
         case None:
             groups = [*_V05_groups, *_V04_groups]
@@ -102,16 +129,36 @@ def open_ome_zarr(
                 f"Unsupported version '{version}', must be one of {_versions}, or None"
             )
 
-    errors: list[Exception] = []
+    errors: list[tuple[_AnyGroup, Exception]] = []
+    grp = None
     for group_cls in groups:
         try:
-            return group_cls.from_zarr(group)
+            grp = group_cls.from_zarr(group)
+            break
         except Exception as e:
-            errors.append(e)
+            errors.append((group_cls, e))
 
-    raise RuntimeError(
-        f"Could not successfully validate {group} against any OME-Zarr group model.\n"
-        "\n"
-        "The following errors were encountered while trying to validate:\n\n"
-        + "\n\n".join(f"- {type(e).__name__}: {e}" for e in errors)
-    )
+    # See if we have ImageLabel instead of an Image
+    if (
+        isinstance(grp, ome_zarr_models.v05.image.Image)
+        and "image-label" in grp.ome_attributes.model_dump()
+    ):
+        try:
+            return ome_zarr_models.v05.image_label.ImageLabel(
+                attributes=grp.attributes.model_dump(), members=grp.members
+            )
+        except Exception:
+            raise
+
+    if grp is None:
+        raise RuntimeError(
+            f"Could not successfully validate {group} "
+            "against any OME-Zarr group model.\n"
+            "\n"
+            "The following errors were encountered while trying to validate:\n\n"
+            + "\n\n".join(
+                f"{e[0].__module__}.{e[0].__name__}\n{type(e[1]).__name__}: {e[1]}"
+                for e in errors
+            )
+        )
+    return grp

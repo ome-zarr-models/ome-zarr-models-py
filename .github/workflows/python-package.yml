@@ -36,7 +36,8 @@ jobs:
           UV_RESOLUTION: ${{ matrix.resolution }}
 
       - name: Run tests
-        run: uv run pytest
+        # For example, using `pytest`
+        run: uv run pytest --record-mode=none
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
