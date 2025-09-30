@@ -1,8 +1,7 @@
+from __future__ import annotations
+
 from importlib.metadata import PackageNotFoundError, version
 from typing import TYPE_CHECKING, Any, Literal
-
-import zarr
-import zarr.storage
 
 import ome_zarr_models.v04.hcs
 import ome_zarr_models.v04.image
@@ -17,6 +16,10 @@ import ome_zarr_models.v05.well
 from ome_zarr_models.base import BaseGroup
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v05.base import BaseGroupv05
+
+if TYPE_CHECKING:
+    import zarr
+    import zarr.storage
 
 try:
     __version__ = version("ome_zarr_models")
@@ -99,6 +102,14 @@ def open_ome_zarr(
     take a long time. It will be quicker to directly use the OME-Zarr group class if you
     know which version and group you expect.
     """
+    try:
+        import zarr
+    except ImportError as e:
+        raise ImportError(
+            "zarr must be installed to use open_ome_zarr(). "
+            "You can install it with 'pip install ome-zarr-models[zarr]'"
+        ) from e
+
     if not isinstance(group, zarr.Group):
         zarr_format = _ome_zarr_zarr_map.get(version, None)  # type: ignore[arg-type]
         group = zarr.open_group(group, zarr_format=zarr_format, mode="r")

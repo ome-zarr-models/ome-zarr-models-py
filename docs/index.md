@@ -22,6 +22,8 @@ Each class has
 
 ```sh
 pip install ome-zarr-models
+# or ... with zarr io support
+pip install ome-zarr-models[zarr]
 ```
 
 or

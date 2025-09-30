@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 import re
+from typing import TYPE_CHECKING
 
 import pytest
-import zarr
 from pydantic import ValidationError
-from zarr.abc.store import Store
 
 from ome_zarr_models.v05.axes import Axis
 from ome_zarr_models.v05.coordinate_transformations import VectorScale
@@ -11,6 +12,10 @@ from ome_zarr_models.v05.image import Image, ImageAttrs
 from ome_zarr_models.v05.labels import LabelsAttrs
 from ome_zarr_models.v05.multiscales import Dataset, Multiscale
 from tests.v05.conftest import json_to_dict, json_to_zarr_group
+
+if TYPE_CHECKING:
+    import zarr
+    from zarr.abc.store import Store
 
 
 def make_valid_image_group(store: Store) -> zarr.Group:

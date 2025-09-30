@@ -1,8 +1,13 @@
-from zarr.abc.store import Store
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from ome_zarr_models._v06.hcs import HCS, HCSAttrs
 from ome_zarr_models._v06.plate import Acquisition, Column, Plate, Row, WellInPlate
 from tests._v06.conftest import json_to_zarr_group
+
+if TYPE_CHECKING:
+    from zarr.abc.store import Store
 
 
 def test_hcs(store: Store) -> None:

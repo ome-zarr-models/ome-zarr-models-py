@@ -1,12 +1,16 @@
-# Import needed for pydantic type resolution
-from typing import Self
+from __future__ import annotations
 
-import zarr
+# Import needed for pydantic type resolution
+from typing import TYPE_CHECKING, Self
 
 from ome_zarr_models._utils import _from_zarr_v3
 from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs
 from ome_zarr_models._v06.image import Image
 from ome_zarr_models._v06.well_types import WellMeta
+
+if TYPE_CHECKING:
+    import zarr
+
 
 __all__ = ["Well", "WellAttrs"]
 

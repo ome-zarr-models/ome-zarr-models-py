@@ -4,7 +4,7 @@ dynamic = ["version"]
 description = "A minimal Python package for reading OME-Zarr (meta)data "
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["zarr>= 3.1.1", "pydantic >= 2.11.5", "pydantic-zarr >= 0.8.2"]
+dependencies = ["pydantic >= 2.11.5", "pydantic-zarr>=0.8.2"]
 maintainers = [{ name = "David Stansby" }]
 license = { file = "LICENSE" }
 classifiers = [
@@ -21,16 +21,8 @@ Repository = "https://github.com/ome-zarr-models/ome-zarr-models-py"
 # Changelog = ""
 
 [project.optional-dependencies]
-docs = [
-    "mkdocs>=1.6.1",
-    "mkdocstrings-python>=1.12.2",
-    "mkdocs-material",
-    "mkdocs-jupyter",
-    "matplotlib",
-    "rich",
-    "griffe-pydantic",
-    "fsspec[http]",
-]
+zarr = ["zarr>= 3.1.1"]
+
 
 [project.scripts]
 ome-zarr-models = "ome_zarr_models._cli:main"
@@ -43,12 +35,30 @@ requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [dependency-groups]
-docs = ["ome-zarr-models[docs]"]
-dev = ["mypy", "ruff>=0.8", "pre-commit"]
-test = ["pytest>=8.3.3", "pytest-cov", "pytest-recording"]
+docs = [
+    "mkdocs>=1.6.1",
+    "mkdocstrings-python>=1.12.2",
+    "mkdocs-material",
+    "mkdocs-jupyter >=0.25",
+    "matplotlib >=3.10",
+    "rich >= 14",
+    "griffe-pydantic",
+    "fsspec[http] >=2025",
+]
+dev = [
+    { include-group = "docs" },
+    { include-group = "test" },
+    "mypy >=1.18",
+    "ruff>=0.8",
+    "pre-commit",
+    "ome-zarr-models[zarr]",
+]
+test = ["pytest>=8.3.3", "pytest-cov >=7.0.0", "pytest-recording", "fsspec[http] >=2025", "typos>=0.6.0"]
 
-[tool.uv]
-default-groups = ["docs", "dev", "test"]
+
+# TEMPORARY: remove before merge
+[tool.uv.sources]
+pydantic-zarr = { git = "https://github.com/zarr-developers/pydantic-zarr", rev = "main" }
 
 # Ruff configuration for linting and formatting
 # https://docs.astral.sh/ruff

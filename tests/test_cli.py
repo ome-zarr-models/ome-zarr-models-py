@@ -3,8 +3,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, cast
 
 import pytest
-import zarr
-from zarr.storage import LocalStore
 
 from ome_zarr_models._cli import main
 
@@ -14,6 +12,8 @@ if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
     from pathlib import Path
     from typing import Any
+
+    import zarr
 
 
 def populate_fake_data(
@@ -83,9 +83,11 @@ def test_cli_validate(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     """Test the CLI commands."""
-
+    zarr_storage = pytest.importorskip("zarr.storage")
     zarr_group = json_to_zarr_group(
-        version=version, json_fname=json_fname, store=LocalStore(root=tmp_path)
+        version=version,
+        json_fname=json_fname,
+        store=zarr_storage.LocalStore(root=tmp_path),
     )
     populate_fake_data(zarr_group)
     monkeypatch.setattr("sys.argv", ["ome-zarr-models", cmd, str(tmp_path)])
@@ -102,6 +104,7 @@ def test_cli_invalid(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     """Test the CLI with no command."""
+    zarr = pytest.importorskip("zarr")
     zarr.create_group(tmp_path)
     monkeypatch.setattr("sys.argv", ["ome-zarr-models", cmd, str(tmp_path)])
     with pytest.raises(SystemExit) as excinfo:

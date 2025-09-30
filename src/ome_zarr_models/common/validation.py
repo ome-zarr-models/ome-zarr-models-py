@@ -3,8 +3,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal, TypeVar, overload
 
-import zarr
-import zarr.errors
 from pydantic import StringConstraints
 from pydantic_zarr.v2 import AnyArraySpec as AnyArraySpecv2
 from pydantic_zarr.v2 import AnyGroupSpec as AnyGroupSpecv2
@@ -19,6 +17,8 @@ from ome_zarr_models.common.coordinate_transformations import VectorScale
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
+    import zarr
 
 
 __all__ = [
@@ -90,6 +90,12 @@ def check_array_path(
         If the array doesn't exist, or the array is not the expected Zarr version.
     """
     try:
+        import zarr
+        import zarr.errors
+    except ImportError as e:
+        raise ImportError("zarr is required to use this function") from e
+
+    try:
         array = zarr.open_array(
             store=group.store_path,
             path=array_path,
@@ -158,6 +164,9 @@ def check_group_path(
     ValueError
         If the group doesn't exist, or the group is not the expected Zarr version.
     """
+    import zarr
+    import zarr.errors
+
     try:
         group = zarr.open_group(
             store=group.store_path,

@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import re
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
 from pydantic_zarr.v2 import ArraySpec
-from zarr.abc.store import Store
 
 from ome_zarr_models.common.coordinate_transformations import VectorTranslation
 from ome_zarr_models.v04.axes import Axis
@@ -11,6 +13,9 @@ from ome_zarr_models.v04.coordinate_transformations import VectorScale
 from ome_zarr_models.v04.image import Image, ImageAttrs
 from ome_zarr_models.v04.multiscales import Dataset, Multiscale
 from tests.v04.conftest import json_to_zarr_group
+
+if TYPE_CHECKING:
+    from zarr.abc.store import Store
 
 
 def test_image(store: Store) -> None:
@@ -77,8 +82,8 @@ def test_image(store: Store) -> None:
 def test_new_image() -> None:
     new_image = Image.new(
         array_specs=[
-            ArraySpec(shape=(5, 5), chunks=(2, 2), dtype=np.uint8),
-            ArraySpec(shape=(3, 3), chunks=(2, 2), dtype=np.uint8),
+            ArraySpec(shape=(5, 5), chunks=(2, 2), dtype=np.uint8, attributes={}),
+            ArraySpec(shape=(3, 3), chunks=(2, 2), dtype=np.uint8, attributes={}),
         ],
         paths=["scale0", "scale1"],
         axes=[
@@ -164,8 +169,8 @@ def test_new_image() -> None:
 def example_image() -> Image:
     return Image.new(
         array_specs=[
-            ArraySpec(shape=(5, 5), chunks=(2, 2), dtype=np.uint8),
-            ArraySpec(shape=(3, 3), chunks=(2, 2), dtype=np.uint8),
+            ArraySpec(shape=(5, 5), chunks=(2, 2), dtype=np.uint8, attributes={}),
+            ArraySpec(shape=(3, 3), chunks=(2, 2), dtype=np.uint8, attributes={}),
         ],
         paths=["scale0", "scale1"],
         axes=[
@@ -212,8 +217,8 @@ def test_new_image_wrong_transforms() -> None:
     ):
         Image.new(
             array_specs=[
-                ArraySpec(shape=(5, 5), chunks=(2, 2), dtype=np.uint8),
-                ArraySpec(shape=(3, 3), chunks=(2, 2), dtype=np.uint8),
+                ArraySpec(shape=(5, 5), chunks=(2, 2), dtype=np.uint8, attributes={}),
+                ArraySpec(shape=(3, 3), chunks=(2, 2), dtype=np.uint8, attributes={}),
             ],
             paths=["scale0", "scale1"],
             axes=[
@@ -238,8 +243,8 @@ def test_global_transform(example_image: Image) -> None:
 def test_no_global_transform() -> None:
     new_image = Image.new(
         array_specs=[
-            ArraySpec(shape=(5, 5), chunks=(2, 2), dtype=np.uint8),
-            ArraySpec(shape=(3, 3), chunks=(2, 2), dtype=np.uint8),
+            ArraySpec(shape=(5, 5), chunks=(2, 2), dtype=np.uint8, attributes={}),
+            ArraySpec(shape=(3, 3), chunks=(2, 2), dtype=np.uint8, attributes={}),
         ],
         paths=["scale0", "scale1"],
         axes=[

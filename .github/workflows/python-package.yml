@@ -14,22 +14,26 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      UV_NO_SYNC: "1"
     strategy:
       matrix:
-        python-version:
-          - "3.11"
+        python-version: ["3.11"]
+        with-zarr: [true, false]
+        resolution: [highest, lowest-direct]
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
-
-      - name: Set up Python ${{ matrix.python-version }}
-        run: uv python install ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: uv sync --all-extras --dev
+        run: uv sync --no-dev --group test ${{ matrix.with-zarr && '--extra zarr' || '' }}
+        env:
+          UV_RESOLUTION: ${{ matrix.resolution }}
 
       - name: Run tests
         # For example, using `pytest`

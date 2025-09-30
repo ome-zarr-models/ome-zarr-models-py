@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-import zarr
-from zarr.abc.store import Store
+import pytest
 
 from ome_zarr_models.v05.hcs import HCS, HCSAttrs
 from ome_zarr_models.v05.plate import Acquisition, Column, Plate, Row, WellInPlate
@@ -9,6 +10,7 @@ from tests.v05.conftest import json_to_zarr_group
 
 if TYPE_CHECKING:
     from pydantic import JsonValue
+    from zarr.abc.store import Store
 
 
 def test_hcs(store: Store) -> None:
@@ -63,6 +65,7 @@ def test_non_existent_wells() -> None:
     does not specify explicitly that the Zarr groups have to exist.
     """
     HCS(
+        members={},
         attributes={
             "ome": {
                 "plate": {
@@ -75,7 +78,7 @@ def test_non_existent_wells() -> None:
                 },
                 "version": "0.5",
             }
-        }
+        },
     )
 
 
@@ -83,7 +86,7 @@ def test_non_existent_wells_from_zarr() -> None:
     """
     Same as above, but using from_zarr(...)
     """
-
+    zarr = pytest.importorskip("zarr")
     plate: dict[str, JsonValue] = {
         "columns": [{"name": "1"}],
         "rows": [{"name": "A"}],

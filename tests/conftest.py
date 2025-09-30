@@ -2,17 +2,15 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Literal, Never, TypeVar
+from typing import TYPE_CHECKING, Literal, TypeVar
 
 import pytest
-import zarr
-import zarr.storage
-from zarr.abc.store import Store
-from zarr.storage import LocalStore, MemoryStore
 
 from ome_zarr_models.base import BaseAttrs
 
 if TYPE_CHECKING:
+    from typing import Any, Never
+
     from zarr.abc.store import Store
 
 
@@ -73,27 +71,36 @@ def json_to_zarr_group(
     return group
 
 
-class UnlistableStore(MemoryStore):
-    """
-    A memory store that doesn't support listing.
+try:
+    import zarr
+    import zarr.storage
+    from zarr.storage import LocalStore, MemoryStore
+except ImportError:
+    pass
+else:
 
-    Mimics other remote stores (e.g., HTTP) that don't support listing.
-    """
+    class UnlistableStore(MemoryStore):
+        """
+        A memory store that doesn't support listing.
 
-    supports_listing: bool = False
+        Mimics other remote stores (e.g., HTTP) that don't support listing.
+        """
 
-    def list(self) -> Never:
-        raise NotImplementedError
+        supports_listing: bool = False
 
-    def list_dir(self, prefix: str) -> Never:
-        raise NotImplementedError
+        def list(self) -> Never:
+            raise NotImplementedError
 
-    def list_prefix(self, prefix: str) -> Never:
-        raise NotImplementedError
+        def list_dir(self, prefix: str) -> Never:
+            raise NotImplementedError
+
+        def list_prefix(self, prefix: str) -> Never:
+            raise NotImplementedError
 
 
 @pytest.fixture(params=["MemoryStore", "LocalStore", "UnlistableStore"])
 def store(request: pytest.FixtureRequest, tmp_path: Path) -> Store:
+    pytest.importorskip("zarr", reason="requires zarr")
     match request.param:
         case "MemoryStore":
             return MemoryStore()

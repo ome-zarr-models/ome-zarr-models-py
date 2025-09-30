@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-import zarr
+import pytest
 
 from ome_zarr_models.common.omero import Channel, Omero, Window
 from ome_zarr_models.v04.axes import Axis
@@ -17,6 +19,7 @@ if TYPE_CHECKING:
 
 
 def test_example_hcs() -> None:
+    zarr = pytest.importorskip("zarr")
     group = zarr.open_group(
         get_examples_path(version="0.4") / "hcs_example.ome.zarr",
         mode="r",
@@ -146,6 +149,7 @@ def test_non_existent_wells_from_zarr() -> None:
     """
     Same as above, but using from_zarr(...)
     """
+    zarr = pytest.importorskip("zarr")
     plate: dict[str, JsonValue] = {
         "columns": [{"name": "1"}],
         "rows": [{"name": "A"}],

@@ -1,11 +1,16 @@
+from __future__ import annotations
+
 import re
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
-from zarr.abc.store import Store
 
 from ome_zarr_models.v05.labels import Labels, LabelsAttrs
 from tests.v05.conftest import json_to_zarr_group
+
+if TYPE_CHECKING:
+    from zarr.abc.store import Store
 
 
 def test_labels(store: Store) -> None:
