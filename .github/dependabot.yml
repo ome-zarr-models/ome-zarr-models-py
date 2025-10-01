@@ -9,3 +9,11 @@ updates:
       actions:
         patterns:
           - "*"
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      python-packages:
+        patterns:
+          - "*"
