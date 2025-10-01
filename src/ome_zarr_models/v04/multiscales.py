@@ -13,18 +13,20 @@ from pydantic import (
     model_validator,
 )
 
-from ome_zarr_models._utils import duplicates
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.coordinate_transformations import (
-    ScaleTransform,
     Transform,
-    TranslationTransform,
+    ValidTransform,
     VectorScale,
     VectorTransform,
     _build_transforms,
     _ndim,
 )
-from ome_zarr_models.common.validation import check_length, check_ordered_scales
+from ome_zarr_models.common.validation import (
+    check_length,
+    check_ordered_scales,
+    unique_items_validator,
+)
 from ome_zarr_models.v04.axes import Axes
 
 if TYPE_CHECKING:
@@ -35,7 +37,6 @@ __all__ = ["Dataset", "Multiscale"]
 
 
 VALID_NDIM = (2, 3, 4, 5)
-ValidTransform = tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform]
 
 
 class Multiscale(BaseAttrs):
@@ -77,14 +78,13 @@ class Multiscale(BaseAttrs):
         Ensure that the length of the axes matches the dimensionality of the transforms
         defined in the top-level coordinateTransformations, if present.
         """
-        self_ndim = len(data.axes)
         if data.coordinateTransformations is not None:
             for tx in data.coordinateTransformations:
-                if hasattr(tx, "ndim") and self_ndim != tx.ndim:
+                if hasattr(tx, "ndim") and data.ndim != tx.ndim:
                     msg = (
                         f"The length of axes does not match the dimensionality of "
                         f"the {tx.type} transform in coordinateTransformations. "
-                        f"Got {self_ndim} axes, but the {tx.type} transform has "
+                        f"Got {data.ndim} axes, but the {tx.type} transform has "
                         f"dimensionality {tx.ndim}"
                     )
                     raise ValueError(msg)
@@ -188,13 +188,10 @@ class Multiscale(BaseAttrs):
         """
         Ensures that the names of the axes are unique.
         """
-        name_dupes = duplicates(a.name for a in axes)
-        if len(name_dupes) > 0:
-            msg = (
-                f"Axis names must be unique. Axis names {tuple(name_dupes.keys())} are "
-                "repeated."
-            )
-            raise ValueError(msg)
+        try:
+            unique_items_validator(axis_names := [a.name for a in axes])
+        except ValueError:
+            raise ValueError(f"Axis names must be unique. Got {axis_names}") from None
         return axes
 
 

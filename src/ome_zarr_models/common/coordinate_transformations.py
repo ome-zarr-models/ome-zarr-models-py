@@ -107,6 +107,9 @@ TranslationTransform = VectorTranslation | PathTranslation
 VectorTransform = VectorScale | VectorTranslation
 
 
+ValidTransform = tuple[ScaleTransform] | tuple[ScaleTransform, TranslationTransform]
+
+
 def _ndim(transform: VectorTransform) -> int:
     """
     Get the dimensionality of a scale or translation transform.
