@@ -158,7 +158,7 @@ class Image(BaseGroupv04[ImageAttrs]):
             version="0.4",
         )
         return Image(
-            members=GroupSpec.from_flat(members_flat).members,  # type: ignore[arg-type]
+            members=GroupSpec.from_flat(members_flat).members,
             attributes=ImageAttrs(multiscales=(multimeta,)),
         )
 
