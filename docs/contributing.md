@@ -41,7 +41,3 @@ To install development dependencies, run `uv sync`.
 We use [mkdocs](https://www.mkdocs.org/) for documentation.
 `mkdocs` is auomatically installed as part of the `uv` development environment.
 Run `mkdocs serve`, and open up the URL that your terminal prints.
-
-### Running the tests for RFC-5 (transformations)
-
-Please see the README in `tests/_rfc5_transforms/data_rfc5/README.md`.

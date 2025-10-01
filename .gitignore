@@ -14,7 +14,3 @@ site
 
 # IDE configurations
 .idea/
-
-# RFC-5 data
-tests/_rfc5_transforms/data_rfc5/full_examples/*
-!tests/_rfc5_transforms/data_rfc5/full_examples/.gitkeep

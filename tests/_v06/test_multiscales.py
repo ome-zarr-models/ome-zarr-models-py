@@ -10,9 +10,8 @@ from ome_zarr_models._v06.coordinate_transformations import (
     Translation,
 )
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
-from tests._rfc5_transforms.conftest import (
-    COORDINATE_SYSTEM_NAME_FOR_TESTS,
-)
+
+COORDINATE_SYSTEM_NAME_FOR_TESTS = "coordinate_system_name_reserved_for_tests"
 
 
 def test_ensure_scale_translation() -> None:

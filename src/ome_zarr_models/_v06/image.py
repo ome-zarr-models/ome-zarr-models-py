@@ -1,19 +1,16 @@
-from collections.abc import Sequence
 from typing import Self
 
 # Import needed for pydantic type resolution
 import pydantic_zarr  # noqa: F401
 import zarr
 import zarr.errors
-from pydantic import Field, JsonValue, model_validator
+from pydantic import Field, model_validator
 from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
 from ome_zarr_models._utils import _from_zarr_v3
-from ome_zarr_models._v06.axes import Axis
-from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs, BaseZarrAttrs
+from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs
 from ome_zarr_models._v06.labels import Labels
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
-from ome_zarr_models.common.coordinate_transformations import _build_transforms
 
 __all__ = ["Image", "ImageAttrs"]
 
@@ -57,6 +54,7 @@ class Image(BaseGroupv06[ImageAttrs]):
         """
         return _from_zarr_v3(group, cls, ImageAttrs)
 
+    """TODO: adapt this for RFC 5
     @classmethod
     def new(
         cls,
@@ -72,7 +70,7 @@ class Image(BaseGroupv06[ImageAttrs]):
         global_scale: Sequence[float] | None = None,
         global_translation: Sequence[float] | None = None,
     ) -> "Image":
-        """
+
         Create a new `Image` from a sequence of multiscale arrays
         and spatial metadata.
 
@@ -106,7 +104,7 @@ class Image(BaseGroupv06[ImageAttrs]):
         This class does not store or copy any array data. To save array data,
         first write this class to a Zarr store, and then write data to the Zarr
         arrays in that store.
-        """
+
         if len(array_specs) != len(paths):
             raise ValueError(
                 f"Length of arrays (got {len(array_specs)=}) must be the same as "
@@ -161,6 +159,7 @@ class Image(BaseGroupv06[ImageAttrs]):
                 )
             ),
         )
+    """
 
     @model_validator(mode="after")
     def _check_arrays_compatible(self) -> Self:

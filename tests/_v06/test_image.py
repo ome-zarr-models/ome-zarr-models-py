@@ -7,7 +7,8 @@ from ome_zarr_models._v06.coordinate_transformations import (
 )
 from ome_zarr_models._v06.image import Image, ImageAttrs
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
-from tests._rfc5_transforms.conftest import json_to_zarr_group
+
+from .conftest import json_to_zarr_group
 
 
 def test_image(store: Store) -> None:
@@ -32,11 +33,12 @@ def test_image(store: Store) -> None:
     )
     ome_group = Image.from_zarr(zarr_group)
     image_attrs = ImageAttrs(
+        version="0.6",
         multiscales=[
             Multiscale(
                 coordinateSystems=(
                     CoordinateSystem(
-                        name="example",
+                        name="coord_sys0",
                         axes=[
                             Axis(name="t", type="time", unit="millisecond"),
                             Axis(name="c", type="channel", unit=None),
@@ -46,7 +48,7 @@ def test_image(store: Store) -> None:
                         ],
                     ),
                     CoordinateSystem(
-                        name="example2",
+                        name="coord_sys1",
                         axes=[
                             Axis(name="t", type="time", unit="millisecond"),
                             Axis(name="c", type="channel", unit=None),
@@ -59,46 +61,56 @@ def test_image(store: Store) -> None:
                 datasets=(
                     Dataset(
                         path="0",
-                        coordinateTransformations=(
+                        coordinateTransformations=[
                             Scale(
-                                scale=[1.0, 1.0, 0.5, 0.5, 0.5],
+                                type="scale",
                                 input="/0",
-                                output="example",
-                            ),
-                        ),
+                                output="coord_sys0",
+                                name=None,
+                                scale=[1.0, 1.0, 0.5, 0.5, 0.5],
+                            )
+                        ],
                     ),
                     Dataset(
                         path="1",
-                        coordinateTransformations=(
+                        coordinateTransformations=[
                             Scale(
-                                scale=[1.0, 1.0, 1.0, 1.0, 1.0],
+                                type="scale",
                                 input="/1",
-                                output="example",
-                            ),
-                        ),
+                                output="coord_sys0",
+                                name=None,
+                                scale=[1.0, 1.0, 1.0, 1.0, 1.0],
+                            )
+                        ],
                     ),
                     Dataset(
                         path="2",
-                        coordinateTransformations=(
+                        coordinateTransformations=[
                             Scale(
-                                scale=[1.0, 1.0, 2.0, 2.0, 2.0],
+                                type="scale",
                                 input="/2",
-                                output="example",
-                            ),
-                        ),
+                                output="coord_sys0",
+                                name=None,
+                                scale=[1.0, 1.0, 2.0, 2.0, 2.0],
+                            )
+                        ],
                     ),
                 ),
                 coordinateTransformations=(
                     Scale(
+                        type="scale",
+                        input="coord_sys0",
+                        output="coord_sys1",
+                        name=None,
                         scale=[0.1, 1.0, 1.0, 1.0, 1.0],
-                        input="example",
-                        output="example2",
                     ),
                 ),
                 metadata={
-                    "description": "the fields in metadata depend on the downscaling "
-                    "implementation. Here, the parameters passed to the "
-                    "skimage function are given",
+                    "description": (
+                        "the fields in metadata depend on "
+                        "the downscaling implementation. Here, the "
+                        "parameters passed to the skimage function are given"
+                    ),
                     "method": "skimage.transform.pyramid_gaussian",
                     "version": "0.16.1",
                     "args": "[true]",
@@ -108,7 +120,6 @@ def test_image(store: Store) -> None:
                 type="gaussian",
             )
         ],
-        version="0.5",
     )
     print(image_attrs.model_dump_json(indent=4))
     assert ome_group.attributes.ome == image_attrs

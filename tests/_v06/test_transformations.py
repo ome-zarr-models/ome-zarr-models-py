@@ -3,11 +3,53 @@ import pytest
 from ome_zarr_models._v06.axes import Axis
 from ome_zarr_models._v06.coordinate_transformations import (
     CoordinateSystem,
+    CoordinateTransformation,
     Identity,
+    Scale,
 )
-from tests._rfc5_transforms.conftest import (
-    wrap_coordinate_transformations_and_systems_into_multiscale,
-)
+from ome_zarr_models._v06.multiscales import Dataset, Multiscale
+
+COORDINATE_SYSTEM_NAME_FOR_TESTS = "coordinate_system_name_reserved_for_tests"
+
+
+def _gen_dataset(
+    output_coordinate_system: str,
+    scale_factors: list[float],
+    path: str = "0",
+) -> Dataset:
+    return Dataset(
+        path=path,
+        coordinateTransformations=(
+            Scale(
+                scale=scale_factors,
+                input=f"/{path}",
+                output=output_coordinate_system,
+            ),
+        ),
+    )
+
+
+def wrap_coordinate_transformations_and_systems_into_multiscale(
+    coordinate_systems: tuple[CoordinateSystem, ...],
+    coordinate_transformations: tuple[CoordinateTransformation, ...],
+) -> Multiscale:
+    extra_cs = CoordinateSystem(
+        name=COORDINATE_SYSTEM_NAME_FOR_TESTS,
+        axes=[
+            Axis(name="j"),
+            Axis(name="i"),
+        ],
+    )
+    return Multiscale(
+        coordinateTransformations=coordinate_transformations,
+        coordinateSystems=(*coordinate_systems, extra_cs),
+        datasets=(
+            _gen_dataset(
+                output_coordinate_system=COORDINATE_SYSTEM_NAME_FOR_TESTS,
+                scale_factors=[1.0] * len(extra_cs.axes),
+            ),
+        ),
+    )
 
 
 def test_coordinate_system_name_not_empty() -> None:

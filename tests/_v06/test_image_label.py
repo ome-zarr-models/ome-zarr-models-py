@@ -5,8 +5,6 @@ from ome_zarr_models._v06.coordinate_transformations import CoordinateSystem, Sc
 from ome_zarr_models._v06.image_label import ImageLabel, ImageLabelAttrs
 from ome_zarr_models._v06.image_label_types import Color, Label, Source
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
-from ome_zarr_models.common.coordinate_transformations import VectorScale
-from ome_zarr_models.common.image_label_types import Property
 from tests._v06.conftest import json_to_zarr_group
 
 
@@ -117,15 +115,20 @@ def test_image_label(store: Store) -> None:
                     ),
                 ),
                 coordinateTransformations=(
-                    VectorScale(
+                    Scale(
                         type="scale",
-                        scale=[0.1, 1.0, 1.0, 1.0, 1.0],
                         input="coord_sys0",
                         output="coord_sys1",
+                        name=None,
+                        scale=[0.1, 1.0, 1.0, 1.0, 1.0],
                     ),
                 ),
                 metadata={
-                    "description": "the fields in metadata depend on the downscaling implementation. Here, the parameters passed to the skimage function are given",
+                    "description": (
+                        "the fields in metadata depend on the "
+                        "downscaling implementation. Here, the parameters "
+                        "passed to the skimage function are given"
+                    ),
                     "method": "skimage.transform.pyramid_gaussian",
                     "version": "0.16.1",
                     "args": "[true]",

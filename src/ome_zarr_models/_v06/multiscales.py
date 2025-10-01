@@ -17,13 +17,8 @@ from ome_zarr_models._v06.coordinate_transformations import (
     Translation,
 )
 from ome_zarr_models.base import BaseAttrs
-from ome_zarr_models.common.coordinate_transformations import (
-    ValidTransform,
-    VectorScale,
-)
 from ome_zarr_models.common.validation import (
     check_length,
-    check_ordered_scales,
 )
 
 __all__ = ["Dataset", "Multiscale"]
@@ -39,7 +34,7 @@ class Multiscale(BaseAttrs):
 
     coordinateSystems: tuple[CoordinateSystem, ...] = Field(..., min_length=1)
     datasets: tuple[Dataset, ...] = Field(..., min_length=1)
-    coordinateTransformations: ValidTransform | None = None
+    coordinateTransformations: tuple[CoordinateTransformation, ...] | None = None
     metadata: JsonValue = None
     name: JsonValue | None = None
     type: JsonValue = None
