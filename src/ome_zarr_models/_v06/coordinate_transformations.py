@@ -52,7 +52,7 @@ class Scale(CoordinateTransformationBase):
     """Scale transformation."""
 
     type: Literal["scale"] = "scale"
-    scale: list[float]
+    scale: tuple[float, ...]
 
     @property
     def ndim(self) -> int:
@@ -66,7 +66,7 @@ class Translation(CoordinateTransformationBase):
     """Translation transformation."""
 
     type: Literal["translation"] = "translation"
-    translation: list[float]
+    translation: tuple[float, ...]
 
     @property
     def ndim(self) -> int:
@@ -80,7 +80,7 @@ class Sequence(CoordinateTransformationBase):
     """Sequence transformation."""
 
     type: Literal["sequence"] = "sequence"
-    transformations: list["CoordinateTransformation"]
+    transformations: tuple["CoordinateTransformation", ...]
 
 
 CoordinateTransformation = Identity | Scale | Translation | Sequence
