@@ -8,6 +8,7 @@ from ome_zarr_models.common.validation import unique_items_validator
 
 
 class CoordinateSystem(BaseAttrs):
+    # Use min_length=1 to ensure name is non-empty
     name: str = Field(min_length=1)
     axes: Axes = Field(min_length=1)
 
