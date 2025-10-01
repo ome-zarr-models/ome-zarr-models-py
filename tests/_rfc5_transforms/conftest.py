@@ -9,13 +9,13 @@ import pytest
 import zarr
 import zarr.storage
 
-from ome_zarr_models._rfc5_transforms.axes import Axis
-from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
+from ome_zarr_models._v06.axes import Axis
+from ome_zarr_models._v06.coordinate_transformations import (
     CoordinateSystem,
     CoordinateTransformation,
     Scale,
 )
-from ome_zarr_models._rfc5_transforms.multiscales import Dataset, Multiscale
+from ome_zarr_models._v06.multiscales import Dataset, Multiscale
 from ome_zarr_models.base import BaseAttrs
 
 if TYPE_CHECKING:
@@ -27,7 +27,7 @@ T = TypeVar("T", bound=BaseAttrs)
 
 COORDINATE_SYSTEM_NAME_FOR_TESTS = "coordinate_system_name_reserved_for_tests"
 
-pytest.skip()
+pytest.skip(allow_module_level=True)
 
 
 def json_to_zarr_group(*, json_fname: str, store: Store) -> zarr.Group:

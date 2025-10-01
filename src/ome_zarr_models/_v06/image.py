@@ -176,8 +176,7 @@ class Image(BaseGroupv06[ImageAttrs]):
         flat_self = self.to_flat()
 
         for multiscale in multimeta:
-            multiscale_ndim = len(multiscale.axes)
-            multiscale_dim_names = tuple(a.name for a in multiscale.axes)
+            multiscale_ndim = multiscale.ndim
             for dataset in multiscale.datasets:
                 try:
                     maybe_arr: AnyArraySpec | AnyGroupSpec = flat_self[
@@ -201,24 +200,6 @@ class Image(BaseGroupv06[ImageAttrs]):
                         "which does not match the dimensionality of the array "
                         f"found in this group at path '{dataset.path}' ({arr_ndim}). "
                         "The number of axes must match the array dimensionality."
-                    )
-
-                    raise ValueError(msg)
-
-                arr_dim_names = maybe_arr.dimension_names
-                if arr_dim_names is None:
-                    msg = (
-                        f"The array in this group at  '{dataset.path}' has no "
-                        "dimension_names metadata."
-                    )
-                    raise ValueError(msg)
-                elif arr_dim_names != multiscale_dim_names:
-                    msg = (
-                        f"The multiscale metadata has {multiscale_dim_names} "
-                        "axes names "
-                        "which does not match the dimension names of the array "
-                        f"found in this group at path '{dataset.path}' "
-                        f"({arr_dim_names}). "
                     )
 
                     raise ValueError(msg)

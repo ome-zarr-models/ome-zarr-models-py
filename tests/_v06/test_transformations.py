@@ -1,7 +1,7 @@
 import pytest
 
-from ome_zarr_models._rfc5_transforms.axes import Axis
-from ome_zarr_models._rfc5_transforms.coordinate_transformations import (
+from ome_zarr_models._v06.axes import Axis
+from ome_zarr_models._v06.coordinate_transformations import (
     CoordinateSystem,
     Identity,
 )
