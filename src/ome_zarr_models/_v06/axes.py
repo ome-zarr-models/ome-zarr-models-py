@@ -19,6 +19,12 @@ class Axis(BaseAttrs):
     # dimension_names which limits it to str | None
 
     name: str | None
-    type: str | None = None
+    type: (
+        Literal["array", "space", "time", "channel", "coordinate", "displacement"]
+        | str
+        | None
+    ) = None
+    discrete: bool | None = None
     # Unit probably intended to be str, but the spec doesn't explicitly specify
     unit: str | JsonValue | None = None
+    longName: str | None = None
