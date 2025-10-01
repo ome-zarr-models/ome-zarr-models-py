@@ -58,7 +58,9 @@ def test_coordinate_system_name_not_empty() -> None:
 
 
 def test_coordinate_system_axes_not_empty() -> None:
-    with pytest.raises(ValueError, match="Value should have at least 1 item after"):
+    with pytest.raises(
+        ValueError, match="Tuple should have at least 1 item after validation"
+    ):
         CoordinateSystem(name="test", axes=[])
 
 

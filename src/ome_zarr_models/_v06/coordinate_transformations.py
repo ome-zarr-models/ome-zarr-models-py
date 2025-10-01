@@ -2,7 +2,7 @@ from typing import Literal, Self
 
 from pydantic import Field, field_validator, model_validator
 
-from ome_zarr_models._v06.axes import Axes
+from ome_zarr_models._v06.axes import Axis
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.validation import unique_items_validator
 
@@ -10,11 +10,11 @@ from ome_zarr_models.common.validation import unique_items_validator
 class CoordinateSystem(BaseAttrs):
     # Use min_length=1 to ensure name is non-empty
     name: str = Field(min_length=1)
-    axes: Axes = Field(min_length=1)
+    axes: tuple[Axis, ...] = Field(min_length=1)
 
     @field_validator("axes", mode="after")
     @classmethod
-    def _ensure_unique_axis_names(cls, axes: Axes) -> Axes:
+    def _ensure_unique_axis_names(cls, axes: tuple[Axis, ...]) -> tuple[Axis, ...]:
         """
         Ensures that the names of the axes are unique.
         """
