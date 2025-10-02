@@ -3,8 +3,8 @@ from pydantic import ValidationError
 
 from ome_zarr_models._v06.axes import Axis
 from ome_zarr_models._v06.coordinate_transformations import (
+    AnyCoordinateTransformation,
     CoordinateSystem,
-    CoordinateTransformation,
     Scale,
     Sequence,
     Translation,
@@ -16,7 +16,7 @@ COORDINATE_SYSTEM_NAME_FOR_TESTS = "coordinate_system_name_reserved_for_tests"
 
 def test_ensure_scale_translation() -> None:
     def _gen_multiscale(
-        coordinateTransformations: tuple[CoordinateTransformation, ...],
+        coordinateTransformations: tuple[AnyCoordinateTransformation, ...],
     ) -> Multiscale:
         extra_cs = CoordinateSystem(
             name=COORDINATE_SYSTEM_NAME_FOR_TESTS,

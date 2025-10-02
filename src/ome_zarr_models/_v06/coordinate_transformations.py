@@ -22,7 +22,7 @@ class CoordinateSystem(BaseAttrs):
         return axes
 
 
-class CoordinateTransformationBase(BaseAttrs):
+class CoordinateTransformation(BaseAttrs):
     type: str
     input: str | None = None
     output: str | None = None
@@ -42,13 +42,13 @@ class CoordinateTransformationBase(BaseAttrs):
         return self
 
 
-class Identity(CoordinateTransformationBase):
+class Identity(CoordinateTransformation):
     """Identity transformation."""
 
     type: Literal["identity"] = "identity"
 
 
-class Scale(CoordinateTransformationBase):
+class Scale(CoordinateTransformation):
     """Scale transformation."""
 
     type: Literal["scale"] = "scale"
@@ -62,7 +62,7 @@ class Scale(CoordinateTransformationBase):
         return len(self.scale)
 
 
-class Translation(CoordinateTransformationBase):
+class Translation(CoordinateTransformation):
     """Translation transformation."""
 
     type: Literal["translation"] = "translation"
@@ -76,11 +76,11 @@ class Translation(CoordinateTransformationBase):
         return len(self.translation)
 
 
-class Sequence(CoordinateTransformationBase):
+class Sequence(CoordinateTransformation):
     """Sequence transformation."""
 
     type: Literal["sequence"] = "sequence"
-    transformations: tuple["CoordinateTransformation", ...]
+    transformations: tuple["AnyCoordinateTransformation", ...]
 
 
-CoordinateTransformation = Identity | Scale | Translation | Sequence
+AnyCoordinateTransformation = Identity | Scale | Translation | Sequence
