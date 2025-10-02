@@ -1,3 +1,3 @@
-[submodule "/Users/dstansby/software/ome-zarr/ome-zarr-models-py/tests/_v06/rfc5/transform_examples/ngff-rfc5-coordinate-transformation-examples"]
-	path = /Users/dstansby/software/ome-zarr/ome-zarr-models-py/tests/_v06/rfc5/transform_examples/ngff-rfc5-coordinate-transformation-examples
+[submodule "tests/_v06/rfc5/transform_examples/ngff-rfc5-coordinate-transformation-examples"]
+	path = tests/_v06/rfc5/transform_examples/ngff-rfc5-coordinate-transformation-examples
 	url = https://github.com/bogovicj/ngff-rfc5-coordinate-transformation-examples
