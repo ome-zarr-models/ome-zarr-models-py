@@ -1,8 +1,8 @@
 import pytest
 
-from ome_zarr_models._v06.axes import Axis
 from ome_zarr_models._v06.coordinate_transforms import (
     AnyTransform,
+    Axis,
     CoordinateSystem,
     Identity,
     Scale,
