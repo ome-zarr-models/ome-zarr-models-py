@@ -10,9 +10,9 @@ from pydantic import (
     model_validator,
 )
 
-from ome_zarr_models._v06.coordinate_transformations import (
+from ome_zarr_models._v06.coordinate_transforms import (
+    AnyTransform,
     CoordinateSystem,
-    CoordinateTransformation,
     Scale,
     Translation,
 )
@@ -34,7 +34,7 @@ class Multiscale(BaseAttrs):
 
     coordinateSystems: tuple[CoordinateSystem, ...] = Field(..., min_length=1)
     datasets: tuple[Dataset, ...] = Field(..., min_length=1)
-    coordinateTransformations: tuple[CoordinateTransformation, ...] | None = None
+    coordinateTransformations: tuple[AnyTransform, ...] | None = None
     metadata: JsonValue = None
     name: JsonValue | None = None
     type: JsonValue = None
@@ -217,7 +217,7 @@ class Dataset(BaseAttrs):
     # TODO: can we validate that the paths must be ordered from highest resolution to
     # smallest using scale metadata?
     path: str
-    coordinateTransformations: list[CoordinateTransformation] = Field(
+    coordinateTransformations: list[AnyTransform] = Field(
         ..., min_length=1, max_length=1
     )
 
@@ -239,7 +239,7 @@ class Dataset(BaseAttrs):
         # see more: ome_zarr_models.common.multiscales.Dataset
 
         class Transforms(BaseModel):
-            transforms: list[CoordinateTransformation]
+            transforms: list[AnyTransform]
 
         transforms = Transforms(transforms=transforms_obj).transforms
         check_length(transforms, valid_lengths=[1], variable_name="transforms")
@@ -281,8 +281,8 @@ class Dataset(BaseAttrs):
     @classmethod
     def _ensure_transform_dimensionality(
         cls,
-        transforms: tuple[CoordinateTransformation, ...],
-    ) -> tuple[CoordinateTransformation, ...]:
+        transforms: tuple[AnyTransform, ...],
+    ) -> tuple[AnyTransform, ...]:
         """
         Ensures that the dimensionality of the scale and translation (when both present)
         match

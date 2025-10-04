@@ -8,6 +8,10 @@ from ome_zarr_models.common.validation import unique_items_validator
 
 
 class CoordinateSystem(BaseAttrs):
+    """
+    Model of a coordinate system.
+    """
+
     # Use min_length=1 to ensure name is non-empty
     name: str = Field(min_length=1)
     axes: tuple[Axis, ...] = Field(min_length=1)
@@ -22,7 +26,11 @@ class CoordinateSystem(BaseAttrs):
         return axes
 
 
-class CoordinateTransformationBase(BaseAttrs):
+class Transform(BaseAttrs):
+    """
+    Model of a coordinate transformation.
+    """
+
     type: str
     input: str | None = None
     output: str | None = None
@@ -42,13 +50,13 @@ class CoordinateTransformationBase(BaseAttrs):
         return self
 
 
-class Identity(CoordinateTransformationBase):
+class Identity(Transform):
     """Identity transformation."""
 
     type: Literal["identity"] = "identity"
 
 
-class Scale(CoordinateTransformationBase):
+class Scale(Transform):
     """Scale transformation."""
 
     type: Literal["scale"] = "scale"
@@ -62,7 +70,7 @@ class Scale(CoordinateTransformationBase):
         return len(self.scale)
 
 
-class Translation(CoordinateTransformationBase):
+class Translation(Transform):
     """Translation transformation."""
 
     type: Literal["translation"] = "translation"
@@ -76,11 +84,11 @@ class Translation(CoordinateTransformationBase):
         return len(self.translation)
 
 
-class Sequence(CoordinateTransformationBase):
+class Sequence(Transform):
     """Sequence transformation."""
 
     type: Literal["sequence"] = "sequence"
-    transformations: tuple["CoordinateTransformation", ...]
+    transformations: tuple["AnyTransform", ...]
 
 
-CoordinateTransformation = Identity | Scale | Translation | Sequence
+AnyTransform = Identity | Scale | Translation | Sequence
