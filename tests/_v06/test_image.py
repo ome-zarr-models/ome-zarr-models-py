@@ -1,7 +1,7 @@
 from zarr.abc.store import Store
 
 from ome_zarr_models._v06.axes import Axis
-from ome_zarr_models._v06.coordinate_transformations import (
+from ome_zarr_models._v06.coordinate_transforms import (
     CoordinateSystem,
     Scale,
 )
