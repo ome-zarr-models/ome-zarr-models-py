@@ -14,6 +14,8 @@ from ome_zarr_models._v06.coordinate_transforms import (
     AnyTransform,
     CoordinateSystem,
     Scale,
+    Sequence,
+    # Transform,
     Translation,
 )
 from ome_zarr_models.base import BaseAttrs
@@ -47,13 +49,14 @@ class Multiscale(BaseAttrs):
         Determined by the length of the output coordinate system.
         """
         output_cs_name = self.datasets[0].coordinateTransformations[0].output
-        output_cs: CoordinateSystem | None = None
         for cs in self.coordinateSystems:
             if cs.name == output_cs_name:
-                output_cs = cs
-                break
-        assert output_cs is not None
-        return len(output_cs.axes)
+                return len(cs.axes)
+
+        raise RuntimeError(
+            f"Did not find coordinate system named '{output_cs_name}' in "
+            "multiscales coordinate systems."
+        )
 
     @property
     def default_coordinate_system(self) -> CoordinateSystem:
@@ -94,10 +97,10 @@ class Multiscale(BaseAttrs):
         dims = []
         for dataset in datasets:
             transformation = dataset.coordinateTransformations[0]
-            if transformation.type == "scale":
+            if isinstance(transformation, Scale):
                 dim = transformation.ndim
             else:
-                assert transformation.type == "sequence" and isinstance(
+                assert isinstance(transformation, Sequence) and isinstance(
                     transformation.transformations[0], Scale
                 )
                 dim = len(transformation.transformations[0].scale)
@@ -154,10 +157,10 @@ class Multiscale(BaseAttrs):
         scale_transforms = []
         for dataset in datasets:
             (transform,) = dataset.coordinateTransformations
-            if transform.type == "scale":
+            if isinstance(transform, Scale):
                 scale_transforms.append(transform)
             else:
-                assert transform.type == "sequence" and isinstance(
+                assert isinstance(transform, Sequence) and isinstance(
                     transform.transformations[0], Scale
                 )
                 scale = transform.transformations[0]
@@ -217,7 +220,7 @@ class Dataset(BaseAttrs):
     # TODO: can we validate that the paths must be ordered from highest resolution to
     # smallest using scale metadata?
     path: str
-    coordinateTransformations: list[AnyTransform] = Field(
+    coordinateTransformations: tuple[AnyTransform, ...] = Field(
         ..., min_length=1, max_length=1
     )
 
@@ -239,13 +242,13 @@ class Dataset(BaseAttrs):
         # see more: ome_zarr_models.common.multiscales.Dataset
 
         class Transforms(BaseModel):
-            transforms: list[AnyTransform]
+            transforms: tuple[AnyTransform, ...]
 
         transforms = Transforms(transforms=transforms_obj).transforms
         check_length(transforms, valid_lengths=[1], variable_name="transforms")
 
         transform = transforms[0]
-        if transform.type == "sequence":
+        if isinstance(transform, Sequence):
             check_length(
                 transform.transformations,
                 valid_lengths=[2],
@@ -253,7 +256,7 @@ class Dataset(BaseAttrs):
                 "the sequence)",
             )
             first, second = transform.transformations
-            if first.type != "scale":
+            if not isinstance(first, Scale):
                 msg = (
                     "When the first (and only) element in `coordinateTransformations`"
                     " is a `Sequence`, the first element must be a `Scale` transform. "
@@ -290,7 +293,7 @@ class Dataset(BaseAttrs):
         # this test will not be needed anymore when
         # https://github.com/ome-zarr-models/ome-zarr-models-py/issues/188 is addressed
         maybe_sequence = transforms[0]
-        if maybe_sequence.type == "sequence":
+        if isinstance(maybe_sequence, Sequence):
             first, second = maybe_sequence.transformations
             if (
                 isinstance(first, Scale)

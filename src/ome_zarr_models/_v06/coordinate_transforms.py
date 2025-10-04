@@ -75,18 +75,11 @@ class Identity(Transform):
     type: Literal["identity"] = "identity"
 
 
-class Scale(Transform):
-    """Scale transformation."""
+class MapAxis(Transform):
+    """Axis mapping transform."""
 
-    type: Literal["scale"] = "scale"
-    scale: tuple[float, ...]
-
-    @property
-    def ndim(self) -> int:
-        """
-        Number of dimensions.
-        """
-        return len(self.scale)
+    type: Literal["mapAxis"] = "mapAxis"
+    mapAxis: dict[str, str]
 
 
 class Translation(Transform):
@@ -103,11 +96,96 @@ class Translation(Transform):
         return len(self.translation)
 
 
+class Scale(Transform):
+    """Scale transformation."""
+
+    type: Literal["scale"] = "scale"
+    scale: tuple[float, ...]
+
+    @property
+    def ndim(self) -> int:
+        """
+        Number of dimensions.
+        """
+        return len(self.scale)
+
+
+class Affine(Transform):
+    """Affine transform."""
+
+    type: Literal["affine"] = "affine"
+    affine: tuple[tuple[float, ...], ...] | None = None
+    path: str | None = None
+
+    # TODO: add a method or property to get array either from self.affine
+    # or by loading Zarr array at self.path
+
+    # TODO: if both affine and path are given, use path
+
+
+class Rotation(Transform):
+    """Rotation transform."""
+
+    type: Literal["rotation"] = "rotation"
+    rotation: tuple[float, ...] | None = None
+    path: str | None = None
+
+    # TODO: add a method or property to get rotation either from self.rotation
+    # or by loading Zarr array at self.path
+
+    # TODO: if both rotation and path are given, use path
+
+
 class Sequence(Transform):
     """Sequence transformation."""
 
     type: Literal["sequence"] = "sequence"
-    transformations: tuple["AnyTransform", ...]
+    transformations: tuple[Transform, ...]
 
 
-AnyTransform = Identity | Scale | Translation | Sequence
+class Displacements(Transform):
+    """Displacement field transform."""
+
+    type: Literal["displacements"] = "displacements"
+    path: str
+    interpolation: str
+
+
+class Coordinates(Transform):
+    """Coordinate field transform."""
+
+    type: Literal["coordinates"] = "coordinates"
+    path: str
+    interpolation: str
+
+
+class Inverse(Transform):
+    """Inverse transform."""
+
+    type: Literal["inverseOf"] = "inverseOf"
+    transform: Transform
+
+
+class Bijection(Transform):
+    """
+    An invertible transform.
+    """
+
+    type: Literal["bijection"] = "bijection"
+    forward: Transform
+    inverse: Transform
+
+
+AnyTransform = (
+    Identity
+    | MapAxis
+    | Translation
+    | Scale
+    | Affine
+    | Rotation
+    | Sequence
+    | Displacements
+    | Coordinates
+    | Inverse
+    | Bijection
+)
