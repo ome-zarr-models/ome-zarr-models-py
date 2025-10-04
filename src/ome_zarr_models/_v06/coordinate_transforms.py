@@ -44,6 +44,10 @@ class CoordinateSystem(BaseAttrs):
         unique_items_validator([a.name for a in axes])
         return axes
 
+    @property
+    def ndim(self) -> int:
+        return len(self.axes)
+
 
 class Transform(BaseAttrs):
     """

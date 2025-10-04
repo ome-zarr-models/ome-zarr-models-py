@@ -46,12 +46,12 @@ class Multiscale(BaseAttrs):
         """
         Dimensionality of the data described by this metadata.
 
-        Determined by the length of the output coordinate system.
+        Determined by the number of dimensions of the output coordinate system.
         """
         output_cs_name = self.datasets[0].coordinateTransformations[0].output
         for cs in self.coordinateSystems:
             if cs.name == output_cs_name:
-                return len(cs.axes)
+                return cs.ndim
 
         raise RuntimeError(
             f"Did not find coordinate system named '{output_cs_name}' in "
@@ -103,7 +103,7 @@ class Multiscale(BaseAttrs):
                 assert isinstance(transformation, Sequence) and isinstance(
                     transformation.transformations[0], Scale
                 )
-                dim = len(transformation.transformations[0].scale)
+                dim = transformation.transformations[0].ndim
             dims.append(dim)
         if len(set(dims)) > 1:
             raise ValueError(
@@ -298,10 +298,10 @@ class Dataset(BaseAttrs):
             if (
                 isinstance(first, Scale)
                 and isinstance(second, Translation)
-                and len(first.scale) != len(second.translation)
+                and first.ndim != second.ndim
             ):
                 raise ValueError(
                     "The length of the scale and translation vectors must be the same. "
-                    f"Got {len(first.scale)} and {len(second.translation)}."
+                    f"Got {first.ndim} and {second.ndim}."
                 )
         return transforms
