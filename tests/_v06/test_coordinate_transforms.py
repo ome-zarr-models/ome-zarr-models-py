@@ -58,3 +58,21 @@ def test_inverse(transform: Transform, inverse_expected: Transform) -> None:
         update={"input": "output_system", "output": "input_system"}
     )
     assert transform.get_inverse() == inverse_expect
+
+
+@pytest.mark.parametrize(
+    "transform, expected_point",
+    (
+        (Identity(), (0, 1, 2)),
+        (Translation(translation=(3.2, 10.2, 7.5)), (3.2, 11.2, 9.5)),
+        (Scale(scale=(1, 0.5, 2)), (0, 0.5, 4)),
+    ),
+)
+def test_transform_point(
+    transform: Transform, expected_point: tuple[int, int, int]
+) -> None:
+    """
+    Test transforming a single point.
+    """
+    actual_point = transform.transform_point((0, 1, 2))
+    assert actual_point == expected_point
