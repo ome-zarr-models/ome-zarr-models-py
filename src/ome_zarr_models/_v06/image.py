@@ -1,19 +1,16 @@
-from collections.abc import Sequence
 from typing import Self
 
 # Import needed for pydantic type resolution
 import pydantic_zarr  # noqa: F401
 import zarr
 import zarr.errors
-from pydantic import Field, JsonValue, model_validator
+from pydantic import Field, model_validator
 from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
 from ome_zarr_models._utils import _from_zarr_v3
-from ome_zarr_models._v06.axes import Axis
-from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs, BaseZarrAttrs
+from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs
 from ome_zarr_models._v06.labels import Labels
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
-from ome_zarr_models.common.coordinate_transformations import _build_transforms
 
 __all__ = ["Image", "ImageAttrs"]
 
@@ -57,6 +54,7 @@ class Image(BaseGroupv06[ImageAttrs]):
         """
         return _from_zarr_v3(group, cls, ImageAttrs)
 
+    """TODO: adapt this for RFC 5
     @classmethod
     def new(
         cls,
@@ -72,7 +70,7 @@ class Image(BaseGroupv06[ImageAttrs]):
         global_scale: Sequence[float] | None = None,
         global_translation: Sequence[float] | None = None,
     ) -> "Image":
-        """
+
         Create a new `Image` from a sequence of multiscale arrays
         and spatial metadata.
 
@@ -106,7 +104,7 @@ class Image(BaseGroupv06[ImageAttrs]):
         This class does not store or copy any array data. To save array data,
         first write this class to a Zarr store, and then write data to the Zarr
         arrays in that store.
-        """
+
         if len(array_specs) != len(paths):
             raise ValueError(
                 f"Length of arrays (got {len(array_specs)=}) must be the same as "
@@ -161,6 +159,7 @@ class Image(BaseGroupv06[ImageAttrs]):
                 )
             ),
         )
+    """
 
     @model_validator(mode="after")
     def _check_arrays_compatible(self) -> Self:
@@ -176,8 +175,7 @@ class Image(BaseGroupv06[ImageAttrs]):
         flat_self = self.to_flat()
 
         for multiscale in multimeta:
-            multiscale_ndim = len(multiscale.axes)
-            multiscale_dim_names = tuple(a.name for a in multiscale.axes)
+            multiscale_ndim = multiscale.ndim
             for dataset in multiscale.datasets:
                 try:
                     maybe_arr: AnyArraySpec | AnyGroupSpec = flat_self[
@@ -201,24 +199,6 @@ class Image(BaseGroupv06[ImageAttrs]):
                         "which does not match the dimensionality of the array "
                         f"found in this group at path '{dataset.path}' ({arr_ndim}). "
                         "The number of axes must match the array dimensionality."
-                    )
-
-                    raise ValueError(msg)
-
-                arr_dim_names = maybe_arr.dimension_names
-                if arr_dim_names is None:
-                    msg = (
-                        f"The array in this group at  '{dataset.path}' has no "
-                        "dimension_names metadata."
-                    )
-                    raise ValueError(msg)
-                elif arr_dim_names != multiscale_dim_names:
-                    msg = (
-                        f"The multiscale metadata has {multiscale_dim_names} "
-                        "axes names "
-                        "which does not match the dimension names of the array "
-                        f"found in this group at path '{dataset.path}' "
-                        f"({arr_dim_names}). "
                     )
 
                     raise ValueError(msg)
