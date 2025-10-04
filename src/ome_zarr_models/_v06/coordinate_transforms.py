@@ -1,10 +1,29 @@
 from typing import Literal, Self
 
-from pydantic import Field, field_validator, model_validator
+from pydantic import Field, JsonValue, field_validator, model_validator
 
-from ome_zarr_models._v06.axes import Axis
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.validation import unique_items_validator
+
+
+class Axis(BaseAttrs):
+    """
+    Model for an element of `Multiscale.axes`.
+    """
+
+    # Explicitly name could be any JsonValue, but implicitly it must match Zarr array
+    # dimension_names which limits it to str | None
+
+    name: str | None
+    type: (
+        Literal["array", "space", "time", "channel", "coordinate", "displacement"]
+        | str
+        | None
+    ) = None
+    discrete: bool | None = None
+    # Unit probably intended to be str, but the spec doesn't explicitly specify
+    unit: str | JsonValue | None = None
+    longName: str | None = None
 
 
 class CoordinateSystem(BaseAttrs):
