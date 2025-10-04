@@ -2,11 +2,11 @@ import pytest
 from pydantic import ValidationError
 
 from ome_zarr_models._v06.coordinate_transforms import (
-    AnyTransform,
     Axis,
     CoordinateSystem,
     Scale,
     Sequence,
+    Transform,
     Translation,
 )
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
@@ -16,7 +16,7 @@ COORDINATE_SYSTEM_NAME_FOR_TESTS = "coordinate_system_name_reserved_for_tests"
 
 def test_ensure_scale_translation() -> None:
     def _gen_multiscale(
-        coordinateTransformations: tuple[AnyTransform, ...],
+        coordinateTransformations: tuple[Transform, ...],
     ) -> Multiscale:
         extra_cs = CoordinateSystem(
             name=COORDINATE_SYSTEM_NAME_FOR_TESTS,

@@ -1,11 +1,11 @@
 import pytest
 
 from ome_zarr_models._v06.coordinate_transforms import (
-    AnyTransform,
     Axis,
     CoordinateSystem,
     Identity,
     Scale,
+    Transform,
 )
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
 
@@ -31,7 +31,7 @@ def _gen_dataset(
 
 def wrap_coordinate_transformations_and_systems_into_multiscale(
     coordinate_systems: tuple[CoordinateSystem, ...],
-    coordinate_transformations: tuple[AnyTransform, ...],
+    coordinate_transformations: tuple[Transform, ...],
 ) -> Multiscale:
     extra_cs = CoordinateSystem(
         name=COORDINATE_SYSTEM_NAME_FOR_TESTS,
