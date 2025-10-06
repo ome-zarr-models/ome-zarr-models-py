@@ -66,6 +66,7 @@ def test_inverse(transform: Transform, inverse_expected: Transform) -> None:
         (Identity(), (0, 1, 2)),
         (Translation(translation=(3.2, 10.2, 7.5)), (3.2, 11.2, 9.5)),
         (Scale(scale=(1, 0.5, 2)), (0, 0.5, 4)),
+        (Affine(affine=((1, 0, 0, 10), (0, 1, 0, -4), (0, 0, 1, 2))), (10, -3, 4)),
     ),
 )
 def test_transform_point(

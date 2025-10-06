@@ -259,6 +259,7 @@ class Affine(Transform):
     """Affine transform."""
 
     type: Literal["affine"] = "affine"
+    # TODO: validate that all the sub-tuples have the same length
     affine: tuple[tuple[float, ...], ...] | None = None
     path: str | None = None
 
@@ -289,12 +290,21 @@ class Affine(Transform):
     def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
         if self.affine is None:
             raise NotImplementedError("Not implemented when self.affine is None")
+        if len(point) != len(self.affine):
+            raise ValueError(
+                f"Dimensionality of point ({len(point)}) does not match "
+                f"dimensionality of transform ({len(self.affine)})"
+            )
+        point_tuple = tuple(point)
+        matrix = [row[:-1] for row in self.affine]
+        translation = [row[-1] for row in self.affine]
+        point_out = [0.0 for _ in point_tuple]
 
-        # TODO: this is wrong - need to split up matrix multiplication and translation
-        return tuple(
-            sum(p * col for p, col in zip(point, row, strict=True))
-            for row in self.affine
-        )
+        for i in range(len(point_out)):
+            point_out[i] = sum(m * p for m, p in zip(matrix[i], point, strict=True))
+            point_out[i] += translation[i]
+
+        return tuple(point_out)
 
     def inverse_transform_point(
         self, point: typing.Sequence[float]
