@@ -1,6 +1,6 @@
 import typing
 from abc import ABC, abstractmethod
-from typing import Annotated, Literal, Self
+from typing import Annotated, Literal, Self, TypeVar
 
 from pydantic import Field, JsonValue, field_validator, model_validator
 
@@ -259,7 +259,6 @@ class Affine(Transform):
     """Affine transform."""
 
     type: Literal["affine"] = "affine"
-    # TODO: validate that all the sub-tuples have the same length
     affine: tuple[tuple[float, ...], ...] | None = None
     path: str | None = None
 
@@ -310,6 +309,22 @@ class Affine(Transform):
         self, point: typing.Sequence[float]
     ) -> tuple[float, ...]:
         raise NotImplementedError
+
+    _TAffine = TypeVar("_TAffine", bound=tuple[tuple[float, ...], ...] | None)
+
+    @field_validator("affine", mode="after")
+    @classmethod
+    def _validate_affine(cls, affine: _TAffine) -> _TAffine:
+        if affine is None:
+            return affine
+
+        row_lens = [len(row) for row in affine]
+        if not all(r == row_lens[0] for r in row_lens[1:]):
+            raise ValueError(
+                f"Row lengths in affine matrix ({row_lens}) are not all equal."
+            )
+
+        return affine
 
 
 class Rotation(Transform):

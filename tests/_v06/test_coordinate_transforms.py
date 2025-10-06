@@ -1,3 +1,5 @@
+import re
+
 import pytest
 from pydantic import ValidationError
 
@@ -95,3 +97,11 @@ def test_inverse_transform_point(
     """
     actual_point = transform.inverse_transform_point((0, 1, 2))
     assert actual_point == expected_point
+
+
+def test_invalid_affine() -> None:
+    with pytest.raises(
+        ValidationError,
+        match=re.escape("Row lengths in affine matrix ([1, 2]) are not all equal."),
+    ):
+        Affine(affine=((1,), (1, 2)))
