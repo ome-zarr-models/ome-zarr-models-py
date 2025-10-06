@@ -91,9 +91,9 @@ class Transform(BaseAttrs, ABC):
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
         """Apply transform a single point."""
 
-    @abstractmethod
     def inverse_transform_point(self, point: typing.Sequence[float]) -> TPoint:
         """Apply inverse transform to a single point."""
+        return self.get_inverse().transform_point(point)
 
     @property
     def _inverse_name(self) -> str | None:
@@ -117,9 +117,6 @@ class Identity(Transform):
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
         return tuple(point)
 
-    def inverse_transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        return tuple(point)
-
 
 class MapAxis(Transform):
     """Axis mapping transform."""
@@ -140,10 +137,6 @@ class MapAxis(Transform):
         )
 
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        # Note: no way to transform a point without axis information...
-        raise NotImplementedError
-
-    def inverse_transform_point(self, point: typing.Sequence[float]) -> TPoint:
         # Note: no way to transform a point without axis information...
         raise NotImplementedError
 
@@ -194,9 +187,6 @@ class Translation(Transform):
         # Note: no way to transform a point without axis information...
         return tuple(p + t for p, t in zip(point, self.translation_vector, strict=True))
 
-    def inverse_transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        return tuple(p - t for p, t in zip(point, self.translation_vector, strict=True))
-
 
 class Scale(Transform):
     """Scale transformation."""
@@ -242,9 +232,6 @@ class Scale(Transform):
 
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
         return tuple(p * s for p, s in zip(point, self.scale_vector, strict=True))
-
-    def inverse_transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        return tuple(p / s for p, s in zip(point, self.scale_vector, strict=True))
 
 
 class Affine(Transform):
@@ -297,9 +284,6 @@ class Affine(Transform):
 
         return tuple(point_out)
 
-    def inverse_transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        raise NotImplementedError
-
     _TAffine = TypeVar("_TAffine", bound=tuple[tuple[float, ...], ...] | None)
 
     @field_validator("affine", mode="after")
@@ -351,9 +335,6 @@ class Rotation(Transform):
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
         raise NotImplementedError("Transforming using a rotation not yet implemented")
 
-    def inverse_transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        raise NotImplementedError("Transforming using a rotation not yet implemented")
-
 
 class Sequence(Transform):
     """Sequence transformation."""
@@ -373,12 +354,6 @@ class Sequence(Transform):
         point_tuple = tuple(point)
         for transform in self.transformations:
             point_tuple = transform.transform_point(point_tuple)
-        return point_tuple
-
-    def inverse_transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        point_tuple = tuple(point)
-        for transform in self.transformations[::-1]:
-            point_tuple = transform.inverse_transform_point(point_tuple)
         return point_tuple
 
     def add_transform(self, transform: "AnyTransform") -> "Sequence":
@@ -409,11 +384,6 @@ class Displacements(Transform):
             "Transforming using a displacement field not yet implemented"
         )
 
-    def inverse_transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        raise NotImplementedError(
-            "Transforming using a displacement field not yet implemented"
-        )
-
 
 class Coordinates(Transform):
     """Coordinate field transform."""
@@ -426,11 +396,6 @@ class Coordinates(Transform):
         raise NotImplementedError
 
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        raise NotImplementedError(
-            "Transforming using a coordinate field not yet implemented"
-        )
-
-    def inverse_transform_point(self, point: typing.Sequence[float]) -> TPoint:
         raise NotImplementedError(
             "Transforming using a coordinate field not yet implemented"
         )
@@ -451,9 +416,6 @@ class Inverse(Transform):
 
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
         return self.transformation.transform_point(point)
-
-    def inverse_transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        return self.transformation.inverse_transform_point(point)
 
 
 class Bijection(Transform):
@@ -480,9 +442,6 @@ class Bijection(Transform):
 
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
         return self.forward.transform_point(point)
-
-    def inverse_transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        return self.inverse.transform_point(point)
 
 
 class ByDimension(Transform):
