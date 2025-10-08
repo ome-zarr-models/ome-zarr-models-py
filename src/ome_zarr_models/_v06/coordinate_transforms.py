@@ -56,6 +56,15 @@ class CoordinateSystem(BaseAttrs):
 class Transform(BaseAttrs, ABC):
     """
     Model of a coordinate transformation.
+
+    Notes
+    -----
+    Coordinate transformations have a `transform_point` method to transform a single
+    point. This only operates on a `tuple` of coordinate points, and not other objects
+    that could represent points (e.g., NumPy arrays). This is a deliberate choice to
+    keep the dependencies of `ome-zarr-models` slim. Other libraries are encouraged
+    to implement their own coordinate transforms, and use the `transform_point` methods
+    here as reference implementations to check their own implementations.
     """
 
     type: str
