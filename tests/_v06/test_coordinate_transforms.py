@@ -105,3 +105,14 @@ def test_invalid_affine() -> None:
         match=re.escape("Row lengths in affine matrix ([1, 2]) are not all equal."),
     ):
         Affine(affine=((1,), (1, 2)))
+
+
+def test_affine_dimension_mismatch() -> None:
+    t = Affine(affine=((1, 0), (0, 1)))
+    with pytest.raises(
+        ValueError,
+        match=re.escape(
+            "Dimensionality of point (1) does not match dimensionality of transform (2)"
+        ),
+    ):
+        t.transform_point((1,))
