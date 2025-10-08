@@ -71,6 +71,15 @@ def test_inverse(transform: Transform, inverse_expected: Transform) -> None:
         (Affine(affine=((1, 0, 0, 10), (0, 1, 0, -4), (0, 0, 1, 2))), (10, -3, 4)),
         # TODO: change the rotation matrix to not the identity
         (Rotation(rotation=((1, 0, 0), (0, 1, 0), (0, 0, 1))), (0, 1, 2)),
+        (
+            Sequence(
+                transformations=(
+                    Scale(scale=(1, 0.5, 2)),
+                    Translation(translation=(0, 1, 2)),
+                )
+            ),
+            (0, 1.5, 6),
+        ),
     ),
 )
 def test_transform_point(
