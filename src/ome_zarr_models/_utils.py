@@ -129,7 +129,10 @@ def _from_zarr_v3(
     # on unlistable storage backends, the members of this group will be {}
     group_spec_in: pydantic_zarr.v3.AnyGroupSpec
     group_spec_in = pydantic_zarr.v3.GroupSpec.from_zarr(group, depth=0)
-    ome_attributes = attrs_cls.model_validate(group.attrs.asdict()["ome"])
+    attrs_dict = group.attrs.asdict()
+    if "ome" not in attrs_dict:
+        raise ValueError("Zarr group attributes does not contain an 'ome' key")
+    ome_attributes = attrs_cls.model_validate(attrs_dict["ome"])
 
     members_tree_flat: dict[
         str, pydantic_zarr.v3.AnyGroupSpec | pydantic_zarr.v3.AnyArraySpec
