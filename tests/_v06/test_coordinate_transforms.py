@@ -95,7 +95,7 @@ def test_inverse_transform_point(
     """
     Test transforming a single point.
     """
-    actual_point = transform.inverse_transform_point((0, 1, 2))
+    actual_point = transform.get_inverse().transform_point((0, 1, 2))
     assert actual_point == expected_point
 
 

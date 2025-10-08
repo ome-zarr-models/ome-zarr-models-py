@@ -91,10 +91,6 @@ class Transform(BaseAttrs, ABC):
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
         """Apply transform a single point."""
 
-    def inverse_transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        """Apply inverse transform to a single point."""
-        return self.get_inverse().transform_point(point)
-
     @property
     def _inverse_name(self) -> str | None:
         if self.name is None:
