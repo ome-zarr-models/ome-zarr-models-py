@@ -77,16 +77,12 @@ class Transform(BaseAttrs, ABC):
         return self
 
     @abstractmethod
-    def get_inverse(self) -> "Transform":
-        """Inverse of this transform."""
-
-    @abstractmethod
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
         """Apply transform a single point."""
 
-    def inverse_transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        """Apply inverse transform to a single point."""
-        return self.get_inverse().transform_point(point)
+    @abstractmethod
+    def get_inverse(self) -> "Transform":
+        """Inverse of this transform."""
 
 
 class Identity(Transform):
