@@ -84,6 +84,15 @@ class Transform(BaseAttrs, ABC):
     def get_inverse(self) -> "Transform":
         """Inverse of this transform."""
 
+    @property
+    def _inverse_kwargs(self) -> dict[str, str | None]:
+        """Common keyword arguments for constructing inverse transforms"""
+        return {
+            "input": self.output,
+            "output": self.input,
+            "name": f"{self.name}_inverse",
+        }
+
 
 class Identity(Transform):
     """Identity transformation."""
@@ -94,7 +103,7 @@ class Identity(Transform):
         return tuple(point)
 
     def get_inverse(self) -> "Identity":
-        return Identity()
+        return Identity(**self._inverse_kwargs)
 
 
 class MapAxis(Transform):
@@ -150,7 +159,10 @@ class Translation(Transform):
         return tuple(p + t for p, t in zip(point, self.translation_vector, strict=True))
 
     def get_inverse(self) -> "Translation":
-        return Translation(translation=tuple(-t for t in self.translation_vector))
+        return Translation(
+            **self._inverse_kwargs,
+            translation=tuple(-t for t in self.translation_vector),
+        )
 
 
 class Scale(Transform):
@@ -191,7 +203,10 @@ class Scale(Transform):
         return tuple(p * s for p, s in zip(point, self.scale_vector, strict=True))
 
     def get_inverse(self) -> "Scale":
-        return Scale(scale=tuple(1 / s for s in self.scale_vector))
+        return Scale(
+            **self._inverse_kwargs,
+            scale=tuple(1 / s for s in self.scale_vector),
+        )
 
 
 class Affine(Transform):
@@ -310,7 +325,8 @@ class Sequence(Transform):
 
     def get_inverse(self) -> "Sequence":
         return Sequence(
-            transformations=tuple(t.get_inverse() for t in self.transformations[::-1])
+            **self._inverse_kwargs,
+            transformations=tuple(t.get_inverse() for t in self.transformations[::-1]),
         )
 
     def add_transform(self, transform: "AnyTransform") -> "Sequence":
@@ -368,7 +384,7 @@ class Inverse(Transform):
         return self.transform.transform_point(point)
 
     def get_inverse(self) -> "Inverse":
-        return Inverse(transform=self.transform.get_inverse())
+        return Inverse(**self._inverse_kwargs, transform=self.transform.get_inverse())
 
 
 class Bijection(Transform):
@@ -384,7 +400,9 @@ class Bijection(Transform):
         return self.forward.transform_point(point)
 
     def get_inverse(self) -> "Bijection":
-        return Bijection(forward=self.inverse, inverse=self.forward)
+        return Bijection(
+            **self._inverse_kwargs, forward=self.inverse, inverse=self.forward
+        )
 
 
 class ByDimension(Transform):
