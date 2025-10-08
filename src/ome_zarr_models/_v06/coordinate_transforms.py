@@ -1,3 +1,4 @@
+import copy
 import typing
 from abc import ABC, abstractmethod
 from typing import Annotated, Literal, Self, TypeVar
@@ -337,7 +338,11 @@ class Rotation(Transform):
         return self
 
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        raise NotImplementedError("Transforming using a rotation not yet implemented")
+        if self.rotation is None:
+            raise NotImplementedError("Not implemented when self.rotation is None")
+        rotation = copy.deepcopy(self.rotation)
+        affine = tuple([(*row, 0.0) for row in rotation])
+        return Affine(affine=affine).transform_point(point)
 
 
 class Sequence(Transform):
