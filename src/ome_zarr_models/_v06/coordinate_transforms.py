@@ -180,7 +180,6 @@ class Translation(Transform):
         return self
 
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        # Note: no way to transform a point without axis information...
         return tuple(p + t for p, t in zip(point, self.translation_vector, strict=True))
 
 
