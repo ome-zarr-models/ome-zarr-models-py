@@ -418,6 +418,15 @@ class ByDimension(Transform):
     type: Literal["byDimension"] = "byDimension"
     transformations: tuple["AnyTransform", ...]
 
+    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+        raise NotImplementedError
+
+    def get_inverse(self) -> "ByDimension":
+        return ByDimension(
+            **self._inverse_kwargs,
+            transformations=tuple(t.get_inverse() for t in self.transformations[::-1]),
+        )
+
 
 AnyTransform = (
     Identity
