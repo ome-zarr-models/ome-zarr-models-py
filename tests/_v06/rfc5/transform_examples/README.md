@@ -1,6 +1,6 @@
 # RFC-5 example tests
 
-This folder contains tests aginst example datsets.
+This folder contains tests against example datasets.
 Originally taken from https://github.com/bogovicj/ngff-rfc5-coordinate-transformation-examples,
 which is included as a sub-module in this folder.
 

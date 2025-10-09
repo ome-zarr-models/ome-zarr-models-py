@@ -28,7 +28,7 @@ with open(FAILING_PATHS_FILE) as f:
     failing_zarrs = {Path(line.removesuffix("\n")) for line in f.readlines()}
 
 
-# Function to rewrite the list of failing exmaples
+# Function to rewrite the list of failing examples
 def write_failing_zarrs(failing_zarrs: set[Path]) -> None:
     with open(FAILING_PATHS_FILE, "w") as f:
         for line in sorted(failing_zarrs):
@@ -51,7 +51,7 @@ def test_basic(zarr_path: Path) -> None:
         Image.from_zarr(zarr_group)
     except Exception as e:
         if zarr_path_relative in failing_zarrs:
-            raise e
+            pytest.xfail()
         else:
             # Failed but not already in list of failing files;
             # add to list of failing files
