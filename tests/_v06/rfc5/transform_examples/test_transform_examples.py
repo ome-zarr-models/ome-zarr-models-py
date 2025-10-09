@@ -63,6 +63,10 @@ def test_basic(zarr_path: Path) -> None:
     if zarr_path_relative in failing_zarrs:
         failing_zarrs.remove(zarr_path_relative)
         write_failing_zarrs(failing_zarrs)
+        raise RuntimeError(
+            "List of failing zarr paths not up to date. "
+            "List has been updated, please commit the change."
+        )
 
 
 def test_get_all_zarrs() -> None:
