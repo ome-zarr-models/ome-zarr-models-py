@@ -4,9 +4,9 @@ import pytest
 import zarr
 
 from ome_zarr_models._v06.image import Image
-from tests._v06.rfc5.transform_examples.expected_attributes import expected_attrs
 
 TEST_DATA_PATH = Path(__file__).parent / "ngff-rfc5-coordinate-transformation-examples"
+FAILING_PATHS_FILE = Path(__file__).parent / "failing_zarrs.txt"
 
 
 def get_all_zarrs(directory: Path) -> list[Path]:
@@ -24,98 +24,45 @@ def get_all_zarrs(directory: Path) -> list[Path]:
 
 
 # List of paths to examples that are currently failing.
-# TODO: remove these one by one and fix
-failing_zarrs = [
-    Path("3d/axis_dependent/byDimension.zarr"),
-    Path("3d/axis_dependent/mapAxis.zarr"),
-    Path("3d/basic/scale.zarr"),
-    Path("3d/basic/sequenceScaleTranslation.zarr"),
-    Path("3d/basic/sequenceScaleTranslation_multiscale.zarr"),
-    Path("3d/basic/scale_multiscale.zarr"),
-    Path("3d/basic/identity.zarr"),
-    Path("3d/basic/translation.zarr"),
-    Path("3d/simple/affine.zarr"),
-    Path("3d/simple/rotationParams.zarr"),
-    Path("3d/simple/rotation.zarr"),
-    Path("3d/simple/affine_multiscale.zarr"),
-    Path("3d/simple/affineParams.zarr"),
-    Path("3d/basic_binary/scaleParams.zarr"),
-    Path("3d/basic_binary/translationParams.zarr"),
-    Path("3d/nonlinear/invDisplacements.zarr"),
-    Path("3d/nonlinear/invCoordinates.zarr"),
-    Path("zarr2/3d/axis_dependent/byDimension.zarr"),
-    Path("zarr2/3d/axis_dependent/mapAxis.zarr"),
-    Path("zarr2/3d/basic/scale.zarr"),
-    Path("zarr2/3d/basic/sequenceScaleTranslation.zarr"),
-    Path("zarr2/3d/basic/sequenceScaleTranslation_multiscale.zarr"),
-    Path("zarr2/3d/basic/scale_multiscale.zarr"),
-    Path("zarr2/3d/basic/identity.zarr"),
-    Path("zarr2/3d/basic/translation.zarr"),
-    Path("zarr2/3d/simple/affine.zarr"),
-    Path("zarr2/3d/simple/rotationParams.zarr"),
-    Path("zarr2/3d/simple/rotation.zarr"),
-    Path("zarr2/3d/simple/affine_multiscale.zarr"),
-    Path("zarr2/3d/simple/affineParams.zarr"),
-    Path("zarr2/3d/basic_binary/scaleParams.zarr"),
-    Path("zarr2/3d/basic_binary/translationParams.zarr"),
-    Path("zarr2/3d/nonlinear/invDisplacements.zarr"),
-    Path("zarr2/3d/nonlinear/invCoordinates.zarr"),
-    Path("zarr2/2d/axis_dependent/byDimension.zarr"),
-    Path("zarr2/2d/axis_dependent/mapAxis.zarr"),
-    Path("zarr2/2d/basic/scale.zarr"),
-    Path("zarr2/2d/basic/sequenceScaleTranslation.zarr"),
-    Path("zarr2/2d/basic/sequenceScaleTranslation_multiscale.zarr"),
-    Path("zarr2/2d/basic/scale_multiscale.zarr"),
-    Path("zarr2/2d/basic/identity.zarr"),
-    Path("zarr2/2d/basic/translation.zarr"),
-    Path("zarr2/2d/simple/affine.zarr"),
-    Path("zarr2/2d/simple/rotationParams.zarr"),
-    Path("zarr2/2d/simple/rotation.zarr"),
-    Path("zarr2/2d/simple/affine_multiscale.zarr"),
-    Path("zarr2/2d/simple/affineParams.zarr"),
-    Path("zarr2/2d/basic_binary/scaleParams.zarr"),
-    Path("zarr2/2d/basic_binary/translationParams.zarr"),
-    Path("zarr2/2d/nonlinear/invDisplacements.zarr"),
-    Path("zarr2/2d/nonlinear/invCoordinates.zarr"),
-    Path("zarr2/user_stories/stitched_tiles_3d.zarr"),
-    Path("zarr2/user_stories/stitched_tiles_2d.zarr"),
-    Path("zarr2/user_stories/image_registration_3d.zarr"),
-    Path("zarr2/user_stories/lens_correction.zarr"),
-    Path("2d/axis_dependent/byDimension.zarr"),
-    Path("2d/axis_dependent/mapAxis.zarr"),
-    Path("2d/basic/scale.zarr"),
-    Path("2d/basic/sequenceScaleTranslation.zarr"),
-    Path("2d/basic/sequenceScaleTranslation_multiscale.zarr"),
-    Path("2d/basic/scale_multiscale.zarr"),
-    Path("2d/basic/identity.zarr"),
-    Path("2d/basic/translation.zarr"),
-    Path("2d/simple/affine.zarr"),
-    Path("2d/simple/rotationParams.zarr"),
-    Path("2d/simple/rotation.zarr"),
-    Path("2d/simple/affine_multiscale.zarr"),
-    Path("2d/simple/affineParams.zarr"),
-    Path("2d/basic_binary/scaleParams.zarr"),
-    Path("2d/basic_binary/translationParams.zarr"),
-    Path("2d/nonlinear/invDisplacements.zarr"),
-    Path("2d/nonlinear/invCoordinates.zarr"),
-    Path("user_stories/stitched_tiles_3d.zarr"),
-    Path("user_stories/stitched_tiles_2d.zarr"),
-    Path("user_stories/image_registration_3d.zarr"),
-    Path("user_stories/lens_correction.zarr"),
-]
+with open(FAILING_PATHS_FILE) as f:
+    failing_zarrs = {Path(line.removesuffix("\n")) for line in f.readlines()}
+
+
+# Function to rewrite the list of failing exmaples
+def write_failing_zarrs(failing_zarrs: set[Path]) -> None:
+    with open(FAILING_PATHS_FILE, "w") as f:
+        for line in sorted(failing_zarrs):
+            f.write(f"{line}\n")
 
 
 @pytest.mark.parametrize("zarr_path", get_all_zarrs(TEST_DATA_PATH))
 def test_basic(zarr_path: Path) -> None:
-    if zarr_path.relative_to(TEST_DATA_PATH) in failing_zarrs:
-        pytest.xfail()
+    """
+    Test loading OME-Zarr datasets with transforms.
 
-    zarr_group = zarr.open_group(zarr_path, mode="r")
-    ome_group = Image.from_zarr(zarr_group)
+    Currently this just smoke tests that they load,
+    and not that the values are as expected.
+    """
+    print(zarr_path)
+    zarr_path_relative = zarr_path.relative_to(TEST_DATA_PATH)
 
-    if expected_attrs[zarr_path] is None:
-        print(f"Expected attributes not set in expected_attributes.py for {zarr_path}")
-    assert ome_group.ome_attributes == expected_attrs[zarr_path]
+    try:
+        zarr_group = zarr.open_group(zarr_path, mode="r")
+        Image.from_zarr(zarr_group)
+    except Exception as e:
+        if zarr_path_relative in failing_zarrs:
+            raise e
+        else:
+            # Failed but not already in list of failing files;
+            # add to list of failing files
+            failing_zarrs.add(zarr_path_relative)
+            write_failing_zarrs(failing_zarrs)
+            raise e
+
+    # Succeeded; remove from list of failing files
+    if zarr_path_relative in failing_zarrs:
+        failing_zarrs.remove(zarr_path_relative)
+        write_failing_zarrs(failing_zarrs)
 
 
 def test_get_all_zarrs() -> None:
