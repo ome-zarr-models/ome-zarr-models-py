@@ -144,7 +144,7 @@ class Sequence(Transform):
     """Sequence transformation."""
 
     type: Literal["sequence"] = "sequence"
-    transformations: tuple[Transform, ...]
+    transformations: tuple["AnyTransform", ...]
 
 
 class Displacements(Transform):
@@ -167,7 +167,7 @@ class Inverse(Transform):
     """Inverse transform."""
 
     type: Literal["inverseOf"] = "inverseOf"
-    transform: Transform
+    transform: "AnyTransform"
 
 
 class Bijection(Transform):
@@ -176,8 +176,8 @@ class Bijection(Transform):
     """
 
     type: Literal["bijection"] = "bijection"
-    forward: Transform
-    inverse: Transform
+    forward: "AnyTransform"
+    inverse: "AnyTransform"
 
 
 AnyTransform = (
