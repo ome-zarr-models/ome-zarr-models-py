@@ -180,6 +180,15 @@ class Bijection(Transform):
     inverse: Transform
 
 
+class ByDimension(Transform):
+    """
+    A transform that operates on a subset of dimensions.
+    """
+
+    type: Literal["byDimension"] = "byDimension"
+    transformations: tuple["AnyTransform", ...]
+
+
 AnyTransform = (
     Identity
     | MapAxis
@@ -192,4 +201,5 @@ AnyTransform = (
     | Coordinates
     | Inverse
     | Bijection
+    | ByDimension
 )
