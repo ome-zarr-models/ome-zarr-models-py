@@ -90,28 +90,58 @@ class Translation(Transform):
     """Translation transformation."""
 
     type: Literal["translation"] = "translation"
-    translation: tuple[float, ...]
+    translation: tuple[float, ...] | None = None
+    path: str | None = None
 
     @property
     def ndim(self) -> int:
         """
         Number of dimensions.
         """
-        return len(self.translation)
+        return len(self.translation_vector)
+
+    @property
+    def translation_vector(self) -> tuple[float, ...]:
+        """
+        Translation vector for this transform.
+        """
+        if self.translation is not None:
+            return self.translation
+        elif self.path is not None:
+            raise NotImplementedError(
+                "Loading translation from a Zarr array not yet implemented"
+            )
+        else:
+            raise RuntimeError("Both self.translation and self.path are None")
 
 
 class Scale(Transform):
     """Scale transformation."""
 
     type: Literal["scale"] = "scale"
-    scale: tuple[float, ...]
+    scale: tuple[float, ...] | None = None
+    path: str | None = None
+
+    @property
+    def scale_vector(self) -> tuple[float, ...]:
+        """
+        Scale vector for this transform.
+        """
+        if self.scale is not None:
+            return self.scale
+        elif self.path is not None:
+            raise NotImplementedError(
+                "Loading scale from a Zarr array not yet implemented"
+            )
+        else:
+            raise RuntimeError("Both self.scale and self.path are None")
 
     @property
     def ndim(self) -> int:
         """
         Number of dimensions.
         """
-        return len(self.scale)
+        return len(self.scale_vector)
 
 
 class Affine(Transform):
@@ -121,23 +151,43 @@ class Affine(Transform):
     affine: tuple[tuple[float, ...], ...] | None = None
     path: str | None = None
 
-    # TODO: add a method or property to get array either from self.affine
-    # or by loading Zarr array at self.path
+    @property
+    def ndim(self) -> int:
+        return len(self.affine_matrix)
 
-    # TODO: if both affine and path are given, use path
+    @property
+    def affine_matrix(self) -> tuple[tuple[float, ...], ...]:
+        if self.affine is not None:
+            return self.affine
+        elif self.path is not None:
+            raise NotImplementedError(
+                "Loading affine matrix from a Zarr array not yet implemented"
+            )
+        else:
+            raise RuntimeError("Both self.affine and self.path are None")
 
 
 class Rotation(Transform):
     """Rotation transform."""
 
     type: Literal["rotation"] = "rotation"
-    rotation: tuple[float, ...] | None = None
+    rotation: tuple[tuple[float, ...], ...] | None = None
     path: str | None = None
 
-    # TODO: add a method or property to get rotation either from self.rotation
-    # or by loading Zarr array at self.path
+    @property
+    def ndim(self) -> int:
+        return len(self.rotation_matrix)
 
-    # TODO: if both rotation and path are given, use path
+    @property
+    def rotation_matrix(self) -> tuple[tuple[float, ...], ...]:
+        if self.rotation is not None:
+            return self.rotation
+        elif self.path is not None:
+            raise NotImplementedError(
+                "Loading rotation matrix from a Zarr array not yet implemented"
+            )
+        else:
+            raise RuntimeError("Both self.rotation and self.path are None")
 
 
 class Sequence(Transform):
