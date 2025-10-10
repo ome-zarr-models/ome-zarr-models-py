@@ -154,7 +154,7 @@ class Multiscale(BaseAttrs):
         """
         Make sure datasets are ordered from highest resolution to smallest.
         """
-        scale_transforms = []
+        scale_transforms: list[Scale] = []
         for dataset in datasets:
             (transform,) = dataset.coordinateTransformations
             if isinstance(transform, Scale):
@@ -166,7 +166,7 @@ class Multiscale(BaseAttrs):
                 scale = transform.transformations[0]
                 scale_transforms.append(scale)
 
-        scales = [s.scale for s in scale_transforms]
+        scales = [s.scale_vector for s in scale_transforms]
         for i in range(len(scales) - 1):
             s1, s2 = scales[i], scales[i + 1]
             is_ordered = all(s1[j] <= s2[j] for j in range(len(s1)))
