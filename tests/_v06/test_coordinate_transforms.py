@@ -6,6 +6,7 @@ from pydantic import ValidationError
 from ome_zarr_models._v06.coordinate_transforms import (
     Affine,
     Identity,
+    Point,
     Rotation,
     Scale,
     Sequence,
@@ -20,6 +21,9 @@ def test_no_parameters(transform_cls: type[Transform]) -> None:
     # OR paths to a Zarr array with those parameters.
     with pytest.raises(ValidationError, match=r"One of .* or 'path' must be given"):
         transform_cls()  # type: ignore[call-arg]
+
+
+coord_sys_kwargs = {"input": "input_system", "output": "output_system"}
 
 
 @pytest.mark.parametrize(
@@ -41,6 +45,7 @@ def test_no_parameters(transform_cls: type[Transform]) -> None:
             (0, 1.5, 6),
         ),
     ),
+    ids=["Identity", "Translation", "Scale", "Affine", "Rotation", "Sequence"],
 )
 def test_transform_point(
     transform: Transform, expected_point: tuple[int, int, int]
@@ -48,8 +53,15 @@ def test_transform_point(
     """
     Test transforming a single point.
     """
-    actual_point = transform.transform_point((0, 1, 2))
-    assert actual_point == expected_point
+    # Set the input/output coordinate system names
+    transform = transform.model_copy(update=coord_sys_kwargs)
+    actual_point = transform.transform_point(
+        Point(coordinates={"x": 0, "y": 1, "z": 2}, coordinate_system="input_system")
+    )
+    assert actual_point == Point(
+        coordinates=dict(zip(["x", "y", "z"], expected_point, strict=True)),
+        coordinate_system="output_system",
+    )
 
 
 @pytest.mark.parametrize(
@@ -66,8 +78,15 @@ def test_inverse_transform_point(
     """
     Test transforming a single point.
     """
-    actual_point = transform.get_inverse().transform_point((0, 1, 2))
-    assert actual_point == expected_point
+    # Set the input/output coordinate system names
+    transform = transform.model_copy(update=coord_sys_kwargs)
+    actual_point = transform.get_inverse().transform_point(
+        Point(coordinates={"x": 0, "y": 1, "z": 2}, coordinate_system="output_system")
+    )
+    assert actual_point == Point(
+        coordinates=dict(zip(["x", "y", "z"], expected_point, strict=True)),
+        coordinate_system="input_system",
+    )
 
 
 def test_invalid_affine() -> None:
@@ -86,4 +105,11 @@ def test_affine_dimension_mismatch() -> None:
             "Dimensionality of point (1) does not match dimensionality of transform (2)"
         ),
     ):
-        t.transform_point((1,))
+        t.transform_point(
+            Point(
+                coordinates={
+                    "x": 0,
+                },
+                coordinate_system="input_system",
+            )
+        )

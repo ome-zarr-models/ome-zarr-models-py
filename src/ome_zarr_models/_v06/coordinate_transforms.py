@@ -1,14 +1,34 @@
 import copy
-import typing
 from abc import ABC, abstractmethod
 from typing import Annotated, Literal, Self, TypeVar
 
-from pydantic import Field, JsonValue, field_validator, model_validator
+from pydantic import BaseModel, Field, JsonValue, field_validator, model_validator
 
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.validation import unique_items_validator
 
-TPoint = tuple[float, ...]
+
+class Point(BaseModel):
+    """
+    A single point.
+
+    This can be used with the transformations defined in this module.
+    A point is defined by a mapping from axes names to coordinate values
+    (`coordinates`), and the coordinate system it is in (`coordinate_system`).
+    """
+
+    coordinates: dict[str, float] = Field(
+        ..., description="Mapping from axis name to coordinate value"
+    )
+    coordinate_system: str
+
+    @property
+    def ndim(self) -> int:
+        return len(self.coordinates)
+
+    @property
+    def axes(self) -> tuple[str, ...]:
+        return tuple(self.coordinates.keys())
 
 
 class Axis(BaseAttrs):
@@ -86,9 +106,30 @@ class Transform(BaseAttrs, ABC):
             raise ValueError(msg)
         return self
 
-    @abstractmethod
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+    def transform_point(self, point: Point) -> Point:
         """Apply transform a single point."""
+        if self.input is not None and point.coordinate_system != self.input:
+            raise ValueError(
+                f"{point.__repr__()} is not in input coordinate system '{self.input}'"
+            )
+        if hasattr(self, "ndim") and point.ndim != self.ndim:
+            raise ValueError(
+                f"Dimensionality of point ({point.ndim}) does not match "
+                f"dimensionality of transform ({self.ndim})"
+            )
+        new_point = self._transform_point(point)
+        return new_point.model_copy(update={"coordinate_system": self.output})
+
+    @abstractmethod
+    def _transform_point(self, point: Point) -> Point:
+        """
+        Apply transform to a single point.
+
+        Notes
+        -----
+        This private method should be overridden by concrete implementations to
+        provide the transformation logic.
+        """
 
     @abstractmethod
     def get_inverse(self) -> "Transform":
@@ -109,8 +150,8 @@ class Identity(Transform):
 
     type: Literal["identity"] = "identity"
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        return tuple(point)
+    def _transform_point(self, point: Point) -> Point:
+        return point
 
     def get_inverse(self) -> "Identity":
         return Identity(**self._inverse_kwargs)
@@ -122,12 +163,20 @@ class MapAxis(Transform):
     type: Literal["mapAxis"] = "mapAxis"
     mapAxis: tuple[int, ...]
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        # Note: no way to transform a point without axis information...
-        raise NotImplementedError
+    def _transform_point(self, point: Point) -> Point:
+        coordinates = copy.deepcopy(point.coordinates)
+        new_coordinates = {
+            new_axis: coordinates[old_axis]
+            for old_axis, new_axis in self.mapAxis.items()
+        }
+        for axis in new_coordinates:
+            coordinates[axis] = new_coordinates[axis]
+        return Point(coordinates=coordinates, coordinate_system=self.output)
 
     def get_inverse(self) -> "MapAxis":
-        raise NotImplementedError
+        return MapAxis(
+            **self._inverse_kwargs, mapAxis={o: i for i, o in self.mapAxis.items()}
+        )
 
     @property
     def ndim(self) -> int:
@@ -168,8 +217,17 @@ class Translation(Transform):
             raise ValueError("One of 'translation' or 'path' must be given")
         return self
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        return tuple(p + t for p, t in zip(point, self.translation_vector, strict=True))
+    def _transform_point(self, point: Point) -> Point:
+        new_coordinates = tuple(
+            p + t
+            for p, t in zip(
+                point.coordinates.values(), self.translation_vector, strict=True
+            )
+        )
+        return Point(
+            coordinates=dict(zip(point.coordinates, new_coordinates, strict=True)),
+            coordinate_system=self.output,
+        )
 
     def get_inverse(self) -> "Translation":
         return Translation(
@@ -212,8 +270,15 @@ class Scale(Transform):
             raise ValueError("One of 'scale' or 'path' must be given")
         return self
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        return tuple(p * s for p, s in zip(point, self.scale_vector, strict=True))
+    def _transform_point(self, point: Point) -> Point:
+        new_coordinates = tuple(
+            p * s
+            for p, s in zip(point.coordinates.values(), self.scale_vector, strict=True)
+        )
+        return Point(
+            coordinates=dict(zip(point.axes, new_coordinates, strict=True)),
+            coordinate_system=self.output,
+        )
 
     def get_inverse(self) -> "Scale":
         return Scale(
@@ -250,22 +315,22 @@ class Affine(Transform):
             raise ValueError("One of 'affine' or 'path' must be given")
         return self
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        if len(point) != len(self.affine_matrix):
-            raise ValueError(
-                f"Dimensionality of point ({len(point)}) does not match "
-                f"dimensionality of transform ({len(self.affine_matrix)})"
-            )
-        point_tuple = tuple(point)
+    def _transform_point(self, point: Point) -> Point:
+        point_tuple = tuple(point.coordinates.values())
         matrix = [row[:-1] for row in self.affine_matrix]
         translation = [row[-1] for row in self.affine_matrix]
         point_out = [0.0 for _ in point_tuple]
 
         for i in range(len(point_out)):
-            point_out[i] = sum(m * p for m, p in zip(matrix[i], point, strict=True))
+            point_out[i] = sum(
+                m * p for m, p in zip(matrix[i], point_tuple, strict=True)
+            )
             point_out[i] += translation[i]
 
-        return tuple(point_out)
+        return Point(
+            coordinates=dict(zip(point.axes, point_out, strict=True)),
+            coordinate_system=self.output,
+        )
 
     def get_inverse(self) -> "Affine":
         raise NotImplementedError
@@ -315,10 +380,12 @@ class Rotation(Transform):
             raise ValueError("One of 'rotation' or 'path' must be given")
         return self
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+    def _transform_point(self, point: Point) -> Point:
         rotation = copy.deepcopy(self.rotation_matrix)
         affine = tuple([(*row, 0.0) for row in rotation])
-        return Affine(affine=affine).transform_point(point)
+        return Affine(
+            affine=affine, input=self.input, output=self.output
+        ).transform_point(point)
 
     def get_inverse(self) -> "Rotation":
         raise NotImplementedError
@@ -330,11 +397,16 @@ class Sequence(Transform):
     type: Literal["sequence"] = "sequence"
     transformations: tuple["AnyTransform", ...]
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        point_tuple = tuple(point)
+    def _transform_point(self, point: Point) -> Point:
+        new_point = point.model_copy()
         for transform in self.transformations:
-            point_tuple = transform.transform_point(point_tuple)
-        return point_tuple
+            new_point = transform.model_copy(
+                # Because items in the sequence don't necessarily define
+                # their coordinate system, use the output system for the point
+                # so it's correct at the end of the chain.
+                update={"output": point.coordinate_system}
+            ).transform_point(new_point)
+        return new_point
 
     def get_inverse(self) -> "Sequence":
         return Sequence(
@@ -358,7 +430,7 @@ class Displacements(Transform):
     path: str
     interpolation: str
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+    def _transform_point(self, point: Point) -> Point:
         raise NotImplementedError(
             "Transforming using a displacement field not yet implemented"
         )
@@ -376,7 +448,7 @@ class Coordinates(Transform):
     path: str
     interpolation: str
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+    def _transform_point(self, point: Point) -> Point:
         raise NotImplementedError(
             "Transforming using a coordinate field not yet implemented"
         )
@@ -393,7 +465,7 @@ class Inverse(Transform):
     type: Literal["inverseOf"] = "inverseOf"
     transform: "AnyTransform"
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+    def _transform_point(self, point: Point) -> Point:
         return self.transform.transform_point(point)
 
     def get_inverse(self) -> "Inverse":
@@ -409,7 +481,7 @@ class Bijection(Transform):
     forward: "AnyTransform"
     inverse: "AnyTransform"
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+    def _transform_point(self, point: Point) -> Point:
         return self.forward.transform_point(point)
 
     def get_inverse(self) -> "Bijection":
@@ -426,7 +498,7 @@ class ByDimension(Transform):
     type: Literal["byDimension"] = "byDimension"
     transformations: tuple["AnyTransform", ...]
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+    def _transform_point(self, point: Point) -> Point:
         raise NotImplementedError
 
     def get_inverse(self) -> "ByDimension":
