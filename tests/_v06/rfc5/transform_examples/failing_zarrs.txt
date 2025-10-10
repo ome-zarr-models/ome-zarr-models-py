@@ -2,7 +2,6 @@
 2d/axis_dependent/mapAxis.zarr
 2d/basic/identity.zarr
 2d/basic/scale_multiscale.zarr
-2d/basic/sequenceScaleTranslation.zarr
 2d/basic/sequenceScaleTranslation_multiscale.zarr
 2d/basic/translation.zarr
 2d/basic_binary/scaleParams.zarr
@@ -18,7 +17,6 @@
 3d/axis_dependent/mapAxis.zarr
 3d/basic/identity.zarr
 3d/basic/scale_multiscale.zarr
-3d/basic/sequenceScaleTranslation.zarr
 3d/basic/sequenceScaleTranslation_multiscale.zarr
 3d/basic/translation.zarr
 3d/basic_binary/scaleParams.zarr
