@@ -129,6 +129,10 @@ class MapAxis(Transform):
     def get_inverse(self) -> "MapAxis":
         raise NotImplementedError
 
+    @property
+    def ndim(self) -> int:
+        return len(self.mapAxis)
+
 
 class Translation(Transform):
     """Translation transformation."""
@@ -247,16 +251,14 @@ class Affine(Transform):
         return self
 
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        if self.affine is None:
-            raise NotImplementedError("Not implemented when self.affine is None")
-        if len(point) != len(self.affine):
+        if len(point) != len(self.affine_matrix):
             raise ValueError(
                 f"Dimensionality of point ({len(point)}) does not match "
-                f"dimensionality of transform ({len(self.affine)})"
+                f"dimensionality of transform ({len(self.affine_matrix)})"
             )
         point_tuple = tuple(point)
-        matrix = [row[:-1] for row in self.affine]
-        translation = [row[-1] for row in self.affine]
+        matrix = [row[:-1] for row in self.affine_matrix]
+        translation = [row[-1] for row in self.affine_matrix]
         point_out = [0.0 for _ in point_tuple]
 
         for i in range(len(point_out)):
@@ -314,9 +316,7 @@ class Rotation(Transform):
         return self
 
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        if self.rotation is None:
-            raise NotImplementedError("Not implemented when self.rotation is None")
-        rotation = copy.deepcopy(self.rotation)
+        rotation = copy.deepcopy(self.rotation_matrix)
         affine = tuple([(*row, 0.0) for row in rotation])
         return Affine(affine=affine).transform_point(point)
 
