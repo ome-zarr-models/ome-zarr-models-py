@@ -3,25 +3,16 @@ from __future__ import annotations
 from typing import Self
 
 from pydantic import (
-    BaseModel,
     Field,
     JsonValue,
-    field_validator,
     model_validator,
 )
 
 from ome_zarr_models._v06.coordinate_transforms import (
     AnyTransform,
     CoordinateSystem,
-    Scale,
-    Sequence,
-    # Transform,
-    Translation,
 )
 from ome_zarr_models.base import BaseAttrs
-from ome_zarr_models.common.validation import (
-    check_length,
-)
 
 __all__ = ["Dataset", "Multiscale"]
 
@@ -86,14 +77,16 @@ class Multiscale(BaseAttrs):
             )
         return data
 
+    # TODO: re-implement without assuming type of transform
+    """
     @field_validator("datasets", mode="after")
     @classmethod
     def _ensure_same_dimensionality_for_all_datasets(
         cls, datasets: list[Dataset]
     ) -> list[Dataset]:
-        """
+        '''
         Ensure that all datasets have the same dimensionality
-        """
+        '''
         dims = []
         for dataset in datasets:
             transformation = dataset.coordinateTransformations[0]
@@ -111,6 +104,7 @@ class Multiscale(BaseAttrs):
                 f"dimensionality. Got {dims}."
             )
         return datasets
+    """
 
     @model_validator(mode="after")
     def _ensure_axes_top_transforms(data: Self) -> Self:
@@ -148,6 +142,8 @@ class Multiscale(BaseAttrs):
                     raise ValueError(msg)
         return data
 
+    # TODO: possibly re-implement if the constraint for ordered scales still exists
+    '''
     @field_validator("datasets", mode="after")
     @classmethod
     def _ensure_ordered_scales(cls, datasets: list[Dataset]) -> list[Dataset]:
@@ -176,6 +172,7 @@ class Multiscale(BaseAttrs):
                     f"than dataset {i + 1} (scales = {s2})."
                 )
         return datasets
+    '''
 
     @model_validator(mode="after")
     def check_cs_input_output(self) -> Self:
@@ -221,23 +218,26 @@ class Dataset(BaseAttrs):
     # smallest using scale metadata?
     path: str
     coordinateTransformations: tuple[AnyTransform, ...] = Field(
-        ..., min_length=1, max_length=1
+        ...,
+        min_length=1,
     )
 
     # TODO: introduce a .build(...) method, similar to the one in v05
 
     # the before validation is used to simplify the error messages
+    # TODO: maybe put this back depending on outcome of https://github.com/ome/ngff/issues/331
+    """
     @field_validator("coordinateTransformations", mode="before")
     def _ensure_scale_translation(
         transforms_obj: object,
     ) -> object:
-        """
+        '''
         Ensures that
         - a single transformation is present
         - such transformation is a scale
         - if such transformation is a sequence, ensure that its length is 2 and that
           the first transformation is a scale and the second a translation
-        """
+        '''
         # the class below simplifies error messages since we are in a before validator;
         # see more: ome_zarr_models.common.multiscales.Dataset
 
@@ -279,7 +279,10 @@ class Dataset(BaseAttrs):
             raise ValueError(msg)
 
         return transforms_obj
+    """
 
+    # TODO: re-write this to not assume scale and translation transforms
+    '''
     @field_validator("coordinateTransformations", mode="after")
     @classmethod
     def _ensure_transform_dimensionality(
@@ -305,3 +308,4 @@ class Dataset(BaseAttrs):
                     f"Got {first.ndim} and {second.ndim}."
                 )
         return transforms
+    '''
