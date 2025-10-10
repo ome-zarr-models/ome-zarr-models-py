@@ -114,6 +114,12 @@ class Translation(Transform):
         else:
             raise RuntimeError("Both self.translation and self.path are None")
 
+    @model_validator(mode="after")
+    def check_metadata_set(self) -> Self:
+        if self.translation is None and self.path is None:
+            raise ValueError("One of 'translation' or 'path' must be given")
+        return self
+
 
 class Scale(Transform):
     """Scale transformation."""
@@ -143,6 +149,12 @@ class Scale(Transform):
         """
         return len(self.scale_vector)
 
+    @model_validator(mode="after")
+    def check_metadata_set(self) -> Self:
+        if self.scale is None and self.path is None:
+            raise ValueError("One of 'scale' or 'path' must be given")
+        return self
+
 
 class Affine(Transform):
     """Affine transform."""
@@ -166,6 +178,12 @@ class Affine(Transform):
         else:
             raise RuntimeError("Both self.affine and self.path are None")
 
+    @model_validator(mode="after")
+    def check_metadata_set(self) -> Self:
+        if self.affine is None and self.path is None:
+            raise ValueError("One of 'affine' or 'path' must be given")
+        return self
+
 
 class Rotation(Transform):
     """Rotation transform."""
@@ -188,6 +206,12 @@ class Rotation(Transform):
             )
         else:
             raise RuntimeError("Both self.rotation and self.path are None")
+
+    @model_validator(mode="after")
+    def check_metadata_set(self) -> Self:
+        if self.rotation is None and self.path is None:
+            raise ValueError("One of 'rotation' or 'path' must be given")
+        return self
 
 
 class Sequence(Transform):
