@@ -15,4 +15,4 @@ def test_no_parameters(transform_cls: type[Transform]) -> None:
     # Check that errors are raised with classes that require either parameters,
     # OR paths to a Zarr array with those parameters.
     with pytest.raises(ValidationError, match=r"One of .* or 'path' must be given"):
-        transform_cls()
+        transform_cls()  # type: ignore[call-arg]
