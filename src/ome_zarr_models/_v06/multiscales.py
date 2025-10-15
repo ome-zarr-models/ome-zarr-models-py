@@ -15,6 +15,7 @@ import ome_zarr_models._v06.coordinate_transforms as transforms
 from ome_zarr_models._v06.coordinate_transforms import (
     AnyTransform,
     CoordinateSystem,
+    Identity,
     Scale,
     Sequence,
     # Transform,
@@ -88,6 +89,8 @@ class Multiscale(BaseAttrs):
             )
         return data
 
+    # TODO: re-implement without assuming type of transform
+    '''
     @field_validator("datasets", mode="after")
     @classmethod
     def _ensure_same_dimensionality_for_all_datasets(
@@ -113,6 +116,7 @@ class Multiscale(BaseAttrs):
                 f"dimensionality. Got {dims}."
             )
         return datasets
+    '''
 
     @model_validator(mode="after")
     def _ensure_axes_top_transforms(data: Self) -> Self:
@@ -150,6 +154,8 @@ class Multiscale(BaseAttrs):
                     raise ValueError(msg)
         return data
 
+    # TODO: possibly re-implement if the constraint for ordered scales still exists
+    '''
     @field_validator("datasets", mode="after")
     @classmethod
     def _ensure_ordered_scales(cls, datasets: list[Dataset]) -> list[Dataset]:
@@ -178,6 +184,7 @@ class Multiscale(BaseAttrs):
                     f"than dataset {i + 1} (scales = {s2})."
                 )
         return datasets
+    '''
 
     @model_validator(mode="after")
     def check_cs_input_output(self) -> Self:
@@ -313,10 +320,10 @@ class Dataset(BaseAttrs):
                     f"transform. Got {sequence_transforms[1]} instead."
                 )
                 raise ValueError(msg)
-        elif not isinstance(transform, Scale):
+        elif not isinstance(transform, Scale | Identity):
             msg = (
                 "The first transformation in `coordinateTransformations` "
-                "must either be a `Scale` transform or a `Sequence` transform. "
+                "must either be a Scale, Identity, or Sequence transform. "
                 f"Got {transform} instead."
             )
             raise ValueError(msg)

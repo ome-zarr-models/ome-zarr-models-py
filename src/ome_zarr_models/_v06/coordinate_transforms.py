@@ -83,7 +83,7 @@ class MapAxis(Transform):
     """Axis mapping transform."""
 
     type: Literal["mapAxis"] = "mapAxis"
-    mapAxis: dict[str, str]
+    mapAxis: tuple[int, ...]
 
 
 class Translation(Transform):
