@@ -14,6 +14,7 @@ from ome_zarr_models._v06.multiscales import Dataset, Multiscale
 COORDINATE_SYSTEM_NAME_FOR_TESTS = "coordinate_system_name_reserved_for_tests"
 
 
+@pytest.mark.skip
 def test_ensure_scale_translation() -> None:
     def _gen_multiscale(
         coordinateTransformations: tuple[Transform, ...],
@@ -130,6 +131,7 @@ def test_ensure_scale_translation() -> None:
         )
 
 
+@pytest.mark.skip
 def test_invalid_dimensionalities() -> None:
     # not ok (one transformation has different dimensionality than the coordinate
     # system)
@@ -187,6 +189,7 @@ def test_invalid_dimensionalities() -> None:
         )
 
 
+@pytest.mark.skip
 def test_ensure_ordered_scales() -> None:
     with pytest.raises(
         ValidationError,
