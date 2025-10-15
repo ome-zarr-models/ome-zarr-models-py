@@ -6,6 +6,7 @@ from ome_zarr_models._v06.coordinate_transforms import (
     CoordinateSystem,
     Scale,
     Sequence,
+    Translation,
 )
 from ome_zarr_models._v06.image import Image, ImageAttrs
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
@@ -155,7 +156,7 @@ def test_image_new() -> None:
         array_specs=array_specs,
         paths=["0", "1"],
         scales=[[1, 1], [2, 2]],
-        translations=[None, None],
+        translations=[[0, 0], [1, 1]],
         name="my_image",
         output_coord_transform=Scale(
             scale=(
@@ -261,6 +262,14 @@ def test_image_new() -> None:
                                         scale=(1.0, 1.0),
                                         path=None,
                                     ),
+                                    Translation(
+                                        type="translation",
+                                        input=None,
+                                        output=None,
+                                        name=None,
+                                        translation=(0.0, 0.0),
+                                        path=None,
+                                    ),
                                 ),
                             ),
                         ),
@@ -280,6 +289,14 @@ def test_image_new() -> None:
                                         output=None,
                                         name=None,
                                         scale=(2.0, 2.0),
+                                        path=None,
+                                    ),
+                                    Translation(
+                                        type="translation",
+                                        input=None,
+                                        output=None,
+                                        name=None,
+                                        translation=(1.0, 1.0),
                                         path=None,
                                     ),
                                 ),
