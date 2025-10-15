@@ -1,14 +1,13 @@
 from typing import Self
 
 import zarr
-from pydantic import Field, PrivateAttr
+from pydantic import Field
 
 from ome_zarr_models._utils import _from_zarr_v3
 from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs
 from ome_zarr_models._v06.coordinate_transforms import (
     AnyTransform,
     CoordinateSystem,
-    Transform,
 )
 from ome_zarr_models._v06.image import Image
 
@@ -34,12 +33,6 @@ class Container(BaseGroupv06[ContainerAttrs]):
     along with additional coordinate transformations and coordinate systems.
     """
 
-    _images: list[Image] = PrivateAttr(default=[])
-    # List of all coordinate systems found within this container
-    _all_systems: list[CoordinateSystem] = PrivateAttr(default=[])
-    # List of all coordinate transformations found within this container
-    _all_transforms: list[AnyTransform] = PrivateAttr(default=[])
-
     @classmethod
     def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
         """
@@ -50,21 +43,4 @@ class Container(BaseGroupv06[ContainerAttrs]):
         group : zarr.Group
             A Zarr group that has valid OME-Zarr image metadata.
         """
-        self = _from_zarr_v3(group, cls, ContainerAttrs)
-        self._all_systems.extend(self.ome_attributes.coordinateSystems)
-        self._all_transforms.extend(self.ome_attributes.coordinateTransformations)
-        return self
-
-    @property
-    def coordinate_systems(self) -> tuple[CoordinateSystem, ...]:
-        """
-        All coordinate systems in this container.
-        """
-        return tuple(self._all_systems)
-
-    @property
-    def coordinate_transforms(self) -> tuple[Transform, ...]:
-        """
-        All coordinate transformations in this container.
-        """
-        return tuple(self._all_transforms)
+        return _from_zarr_v3(group, cls, ContainerAttrs)
