@@ -284,10 +284,10 @@ class Affine(Transform):
 
     @property
     def ndim(self) -> int:
-        return len(self.affine_matrix)
+        return len(self.translation_vector)
 
     @property
-    def affine_matrix(self) -> tuple[tuple[float, ...], ...]:
+    def affine_array(self) -> tuple[tuple[float, ...], ...]:
         if self.affine is not None:
             return self.affine
         elif self.path is not None:
@@ -297,6 +297,14 @@ class Affine(Transform):
         else:
             raise RuntimeError("Both self.affine and self.path are None")
 
+    @property
+    def translation_vector(self) -> tuple[float, ...]:
+        return tuple(row[-1] for row in self.affine_array)
+
+    @property
+    def matrix(self) -> tuple[tuple[float, ...], ...]:
+        return tuple(row[:-1] for row in self.affine_array)
+
     @model_validator(mode="after")
     def check_metadata_set(self) -> Self:
         if self.affine is None and self.path is None:
@@ -304,15 +312,13 @@ class Affine(Transform):
         return self
 
     def _transform_point(self, point: Point) -> Point:
-        matrix = [row[:-1] for row in self.affine_matrix]
-        translation = [row[-1] for row in self.affine_matrix]
         point_out = [0.0 for _ in point.coordinates]
 
         for i in range(len(point_out)):
             point_out[i] = sum(
-                m * p for m, p in zip(matrix[i], point.coordinates, strict=True)
+                m * p for m, p in zip(self.matrix[i], point.coordinates, strict=True)
             )
-            point_out[i] += translation[i]
+            point_out[i] += self.translation_vector[i]
 
         return Point(
             coordinates=point_out,
