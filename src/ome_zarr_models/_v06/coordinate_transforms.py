@@ -13,22 +13,16 @@ class Point(BaseModel):
     A single point.
 
     This can be used with the transformations defined in this module.
-    A point is defined by a mapping from axes names to coordinate values
+    A point is defined as an ordered list of coordinate values
     (`coordinates`), and the coordinate system it is in (`coordinate_system`).
     """
 
-    coordinates: dict[str, float] = Field(
-        ..., description="Mapping from axis name to coordinate value"
-    )
+    coordinates: tuple[float, ...] = Field(..., description="Coordinate values")
     coordinate_system: str
 
     @property
     def ndim(self) -> int:
         return len(self.coordinates)
-
-    @property
-    def axes(self) -> tuple[str, ...]:
-        return tuple(self.coordinates.keys())
 
 
 class Axis(BaseAttrs):
@@ -164,18 +158,15 @@ class MapAxis(Transform):
     mapAxis: tuple[int, ...]
 
     def _transform_point(self, point: Point) -> Point:
-        coordinates = copy.deepcopy(point.coordinates)
-        new_coordinates = {
-            new_axis: coordinates[old_axis]
-            for old_axis, new_axis in self.mapAxis.items()
-        }
-        for axis in new_coordinates:
-            coordinates[axis] = new_coordinates[axis]
-        return Point(coordinates=coordinates, coordinate_system=self.output)
+        return Point(
+            coordinates=tuple(point.coordinates[i] for i in self.mapAxis),
+            coordinate_system=self.output,
+        )
 
     def get_inverse(self) -> "MapAxis":
+        axis_map = dict(zip(range(self.ndim), self.mapAxis, strict=True))
         return MapAxis(
-            **self._inverse_kwargs, mapAxis={o: i for i, o in self.mapAxis.items()}
+            **self._inverse_kwargs, mapAxis=tuple(axis_map[i] for i in range(self.ndim))
         )
 
     @property
@@ -220,12 +211,10 @@ class Translation(Transform):
     def _transform_point(self, point: Point) -> Point:
         new_coordinates = tuple(
             p + t
-            for p, t in zip(
-                point.coordinates.values(), self.translation_vector, strict=True
-            )
+            for p, t in zip(point.coordinates, self.translation_vector, strict=True)
         )
         return Point(
-            coordinates=dict(zip(point.coordinates, new_coordinates, strict=True)),
+            coordinates=new_coordinates,
             coordinate_system=self.output,
         )
 
@@ -272,11 +261,10 @@ class Scale(Transform):
 
     def _transform_point(self, point: Point) -> Point:
         new_coordinates = tuple(
-            p * s
-            for p, s in zip(point.coordinates.values(), self.scale_vector, strict=True)
+            p * s for p, s in zip(point.coordinates, self.scale_vector, strict=True)
         )
         return Point(
-            coordinates=dict(zip(point.axes, new_coordinates, strict=True)),
+            coordinates=new_coordinates,
             coordinate_system=self.output,
         )
 
@@ -316,19 +304,18 @@ class Affine(Transform):
         return self
 
     def _transform_point(self, point: Point) -> Point:
-        point_tuple = tuple(point.coordinates.values())
         matrix = [row[:-1] for row in self.affine_matrix]
         translation = [row[-1] for row in self.affine_matrix]
-        point_out = [0.0 for _ in point_tuple]
+        point_out = [0.0 for _ in point.coordinates]
 
         for i in range(len(point_out)):
             point_out[i] = sum(
-                m * p for m, p in zip(matrix[i], point_tuple, strict=True)
+                m * p for m, p in zip(matrix[i], point.coordinates, strict=True)
             )
             point_out[i] += translation[i]
 
         return Point(
-            coordinates=dict(zip(point.axes, point_out, strict=True)),
+            coordinates=point_out,
             coordinate_system=self.output,
         )
 

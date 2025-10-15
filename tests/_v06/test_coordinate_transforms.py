@@ -56,10 +56,10 @@ def test_transform_point(
     # Set the input/output coordinate system names
     transform = transform.model_copy(update=coord_sys_kwargs)
     actual_point = transform.transform_point(
-        Point(coordinates={"x": 0, "y": 1, "z": 2}, coordinate_system="input_system")
+        Point(coordinates=(0, 1, 2), coordinate_system="input_system")
     )
     assert actual_point == Point(
-        coordinates=dict(zip(["x", "y", "z"], expected_point, strict=True)),
+        coordinates=expected_point,
         coordinate_system="output_system",
     )
 
@@ -81,10 +81,10 @@ def test_inverse_transform_point(
     # Set the input/output coordinate system names
     transform = transform.model_copy(update=coord_sys_kwargs)
     actual_point = transform.get_inverse().transform_point(
-        Point(coordinates={"x": 0, "y": 1, "z": 2}, coordinate_system="output_system")
+        Point(coordinates=(0, 1, 2), coordinate_system="output_system")
     )
     assert actual_point == Point(
-        coordinates=dict(zip(["x", "y", "z"], expected_point, strict=True)),
+        coordinates=expected_point,
         coordinate_system="input_system",
     )
 
@@ -107,9 +107,7 @@ def test_affine_dimension_mismatch() -> None:
     ):
         t.transform_point(
             Point(
-                coordinates={
-                    "x": 0,
-                },
+                coordinates=(0,),
                 coordinate_system="input_system",
             )
         )
