@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import typing
 from typing import Self
 
 from pydantic import (
@@ -10,6 +11,7 @@ from pydantic import (
     model_validator,
 )
 
+import ome_zarr_models._v06.coordinate_transforms as transforms
 from ome_zarr_models._v06.coordinate_transforms import (
     AnyTransform,
     CoordinateSystem,
@@ -197,7 +199,8 @@ class Multiscale(BaseAttrs):
             # https://imagesc.zulipchat.com/#narrow/channel/469152-ome-zarr-models-py/topic/validating.20paths
             if transformation.input not in cs_names:
                 raise ValueError(
-                    "Invalid input in coordinate transformation: "
+                    "Invalid input in coordinate transformation "
+                    f"'{transformation.name}': "
                     f"{transformation.input}. Must be one of {cs_names}."
                 )
 
@@ -221,10 +224,48 @@ class Dataset(BaseAttrs):
     # smallest using scale metadata?
     path: str
     coordinateTransformations: tuple[AnyTransform, ...] = Field(
-        ..., min_length=1, max_length=1
+        ..., min_length=1, max_length=2
     )
 
-    # TODO: introduce a .build(...) method, similar to the one in v05
+    @classmethod
+    def build(
+        cls,
+        *,
+        path: str,
+        scale: typing.Sequence[float],
+        translation: typing.Sequence[float] | None,
+        coord_sys_output_name: str,
+    ) -> Self:
+        """
+        Construct a `Dataset`.
+
+        Parameters
+        ----------
+        path :
+            Path to Zarr array.
+        scale :
+            Scale factors for this Dataset. These should be set so the output voxel size
+            matches the highest resolution dataset in the multiscales.
+        translation :
+            A translation to apply. This is applied *after* the scaling.
+        coord_sys_output_name :
+            The name of the output coordinate system after this dataset is
+            scaled and translated.
+        """
+        transform = transforms.Sequence(
+            input=path,
+            output=coord_sys_output_name,
+            transformations=[transforms.Scale(scale=scale)],
+        )
+        if translation is not None:
+            transform = transform.add_transform(
+                transforms.Translation(translation=translation)
+            )
+        print(transform)
+        return cls(
+            path=path,
+            coordinateTransformations=(transform,),
+        )
 
     # the before validation is used to simplify the error messages
     @field_validator("coordinateTransformations", mode="before")
@@ -251,26 +292,28 @@ class Dataset(BaseAttrs):
         if isinstance(transform, Sequence):
             check_length(
                 transform.transformations,
-                valid_lengths=[2],
+                valid_lengths=[1, 2],
                 variable_name="transform.transforms (i.e. transformations composing "
                 "the sequence)",
             )
-            first, second = transform.transformations
-            if not isinstance(first, Scale):
+            sequence_transforms = transform.transformations
+            if not isinstance(sequence_transforms[0], Scale):
                 msg = (
                     "When the first (and only) element in `coordinateTransformations`"
                     " is a `Sequence`, the first element must be a `Scale` transform. "
-                    f"Got {first} instead."
+                    f"Got {sequence_transforms[0]} instead."
                 )
                 raise ValueError(msg)
-            if second.type != "translation":
+            if len(sequence_transforms) == 2 and not isinstance(
+                sequence_transforms[1], Translation
+            ):
                 msg = (
                     "When the first (and only) element in `coordinateTransformations`"
                     " is a `Sequence`, the second element must be a `Translation` "
-                    f"transform. Got {second} instead."
+                    f"transform. Got {sequence_transforms[1]} instead."
                 )
                 raise ValueError(msg)
-        elif transform.type != "scale":
+        elif not isinstance(transform, Scale):
             msg = (
                 "The first transformation in `coordinateTransformations` "
                 "must either be a `Scale` transform or a `Sequence` transform. "
@@ -292,16 +335,24 @@ class Dataset(BaseAttrs):
         """
         # this test will not be needed anymore when
         # https://github.com/ome-zarr-models/ome-zarr-models-py/issues/188 is addressed
-        maybe_sequence = transforms[0]
-        if isinstance(maybe_sequence, Sequence):
-            first, second = maybe_sequence.transformations
-            if (
-                isinstance(first, Scale)
-                and isinstance(second, Translation)
-                and first.ndim != second.ndim
-            ):
-                raise ValueError(
-                    "The length of the scale and translation vectors must be the same. "
-                    f"Got {first.ndim} and {second.ndim}."
-                )
+        if len(transforms) == 2:
+            scale, translation = transforms
+        elif (
+            len(transforms) == 1
+            and isinstance(transforms[0], Sequence)
+            and len(transforms[0].transformations) == 2
+        ):
+            scale, translation = transforms[0].transformations
+        else:
+            return transforms
+
+        if (
+            isinstance(scale, Scale)
+            and isinstance(translation, Translation)
+            and scale.ndim != translation.ndim
+        ):
+            raise ValueError(
+                "The length of the scale and translation vectors must be the same. "
+                f"Got {scale.ndim} and {translation.ndim}."
+            )
         return transforms

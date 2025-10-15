@@ -1,14 +1,20 @@
+from collections.abc import Sequence
 from typing import Self
 
 # Import needed for pydantic type resolution
 import pydantic_zarr  # noqa: F401
 import zarr
 import zarr.errors
-from pydantic import Field, model_validator
+from pydantic import Field, JsonValue, model_validator
 from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
 from ome_zarr_models._utils import _from_zarr_v3
-from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs
+from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs, BaseZarrAttrs
+from ome_zarr_models._v06.coordinate_transforms import (
+    Axis,
+    CoordinateSystem,
+    Transform,
+)
 from ome_zarr_models._v06.labels import Labels
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
 
@@ -54,23 +60,21 @@ class Image(BaseGroupv06[ImageAttrs]):
         """
         return _from_zarr_v3(group, cls, ImageAttrs)
 
-    """TODO: adapt this for RFC 5
     @classmethod
     def new(
         cls,
         *,
         array_specs: Sequence[AnyArraySpec],
         paths: Sequence[str],
-        axes: Sequence[Axis],
         scales: Sequence[Sequence[float]],
         translations: Sequence[Sequence[float] | None],
-        name: str | None = None,
+        name: str,
         multiscale_type: str | None = None,
         metadata: JsonValue | None = None,
-        global_scale: Sequence[float] | None = None,
-        global_translation: Sequence[float] | None = None,
+        output_coord_transform: Transform,
+        output_coord_system: CoordinateSystem,
     ) -> "Image":
-
+        """
         Create a new `Image` from a sequence of multiscale arrays
         and spatial metadata.
 
@@ -94,17 +98,20 @@ class Image(BaseGroupv06[ImageAttrs]):
             Optional.
         metadata :
             Arbitrary metadata to store in the multiscales group.
-        global_scale :
-            A global scale value for each axis of every array.
-        global_translation :
-            A global translation value for each axis of every array.
+        output_coord_transform :
+            A coordinate transform that maps from the full resolution array
+            (defined by zero translation, and unity scale factor) into the output
+            coordinate system.
+        output_coord_system :
+            The output coordinate system after the array scales and translations, and
+            the global scales and translations have been applied.
 
         Notes
         -----
         This class does not store or copy any array data. To save array data,
         first write this class to a Zarr store, and then write data to the Zarr
         arrays in that store.
-
+        """
         if len(array_specs) != len(paths):
             raise ValueError(
                 f"Length of arrays (got {len(array_specs)=}) must be the same as "
@@ -114,16 +121,6 @@ class Image(BaseGroupv06[ImageAttrs]):
             "/" + key.lstrip("/"): arr
             for key, arr in zip(paths, array_specs, strict=True)
         }
-
-        if global_scale is None and global_translation is None:
-            global_transform = None
-        elif global_scale is None:
-            raise ValueError(
-                "If global_translation is specified, "
-                "global_scale must also be specified."
-            )
-        else:
-            global_transform = _build_transforms(global_scale, global_translation)
 
         if len(scales) != len(paths):
             raise ValueError(
@@ -135,15 +132,36 @@ class Image(BaseGroupv06[ImageAttrs]):
                 f"Length of 'translations' ({len(translations)}) does not match "
                 f"length of 'paths' ({len(paths)})"
             )
+        array_coordinate_system = CoordinateSystem(
+            name=f"{name}_array_coords",
+            axes=tuple(
+                Axis(name=axis.name, type="array", discrete=True)
+                for axis in output_coord_system.axes
+            ),
+        )
+        output_coord_transform = output_coord_transform.model_copy(
+            update={
+                "input": array_coordinate_system.name,
+                "output": output_coord_system.name,
+            }
+        )
         multimeta = Multiscale(
-            axes=tuple(axes),
             datasets=tuple(
-                Dataset.build(path=path, scale=scale, translation=translation)
+                Dataset.build(
+                    path=path,
+                    scale=scale,
+                    translation=translation,
+                    coord_sys_output_name=f"{name}_array_coords",
+                )
                 for path, scale, translation in zip(
                     paths, scales, translations, strict=True
                 )
             ),
-            coordinateTransformations=global_transform,
+            coordinateTransformations=(output_coord_transform,),
+            coordinateSystems=(
+                array_coordinate_system,
+                output_coord_system,
+            ),
             metadata=metadata,
             name=name,
             type=multiscale_type,
@@ -159,7 +177,6 @@ class Image(BaseGroupv06[ImageAttrs]):
                 )
             ),
         )
-    """
 
     @model_validator(mode="after")
     def _check_arrays_compatible(self) -> Self:
