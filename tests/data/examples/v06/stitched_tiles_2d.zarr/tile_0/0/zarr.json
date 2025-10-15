@@ -6,17 +6,11 @@
       "separator": "/"
     }
   },
-  "shape": [
-    300,
-    372
-  ],
+  "shape": [300, 372],
   "chunk_grid": {
     "name": "regular",
     "configuration": {
-      "chunk_shape": [
-        300,
-        372
-      ]
+      "chunk_shape": [300, 372]
     }
   },
   "codecs": [
