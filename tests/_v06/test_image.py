@@ -166,8 +166,8 @@ def test_image_new() -> None:
         output_coord_system=CoordinateSystem(
             name="my_image_coords",
             axes=(
-                Axis(name="y", type="space", unit="micrometer"),
-                Axis(name="x", type="space", unit="micrometer"),
+                Axis(name="y", type="space", unit="micrometer", discrete=False),
+                Axis(name="x", type="space", unit="micrometer", discrete=False),
             ),
         ),
     )
@@ -229,14 +229,14 @@ def test_image_new() -> None:
                             Axis(
                                 name="y",
                                 type="space",
-                                discrete=None,
+                                discrete=False,
                                 unit="micrometer",
                                 longName=None,
                             ),
                             Axis(
                                 name="x",
                                 type="space",
-                                discrete=None,
+                                discrete=False,
                                 unit="micrometer",
                                 longName=None,
                             ),
