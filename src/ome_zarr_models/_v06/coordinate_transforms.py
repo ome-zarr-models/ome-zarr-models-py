@@ -1,4 +1,4 @@
-from typing import Literal, Self
+from typing import Annotated, Literal, Self
 
 from pydantic import Field, JsonValue, field_validator, model_validator
 
@@ -263,7 +263,7 @@ class ByDimension(Transform):
     transformations: tuple["AnyTransform", ...]
 
 
-AnyTransform = (
+AnyTransform = Annotated[
     Identity
     | MapAxis
     | Translation
@@ -275,5 +275,6 @@ AnyTransform = (
     | Coordinates
     | Inverse
     | Bijection
-    | ByDimension
-)
+    | ByDimension,
+    Field(discriminator="type"),
+]
