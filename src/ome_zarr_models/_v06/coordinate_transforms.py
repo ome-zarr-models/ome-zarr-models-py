@@ -220,6 +220,14 @@ class Sequence(Transform):
     type: Literal["sequence"] = "sequence"
     transformations: tuple["AnyTransform", ...]
 
+    def add_transform(self, transform: "AnyTransform") -> "Sequence":
+        """
+        Create a new sequence by adding a transform to the end of this one.
+        """
+        return self.model_copy(
+            update={"transformations": (*self.transformations, transform)}
+        )
+
 
 class Displacements(Transform):
     """Displacement field transform."""
