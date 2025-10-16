@@ -23,7 +23,11 @@ def get_all_zarrs(directory: Path) -> list[Path]:
     return sorted(zarrs)
 
 
-@pytest.mark.parametrize("zarr_path", get_all_zarrs(TEST_DATA_PATH))
+@pytest.mark.parametrize(
+    "zarr_path",
+    get_all_zarrs(TEST_DATA_PATH),
+    ids=[str(p.relative_to(TEST_DATA_PATH)) for p in get_all_zarrs(TEST_DATA_PATH)],
+)
 def test_basic(zarr_path: Path) -> None:
     """
     Test loading OME-Zarr datasets with transforms.
@@ -37,12 +41,9 @@ def test_basic(zarr_path: Path) -> None:
     if zarr_path_relative in [
         Path("2d/basic_binary/translationParams.zarr"),
         Path("2d/simple/affineParams.zarr"),
-        Path("2d/simple/multiscale.zarr"),
         Path("2d/simple/rotationParams.zarr"),
         Path("3d/axis_dependent/mapAxis.zarr"),
-        Path("3d/nonlinear/invCoordinates.zarr"),
         Path("3d/simple/affineParams.zarr"),
-        Path("3d/simple/affine_multiscale.zarr"),
         Path("user_stories/SCAPE.zarr"),
         Path("user_stories/image_registration_3d.zarr"),
         Path("user_stories/lens_correction.zarr"),
