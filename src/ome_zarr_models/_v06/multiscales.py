@@ -1,37 +1,30 @@
 from __future__ import annotations
 
-from collections import Counter
-from typing import TYPE_CHECKING, Any, Self
+import typing
+from typing import Self
 
 from pydantic import (
     BaseModel,
     Field,
     JsonValue,
-    SerializerFunctionWrapHandler,
     field_validator,
-    model_serializer,
     model_validator,
 )
 
-from ome_zarr_models._v06.axes import Axes
-from ome_zarr_models.base import BaseAttrs
-from ome_zarr_models.common.coordinate_transformations import (
-    Transform,
-    ValidTransform,
-    VectorScale,
-    VectorTransform,
-    _build_transforms,
-    _ndim,
+import ome_zarr_models._v06.coordinate_transforms as transforms
+from ome_zarr_models._v06.coordinate_transforms import (
+    AnyTransform,
+    CoordinateSystem,
+    Identity,
+    Scale,
+    Sequence,
+    # Transform,
+    Translation,
 )
+from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.validation import (
     check_length,
-    check_ordered_scales,
-    unique_items_validator,
 )
-
-if TYPE_CHECKING:
-    from collections.abc import Sequence
-
 
 __all__ = ["Dataset", "Multiscale"]
 
@@ -44,32 +37,86 @@ class Multiscale(BaseAttrs):
     An element of multiscales metadata.
     """
 
-    axes: Axes
+    coordinateSystems: tuple[CoordinateSystem, ...] = Field(..., min_length=1)
     datasets: tuple[Dataset, ...] = Field(..., min_length=1)
-    coordinateTransformations: ValidTransform | None = None
+    coordinateTransformations: tuple[AnyTransform, ...] | None = None
     metadata: JsonValue = None
     name: JsonValue | None = None
     type: JsonValue = None
-
-    @model_serializer(mode="wrap")
-    def _serialize(
-        self,
-        serializer: SerializerFunctionWrapHandler,
-    ) -> dict[str, Any]:
-        d: dict[str, Any] = serializer(self)
-        if self.coordinateTransformations is None:
-            d.pop("coordinateTransformations", None)
-
-        return d
 
     @property
     def ndim(self) -> int:
         """
         Dimensionality of the data described by this metadata.
 
-        Determined by the length of the axes attribute.
+        Determined by the number of dimensions of the output coordinate system.
         """
-        return len(self.axes)
+        output_cs_name = self.datasets[0].coordinateTransformations[0].output
+        for cs in self.coordinateSystems:
+            if cs.name == output_cs_name:
+                return cs.ndim
+
+        raise RuntimeError(
+            f"Did not find coordinate system named '{output_cs_name}' in "
+            "multiscales coordinate systems."
+        )
+
+    @property
+    def default_coordinate_system(self) -> CoordinateSystem:
+        """
+        Property returning the default coordinate system (i.e. the first entry).
+
+        The default coordinate system should be used for viewing and processing unless
+        a use case dictates otherwise
+        """
+        return self.coordinateSystems[0]
+
+    @model_validator(mode="after")
+    def _ensure_same_output_cs_for_all_datasets(data: Self) -> Self:
+        """
+        Ensure that all datasets have the same output coordinate system.
+
+        Also ensures that the dimensionality of each dataset match the one of the
+        output coordinate system.
+        """
+        output_cs_names = {
+            dataset.coordinateTransformations[0].output for dataset in data.datasets
+        }
+        if len(output_cs_names) > 1:
+            raise ValueError(
+                "All `Dataset` instances of a `Multiscale`  must have the same output "
+                f"coordinate system. Got {output_cs_names}."
+            )
+        return data
+
+    # TODO: re-implement without assuming type of transform
+    '''
+    @field_validator("datasets", mode="after")
+    @classmethod
+    def _ensure_same_dimensionality_for_all_datasets(
+        cls, datasets: list[Dataset]
+    ) -> list[Dataset]:
+        """
+        Ensure that all datasets have the same dimensionality
+        """
+        dims = []
+        for dataset in datasets:
+            transformation = dataset.coordinateTransformations[0]
+            if isinstance(transformation, Scale):
+                dim = transformation.ndim
+            else:
+                assert isinstance(transformation, Sequence) and isinstance(
+                    transformation.transformations[0], Scale
+                )
+                dim = transformation.transformations[0].ndim
+            dims.append(dim)
+        if len(set(dims)) > 1:
+            raise ValueError(
+                "All `Dataset` instances of a `Multiscale` must have the same "
+                f"dimensionality. Got {dims}."
+            )
+        return datasets
+    '''
 
     @model_validator(mode="after")
     def _ensure_axes_top_transforms(data: Self) -> Self:
@@ -94,104 +141,84 @@ class Multiscale(BaseAttrs):
         """
         Ensure that the length of the axes matches the dimensionality of the transforms
         """
-        self_ndim = len(data.axes)
         for ds_idx, ds in enumerate(data.datasets):
             for tx in ds.coordinateTransformations:
-                if hasattr(tx, "ndim") and self_ndim != tx.ndim:
+                if hasattr(tx, "ndim") and data.ndim != tx.ndim:
                     msg = (
                         f"The length of axes does not match the dimensionality of "
                         f"the {tx.type} transform in "
                         f"datasets[{ds_idx}].coordinateTransformations. "
-                        f"Got {self_ndim} axes, but the {tx.type} transform has "
+                        f"Got {data.ndim} axes, but the {tx.type} transform has "
                         f"dimensionality {tx.ndim}"
                     )
                     raise ValueError(msg)
         return data
 
+    # TODO: possibly re-implement if the constraint for ordered scales still exists
+    '''
     @field_validator("datasets", mode="after")
     @classmethod
     def _ensure_ordered_scales(cls, datasets: list[Dataset]) -> list[Dataset]:
         """
         Make sure datasets are ordered from highest resolution to smallest.
         """
-        scale_transforms = [d.coordinateTransformations[0] for d in datasets]
-        # Only handle scales given in metadata, not in files
-        scale_vector_transforms = [
-            t for t in scale_transforms if isinstance(t, VectorScale)
-        ]
-        check_ordered_scales(scale_vector_transforms)
+        scale_transforms: list[Scale] = []
+        for dataset in datasets:
+            (transform,) = dataset.coordinateTransformations
+            if isinstance(transform, Scale):
+                scale_transforms.append(transform)
+            else:
+                assert isinstance(transform, Sequence) and isinstance(
+                    transform.transformations[0], Scale
+                )
+                scale = transform.transformations[0]
+                scale_transforms.append(scale)
+
+        scales = [s.scale_vector for s in scale_transforms]
+        for i in range(len(scales) - 1):
+            s1, s2 = scales[i], scales[i + 1]
+            is_ordered = all(s1[j] <= s2[j] for j in range(len(s1)))
+            if not is_ordered:
+                raise ValueError(
+                    f"Dataset {i} has a lower resolution (scales = {s1}) "
+                    f"than dataset {i + 1} (scales = {s2})."
+                )
         return datasets
+    '''
 
-    @field_validator("axes", mode="after")
-    @classmethod
-    def _ensure_axis_length(cls, axes: Axes) -> Axes:
+    @model_validator(mode="after")
+    def check_cs_input_output(self) -> Self:
+        """Check input and output for each coordinate system.
+
+        The input and output must either be a path relative to the current file in the
+        zarr store or must be a name that is present in the list of coordinate systems.
         """
-        Ensures that there are between 2 and 5 axes (inclusive)
-        """
-        check_length(axes, valid_lengths=VALID_NDIM, variable_name="axes")
-        return axes
+        # TODO: this test is only for coordinate transformations that are not part of a
+        #  dataset. A second test for datasets should be added.
+        if self.coordinateTransformations is None:
+            return self
+        cs_names = {cs.name for cs in self.coordinateSystems}
 
-    @field_validator("axes", mode="after")
-    @classmethod
-    def _ensure_axis_types(cls, axes: Axes) -> Axes:
-        """
-        Ensures that the following conditions are true:
+        # check input
+        for transformation in self.coordinateTransformations:
+            # TODO: add support for the input coordinate system being equal to the path
+            #  of the array data. See more:
+            # https://imagesc.zulipchat.com/#narrow/channel/469152-ome-zarr-models-py/topic/validating.20paths
+            if transformation.input not in cs_names:
+                raise ValueError(
+                    "Invalid input in coordinate transformation "
+                    f"'{transformation.name}': "
+                    f"{transformation.input}. Must be one of {cs_names}."
+                )
 
-        - there are only 2 or 3 axes with type `space`
-        - the axes with type `space` are last in the list of axes
-        - there is only 1 axis with type `time`
-        - there is only 1 axis with type `channel`
-        - there is only 1 axis with a type that is not `space`, `time`, or `channel`
-        """
-        check_length(
-            [ax for ax in axes if ax.type == "space"],
-            valid_lengths=[2, 3],
-            variable_name="space axes",
-        )
-        check_length(
-            [ax for ax in axes if ax.type == "time"],
-            valid_lengths=[0, 1],
-            variable_name="time axes",
-        )
-        check_length(
-            [ax for ax in axes if ax.type == "channel"],
-            valid_lengths=[0, 1],
-            variable_name="channel axes",
-        )
-        check_length(
-            [ax for ax in axes if ax.type not in ["space", "time", "channel"]],
-            valid_lengths=[0, 1],
-            variable_name="custom axes",
-        )
-
-        axis_types = [ax.type for ax in axes]
-        type_census = Counter(axis_types)
-        num_spaces = type_census["space"]
-        if not all(a == "space" for a in axis_types[-num_spaces:]):
-            msg = (
-                f"All space axes must be at the end of the axes list. "
-                f"Got axes with order: {axis_types}."
-            )
-            raise ValueError(msg)
-
-        num_times = type_census["time"]
-        if num_times == 1 and axis_types[0] != "time":
-            msg = "Time axis must be at the beginning of axis list."
-            raise ValueError(msg)
-
-        return axes
-
-    @field_validator("axes", mode="after")
-    @classmethod
-    def _ensure_unique_axis_names(cls, axes: Axes) -> Axes:
-        """
-        Ensures that the names of the axes are unique.
-        """
-        try:
-            unique_items_validator(axis_names := [a.name for a in axes])
-        except ValueError:
-            raise ValueError(f"Axis names must be unique. Got {axis_names}") from None
-        return axes
+        # check output
+        for transformation in self.coordinateTransformations:
+            if transformation.output not in cs_names:
+                raise ValueError(
+                    "Invalid output in coordinate transformation: "
+                    f"{transformation.output}. Must be one of {cs_names}."
+                )
+        return self
 
 
 class Dataset(BaseAttrs):
@@ -203,60 +230,103 @@ class Dataset(BaseAttrs):
     # TODO: can we validate that the paths must be ordered from highest resolution to
     # smallest using scale metadata?
     path: str
-    coordinateTransformations: ValidTransform
+    coordinateTransformations: tuple[AnyTransform, ...] = Field(
+        ..., min_length=1, max_length=2
+    )
 
     @classmethod
     def build(
-        cls, *, path: str, scale: Sequence[float], translation: Sequence[float] | None
+        cls,
+        *,
+        path: str,
+        scale: typing.Sequence[float],
+        translation: typing.Sequence[float] | None,
+        coord_sys_output_name: str,
     ) -> Self:
         """
-        Construct a `Dataset` from a path, a scale, and a translation.
+        Construct a `Dataset`.
+
+        Parameters
+        ----------
+        path :
+            Path to Zarr array.
+        scale :
+            Scale factors for this Dataset. These should be set so the output voxel size
+            matches the highest resolution dataset in the multiscales.
+        translation :
+            A translation to apply. This is applied *after* the scaling.
+        coord_sys_output_name :
+            The name of the output coordinate system after this dataset is
+            scaled and translated.
         """
+        transform = transforms.Sequence(
+            input=path,
+            output=coord_sys_output_name,
+            transformations=[transforms.Scale(scale=scale)],
+        )
+        if translation is not None:
+            transform = transform.add_transform(
+                transforms.Translation(translation=translation)
+            )
+        print(transform)
         return cls(
             path=path,
-            coordinateTransformations=_build_transforms(
-                scale=scale, translation=translation
-            ),
+            coordinateTransformations=(transform,),
         )
 
+    # the before validation is used to simplify the error messages
     @field_validator("coordinateTransformations", mode="before")
     def _ensure_scale_translation(
         transforms_obj: object,
     ) -> object:
         """
         Ensures that
-        - there are only 1 or 2 transforms.
-        - the first element is a scale transformation
-        - the second element, if present, is a translation transform
+        - a single transformation is present
+        - such transformation is a scale
+        - if such transformation is a sequence, ensure that its length is 2 and that
+          the first transformation is a scale and the second a translation
         """
-        # This is used as a before validator - to help use, we use pydantic to first
-        # cast the input (which can in general anything) into a set of transformations.
-        # Then we check the transformations are valid.
-        #
-        # This is a bit convoluted, but we do it because the default pydantic error
-        # messages are a mess otherwise
+        # the class below simplifies error messages since we are in a before validator;
+        # see more: ome_zarr_models.common.multiscales.Dataset
 
         class Transforms(BaseModel):
-            transforms: list[Transform]
+            transforms: tuple[AnyTransform, ...]
 
         transforms = Transforms(transforms=transforms_obj).transforms
-        check_length(transforms, valid_lengths=[1, 2], variable_name="transforms")
+        check_length(transforms, valid_lengths=[1], variable_name="transforms")
 
-        maybe_scale = transforms[0]
-        if maybe_scale.type != "scale":
-            msg = (
-                "The first element of `coordinateTransformations` must be a scale "
-                f"transform. Got {maybe_scale} instead."
+        transform = transforms[0]
+        if isinstance(transform, Sequence):
+            check_length(
+                transform.transformations,
+                valid_lengths=[1, 2],
+                variable_name="transform.transforms (i.e. transformations composing "
+                "the sequence)",
             )
-            raise ValueError(msg)
-        if len(transforms) == 2:
-            maybe_trans = transforms[1]
-            if (maybe_trans.type) != "translation":
+            sequence_transforms = transform.transformations
+            if not isinstance(sequence_transforms[0], Scale):
                 msg = (
-                    "The second element of `coordinateTransformations` must be a "
-                    f"translation transform. Got {maybe_trans} instead."
+                    "When the first (and only) element in `coordinateTransformations`"
+                    " is a `Sequence`, the first element must be a `Scale` transform. "
+                    f"Got {sequence_transforms[0]} instead."
                 )
                 raise ValueError(msg)
+            if len(sequence_transforms) == 2 and not isinstance(
+                sequence_transforms[1], Translation
+            ):
+                msg = (
+                    "When the first (and only) element in `coordinateTransformations`"
+                    " is a `Sequence`, the second element must be a `Translation` "
+                    f"transform. Got {sequence_transforms[1]} instead."
+                )
+                raise ValueError(msg)
+        elif not isinstance(transform, Scale | Identity):
+            msg = (
+                "The first transformation in `coordinateTransformations` "
+                "must either be a Scale, Identity, or Sequence transform. "
+                f"Got {transform} instead."
+            )
+            raise ValueError(msg)
 
         return transforms_obj
 
@@ -264,21 +334,32 @@ class Dataset(BaseAttrs):
     @classmethod
     def _ensure_transform_dimensionality(
         cls,
-        transforms: ValidTransform,
-    ) -> ValidTransform:
+        transforms: tuple[AnyTransform, ...],
+    ) -> tuple[AnyTransform, ...]:
         """
-        Ensures that the elements in the input sequence define transformations with
-        identical dimensionality. If any of the transforms are defined with a path
-        instead of concrete values, then no validation will be performed and the
-        transforms will be returned as-is.
+        Ensures that the dimensionality of the scale and translation (when both present)
+        match
         """
-        vector_transforms = filter(lambda v: isinstance(v, VectorTransform), transforms)
-        ndims = tuple(map(_ndim, vector_transforms))  # type: ignore[arg-type]
-        ndims_set = set(ndims)
-        if len(ndims_set) > 1:
-            msg = (
-                "The transforms have inconsistent dimensionality. "
-                f"Got transforms with dimensionality = {ndims}."
+        # this test will not be needed anymore when
+        # https://github.com/ome-zarr-models/ome-zarr-models-py/issues/188 is addressed
+        if len(transforms) == 2:
+            scale, translation = transforms
+        elif (
+            len(transforms) == 1
+            and isinstance(transforms[0], Sequence)
+            and len(transforms[0].transformations) == 2
+        ):
+            scale, translation = transforms[0].transformations
+        else:
+            return transforms
+
+        if (
+            isinstance(scale, Scale)
+            and isinstance(translation, Translation)
+            and scale.ndim != translation.ndim
+        ):
+            raise ValueError(
+                "The length of the scale and translation vectors must be the same. "
+                f"Got {scale.ndim} and {translation.ndim}."
             )
-            raise ValueError(msg)
         return transforms
