@@ -12,7 +12,7 @@ from ome_zarr_models._v06.coordinate_transforms import (
 from ome_zarr_models._v06.image import Image
 
 
-class ContainerAttrs(BaseOMEAttrs):
+class CollectionAttrs(BaseOMEAttrs):
     coordinateTransformations: tuple[AnyTransform, ...] = Field(default=())
     coordinateSystems: tuple[CoordinateSystem, ...] = Field(default=())
 
@@ -25,7 +25,7 @@ class ContainerAttrs(BaseOMEAttrs):
         return paths
 
 
-class Container(BaseGroupv06[ContainerAttrs]):
+class Collection(BaseGroupv06[CollectionAttrs]):
     """
     An OME-Zarr container group.
 
@@ -36,11 +36,11 @@ class Container(BaseGroupv06[ContainerAttrs]):
     @classmethod
     def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
         """
-        Create an OME-Zarr image model from a `zarr.Group`.
+        Create an OME-Zarr collection from a `zarr.Group`.
 
         Parameters
         ----------
         group : zarr.Group
             A Zarr group that has valid OME-Zarr image metadata.
         """
-        return _from_zarr_v3(group, cls, ContainerAttrs)
+        return _from_zarr_v3(group, cls, CollectionAttrs)

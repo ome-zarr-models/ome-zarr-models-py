@@ -3,7 +3,7 @@ from pathlib import Path
 import zarr
 from pydantic_zarr.v3 import ArraySpec, GroupSpec
 
-from ome_zarr_models._v06.container import Container, ContainerAttrs
+from ome_zarr_models._v06.collection import Collection, CollectionAttrs
 from ome_zarr_models._v06.coordinate_transforms import (
     Axis,
     CoordinateSystem,
@@ -19,7 +19,7 @@ def test_load_container() -> None:
         / "v06"
         / "stitched_tiles_2d.zarr"
     )
-    container = Container.from_zarr(group)
+    container = Collection.from_zarr(group)
     assert container.members == {
         "tile_0": GroupSpec(
             zarr_format=3,
@@ -182,7 +182,7 @@ def test_load_container() -> None:
             },
         ),
     }
-    assert container.ome_attributes == ContainerAttrs(
+    assert container.ome_attributes == CollectionAttrs(
         version="0.6",
         coordinateTransformations=(
             Translation(
