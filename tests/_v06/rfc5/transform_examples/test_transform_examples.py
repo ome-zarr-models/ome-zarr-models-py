@@ -4,6 +4,7 @@ import pytest
 import zarr
 import zarr.errors
 
+from ome_zarr_models._v06.collection import Collection
 from ome_zarr_models._v06.image import Image
 
 TEST_DATA_PATH = Path(__file__).parent / "ngff-rfc5-coordinate-transformation-examples"
@@ -46,17 +47,15 @@ def test_basic(zarr_path: Path) -> None:
         Path("3d/simple/affineParams.zarr"),
         Path("user_stories/SCAPE.zarr"),
         Path("user_stories/image_registration_3d.zarr"),
-        Path("user_stories/lens_correction.zarr"),
-        Path("user_stories/stitched_tiles_2d.zarr"),
-        Path("user_stories/stitched_tiles_3d.zarr"),
     ]:
         pytest.xfail("Example currently failing")
     elif "byDimension" in str(zarr_path):
         pytest.xfail("byDimension not correctly implemented")
 
+    cls = Collection if zarr_path_relative.parts[0] == "user_stories" else Image
     zarr_group = zarr.open_group(zarr_path, mode="r")
     try:
-        Image.from_zarr(zarr_group)
+        cls.from_zarr(zarr_group)
     except NotImplementedError as e:
         if "from a Zarr array not yet implemented" in str(e):
             pytest.xfail(
