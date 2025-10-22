@@ -33,7 +33,7 @@
                 {
                   "type": "scale",
                   "output": "physical",
-                  "input": "0",
+                  "input": "/0",
                   "name": "tile_0 to physical",
                   "scale": [1, 1]
                 }

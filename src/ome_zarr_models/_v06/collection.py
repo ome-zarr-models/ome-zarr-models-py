@@ -19,7 +19,7 @@ class CollectionAttrs(BaseOMEAttrs):
     def get_group_paths(self) -> dict[str, type[Image]]:  # type: ignore[override]
         paths = {}
         for transform in self.coordinateTransformations:
-            if transform.input is not None:  # and transform.input.startswith("/"):
+            if transform.input is not None and transform.input.startswith("/"):
                 paths[transform.input.removeprefix("/")] = Image
 
         return paths

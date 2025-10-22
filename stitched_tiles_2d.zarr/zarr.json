@@ -8,28 +8,28 @@
         {
           "type": "translation",
           "output": "world",
-          "input": "tile_0",
+          "input": "/tile_0",
           "translation": [0, 0],
           "name": "tile_0_mm to world"
         },
         {
           "type": "translation",
           "output": "world",
-          "input": "tile_1",
+          "input": "/tile_1",
           "translation": [0, 348],
           "name": "tile_1_mm to world"
         },
         {
           "type": "translation",
           "output": "world",
-          "input": "tile_2",
+          "input": "/tile_2",
           "translation": [276, 0],
           "name": "tile_2_mm to world"
         },
         {
           "type": "translation",
           "output": "world",
-          "input": "tile_3",
+          "input": "/tile_3",
           "translation": [276, 348],
           "name": "tile_3_mm to world"
         }
@@ -52,7 +52,8 @@
             }
           ]
         }
-      ]
+      ],
+      "image_paths": ["tile_0", "tile_1", "tile_2", "tile_3"]
     }
   }
 }
