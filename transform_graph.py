@@ -26,6 +26,9 @@ for image_path in coll.members:
     image_graph = graphviz.Digraph(
         name=f"cluster_{image_path}",  # node_attr={"shape": "box"}
     )
+    # Add this image as an implicit coordinate system
+    image_graph.node(f"/{image_path}", fillcolor="#e3a074", style="filled")
+
     for multiscales in image.ome_attributes.multiscales:
         # Systems in multiscale images
         for system in multiscales.coordinateSystems:
@@ -37,12 +40,12 @@ for image_path in coll.members:
                     f"/{image_path}/{transform.input.removeprefix('/')}",
                     f"/{image_path}/{transform.output.removeprefix('/')}",
                 )
-            # Add (identity) transform between first coordinate system and path to
-            # this multiscales array, since they mean the same thing
-            image_graph.edge(
-                f"/{image_path}/{multiscales.coordinateSystems[0].name}",
-                f"/{image_path}",
-            )
+        # Add (identity) transform between first coordinate system and path to
+        # this multiscales array, since they mean the same thing
+        image_graph.edge(
+            f"/{image_path}/{multiscales.coordinateSystems[0].name}",
+            f"/{image_path}",
+        )
 
     # (implicit) Array coordinate systems
     for array_path in image.members:
