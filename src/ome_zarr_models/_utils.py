@@ -22,6 +22,7 @@ from ome_zarr_models.common.validation import (
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
+    import graphviz
     import zarr
     from zarr.abc.store import Store
 
@@ -245,3 +246,23 @@ class TransformGraph:
         if transform.input is None or transform.output is None:
             raise ValueError("transform must have both input and output set")
         self._graph[transform.input][transform.output] = transform
+
+    def to_graphviz(self) -> graphviz.Digraph:
+        """
+        Convert to a graphviz graph.
+
+        Notes
+        -----
+        Requires the `graphviz` package to be installed.
+        """
+        import graphviz
+
+        graph = graphviz.Digraph()
+
+        for input_sys in self._graph:
+            for output_sys in self._graph[input_sys]:
+                graph.edge(
+                    input_sys, output_sys, label=self._graph[input_sys][output_sys].type
+                )
+
+        return graph
