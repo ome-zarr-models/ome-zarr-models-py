@@ -8,14 +8,7 @@ import zarr
 
 from ome_zarr_models._v06.image import Image
 
-EXAMPLE_PATH = (
-    Path(__file__).parent.parent
-    / "tests"
-    / "_v06"
-    / "rfc5"
-    / "transform_examples"
-    / "ngff-rfc5-coordinate-transformation-examples"
-)
+EXAMPLE_PATH = Path("/Users/dstansby/software/ome-zarr/rfc5-example-transform-graphs")
 
 OUTPUT_PATH = Path(__file__).parent / "graphs"
 OUTPUT_PATH.mkdir(exist_ok=True)
