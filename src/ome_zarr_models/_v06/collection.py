@@ -23,7 +23,6 @@ class CollectionAttrs(BaseOMEAttrs):
             if transform.input is not None and transform.input not in coord_sys_names:
                 paths[transform.input] = Image
 
-        print(paths)
         return paths
 
 
