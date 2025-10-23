@@ -187,17 +187,19 @@ def test_load_container() -> None:
         coordinateTransformations=(
             Translation(
                 type="translation",
-                input="/tile_0",
+                input="tile_0",
                 output="world",
                 name="tile_0_mm to world",
-                translation=[0, 0],
+                translation=(0.0, 0.0),
+                path=None,
             ),
             Translation(
                 type="translation",
-                input="/tile_1",
+                input="tile_1",
                 output="world",
                 name="tile_1_mm to world",
-                translation=[0, 348],
+                translation=(0.0, 348.0),
+                path=None,
             ),
         ),
         coordinateSystems=(
