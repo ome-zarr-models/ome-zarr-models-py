@@ -40,9 +40,9 @@ def test_basic(zarr_path: Path) -> None:
     zarr_path_relative = zarr_path.relative_to(TEST_DATA_PATH)
     # These have broken metadata; once metadata is fixed, re-enable tests
     if zarr_path_relative in [
+        # https://github.com/jo-mueller/ngff-rfc5-coordinate-transformation-examples/pull/6
         Path("2d/basic_binary/translationParams.zarr"),
-        Path("2d/simple/affineParams.zarr"),
-        Path("2d/simple/rotationParams.zarr"),
+        # https://github.com/jo-mueller/ngff-rfc5-coordinate-transformation-examples/pull/8
         Path("3d/axis_dependent/mapAxis.zarr"),
         Path("3d/simple/affineParams.zarr"),
         Path("user_stories/SCAPE.zarr"),
