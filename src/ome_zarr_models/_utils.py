@@ -4,7 +4,7 @@ Private utilities.
 
 from __future__ import annotations
 
-from collections import Counter
+from collections import Counter, defaultdict
 from dataclasses import MISSING, fields, is_dataclass
 from typing import TYPE_CHECKING, Any, TypeVar
 
@@ -26,8 +26,10 @@ if TYPE_CHECKING:
     from zarr.abc.store import Store
 
     from ome_zarr_models._v06.base import BaseGroupv06
+    from ome_zarr_models._v06.coordinate_transforms import Transform
     from ome_zarr_models.v04.base import BaseGroupv04
     from ome_zarr_models.v05.base import BaseGroupv05
+
 
 TBaseGroupv2 = TypeVar("TBaseGroupv2", bound="BaseGroupv04[Any]")
 TAttrsv2 = TypeVar("TAttrsv2", bound=BaseAttrsv2)
@@ -225,3 +227,21 @@ def dataclass_to_pydantic(dataclass_type: type) -> type[pydantic.BaseModel]:
             field_definitions[_field.name] = (_field.type, Ellipsis)
 
     return create_model(dataclass_type.__name__, **field_definitions)  # type: ignore[no-any-return, call-overload]
+
+
+class TransformGraph:
+    """
+    A graph representing coordinate transforms.
+    """
+
+    def __init__(self) -> None:
+        # Mapping from input coordinate system to a dict of {output_system: transform}
+        self._graph: dict[str, dict[str, Transform]] = defaultdict(dict)
+
+    def add_transform(self, transform: Transform) -> None:
+        """
+        Add a transform to the graph.
+        """
+        if transform.input is None or transform.output is None:
+            raise ValueError("transform must have both input and output set")
+        self._graph[transform.input][transform.output] = transform
