@@ -249,7 +249,7 @@ class Inverse(Transform):
     """Inverse transform."""
 
     type: Literal["inverseOf"] = "inverseOf"
-    transform: "AnyTransform"
+    transformation: "AnyTransform"
 
 
 class Bijection(Transform):
