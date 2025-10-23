@@ -47,6 +47,8 @@ def test_basic(zarr_path: Path) -> None:
         Path("3d/simple/affineParams.zarr"),
         Path("user_stories/SCAPE.zarr"),
         Path("user_stories/image_registration_3d.zarr"),
+        # https://github.com/jo-mueller/ngff-rfc5-coordinate-transformation-examples/pull/7
+        Path("user_stories/stitched_tiles_3d.zarr"),
     ]:
         pytest.xfail("Example currently failing")
     elif "byDimension" in str(zarr_path):
