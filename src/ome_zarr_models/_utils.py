@@ -230,6 +230,9 @@ def dataclass_to_pydantic(dataclass_type: type) -> type[pydantic.BaseModel]:
     return create_model(dataclass_type.__name__, **field_definitions)  # type: ignore[no-any-return, call-overload]
 
 
+GRAPHVIZ_ATTRS = {"fontname": "open-sans"}
+
+
 class TransformGraph:
     """
     A graph representing coordinate transforms.
@@ -297,6 +300,7 @@ class TransformGraph:
                     self._node_key(graph_name, subgraph._default_system),
                     self._node_key("", graph_name),
                     arrowhead="none",
+                    **GRAPHVIZ_ATTRS,
                 )
                 subgraph_gv.attr(label=graph_name)
 
@@ -319,14 +323,13 @@ class TransformGraph:
         """
         Add nodes and edges to a graphviz graph.
         """
-        global_attrs = {"fontname": "open-sans"}
         for system_name in graph._named_systems:
             graphviz_graph.node(
                 cls._node_key(path, system_name),
                 label=system_name,
                 style="filled",
                 fillcolor="#fdbb84",
-                **global_attrs,
+                **GRAPHVIZ_ATTRS,
             )
 
         for system_name in graph._path_systems:
@@ -334,8 +337,7 @@ class TransformGraph:
                 cls._node_key(path, system_name),
                 label=system_name,
                 style="filled",
-                # fillcolor="#fdbb84",
-                **global_attrs,
+                **GRAPHVIZ_ATTRS,
             )
 
         for input_sys in graph._graph:
@@ -344,7 +346,7 @@ class TransformGraph:
                     cls._node_key(path, input_sys),
                     cls._node_key(path, output_sys),
                     label=graph._graph[input_sys][output_sys]._short_name,
-                    **global_attrs,
+                    **GRAPHVIZ_ATTRS,
                 )
 
     @staticmethod
