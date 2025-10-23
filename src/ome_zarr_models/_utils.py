@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from collections import Counter, defaultdict
 from dataclasses import MISSING, fields, is_dataclass
+from sre_parse import GLOBAL_FLAGS
 from typing import TYPE_CHECKING, Any, TypeVar
 
 import pydantic
@@ -288,7 +289,9 @@ class TransformGraph:
         import graphviz
 
         graph_gv = graphviz.Digraph()
-        self._add_nodes_edges(self, graph_gv)
+        with graph_gv.subgraph(name="cluster_") as subgraph_gv:
+            self._add_nodes_edges(self, subgraph_gv)
+            subgraph_gv.attr(label="Top level collection", **GRAPHVIZ_ATTRS)
 
         for graph_name in self._subgraphs:
             with graph_gv.subgraph(name=f"cluster_{graph_name}") as subgraph_gv:
@@ -302,7 +305,7 @@ class TransformGraph:
                     arrowhead="none",
                     **GRAPHVIZ_ATTRS,
                 )
-                subgraph_gv.attr(label=graph_name)
+                subgraph_gv.attr(label=graph_name, **GRAPHVIZ_ATTRS)
 
         return graph_gv
 
