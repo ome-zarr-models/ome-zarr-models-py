@@ -276,7 +276,7 @@ class TransformGraph:
                 graph.edge(
                     input_sys,
                     output_sys,
-                    label=self._graph[input_sys][output_sys].type,
+                    label=self._graph[input_sys][output_sys]._short_name,
                     **global_attrs,
                 )
 

@@ -37,7 +37,8 @@ for subdir in [p for p in EXAMPLE_PATH.iterdir() if p.is_dir()]:
                 continue
 
             print(
-                f"📈 Rendering transform graph for {image_path.relative_to(EXAMPLE_PATH)}"
+                "📈 Rendering transform graph for "
+                f"{image_path.relative_to(EXAMPLE_PATH)}"
             )
             graph = image.transform_graph()
             graphviz_graph = graph.to_graphviz()
