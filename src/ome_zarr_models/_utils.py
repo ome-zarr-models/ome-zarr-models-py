@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from zarr.abc.store import Store
 
     from ome_zarr_models._v06.base import BaseGroupv06
-    from ome_zarr_models._v06.coordinate_transforms import Transform
+    from ome_zarr_models._v06.coordinate_transforms import CoordinateSystem, Transform
     from ome_zarr_models.v04.base import BaseGroupv04
     from ome_zarr_models.v05.base import BaseGroupv05
 
@@ -238,6 +238,13 @@ class TransformGraph:
     def __init__(self) -> None:
         # Mapping from input coordinate system to a dict of {output_system: transform}
         self._graph: dict[str, dict[str, Transform]] = defaultdict(dict)
+        self._named_systems: dict[str, CoordinateSystem] = {}
+
+    def add_system(self, system: CoordinateSystem) -> None:
+        """
+        Add a named coordinate system to the graph.
+        """
+        self._named_systems[system.name] = system
 
     def add_transform(self, transform: Transform) -> None:
         """
@@ -259,10 +266,15 @@ class TransformGraph:
 
         graph = graphviz.Digraph()
 
+        for sys in self._named_systems:
+            graph.node(sys, style="filled", fillcolor="#fdbb84")
+
         for input_sys in self._graph:
             for output_sys in self._graph[input_sys]:
                 graph.edge(
-                    input_sys, output_sys, label=self._graph[input_sys][output_sys].type
+                    input_sys,
+                    output_sys,
+                    label=self._graph[input_sys][output_sys].type,
                 )
 
         return graph

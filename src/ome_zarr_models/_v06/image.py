@@ -293,6 +293,9 @@ class Image(BaseGroupv06[ImageAttrs]):
         graph = TransformGraph()
 
         for multiscales in self.ome_attributes.multiscales:
+            # Coordinate systems
+            for system in multiscales.coordinateSystems:
+                graph.add_system(system)
             # Coordinate transforms
             if multiscales.coordinateTransformations is not None:
                 for transform in multiscales.coordinateTransformations:
