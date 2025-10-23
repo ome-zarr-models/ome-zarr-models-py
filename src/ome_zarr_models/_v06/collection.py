@@ -46,6 +46,18 @@ class Collection(BaseGroupv06[CollectionAttrs]):
         """
         return _from_zarr_v3(group, cls, CollectionAttrs)
 
+    @property
+    def images(self) -> dict[str, Image]:
+        if self.members is None:
+            return {}
+        return {
+            member: Image(
+                attributes=self.members[member].attributes,
+                members=self.members[member].members,
+            )
+            for member in self.members
+        }
+
     def transform_graph(self) -> TransformGraph:
         """
         Create a coordinate transformation graph for this image.
@@ -58,5 +70,9 @@ class Collection(BaseGroupv06[CollectionAttrs]):
         # Coordinate transforms
         for transform in self.ome_attributes.coordinateTransformations:
             graph.add_transform(transform)
+
+        images = self.images
+        for image_path in self.images:
+            graph.add_subgraph(image_path, images[image_path].transform_graph())
 
         return graph

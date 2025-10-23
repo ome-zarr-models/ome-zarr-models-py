@@ -305,4 +305,8 @@ class Image(BaseGroupv06[ImageAttrs]):
                 for transform in dataset.coordinateTransformations:
                     graph.add_transform(transform)
 
+        graph.set_default_system(
+            self.ome_attributes.multiscales[0].coordinateSystems[0].name
+        )
+
         return graph

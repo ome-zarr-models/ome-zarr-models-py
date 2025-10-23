@@ -239,12 +239,32 @@ class TransformGraph:
         # Mapping from input coordinate system to a dict of {output_system: transform}
         self._graph: dict[str, dict[str, Transform]] = defaultdict(dict)
         self._named_systems: dict[str, CoordinateSystem] = {}
+        self._default_system = ""
+        self._subgraphs: dict[str, TransformGraph] = {}
 
     def add_system(self, system: CoordinateSystem) -> None:
         """
         Add a named coordinate system to the graph.
         """
         self._named_systems[system.name] = system
+
+    def add_subgraph(self, path: str, graph: TransformGraph) -> None:
+        """
+        Add a subgraph to this graph.
+        """
+        self._subgraphs[path] = graph
+
+    def set_default_system(self, system_name: str) -> None:
+        """
+        Set the default coordinate system used when transforming
+        out of this graph.
+        """
+        if system_name not in self._named_systems:
+            raise ValueError(
+                f"System named '{system_name}' not in list of named coordinate systems "
+                f"({self._named_systems.keys()})"
+            )
+        self._default_system = system_name
 
     def add_transform(self, transform: Transform) -> None:
         """
@@ -264,20 +284,72 @@ class TransformGraph:
         """
         import graphviz
 
+        graph_gv = graphviz.Digraph()
+        self._add_nodes_edges(self, graph_gv)
+
+        for graph_name in self._subgraphs:
+            with graph_gv.subgraph(name=f"cluster_{graph_name}") as subgraph_gv:
+                subgraph = self._subgraphs[graph_name]
+                self._add_nodes_edges(subgraph, subgraph_gv, path=graph_name)
+                # Add edge between default coordinate system and path name in
+                # the collection
+                graph_gv.edge(
+                    self._node_key(graph_name, subgraph._default_system),
+                    self._node_key("", graph_name),
+                    arrowhead="none",
+                )
+                subgraph_gv.attr(label=graph_name)
+
+        return graph_gv
+
+    @property
+    def _path_systems(self) -> set[str]:
+        systems = set()
+        for sys_in in self._graph:
+            systems.add(sys_in)
+            for sys_out in self._graph[sys_in]:
+                systems.add(sys_out)
+
+        return systems - set(self._named_systems.keys())
+
+    @classmethod
+    def _add_nodes_edges(
+        cls, graph: TransformGraph, graphviz_graph: graphviz.Digraph, path: str = ""
+    ) -> None:
+        """
+        Add nodes and edges to a graphviz graph.
+        """
         global_attrs = {"fontname": "open-sans"}
+        for system_name in graph._named_systems:
+            graphviz_graph.node(
+                cls._node_key(path, system_name),
+                label=system_name,
+                style="filled",
+                fillcolor="#fdbb84",
+                **global_attrs,
+            )
 
-        graph = graphviz.Digraph()
+        for system_name in graph._path_systems:
+            graphviz_graph.node(
+                cls._node_key(path, system_name),
+                label=system_name,
+                style="filled",
+                # fillcolor="#fdbb84",
+                **global_attrs,
+            )
 
-        for sys in self._named_systems:
-            graph.node(sys, style="filled", fillcolor="#fdbb84", **global_attrs)
-
-        for input_sys in self._graph:
-            for output_sys in self._graph[input_sys]:
-                graph.edge(
-                    input_sys,
-                    output_sys,
-                    label=self._graph[input_sys][output_sys]._short_name,
+        for input_sys in graph._graph:
+            for output_sys in graph._graph[input_sys]:
+                graphviz_graph.edge(
+                    cls._node_key(path, input_sys),
+                    cls._node_key(path, output_sys),
+                    label=graph._graph[input_sys][output_sys]._short_name,
                     **global_attrs,
                 )
 
-        return graph
+    @staticmethod
+    def _node_key(path: str, system_name: str) -> str:
+        """
+        Unique key for nodes in graphviz graphs.
+        """
+        return str(hash((path, system_name)))

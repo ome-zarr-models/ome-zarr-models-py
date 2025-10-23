@@ -51,6 +51,7 @@ for zarr_path in get_all_zarrs(EXAMPLE_PATH):
         if relative_path.parts[0] == "user_stories":
             group = Collection.from_zarr(zarr.open_group(zarr_path, mode="r"))
         else:
+            continue
             group = Image.from_zarr(zarr.open_group(zarr_path, mode="r"))
     except Exception:
         print(f"😢 Failed to load group at {zarr_path.relative_to(EXAMPLE_PATH)}")
