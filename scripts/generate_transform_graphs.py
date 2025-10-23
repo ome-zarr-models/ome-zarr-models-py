@@ -6,6 +6,7 @@ from pathlib import Path
 
 import zarr
 
+from ome_zarr_models._v06.collection import Collection
 from ome_zarr_models._v06.image import Image
 
 EXAMPLE_PATH = (
@@ -22,29 +23,47 @@ OUTPUT_PATH = Path(
 )
 OUTPUT_PATH.mkdir(exist_ok=True)
 
-for subdir in [p for p in EXAMPLE_PATH.iterdir() if p.is_dir()]:
-    for sub_subdir in [p for p in subdir.iterdir() if p.is_dir()]:
-        graph_path = OUTPUT_PATH / subdir.name / sub_subdir.name
-        graph_path.mkdir(exist_ok=True, parents=True)
 
-        for image_path in sub_subdir.glob("*.zarr"):
-            try:
-                image = Image.from_zarr(zarr.open_group(image_path, mode="r"))
-            except Exception:
-                print(
-                    f"😢 Failed to load group at {image_path.relative_to(EXAMPLE_PATH)}"
-                )
-                continue
+def get_all_zarrs(directory: Path) -> list[Path]:
+    """
+    Get all Zarr sub-directories.
+    """
+    zarrs: list[Path] = []
+    for f in directory.glob("*"):
+        if f.is_dir():
+            if f.suffix == ".zarr":
+                # Found a Zarr group
+                zarrs.append(f)
+            else:
+                # Recurse
+                zarrs += get_all_zarrs(f)
 
-            print(
-                "📈 Rendering transform graph for "
-                f"{image_path.relative_to(EXAMPLE_PATH)}"
-            )
-            graph = image.transform_graph()
-            graphviz_graph = graph.to_graphviz()
-            graphviz_graph.render(
-                filename=image_path.name.removesuffix(".zarr"),
-                directory=graph_path,
-                cleanup=True,
-                format="png",
-            )
+    return sorted(zarrs)
+
+
+for zarr_path in get_all_zarrs(EXAMPLE_PATH):
+    relative_path = zarr_path.relative_to(EXAMPLE_PATH)
+    graph_path = OUTPUT_PATH / relative_path.parent
+    graph_path.mkdir(exist_ok=True, parents=True)
+
+    group: Collection | Image
+    try:
+        if relative_path.parts[0] == "user_stories":
+            group = Collection.from_zarr(zarr.open_group(zarr_path, mode="r"))
+        else:
+            group = Image.from_zarr(zarr.open_group(zarr_path, mode="r"))
+    except Exception:
+        print(f"😢 Failed to load group at {zarr_path.relative_to(EXAMPLE_PATH)}")
+        continue
+
+    print(f"📈 Rendering transform graph for {zarr_path.relative_to(EXAMPLE_PATH)}")
+    graph = group.transform_graph()
+    graphviz_graph = graph.to_graphviz()
+    graphviz_graph.render(
+        filename=zarr_path.name.removesuffix(".zarr"),
+        directory=graph_path,
+        cleanup=True,
+        format="png",
+    )
+
+print(f"Rendered graphs available at {OUTPUT_PATH}")

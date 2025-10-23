@@ -3,7 +3,7 @@ from typing import Self
 import zarr
 from pydantic import Field
 
-from ome_zarr_models._utils import _from_zarr_v3
+from ome_zarr_models._utils import TransformGraph, _from_zarr_v3
 from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs
 from ome_zarr_models._v06.coordinate_transforms import (
     AnyTransform,
@@ -45,3 +45,18 @@ class Collection(BaseGroupv06[CollectionAttrs]):
             A Zarr group that has valid OME-Zarr image metadata.
         """
         return _from_zarr_v3(group, cls, CollectionAttrs)
+
+    def transform_graph(self) -> TransformGraph:
+        """
+        Create a coordinate transformation graph for this image.
+        """
+        graph = TransformGraph()
+
+        # Coordinate systems
+        for system in self.ome_attributes.coordinateSystems:
+            graph.add_system(system)
+        # Coordinate transforms
+        for transform in self.ome_attributes.coordinateTransformations:
+            graph.add_transform(transform)
+
+        return graph
