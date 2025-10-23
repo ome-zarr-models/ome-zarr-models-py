@@ -17,11 +17,13 @@ class CollectionAttrs(BaseOMEAttrs):
     coordinateSystems: tuple[CoordinateSystem, ...] = Field(default=())
 
     def get_group_paths(self) -> dict[str, type[Image]]:  # type: ignore[override]
+        coord_sys_names = [c.name for c in self.coordinateSystems]
         paths = {}
         for transform in self.coordinateTransformations:
-            if transform.input is not None and transform.input.startswith("/"):
-                paths[transform.input.removeprefix("/")] = Image
+            if transform.input is not None and transform.input not in coord_sys_names:
+                paths[transform.input] = Image
 
+        print(paths)
         return paths
 
 
