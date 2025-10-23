@@ -264,10 +264,12 @@ class TransformGraph:
         """
         import graphviz
 
+        global_attrs = {"fontname": "open-sans"}
+
         graph = graphviz.Digraph()
 
         for sys in self._named_systems:
-            graph.node(sys, style="filled", fillcolor="#fdbb84")
+            graph.node(sys, style="filled", fillcolor="#fdbb84", **global_attrs)
 
         for input_sys in self._graph:
             for output_sys in self._graph[input_sys]:
@@ -275,6 +277,7 @@ class TransformGraph:
                     input_sys,
                     output_sys,
                     label=self._graph[input_sys][output_sys].type,
+                    **global_attrs,
                 )
 
         return graph
