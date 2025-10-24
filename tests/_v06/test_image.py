@@ -173,7 +173,9 @@ def test_image(store: Store) -> None:
                     ),
                 ),
                 metadata={
-                    "description": "the fields in metadata depend on the downscaling implementation. Here, the parameters passed to the skimage function are given",
+                    "description": "the fields in metadata depend on the downscaling "
+                    "implementation. Here, the parameters passed to the skimage "
+                    "function are given",
                     "method": "skimage.transform.pyramid_gaussian",
                     "version": "0.16.1",
                     "args": "[true]",
