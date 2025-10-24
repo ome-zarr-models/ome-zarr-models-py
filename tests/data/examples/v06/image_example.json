@@ -34,7 +34,7 @@
               {
                 "type": "scale",
                 "scale": [1.0, 1.0, 0.5, 0.5, 0.5],
-                "input": "/0",
+                "input": "0",
                 "output": "coord_sys0"
               }
             ]
@@ -45,7 +45,7 @@
               {
                 "type": "scale",
                 "scale": [1.0, 1.0, 1.0, 1.0, 1.0],
-                "input": "/1",
+                "input": "1",
                 "output": "coord_sys0"
               }
             ]
@@ -56,7 +56,7 @@
               {
                 "type": "scale",
                 "scale": [1.0, 1.0, 2.0, 2.0, 2.0],
-                "input": "/2",
+                "input": "2",
                 "output": "coord_sys0"
               }
             ]
