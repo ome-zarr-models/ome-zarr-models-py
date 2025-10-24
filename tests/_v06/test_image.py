@@ -42,61 +42,124 @@ def test_image(store: Store) -> None:
                 coordinateSystems=(
                     CoordinateSystem(
                         name="coord_sys0",
-                        axes=[
-                            Axis(name="t", type="time", unit="millisecond"),
-                            Axis(name="c", type="channel", unit=None),
-                            Axis(name="z", type="space", unit="micrometer"),
-                            Axis(name="y", type="space", unit="micrometer"),
-                            Axis(name="x", type="space", unit="micrometer"),
-                        ],
+                        axes=(
+                            Axis(
+                                name="t",
+                                type="time",
+                                discrete=None,
+                                unit="millisecond",
+                                longName=None,
+                            ),
+                            Axis(
+                                name="c",
+                                type="channel",
+                                discrete=None,
+                                unit=None,
+                                longName=None,
+                            ),
+                            Axis(
+                                name="z",
+                                type="space",
+                                discrete=None,
+                                unit="micrometer",
+                                longName=None,
+                            ),
+                            Axis(
+                                name="y",
+                                type="space",
+                                discrete=None,
+                                unit="micrometer",
+                                longName=None,
+                            ),
+                            Axis(
+                                name="x",
+                                type="space",
+                                discrete=None,
+                                unit="micrometer",
+                                longName=None,
+                            ),
+                        ),
                     ),
                     CoordinateSystem(
                         name="coord_sys1",
-                        axes=[
-                            Axis(name="t", type="time", unit="millisecond"),
-                            Axis(name="c", type="channel", unit=None),
-                            Axis(name="z", type="space", unit="micrometer"),
-                            Axis(name="y", type="space", unit="micrometer"),
-                            Axis(name="x", type="space", unit="micrometer"),
-                        ],
+                        axes=(
+                            Axis(
+                                name="t",
+                                type="time",
+                                discrete=None,
+                                unit="millisecond",
+                                longName=None,
+                            ),
+                            Axis(
+                                name="c",
+                                type="channel",
+                                discrete=None,
+                                unit=None,
+                                longName=None,
+                            ),
+                            Axis(
+                                name="z",
+                                type="space",
+                                discrete=None,
+                                unit="micrometer",
+                                longName=None,
+                            ),
+                            Axis(
+                                name="y",
+                                type="space",
+                                discrete=None,
+                                unit="micrometer",
+                                longName=None,
+                            ),
+                            Axis(
+                                name="x",
+                                type="space",
+                                discrete=None,
+                                unit="micrometer",
+                                longName=None,
+                            ),
+                        ),
                     ),
                 ),
                 datasets=(
                     Dataset(
                         path="0",
-                        coordinateTransformations=[
+                        coordinateTransformations=(
                             Scale(
                                 type="scale",
-                                input="/0",
+                                input="0",
                                 output="coord_sys0",
                                 name=None,
-                                scale=[1.0, 1.0, 0.5, 0.5, 0.5],
-                            )
-                        ],
+                                scale=(1.0, 1.0, 0.5, 0.5, 0.5),
+                                path=None,
+                            ),
+                        ),
                     ),
                     Dataset(
                         path="1",
-                        coordinateTransformations=[
+                        coordinateTransformations=(
                             Scale(
                                 type="scale",
-                                input="/1",
+                                input="1",
                                 output="coord_sys0",
                                 name=None,
-                                scale=[1.0, 1.0, 1.0, 1.0, 1.0],
-                            )
-                        ],
+                                scale=(1.0, 1.0, 1.0, 1.0, 1.0),
+                                path=None,
+                            ),
+                        ),
                     ),
                     Dataset(
                         path="2",
-                        coordinateTransformations=[
+                        coordinateTransformations=(
                             Scale(
                                 type="scale",
-                                input="/2",
+                                input="2",
                                 output="coord_sys0",
                                 name=None,
-                                scale=[1.0, 1.0, 2.0, 2.0, 2.0],
-                            )
-                        ],
+                                scale=(1.0, 1.0, 2.0, 2.0, 2.0),
+                                path=None,
+                            ),
+                        ),
                     ),
                 ),
                 coordinateTransformations=(
@@ -105,15 +168,12 @@ def test_image(store: Store) -> None:
                         input="coord_sys0",
                         output="coord_sys1",
                         name=None,
-                        scale=[0.1, 1.0, 1.0, 1.0, 1.0],
+                        scale=(0.1, 1.0, 1.0, 1.0, 1.0),
+                        path=None,
                     ),
                 ),
                 metadata={
-                    "description": (
-                        "the fields in metadata depend on "
-                        "the downscaling implementation. Here, the "
-                        "parameters passed to the skimage function are given"
-                    ),
+                    "description": "the fields in metadata depend on the downscaling implementation. Here, the parameters passed to the skimage function are given",
                     "method": "skimage.transform.pyramid_gaussian",
                     "version": "0.16.1",
                     "args": "[true]",
@@ -124,7 +184,6 @@ def test_image(store: Store) -> None:
             )
         ],
     )
-    print(image_attrs.model_dump_json(indent=4))
     assert ome_group.attributes.ome == image_attrs
 
 
