@@ -22,6 +22,8 @@ class CollectionAttrs(BaseOMEAttrs):
         for transform in self.coordinateTransformations:
             if transform.input is not None and transform.input not in coord_sys_names:
                 paths[transform.input] = Image
+            if transform.output is not None and transform.output not in coord_sys_names:
+                paths[transform.output] = Image
 
         return paths
 
