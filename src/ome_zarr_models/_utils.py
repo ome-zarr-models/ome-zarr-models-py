@@ -289,11 +289,13 @@ class TransformGraph:
         import graphviz
 
         graph_gv = graphviz.Digraph()
+        # Add main graph
         with graph_gv.subgraph(name="cluster_") as subgraph_gv:
             self._add_nodes_edges(self, subgraph_gv)
             if len(self._subgraphs):
                 subgraph_gv.attr(label="Top level collection", **GRAPHVIZ_ATTRS)
 
+        # Add any subgraphs
         for graph_name in self._subgraphs:
             with graph_gv.subgraph(name=f"cluster_{graph_name}") as subgraph_gv:
                 subgraph = self._subgraphs[graph_name]
@@ -304,6 +306,7 @@ class TransformGraph:
                     self._node_key(graph_name, subgraph._default_system),
                     self._node_key("", graph_name),
                     arrowhead="none",
+                    style="dashed",
                     **GRAPHVIZ_ATTRS,
                 )
                 subgraph_gv.attr(label=graph_name, **GRAPHVIZ_ATTRS)
