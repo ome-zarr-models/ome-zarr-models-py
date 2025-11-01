@@ -463,9 +463,6 @@ class ByDimension(Transform):
     def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
         raise NotImplementedError
 
-    def inverse_transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        raise NotImplementedError
-
 
 AnyTransform = Annotated[
     Identity
