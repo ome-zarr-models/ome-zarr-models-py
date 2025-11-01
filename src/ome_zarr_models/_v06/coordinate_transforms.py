@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from typing import Annotated, Literal, Self
 
 from pydantic import Field, JsonValue, field_validator, model_validator
@@ -49,7 +50,7 @@ class CoordinateSystem(BaseAttrs):
         return len(self.axes)
 
 
-class Transform(BaseAttrs):
+class Transform(BaseAttrs, ABC):
     """
     Model of a coordinate transformation.
     """
@@ -72,11 +73,31 @@ class Transform(BaseAttrs):
             raise ValueError(msg)
         return self
 
+    @abstractmethod
+    def get_inverse(self) -> "Transform":
+        """
+        Inverse of this transform.
+
+        Raises
+        ------
+        NotImplementedError
+            If this the inverse for this transform is not yet implemented.
+        """
+
+    @property
+    def _inverse_name(self) -> str | None:
+        if self.name is None:
+            return None
+        return f"{self.name}_inverse"
+
 
 class Identity(Transform):
     """Identity transformation."""
 
     type: Literal["identity"] = "identity"
+
+    def get_inverse(self) -> "Identity":
+        return Identity(input=self.output, output=self.input, name=self._inverse_name)
 
 
 class MapAxis(Transform):
@@ -84,6 +105,18 @@ class MapAxis(Transform):
 
     type: Literal["mapAxis"] = "mapAxis"
     mapAxis: tuple[int, ...]
+
+    @property
+    def ndim(self) -> int:
+        return len(self.mapAxis)
+
+    def get_inverse(self) -> "MapAxis":
+        return MapAxis(
+            input=self.output,
+            output=self.input,
+            name=self._inverse_name,
+            mapAxis=tuple([self.mapAxis.index(i) for i in range(self.ndim)]),
+        )
 
 
 class Translation(Transform):
@@ -99,6 +132,14 @@ class Translation(Transform):
         Number of dimensions.
         """
         return len(self.translation_vector)
+
+    def get_inverse(self) -> "Translation":
+        return Translation(
+            input=self.output,
+            output=self.input,
+            name=self._inverse_name,
+            translation=tuple([-i for i in self.translation_vector]),
+        )
 
     @property
     def translation_vector(self) -> tuple[float, ...]:
@@ -127,6 +168,14 @@ class Scale(Transform):
     type: Literal["scale"] = "scale"
     scale: tuple[float, ...] | None = None
     path: str | None = None
+
+    def get_inverse(self) -> "Scale":
+        return Scale(
+            input=self.output,
+            output=self.input,
+            name=self._inverse_name,
+            scale=tuple([1 / i for i in self.scale_vector]),
+        )
 
     @property
     def scale_vector(self) -> tuple[float, ...]:
@@ -167,6 +216,9 @@ class Affine(Transform):
     def ndim(self) -> int:
         return len(self.affine_matrix)
 
+    def get_inverse(self) -> "Affine":
+        raise NotImplementedError
+
     @property
     def affine_matrix(self) -> tuple[tuple[float, ...], ...]:
         if self.affine is not None:
@@ -196,6 +248,9 @@ class Rotation(Transform):
     def ndim(self) -> int:
         return len(self.rotation_matrix)
 
+    def get_inverse(self) -> "Rotation":
+        raise NotImplementedError
+
     @property
     def rotation_matrix(self) -> tuple[tuple[float, ...], ...]:
         if self.rotation is not None:
@@ -220,6 +275,14 @@ class Sequence(Transform):
     type: Literal["sequence"] = "sequence"
     transformations: tuple["AnyTransform", ...]
 
+    def get_inverse(self) -> "Sequence":
+        return Sequence(
+            input=self.output,
+            output=self.input,
+            name=self._inverse_name,
+            transformations=(t.get_inverse() for t in self.transformations[::-1]),
+        )
+
     def add_transform(self, transform: "AnyTransform") -> "Sequence":
         """
         Create a new sequence by adding a transform to the end of this one.
@@ -236,6 +299,9 @@ class Displacements(Transform):
     path: str
     interpolation: str
 
+    def get_inverse(self) -> "Displacements":
+        raise NotImplementedError
+
 
 class Coordinates(Transform):
     """Coordinate field transform."""
@@ -244,12 +310,18 @@ class Coordinates(Transform):
     path: str
     interpolation: str
 
+    def get_inverse(self) -> "Coordinates":
+        raise NotImplementedError
+
 
 class Inverse(Transform):
     """Inverse transform."""
 
     type: Literal["inverseOf"] = "inverseOf"
     transformation: "AnyTransform"
+
+    def get_inverse(self) -> "Coordinates":
+        raise NotImplementedError
 
 
 class Bijection(Transform):
@@ -261,6 +333,15 @@ class Bijection(Transform):
     forward: "AnyTransform"
     inverse: "AnyTransform"
 
+    def get_inverse(self) -> "Bijection":
+        return Bijection(
+            input=self.output,
+            output=self.input,
+            name=self._inverse_name,
+            forward=self.inverse,
+            inverse=self.forward,
+        )
+
 
 class ByDimension(Transform):
     """
@@ -269,6 +350,9 @@ class ByDimension(Transform):
 
     type: Literal["byDimension"] = "byDimension"
     transformations: tuple["AnyTransform", ...]
+
+    def get_inverse(self) -> "ByDimension":
+        raise NotImplementedError
 
 
 AnyTransform = Annotated[
