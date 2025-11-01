@@ -146,10 +146,6 @@ class MapAxis(Transform):
         # Note: no way to transform a point without axis information...
         raise NotImplementedError
 
-    @property
-    def ndim(self) -> int:
-        return len(self.mapAxis)
-
 
 class Translation(Transform):
     """Translation transformation."""
