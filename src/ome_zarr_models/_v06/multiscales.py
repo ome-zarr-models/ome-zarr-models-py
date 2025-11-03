@@ -48,28 +48,36 @@ class Multiscale(BaseAttrs):
     def ndim(self) -> int:
         """
         Dimensionality of the data described by this metadata.
-
-        Determined by the number of dimensions of the output coordinate system.
         """
-        output_cs_name = self.datasets[0].coordinateTransformations[0].output
-        for cs in self.coordinateSystems:
-            if cs.name == output_cs_name:
-                return cs.ndim
-
-        raise RuntimeError(
-            f"Did not find coordinate system named '{output_cs_name}' in "
-            "multiscales coordinate systems."
-        )
+        return self.intrinsic_coordinate_system.ndim
 
     @property
     def default_coordinate_system(self) -> CoordinateSystem:
         """
-        Property returning the default coordinate system (i.e. the first entry).
+        The default coordinate system for this multiscales.
 
-        The default coordinate system should be used for viewing and processing unless
-        a use case dictates otherwise
+        Any references to this multiscales in coordinate transformations will resolve
+        to this coordinate system.
+
+        Notes
+        -----
+        This is the first entry in the `coordinateSystems` attribute.
         """
         return self.coordinateSystems[0]
+
+    @property
+    def intrinsic_coordinate_system(self) -> CoordinateSystem:
+        """
+        Physical coordinate system.
+
+        Should be used for viewing and processing unless a use case dictates otherwise.
+        A representation of the image in its native physical coordinate system.
+
+        Notes
+        -----
+        This is the last entry in the `coordinateSystems` attribute.
+        """
+        return self.coordinateSystems[-1]
 
     @model_validator(mode="after")
     def _ensure_same_output_cs_for_all_datasets(data: Self) -> Self:

@@ -240,3 +240,51 @@ def test_ensure_ordered_scales() -> None:
                 ),
             ),
         )
+
+
+def test_default_coordinate_systems() -> None:
+    multiscale = Multiscale(
+        coordinateTransformations=None,
+        coordinateSystems=(
+            CoordinateSystem(
+                name="an_other_system",
+                axes=[
+                    Axis(name="x"),
+                    Axis(name="y"),
+                ],
+            ),
+            CoordinateSystem(
+                name="physical",
+                axes=[
+                    Axis(name="j"),
+                    Axis(name="i"),
+                ],
+            ),
+        ),
+        datasets=(
+            Dataset(
+                path="0",
+                coordinateTransformations=(
+                    Scale(
+                        scale=[2.0, 2.0],
+                        input="0",
+                        output="out",
+                    ),
+                ),
+            ),
+        ),
+    )
+    assert multiscale.intrinsic_coordinate_system == CoordinateSystem(
+        name="physical",
+        axes=(
+            Axis(name="j", type=None, discrete=None, unit=None, longName=None),
+            Axis(name="i", type=None, discrete=None, unit=None, longName=None),
+        ),
+    )
+    assert multiscale.default_coordinate_system == CoordinateSystem(
+        name="an_other_system",
+        axes=(
+            Axis(name="x", type=None, discrete=None, unit=None, longName=None),
+            Axis(name="y", type=None, discrete=None, unit=None, longName=None),
+        ),
+    )
