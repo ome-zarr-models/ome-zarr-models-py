@@ -6,7 +6,6 @@ from __future__ import annotations
 
 from collections import Counter, defaultdict
 from dataclasses import MISSING, fields, is_dataclass
-from sre_parse import GLOBAL_FLAGS
 from typing import TYPE_CHECKING, Any, TypeVar
 
 import pydantic

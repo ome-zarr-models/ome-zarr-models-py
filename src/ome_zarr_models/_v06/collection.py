@@ -1,7 +1,9 @@
+import warnings
 from typing import Self
 
 import zarr
 from pydantic import Field
+from pydantic_zarr.v3 import GroupSpec
 
 from ome_zarr_models._utils import TransformGraph, _from_zarr_v3
 from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs
@@ -52,13 +54,19 @@ class Collection(BaseGroupv06[CollectionAttrs]):
     def images(self) -> dict[str, Image]:
         if self.members is None:
             return {}
-        return {
-            member: Image(
-                attributes=self.members[member].attributes,
-                members=self.members[member].members,
+
+        images = {}
+        for member_name, member in self.members.items():
+            if not isinstance(member, GroupSpec):
+                warnings.warn(
+                    f"Member '{member_name}' is an array, not an OME-Zarr image",
+                    stacklevel=2,
+                )
+                continue
+            images[member_name] = Image(
+                attributes=member.attributes, members=member.members
             )
-            for member in self.members
-        }
+        return images
 
     def transform_graph(self) -> TransformGraph:
         """
