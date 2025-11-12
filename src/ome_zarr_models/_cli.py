@@ -2,11 +2,16 @@ from __future__ import annotations
 
 import argparse
 import sys
+from pathlib import Path
 from typing import TYPE_CHECKING, Literal
 
 from ome_zarr_models import __version__, open_ome_zarr
+from ome_zarr_models._v06.collection import Collection
+from ome_zarr_models._v06.image import Image
 
 if TYPE_CHECKING:
+    from os import PathLike
+
     from zarr.storage import StoreLike
 
 
@@ -39,6 +44,15 @@ def main() -> None:
         "path", type=str, help="Path to OME-Zarr group to get information about"
     )
 
+    # transform-graph sub-command
+    graph_cmd = subparsers.add_parser(
+        "transform-graph", help="Visualise transform graph for an OME-Zarr group"
+    )
+    graph_cmd.add_argument("path", type=str, help="Path to OME-Zarr group")
+    graph_cmd.add_argument(
+        "output_image_path", type=str, help="Path to save image of transform graph to"
+    )
+
     args = parser.parse_args()
 
     # Execute the appropriate command
@@ -47,6 +61,8 @@ def main() -> None:
             validate(args.path)
         case "info":
             info(args.path)
+        case "transform-graph":
+            render_transform_graph(args.path, args.output_image_path)
         case None:
             parser.print_help()
             sys.exit(1)
@@ -106,6 +122,46 @@ def info(path: StoreLike) -> None:
         sys.exit(1)
     else:
         print(obj)
+
+
+def render_transform_graph(path: StoreLike, output_image_path: PathLike[str]) -> None:
+    """
+    Render a coordinate transformation graph to a PNG image.
+
+    Requires the `graphviz` Python library to be installed.
+    """
+    output_image_path = Path(output_image_path)
+    if output_image_path.exists():
+        raise RuntimeError(f"Output image path already exists: {output_image_path}")
+
+    import zarr
+
+    try:
+        group = zarr.open_group(path, mode="r")
+    except Exception as e:
+        print(f"{e}\n")
+        print(f"❌ Invalid Zarr group: {path}")
+        sys.exit(1)
+
+    model: Image | Collection
+    try:
+        model = Collection.from_zarr(group)
+    except Exception as _:
+        try:
+            model = Image.from_zarr(group)
+        except Exception as e:
+            print(f"{e}\n")
+            print(f"❌ Invalid OME-Zarr group: {path}")
+            sys.exit(1)
+
+    graph = model.transform_graph()
+    graphviz_graph = graph.to_graphviz()
+    graphviz_graph.render(
+        filename=output_image_path.name,
+        directory=output_image_path.parent,
+        cleanup=True,
+        format="png",
+    )
 
 
 if __name__ == "__main__":

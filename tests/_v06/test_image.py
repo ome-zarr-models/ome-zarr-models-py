@@ -1,5 +1,7 @@
+import pytest
 from pydantic_zarr.v3 import AnyArraySpec, ArraySpec, NamedConfig
 from zarr.abc.store import Store
+from zarr.storage import MemoryStore
 
 from ome_zarr_models._v06.coordinate_transforms import (
     Axis,
@@ -381,3 +383,104 @@ def test_image_new() -> None:
             )
         ],
     )
+
+
+def test_transform_graph() -> None:
+    zarr_group = json_to_zarr_group(
+        json_fname="image_example.json", store=MemoryStore()
+    )
+    zarr_group.create_array(
+        "0",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
+    zarr_group.create_array(
+        "1",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
+    zarr_group.create_array(
+        "2",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
+    image = Image.from_zarr(zarr_group)
+
+    graph = image.transform_graph()
+    assert graph._graph == {
+        "0": {
+            "coord_sys0": Scale(
+                type="scale",
+                input="0",
+                output="coord_sys0",
+                name=None,
+                scale=(1.0, 1.0, 0.5, 0.5, 0.5),
+                path=None,
+            )
+        },
+        "1": {
+            "coord_sys0": Scale(
+                type="scale",
+                input="1",
+                output="coord_sys0",
+                name=None,
+                scale=(1.0, 1.0, 1.0, 1.0, 1.0),
+                path=None,
+            )
+        },
+        "2": {
+            "coord_sys0": Scale(
+                type="scale",
+                input="2",
+                output="coord_sys0",
+                name=None,
+                scale=(1.0, 1.0, 2.0, 2.0, 2.0),
+                path=None,
+            )
+        },
+        "coord_sys0": {
+            "coord_sys1": Scale(
+                type="scale",
+                input="coord_sys0",
+                output="coord_sys1",
+                name=None,
+                scale=(0.1, 1.0, 1.0, 1.0, 1.0),
+                path=None,
+            )
+        },
+    }
+
+
+def test_transform_graph_to_graphviz() -> None:
+    graphviz = pytest.importorskip("graphviz")
+    # Test rendering a transform graph to a graphviz graph
+    # NOTE: currently just a smoke test, does not check that the output is correct
+    zarr_group = json_to_zarr_group(
+        json_fname="image_example.json", store=MemoryStore()
+    )
+    zarr_group.create_array(
+        "0",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
+    zarr_group.create_array(
+        "1",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
+    zarr_group.create_array(
+        "2",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
+    image = Image.from_zarr(zarr_group)
+
+    graph = image.transform_graph()
+    graphviz_graph = graph.to_graphviz()
+    assert isinstance(graphviz_graph, graphviz.Digraph)
