@@ -8,7 +8,7 @@ import zarr.errors
 from pydantic import Field, JsonValue, model_validator
 from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
-from ome_zarr_models._utils import _from_zarr_v3
+from ome_zarr_models._utils import TransformGraph, _from_zarr_v3
 from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs, BaseZarrAttrs
 from ome_zarr_models._v06.coordinate_transforms import (
     Axis,
@@ -285,3 +285,28 @@ class Image(BaseGroupv06[ImageAttrs]):
             tuple(dataset for dataset in multiscale.datasets)
             for multiscale in self.ome_attributes.multiscales
         )
+
+    def transform_graph(self) -> TransformGraph:
+        """
+        Create a coordinate transformation graph for this image.
+        """
+        graph = TransformGraph()
+
+        for multiscales in self.ome_attributes.multiscales:
+            # Coordinate systems
+            for system in multiscales.coordinateSystems:
+                graph.add_system(system)
+            # Coordinate transforms
+            if multiscales.coordinateTransformations is not None:
+                for transform in multiscales.coordinateTransformations:
+                    graph.add_transform(transform)
+            # Coordinate transforms in datasets
+            for dataset in multiscales.datasets:
+                for transform in dataset.coordinateTransformations:
+                    graph.add_transform(transform)
+
+        graph.set_default_system(
+            self.ome_attributes.multiscales[0].coordinateSystems[0].name
+        )
+
+        return graph

@@ -4,7 +4,7 @@ Private utilities.
 
 from __future__ import annotations
 
-from collections import Counter
+from collections import Counter, defaultdict
 from dataclasses import MISSING, fields, is_dataclass
 from typing import TYPE_CHECKING, Any, TypeVar
 
@@ -22,12 +22,15 @@ from ome_zarr_models.common.validation import (
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
+    import graphviz
     import zarr
     from zarr.abc.store import Store
 
     from ome_zarr_models._v06.base import BaseGroupv06
+    from ome_zarr_models._v06.coordinate_transforms import CoordinateSystem, Transform
     from ome_zarr_models.v04.base import BaseGroupv04
     from ome_zarr_models.v05.base import BaseGroupv05
+
 
 TBaseGroupv2 = TypeVar("TBaseGroupv2", bound="BaseGroupv04[Any]")
 TAttrsv2 = TypeVar("TAttrsv2", bound=BaseAttrsv2)
@@ -228,3 +231,136 @@ def dataclass_to_pydantic(dataclass_type: type) -> type[pydantic.BaseModel]:
             field_definitions[_field.name] = (_field.type, Ellipsis)
 
     return create_model(dataclass_type.__name__, **field_definitions)  # type: ignore[no-any-return, call-overload]
+
+
+GRAPHVIZ_ATTRS = {"fontname": "open-sans"}
+
+
+class TransformGraph:
+    """
+    A graph representing coordinate transforms.
+    """
+
+    def __init__(self) -> None:
+        # Mapping from input coordinate system to a dict of {output_system: transform}
+        self._graph: dict[str, dict[str, Transform]] = defaultdict(dict)
+        self._named_systems: dict[str, CoordinateSystem] = {}
+        self._default_system = ""
+        self._subgraphs: dict[str, TransformGraph] = {}
+
+    def add_system(self, system: CoordinateSystem) -> None:
+        """
+        Add a named coordinate system to the graph.
+        """
+        self._named_systems[system.name] = system
+
+    def add_subgraph(self, path: str, graph: TransformGraph) -> None:
+        """
+        Add a subgraph to this graph.
+        """
+        self._subgraphs[path] = graph
+
+    def set_default_system(self, system_name: str) -> None:
+        """
+        Set the default coordinate system used when transforming
+        out of this graph.
+        """
+        if system_name not in self._named_systems:
+            raise ValueError(
+                f"System named '{system_name}' not in list of named coordinate systems "
+                f"({self._named_systems.keys()})"
+            )
+        self._default_system = system_name
+
+    def add_transform(self, transform: Transform) -> None:
+        """
+        Add a transform to the graph.
+        """
+        if transform.input is None or transform.output is None:
+            raise ValueError("transform must have both input and output set")
+        self._graph[transform.input][transform.output] = transform
+
+    def to_graphviz(self) -> graphviz.Digraph:
+        """
+        Convert to a graphviz graph.
+
+        Notes
+        -----
+        Requires the `graphviz` package to be installed.
+        """
+        import graphviz
+
+        graph_gv = graphviz.Digraph()
+        # Add main graph
+        with graph_gv.subgraph(name="cluster_") as subgraph_gv:
+            self._add_nodes_edges(self, subgraph_gv)
+            if len(self._subgraphs):
+                subgraph_gv.attr(label="Top level collection", **GRAPHVIZ_ATTRS)
+
+        # Add any subgraphs
+        for graph_name in self._subgraphs:
+            with graph_gv.subgraph(name=f"cluster_{graph_name}") as subgraph_gv:
+                subgraph = self._subgraphs[graph_name]
+                self._add_nodes_edges(subgraph, subgraph_gv, path=graph_name)
+                # Add edge between default coordinate system and path name in
+                # the collection
+                graph_gv.edge(
+                    self._node_key(graph_name, subgraph._default_system),
+                    self._node_key("", graph_name),
+                    arrowhead="none",
+                    style="dashed",
+                    **GRAPHVIZ_ATTRS,
+                )
+                subgraph_gv.attr(label=graph_name, **GRAPHVIZ_ATTRS)
+
+        return graph_gv
+
+    @property
+    def _path_systems(self) -> set[str]:
+        systems = set()
+        for sys_in in self._graph:
+            systems.add(sys_in)
+            for sys_out in self._graph[sys_in]:
+                systems.add(sys_out)
+
+        return systems - set(self._named_systems.keys())
+
+    @classmethod
+    def _add_nodes_edges(
+        cls, graph: TransformGraph, graphviz_graph: graphviz.Digraph, path: str = ""
+    ) -> None:
+        """
+        Add nodes and edges to a graphviz graph.
+        """
+        for system_name in graph._named_systems:
+            graphviz_graph.node(
+                cls._node_key(path, system_name),
+                label=system_name,
+                style="filled",
+                fillcolor="#fdbb84",
+                **GRAPHVIZ_ATTRS,
+            )
+
+        for system_name in graph._path_systems:
+            graphviz_graph.node(
+                cls._node_key(path, system_name),
+                label=system_name,
+                style="filled",
+                **GRAPHVIZ_ATTRS,
+            )
+
+        for input_sys in graph._graph:
+            for output_sys in graph._graph[input_sys]:
+                graphviz_graph.edge(
+                    cls._node_key(path, input_sys),
+                    cls._node_key(path, output_sys),
+                    label=graph._graph[input_sys][output_sys]._short_name,
+                    **GRAPHVIZ_ATTRS,
+                )
+
+    @staticmethod
+    def _node_key(path: str, system_name: str) -> str:
+        """
+        Unique key for nodes in graphviz graphs.
+        """
+        return str(hash((path, system_name)))
