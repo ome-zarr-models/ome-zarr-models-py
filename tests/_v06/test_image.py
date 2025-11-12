@@ -410,30 +410,30 @@ def test_transform_graph() -> None:
 
     graph = image.transform_graph()
     assert graph._graph == {
-        "/0": {
+        "0": {
             "coord_sys0": Scale(
                 type="scale",
-                input="/0",
+                input="0",
                 output="coord_sys0",
                 name=None,
                 scale=(1.0, 1.0, 0.5, 0.5, 0.5),
                 path=None,
             )
         },
-        "/1": {
+        "1": {
             "coord_sys0": Scale(
                 type="scale",
-                input="/1",
+                input="1",
                 output="coord_sys0",
                 name=None,
                 scale=(1.0, 1.0, 1.0, 1.0, 1.0),
                 path=None,
             )
         },
-        "/2": {
+        "2": {
             "coord_sys0": Scale(
                 type="scale",
-                input="/2",
+                input="2",
                 output="coord_sys0",
                 name=None,
                 scale=(1.0, 1.0, 2.0, 2.0, 2.0),
