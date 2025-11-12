@@ -90,6 +90,10 @@ class Transform(BaseAttrs, ABC):
             return None
         return f"{self.name}_inverse"
 
+    @property
+    def _short_name(self) -> str:
+        return self.type
+
 
 class Identity(Transform):
     """Identity transformation."""
@@ -291,6 +295,10 @@ class Sequence(Transform):
             update={"transformations": (*self.transformations, transform)}
         )
 
+    @property
+    def _short_name(self) -> str:
+        return f"sequence[{', '.join([t._short_name for t in self.transformations])}]"
+
 
 class Displacements(Transform):
     """Displacement field transform."""
@@ -323,6 +331,10 @@ class Inverse(Transform):
     def get_inverse(self) -> "Coordinates":
         raise NotImplementedError
 
+    @property
+    def _short_name(self) -> str:
+        return f"inverseOf[{self.transformation._short_name}]"
+
 
 class Bijection(Transform):
     """
@@ -341,6 +353,10 @@ class Bijection(Transform):
             forward=self.inverse,
             inverse=self.forward,
         )
+
+    @property
+    def _short_name(self) -> str:
+        return f"bijection[{self.forward._short_name}]"
 
 
 class ByDimension(Transform):

@@ -1,9 +1,11 @@
+import warnings
 from typing import Self
 
 import zarr
 from pydantic import Field
+from pydantic_zarr.v3 import GroupSpec
 
-from ome_zarr_models._utils import _from_zarr_v3
+from ome_zarr_models._utils import TransformGraph, _from_zarr_v3
 from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs
 from ome_zarr_models._v06.coordinate_transforms import (
     AnyTransform,
@@ -22,6 +24,8 @@ class CollectionAttrs(BaseOMEAttrs):
         for transform in self.coordinateTransformations:
             if transform.input is not None and transform.input not in coord_sys_names:
                 paths[transform.input] = Image
+            if transform.output is not None and transform.output not in coord_sys_names:
+                paths[transform.output] = Image
 
         return paths
 
@@ -45,3 +49,40 @@ class Collection(BaseGroupv06[CollectionAttrs]):
             A Zarr group that has valid OME-Zarr image metadata.
         """
         return _from_zarr_v3(group, cls, CollectionAttrs)
+
+    @property
+    def images(self) -> dict[str, Image]:
+        if self.members is None:
+            return {}
+
+        images = {}
+        for member_name, member in self.members.items():
+            if not isinstance(member, GroupSpec):
+                warnings.warn(
+                    f"Member '{member_name}' is an array, not an OME-Zarr image",
+                    stacklevel=2,
+                )
+                continue
+            images[member_name] = Image(
+                attributes=member.attributes, members=member.members
+            )
+        return images
+
+    def transform_graph(self) -> TransformGraph:
+        """
+        Create a coordinate transformation graph for this image.
+        """
+        graph = TransformGraph()
+
+        # Coordinate systems
+        for system in self.ome_attributes.coordinateSystems:
+            graph.add_system(system)
+        # Coordinate transforms
+        for transform in self.ome_attributes.coordinateTransformations:
+            graph.add_transform(transform)
+
+        images = self.images
+        for image_path in self.images:
+            graph.add_subgraph(image_path, images[image_path].transform_graph())
+
+        return graph
