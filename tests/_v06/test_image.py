@@ -1,3 +1,4 @@
+import pytest
 from pydantic_zarr.v3 import AnyArraySpec, ArraySpec, NamedConfig
 from zarr.abc.store import Store
 from zarr.storage import MemoryStore
@@ -451,3 +452,35 @@ def test_transform_graph() -> None:
             )
         },
     }
+
+
+def test_transform_graph_to_graphviz() -> None:
+    graphviz = pytest.importorskip("graphviz")
+    # Test rendering a transform graph to a graphviz graph
+    # NOTE: currently just a smoke test, does not check that the output is correct
+    zarr_group = json_to_zarr_group(
+        json_fname="image_example.json", store=MemoryStore()
+    )
+    zarr_group.create_array(
+        "0",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
+    zarr_group.create_array(
+        "1",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
+    zarr_group.create_array(
+        "2",
+        shape=(1, 1, 1, 1, 1),
+        dtype="uint8",
+        dimension_names=["t", "c", "z", "y", "x"],
+    )
+    image = Image.from_zarr(zarr_group)
+
+    graph = image.transform_graph()
+    graphviz_graph = graph.to_graphviz()
+    assert isinstance(graphviz_graph, graphviz.Digraph)
