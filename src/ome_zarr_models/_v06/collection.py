@@ -25,8 +25,11 @@ class CollectionAttrs(BaseOMEAttrs):
         for transform in self.coordinateTransformations:
             for coordinate_system in (transform.input, transform.output):
                 if coordinate_system is not None:
-                    if isinstance(coordinate_system, str) and coordinate_system not in coord_sys_names:
-                        paths[coordinate_system] = Image
+                    if isinstance(coordinate_system, str):
+                        if coordinate_system not in coord_sys_names:
+                            paths[coordinate_system] = Image
+                        else:
+                            pass
                     else:
                         assert isinstance(coordinate_system, CoordinateSystemIdentifier)
                         paths[coordinate_system.path] = Image
