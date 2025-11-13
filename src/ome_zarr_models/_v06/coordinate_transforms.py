@@ -145,6 +145,15 @@ class MapAxis(Transform):
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
         return tuple(point[i] for i in self.mapAxis)
 
+    @field_validator("mapAxis", mode="after")
+    @classmethod
+    def check_all_axes(cls, mapAxis: tuple[int, ...]) -> tuple[int, ...]:
+        if set(mapAxis) != set(range(len(mapAxis))):
+            raise ValueError(
+                f"Not all axes present from 0 to {len(mapAxis) - 1}: {mapAxis}"
+            )
+        return mapAxis
+
 
 class Translation(Transform):
     """Translation transformation."""
@@ -182,14 +191,14 @@ class Translation(Transform):
         else:
             raise RuntimeError("Both self.translation and self.path are None")
 
+    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+        return tuple(p + t for p, t in zip(point, self.translation_vector, strict=True))
+
     @model_validator(mode="after")
     def check_metadata_set(self) -> Self:
         if self.translation is None and self.path is None:
             raise ValueError("One of 'translation' or 'path' must be given")
         return self
-
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        return tuple(p + t for p, t in zip(point, self.translation_vector, strict=True))
 
 
 class Scale(Transform):

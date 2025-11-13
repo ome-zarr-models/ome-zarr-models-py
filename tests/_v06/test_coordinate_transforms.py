@@ -128,3 +128,10 @@ def test_affine_dimension_mismatch() -> None:
         ),
     ):
         t.transform_point((1,))
+
+
+def test_validate_mapaxis() -> None:
+    with pytest.raises(
+        ValidationError, match=re.escape("Not all axes present from 0 to 2")
+    ):
+        MapAxis(mapAxis=(0, 3, 1))
