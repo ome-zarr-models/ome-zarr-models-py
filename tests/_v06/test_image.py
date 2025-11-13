@@ -222,13 +222,7 @@ def test_image_new() -> None:
         scales=[[1, 1], [2, 2]],
         translations=[[0, 0], [1, 1]],
         name="my_image",
-        output_coord_transform=Scale(
-            scale=(
-                0.5,
-                0.2,
-            )
-        ),
-        output_coord_system=CoordinateSystem(
+        physical_coord_system=CoordinateSystem(
             name="my_image_coords",
             axes=(
                 Axis(name="y", type="space", unit="micrometer", discrete=False),
@@ -270,25 +264,6 @@ def test_image_new() -> None:
             Multiscale(
                 coordinateSystems=(
                     CoordinateSystem(
-                        name="my_image_array_coords",
-                        axes=(
-                            Axis(
-                                name="y",
-                                type="array",
-                                discrete=True,
-                                unit=None,
-                                longName=None,
-                            ),
-                            Axis(
-                                name="x",
-                                type="array",
-                                discrete=True,
-                                unit=None,
-                                longName=None,
-                            ),
-                        ),
-                    ),
-                    CoordinateSystem(
                         name="my_image_coords",
                         axes=(
                             Axis(
@@ -315,7 +290,7 @@ def test_image_new() -> None:
                             Sequence(
                                 type="sequence",
                                 input="0",
-                                output="my_image_array_coords",
+                                output="my_image_coords",
                                 name=None,
                                 transformations=(
                                     Scale(
@@ -344,7 +319,7 @@ def test_image_new() -> None:
                             Sequence(
                                 type="sequence",
                                 input="1",
-                                output="my_image_array_coords",
+                                output="my_image_coords",
                                 name=None,
                                 transformations=(
                                     Scale(
@@ -368,16 +343,7 @@ def test_image_new() -> None:
                         ),
                     ),
                 ),
-                coordinateTransformations=(
-                    Scale(
-                        type="scale",
-                        input="my_image_array_coords",
-                        output="my_image_coords",
-                        name=None,
-                        scale=(0.5, 0.2),
-                        path=None,
-                    ),
-                ),
+                coordinateTransformations=(),
                 metadata=None,
                 name="my_image",
                 type=None,
