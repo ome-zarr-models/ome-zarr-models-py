@@ -143,8 +143,7 @@ class MapAxis(Transform):
         )
 
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        # Note: no way to transform a point without axis information...
-        raise NotImplementedError
+        return tuple(point[i] for i in self.mapAxis)
 
 
 class Translation(Transform):
