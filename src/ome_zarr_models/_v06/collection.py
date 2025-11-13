@@ -10,6 +10,7 @@ from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs
 from ome_zarr_models._v06.coordinate_transforms import (
     AnyTransform,
     CoordinateSystem,
+    CoordinateSystemIdentifier,
 )
 from ome_zarr_models._v06.image import Image
 
@@ -22,11 +23,13 @@ class CollectionAttrs(BaseOMEAttrs):
         coord_sys_names = [c.name for c in self.coordinateSystems]
         paths = {}
         for transform in self.coordinateTransformations:
-            if transform.input is not None and transform.input not in coord_sys_names:
-                paths[transform.input] = Image
-            if transform.output is not None and transform.output not in coord_sys_names:
-                paths[transform.output] = Image
-
+            for coordinate_system in (transform.input, transform.output):
+                if transform.input is not None:
+                    if isinstance(transform.input, str) and transform.input not in coord_sys_names:
+                        paths[transform.input] = Image
+                    else:
+                        assert isinstance(transform.input, CoordinateSystemIdentifier)
+                        paths[transform.input.path] = Image
         return paths
 
 
