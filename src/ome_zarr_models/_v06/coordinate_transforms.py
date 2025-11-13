@@ -391,16 +391,9 @@ class Affine(Transform):
                 f"Dimensionality of point ({len(point)}) does not match "
                 f"dimensionality of transform ({len(self.affine_matrix)})"
             )
-        point_tuple = tuple(point)
-        point_out = [0.0 for _ in point_tuple]
-
-        for i in range(len(point_out)):
-            point_out[i] = sum(
-                m * p for m, p in zip(self._matrix[i], point, strict=True)
-            )
-            point_out[i] += self._translation[i]
-
-        return tuple(point_out)
+        matrix = np.array([row[:-1] for row in self.affine_matrix])
+        translation = np.array([row[-1] for row in self.affine_matrix])
+        return tuple(np.dot(matrix, point) + translation)
 
     def as_affine(self) -> "Affine":
         return self.model_copy()
