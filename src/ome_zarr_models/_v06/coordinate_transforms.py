@@ -60,6 +60,13 @@ class CoordinateSystem(BaseAttrs):
     def ndim(self) -> int:
         return len(self.axes)
 
+class CoordinateSystemIdentifier(BaseAttrs):
+    """
+    Model for a coordinate system identifier.
+    """
+
+    name: str
+    path: str
 
 class Transform(BaseAttrs, ABC):
     """
@@ -76,8 +83,8 @@ class Transform(BaseAttrs, ABC):
     """
 
     type: str
-    input: str | None = None
-    output: str | None = None
+    input: str | CoordinateSystemIdentifier | None = None
+    output: str | CoordinateSystemIdentifier | None = None
     name: str | None = None
 
     @model_validator(mode="after")
