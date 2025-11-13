@@ -358,7 +358,15 @@ class Affine(Transform):
         return False
 
     def get_inverse(self) -> "Affine":
-        raise NotImplementedError
+        matrix_inv = np.linalg.inv(self._matrix)
+        translation_inv = np.dot(matrix_inv, self._translation)
+        affine = tuple(
+            (*tuple(matrix_inv[i]), translation_inv[i]) for i in range(self.ndim)
+        )
+
+        return Affine(
+            affine=affine, input=self.output, output=self.input, name=self._inverse_name
+        )
 
     @property
     def affine_matrix(self) -> tuple[tuple[float, ...], ...]:
@@ -391,9 +399,7 @@ class Affine(Transform):
                 f"Dimensionality of point ({len(point)}) does not match "
                 f"dimensionality of transform ({len(self.affine_matrix)})"
             )
-        matrix = np.array([row[:-1] for row in self.affine_matrix])
-        translation = np.array([row[-1] for row in self.affine_matrix])
-        return tuple(np.dot(matrix, point) + translation)
+        return tuple(np.dot(self._matrix, point) + self._translation)
 
     def as_affine(self) -> "Affine":
         return self.model_copy()

@@ -77,6 +77,8 @@ def test_inverse(transform: Transform, inverse_expected: Transform) -> None:
         (Affine(affine=((1, 0, 0, 10), (0, 1, 0, -4), (0, 0, 1, 2))), (10, -3, 4)),
         # TODO: change the rotation matrix to not the identity
         (Rotation(rotation=((1, 0, 0), (0, 1, 0), (0, 0, 1))), (0, 1, 2)),
+        # TODO: change the matrix part of the affine to not the identity
+        (Affine(affine=((1, 0, 0, 2), (0, 1, 0, -5), (0, 0, 1, 0))), (2, -4, 2)),
         (
             Sequence(
                 transformations=(
