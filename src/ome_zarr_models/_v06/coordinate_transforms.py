@@ -1,4 +1,3 @@
-import copy
 import typing
 from abc import ABC, abstractmethod
 from typing import Annotated, Literal, Self, TypeVar
@@ -461,6 +460,17 @@ class Rotation(Transform):
     def check_metadata_set(self) -> Self:
         if self.rotation is None and self.path is None:
             raise ValueError("One of 'rotation' or 'path' must be given")
+        return self
+
+    @model_validator(mode="after")
+    def check_rotation_matrix(self) -> Self:
+        matrix_array = np.array(self.rotation_matrix)
+        print(np.identity(self.ndim))
+        print(matrix_array @ matrix_array.T)
+        if not np.allclose(matrix_array @ matrix_array.T, np.identity(self.ndim)):
+            raise ValueError(
+                f"Provided matrix is not a pure rotation matrix: {matrix_array}"
+            )
         return self
 
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
