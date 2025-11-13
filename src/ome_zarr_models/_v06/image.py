@@ -11,9 +11,8 @@ from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 from ome_zarr_models._utils import TransformGraph, _from_zarr_v3
 from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs, BaseZarrAttrs
 from ome_zarr_models._v06.coordinate_transforms import (
-    Axis,
+    AnyTransform,
     CoordinateSystem,
-    Transform,
 )
 from ome_zarr_models._v06.labels import Labels
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
@@ -68,11 +67,12 @@ class Image(BaseGroupv06[ImageAttrs]):
         paths: Sequence[str],
         scales: Sequence[Sequence[float]],
         translations: Sequence[Sequence[float] | None],
+        physical_coord_system: CoordinateSystem,
         name: str,
         multiscale_type: str | None = None,
         metadata: JsonValue | None = None,
-        output_coord_transform: Transform,
-        output_coord_system: CoordinateSystem,
+        coord_transforms: Sequence[AnyTransform] = (),
+        coord_systems: Sequence[CoordinateSystem] = (),
     ) -> "Image":
         """
         Create a new `Image` from a sequence of multiscale arrays
@@ -91,6 +91,9 @@ class Image(BaseGroupv06[ImageAttrs]):
             For each array, a scale value for each axis of the array.
         translations :
             For each array, a translation value for each axis the array.
+        physical_coord_system :
+            The physical coordinate system after the scale and translations have been
+            applied to each array.
         name :
             A name for the multiscale collection.
         multiscale_type :
@@ -98,13 +101,10 @@ class Image(BaseGroupv06[ImageAttrs]):
             Optional.
         metadata :
             Arbitrary metadata to store in the multiscales group.
-        output_coord_transform :
-            A coordinate transform that maps from the full resolution array
-            (defined by zero translation, and unity scale factor) into the output
-            coordinate system.
-        output_coord_system :
-            The output coordinate system after the array scales and translations, and
-            the global scales and translations have been applied.
+        coord_transforms :
+            Additional coordinate transforms to add to this image.
+        coord_systems :
+            Additional coordinate systems to add to this image.
 
         Notes
         -----
@@ -132,35 +132,23 @@ class Image(BaseGroupv06[ImageAttrs]):
                 f"Length of 'translations' ({len(translations)}) does not match "
                 f"length of 'paths' ({len(paths)})"
             )
-        array_coordinate_system = CoordinateSystem(
-            name=f"{name}_array_coords",
-            axes=tuple(
-                Axis(name=axis.name, type="array", discrete=True)
-                for axis in output_coord_system.axes
-            ),
-        )
-        output_coord_transform = output_coord_transform.model_copy(
-            update={
-                "input": array_coordinate_system.name,
-                "output": output_coord_system.name,
-            }
-        )
+
         multimeta = Multiscale(
             datasets=tuple(
                 Dataset.build(
                     path=path,
                     scale=scale,
                     translation=translation,
-                    coord_sys_output_name=f"{name}_array_coords",
+                    coord_sys_output_name=physical_coord_system.name,
                 )
                 for path, scale, translation in zip(
                     paths, scales, translations, strict=True
                 )
             ),
-            coordinateTransformations=(output_coord_transform,),
+            coordinateTransformations=coord_transforms,
             coordinateSystems=(
-                array_coordinate_system,
-                output_coord_system,
+                physical_coord_system,
+                *coord_systems,
             ),
             metadata=metadata,
             name=name,
