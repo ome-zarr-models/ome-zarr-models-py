@@ -226,3 +226,10 @@ def test_validate_mapaxis() -> None:
         ValidationError, match=re.escape("Not all axes present from 0 to 2")
     ):
         MapAxis(mapAxis=(0, 3, 1))
+
+
+def test_none_rotation() -> None:
+    with pytest.raises(
+        ValidationError, match="Provided matrix is not a pure rotation matrix"
+    ):
+        Rotation(rotation=((0, 2), (-1, 0)))
