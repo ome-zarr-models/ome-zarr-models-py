@@ -39,13 +39,7 @@ def test_basic(zarr_path: Path) -> None:
     print(zarr_path)
     zarr_path_relative = zarr_path.relative_to(TEST_DATA_PATH)
     # These have broken metadata; once metadata is fixed, re-enable tests
-    if zarr_path_relative in [
-        Path("3d/simple/affineParams.zarr"),
-        Path("user_stories/SCAPE.zarr"),
-        Path("user_stories/image_registration_3d.zarr"),
-    ]:
-        pytest.xfail("Example currently failing")
-    elif "byDimension" in str(zarr_path):
+    if "byDimension" in str(zarr_path):
         pytest.xfail("byDimension not correctly implemented")
 
     cls = Collection if zarr_path_relative.parts[0] == "user_stories" else Image
@@ -62,4 +56,4 @@ def test_basic(zarr_path: Path) -> None:
 
 def test_get_all_zarrs() -> None:
     zarrs = get_all_zarrs(TEST_DATA_PATH)
-    assert len([z.relative_to(TEST_DATA_PATH) for z in zarrs]) == 38
+    assert len([z.relative_to(TEST_DATA_PATH) for z in zarrs]) == 39
