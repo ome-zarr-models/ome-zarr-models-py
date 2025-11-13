@@ -149,9 +149,9 @@ class MapAxis(Transform):
             mapAxis=tuple([self.mapAxis.index(i) for i in range(self.ndim)]),
         )
 
-    def transform_point(self, point: typing.Sequence[float], error=NotImplementedError) -> TPoint:
+    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
         # Note: no way to transform a point without axis information...
-        raise error
+        raise NotImplementedError
 
 
 class Translation(Transform):
