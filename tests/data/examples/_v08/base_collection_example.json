@@ -1,0 +1,21 @@
+{
+    "ome": {
+        "version": "0.5",
+        "type": "collection",
+        "name": "nested-collection",
+        "nodes": [
+            {
+                "type": "multiscale",
+                "name": "image",
+                "path": "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0062A/6001240_labels.zarr/",
+                "attributes": {}
+            },
+            {
+                "type": "multiscale",
+                "name": "image-label",
+                "path": "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0062A/6001240_labels.zarr/labels/0/",
+                "attributes": {}
+            }
+        ]
+    }
+}
