@@ -451,7 +451,12 @@ class Rotation(Transform):
         return False
 
     def get_inverse(self) -> "Rotation":
-        raise NotImplementedError
+        new_matrix = np.linalg.inv(np.array(self.rotation_matrix))
+        return Rotation(
+            rotation=tuple(tuple(row) for row in new_matrix),
+            input=self.output,
+            output=self.input,
+        )
 
     @property
     def rotation_matrix(self) -> tuple[tuple[float, ...], ...]:
@@ -471,9 +476,7 @@ class Rotation(Transform):
         return self
 
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        rotation = copy.deepcopy(self.rotation_matrix)
-        affine = tuple([(*row, 0.0) for row in rotation])
-        return Affine(affine=affine).transform_point(point)
+        return tuple(np.dot(np.array(self.rotation_matrix), np.array(point)))
 
     def as_affine(self) -> "Affine":
         return Affine._from_matrix_vector(

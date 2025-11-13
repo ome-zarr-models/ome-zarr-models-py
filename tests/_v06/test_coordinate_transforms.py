@@ -33,6 +33,10 @@ def test_no_parameters(transform_cls: type[Transform]) -> None:
         (Translation(translation=(-1, 23)), Translation(translation=(1, -23))),
         (Scale(scale=(-1, 2, 0.5)), Scale(scale=(-1, 0.5, 2))),
         (
+            Rotation(rotation=(((0, 1), (-1, 0)))),
+            Rotation(rotation=(((0, -1), (1, 0)))),
+        ),
+        (
             Sequence(
                 transformations=(
                     Scale(scale=(0.5, -2)),
