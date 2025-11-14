@@ -227,7 +227,7 @@ class Image(BaseGroupv06[ImageAttrs]):
                                 _v05_transform_to_v06(
                                     ds.coordinateTransformations
                                 ).model_copy(
-                                    update={"input": ds.path, "ouput": DEFAULT_SYS_NAME}
+                                    update={"input": ds.path, "output": DEFAULT_SYS_NAME}
                                 ),
                             ),
                         )
