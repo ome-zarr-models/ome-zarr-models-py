@@ -4,7 +4,6 @@ import typing
 from typing import Self
 
 from pydantic import (
-    BaseModel,
     Field,
     JsonValue,
     field_validator,
@@ -22,9 +21,6 @@ from ome_zarr_models._v06.coordinate_transforms import (
     Translation,
 )
 from ome_zarr_models.base import BaseAttrs
-from ome_zarr_models.common.validation import (
-    check_length,
-)
 
 __all__ = ["Dataset", "Multiscale"]
 
@@ -238,9 +234,7 @@ class Dataset(BaseAttrs):
     # TODO: can we validate that the paths must be ordered from highest resolution to
     # smallest using scale metadata?
     path: str
-    coordinateTransformations: tuple[AnyTransform, ...] = Field(
-        ..., min_length=1, max_length=2
-    )
+    coordinateTransformations: tuple[Scale | Identity | Sequence]
 
     @classmethod
     def build(
@@ -267,76 +261,24 @@ class Dataset(BaseAttrs):
             The name of the output coordinate system after this dataset is
             scaled and translated.
         """
-        transform = transforms.Sequence(
-            input=path,
-            output=coord_sys_output_name,
-            transformations=[transforms.Scale(scale=scale)],
-        )
-        if translation is not None:
-            transform = transform.add_transform(
-                transforms.Translation(translation=translation)
+        transform: transforms.Scale | transforms.Sequence
+        if translation is None:
+            transform = transforms.Scale(
+                scale=tuple(scale), input=path, output=coord_sys_output_name
             )
-        print(transform)
+        else:
+            transform = transforms.Sequence(
+                input=path,
+                output=coord_sys_output_name,
+                transformations=(
+                    transforms.Scale(scale=tuple(scale)),
+                    transforms.Translation(translation=tuple(translation)),
+                ),
+            )
         return cls(
             path=path,
             coordinateTransformations=(transform,),
         )
-
-    # the before validation is used to simplify the error messages
-    @field_validator("coordinateTransformations", mode="before")
-    def _ensure_scale_translation(
-        transforms_obj: object,
-    ) -> object:
-        """
-        Ensures that
-        - a single transformation is present
-        - such transformation is a scale
-        - if such transformation is a sequence, ensure that its length is 2 and that
-          the first transformation is a scale and the second a translation
-        """
-        # the class below simplifies error messages since we are in a before validator;
-        # see more: ome_zarr_models.common.multiscales.Dataset
-
-        class Transforms(BaseModel):
-            transforms: tuple[AnyTransform, ...]
-
-        transforms = Transforms(transforms=transforms_obj).transforms
-        check_length(transforms, valid_lengths=[1], variable_name="transforms")
-
-        transform = transforms[0]
-        if isinstance(transform, Sequence):
-            check_length(
-                transform.transformations,
-                valid_lengths=[1, 2],
-                variable_name="transform.transforms (i.e. transformations composing "
-                "the sequence)",
-            )
-            sequence_transforms = transform.transformations
-            if not isinstance(sequence_transforms[0], Scale):
-                msg = (
-                    "When the first (and only) element in `coordinateTransformations`"
-                    " is a `Sequence`, the first element must be a `Scale` transform. "
-                    f"Got {sequence_transforms[0]} instead."
-                )
-                raise ValueError(msg)
-            if len(sequence_transforms) == 2 and not isinstance(
-                sequence_transforms[1], Translation
-            ):
-                msg = (
-                    "When the first (and only) element in `coordinateTransformations`"
-                    " is a `Sequence`, the second element must be a `Translation` "
-                    f"transform. Got {sequence_transforms[1]} instead."
-                )
-                raise ValueError(msg)
-        elif not isinstance(transform, Scale | Identity):
-            msg = (
-                "The first transformation in `coordinateTransformations` "
-                "must either be a Scale, Identity, or Sequence transform. "
-                f"Got {transform} instead."
-            )
-            raise ValueError(msg)
-
-        return transforms_obj
 
     @field_validator("coordinateTransformations", mode="after")
     @classmethod
