@@ -55,7 +55,7 @@ class Collection(BaseGroupv06[CollectionAttrs]):
     def new(
         cls,
         *,
-        images: Sequence[tuple[str, Image]],
+        images: dict[str, Image],
         coord_transforms: Sequence[AnyTransform] = (),
         coord_systems: Sequence[CoordinateSystem] = (),
     ) -> "Collection":
@@ -65,9 +65,8 @@ class Collection(BaseGroupv06[CollectionAttrs]):
         Parameters
         ----------
         images :
-            A sequence of (name, Image) tuples representing the images to include in
-            this collection. The name is the path to the image within the collection
-            group.
+            A dictionary mapping image names to Image objects. The keys are the paths
+            to the images within the collection group.
         coord_transforms :
             Coordinate transforms to add to this collection.
         coord_systems :
@@ -80,7 +79,7 @@ class Collection(BaseGroupv06[CollectionAttrs]):
         arrays in that store.
         """
         members_flat = {}
-        for name, image in images:
+        for name, image in images.items():
             base_path = "/" + name.lstrip("/")
             # Get the flattened representation of the image
             image_flat = image.to_flat(root_path=base_path)

@@ -297,7 +297,7 @@ def test_collection_new() -> None:
     )
 
     collection = Collection.new(
-        images=[("image_a", image_a), ("image_b", image_b)],
+        images={"image_a": image_a, "image_b": image_b},
         coord_transforms=[transform_a_world, transform_b_world],
         coord_systems=[world_coord_system],
     )
