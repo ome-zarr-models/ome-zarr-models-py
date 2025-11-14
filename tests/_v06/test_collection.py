@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import zarr
-from pydantic_zarr.v3 import ArraySpec, GroupSpec, NamedConfig
+from pydantic_zarr.v3 import AnyArraySpec, ArraySpec, GroupSpec, NamedConfig
 
 from ome_zarr_models._v06.collection import Collection, CollectionAttrs
 from ome_zarr_models._v06.coordinate_transforms import (
@@ -230,7 +230,7 @@ def test_load_container() -> None:
 def test_collection_new() -> None:
     """Test creating a new collection with Collection.new()."""
     # Create array spec
-    array_spec = ArraySpec(
+    array_spec: AnyArraySpec = ArraySpec(
         zarr_format=3,
         node_type="array",
         attributes={},
@@ -321,16 +321,22 @@ def test_collection_new() -> None:
     assert isinstance(image_b_member.members["0"], ArraySpec)
 
     # Verify array specs have correct shapes
+    assert isinstance(collection.members["image_a"], GroupSpec)
+    assert collection.members["image_a"].members is not None
     assert collection.members["image_a"].members["0"].shape == (256, 256)
+    assert isinstance(collection.members["image_b"], GroupSpec)
+    assert collection.members["image_b"].members is not None
     assert collection.members["image_b"].members["0"].shape == (256, 256)
 
     # Verify coordinate transformations
     assert len(collection.ome_attributes.coordinateTransformations) == 2
     coord_transform_0 = collection.ome_attributes.coordinateTransformations[0]
+    assert isinstance(coord_transform_0, Translation)
     assert coord_transform_0.input == "image_a"
     assert coord_transform_0.output == "world"
     assert coord_transform_0.translation == (0, 0)
     coord_transform_1 = collection.ome_attributes.coordinateTransformations[1]
+    assert isinstance(coord_transform_1, Translation)
     assert coord_transform_1.input == "image_b"
     assert coord_transform_1.output == "world"
     assert coord_transform_1.translation == (0, 256)
