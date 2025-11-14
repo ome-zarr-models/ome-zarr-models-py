@@ -41,6 +41,29 @@ class ImageAttrs(BaseOMEAttrs):
     def get_optional_group_paths(self) -> dict[str, type[Labels]]:  # type: ignore[override]
         return {"labels": Labels}
 
+    def transform_graph(self) -> TransformGraph:
+        """
+        Create a coordinate transformation graph for these image attributes.
+        """
+        graph = TransformGraph()
+
+        for multiscales in self.multiscales:
+            # Coordinate systems
+            for system in multiscales.coordinateSystems:
+                graph.add_system(system)
+            # Coordinate transforms
+            if multiscales.coordinateTransformations is not None:
+                for transform in multiscales.coordinateTransformations:
+                    graph.add_transform(transform)
+            # Coordinate transforms in datasets
+            for dataset in multiscales.datasets:
+                for transform in dataset.coordinateTransformations:
+                    graph.add_transform(transform)
+
+        graph.set_default_system(self.multiscales[0].coordinateSystems[0].name)
+
+        return graph
+
 
 class Image(BaseGroupv06[ImageAttrs]):
     """
@@ -278,23 +301,4 @@ class Image(BaseGroupv06[ImageAttrs]):
         """
         Create a coordinate transformation graph for this image.
         """
-        graph = TransformGraph()
-
-        for multiscales in self.ome_attributes.multiscales:
-            # Coordinate systems
-            for system in multiscales.coordinateSystems:
-                graph.add_system(system)
-            # Coordinate transforms
-            if multiscales.coordinateTransformations is not None:
-                for transform in multiscales.coordinateTransformations:
-                    graph.add_transform(transform)
-            # Coordinate transforms in datasets
-            for dataset in multiscales.datasets:
-                for transform in dataset.coordinateTransformations:
-                    graph.add_transform(transform)
-
-        graph.set_default_system(
-            self.ome_attributes.multiscales[0].coordinateSystems[0].name
-        )
-
-        return graph
+        return self.ome_attributes.transform_graph()
