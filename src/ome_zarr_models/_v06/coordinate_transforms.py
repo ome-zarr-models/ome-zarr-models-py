@@ -102,6 +102,13 @@ class Transform(BaseAttrs, ABC):
         """Apply transform a single point."""
 
     @property
+    @abstractmethod
+    def has_inverse(self) -> bool:
+        """
+        True if ome-zarr models can return an inverse from `get_inverse()`.
+        """
+
+    @property
     def _inverse_name(self) -> str | None:
         if self.name is None:
             return None
@@ -116,6 +123,10 @@ class Identity(Transform):
     """Identity transformation."""
 
     type: Literal["identity"] = "identity"
+
+    @property
+    def has_inverse(self) -> bool:
+        return True
 
     def get_inverse(self) -> "Identity":
         return Identity(input=self.output, output=self.input, name=self._inverse_name)
@@ -133,6 +144,10 @@ class MapAxis(Transform):
     @property
     def ndim(self) -> int:
         return len(self.mapAxis)
+
+    @property
+    def has_inverse(self) -> bool:
+        return True
 
     def get_inverse(self) -> "MapAxis":
         return MapAxis(
@@ -168,6 +183,10 @@ class Translation(Transform):
         Number of dimensions.
         """
         return len(self.translation_vector)
+
+    @property
+    def has_inverse(self) -> bool:
+        return True
 
     def get_inverse(self) -> "Translation":
         return Translation(
@@ -207,6 +226,10 @@ class Scale(Transform):
     type: Literal["scale"] = "scale"
     scale: tuple[float, ...] | None = None
     path: str | None = None
+
+    @property
+    def has_inverse(self) -> bool:
+        return True
 
     def get_inverse(self) -> "Scale":
         return Scale(
@@ -257,6 +280,10 @@ class Affine(Transform):
     @property
     def ndim(self) -> int:
         return len(self.affine_matrix)
+
+    @property
+    def has_inverse(self) -> bool:
+        return False
 
     def get_inverse(self) -> "Affine":
         raise NotImplementedError
@@ -323,6 +350,10 @@ class Rotation(Transform):
     def ndim(self) -> int:
         return len(self.rotation_matrix)
 
+    @property
+    def has_inverse(self) -> bool:
+        return False
+
     def get_inverse(self) -> "Rotation":
         raise NotImplementedError
 
@@ -354,6 +385,10 @@ class Sequence(Transform):
 
     type: Literal["sequence"] = "sequence"
     transformations: tuple["AnyTransform", ...]
+
+    @property
+    def has_inverse(self) -> bool:
+        return all(t.has_inverse for t in self.transformations)
 
     def get_inverse(self) -> "Sequence":
         return Sequence(
@@ -389,6 +424,10 @@ class Displacements(Transform):
     path: str
     interpolation: str
 
+    @property
+    def has_inverse(self) -> bool:
+        return False
+
     def get_inverse(self) -> "Displacements":
         raise NotImplementedError
 
@@ -405,6 +444,10 @@ class Coordinates(Transform):
     path: str
     interpolation: str
 
+    @property
+    def has_inverse(self) -> bool:
+        return False
+
     def get_inverse(self) -> "Coordinates":
         raise NotImplementedError
 
@@ -419,6 +462,10 @@ class Inverse(Transform):
 
     type: Literal["inverseOf"] = "inverseOf"
     transformation: "AnyTransform"
+
+    @property
+    def has_inverse(self) -> bool:
+        return False
 
     def get_inverse(self) -> "Coordinates":
         raise NotImplementedError
@@ -439,6 +486,10 @@ class Bijection(Transform):
     type: Literal["bijection"] = "bijection"
     forward: "AnyTransform"
     inverse: "AnyTransform"
+
+    @property
+    def has_inverse(self) -> bool:
+        return True
 
     def get_inverse(self) -> "Bijection":
         return Bijection(
@@ -464,6 +515,10 @@ class ByDimension(Transform):
 
     type: Literal["byDimension"] = "byDimension"
     transformations: tuple["AnyTransform", ...]
+
+    @property
+    def has_inverse(self) -> bool:
+        return False
 
     def get_inverse(self) -> "ByDimension":
         raise NotImplementedError
