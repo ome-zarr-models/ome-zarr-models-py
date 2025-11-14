@@ -214,6 +214,7 @@ class Image(BaseGroupv06[ImageAttrs]):
         -------
         OME-Zarr version 0.6 image model.
         """
+        DEFAULT_SYS_NAME = "physical"
         new_members = image_v05.members
         new_attributes = ImageAttrs(
             version="0.6",
@@ -223,14 +224,18 @@ class Image(BaseGroupv06[ImageAttrs]):
                         Dataset(
                             path=ds.path,
                             coordinateTransformations=(
-                                _v05_transform_to_v06(ds.coordinateTransformations),
+                                _v05_transform_to_v06(
+                                    ds.coordinateTransformations
+                                ).model_copy(
+                                    update={"input": ds.path, "ouput": DEFAULT_SYS_NAME}
+                                ),
                             ),
                         )
                         for ds in ms.datasets
                     ),
                     coordinateSystems=(
                         CoordinateSystem(
-                            name="physical",
+                            name=DEFAULT_SYS_NAME,
                             axes=tuple(
                                 Axis(name=ax.name, type=ax.type, unit=ax.unit)
                                 for ax in ms.axes
