@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import zarr
-from pydantic_zarr.v3 import ArraySpec, GroupSpec
+from pydantic_zarr.v3 import ArraySpec, GroupSpec, NamedConfig
 
 from ome_zarr_models._v06.collection import Collection, CollectionAttrs
 from ome_zarr_models._v06.coordinate_transforms import (
@@ -9,6 +9,7 @@ from ome_zarr_models._v06.coordinate_transforms import (
     CoordinateSystem,
     Translation,
 )
+from ome_zarr_models._v06.image import Image
 
 
 def test_load_container() -> None:
@@ -224,3 +225,119 @@ def test_load_container() -> None:
             ),
         ),
     )
+
+
+def test_collection_new() -> None:
+    """Test creating a new collection with Collection.new()."""
+    # Create array spec
+    array_spec = ArraySpec(
+        zarr_format=3,
+        node_type="array",
+        attributes={},
+        shape=(256, 256),
+        data_type="uint8",
+        chunk_grid=NamedConfig(
+            name="regular",
+            configuration={"chunk_shape": [256, 256]},
+        ),
+        chunk_key_encoding=NamedConfig(
+            name="default", configuration={"separator": "/"}
+        ),
+        fill_value=0,
+        codecs=[NamedConfig(name="bytes")],
+        dimension_names=["y", "x"],
+    )
+
+    # Create coordinate system
+    physical_coord_system = CoordinateSystem(
+        name="physical_coord_system",
+        axes=(
+            Axis(name="y", type="space", unit="um"),
+            Axis(name="x", type="space", unit="um"),
+        ),
+    )
+
+    world_coord_system = CoordinateSystem(
+        name="world",
+        axes=(
+            Axis(name="y", type="space", unit="um"),
+            Axis(name="x", type="space", unit="um"),
+        ),
+    )
+
+    # Create images
+    image_a = Image.new(
+        array_specs=[array_spec],
+        paths=["0"],
+        scales=[[1, 1]],
+        translations=[[0, 0]],
+        physical_coord_system=physical_coord_system,
+        name="image_a",
+    )
+
+    image_b = Image.new(
+        array_specs=[array_spec],
+        paths=["0"],
+        scales=[[1, 1]],
+        translations=[[0, 0]],
+        physical_coord_system=physical_coord_system,
+        name="image_b",
+    )
+
+    # Create collection with coordinate transformations
+    transform_a_world = Translation(
+        translation=(0, 0),
+        input="image_a",
+        output="world",
+    )
+    transform_b_world = Translation(
+        translation=(0, 256),
+        input="image_b",
+        output="world",
+    )
+
+    collection = Collection.new(
+        images=[("image_a", image_a), ("image_b", image_b)],
+        coord_transforms=[transform_a_world, transform_b_world],
+        coord_systems=[world_coord_system],
+    )
+
+    # Verify collection structure
+    assert collection.members is not None
+    assert "image_a" in collection.members
+    assert "image_b" in collection.members
+
+    # Verify that members are GroupSpecs with nested ArraySpecs
+    image_a_member = collection.members["image_a"]
+    assert isinstance(image_a_member, GroupSpec)
+    assert image_a_member.members is not None
+    assert "0" in image_a_member.members
+    assert isinstance(image_a_member.members["0"], ArraySpec)
+
+    image_b_member = collection.members["image_b"]
+    assert isinstance(image_b_member, GroupSpec)
+    assert image_b_member.members is not None
+    assert "0" in image_b_member.members
+    assert isinstance(image_b_member.members["0"], ArraySpec)
+
+    # Verify array specs have correct shapes
+    assert collection.members["image_a"].members["0"].shape == (256, 256)
+    assert collection.members["image_b"].members["0"].shape == (256, 256)
+
+    # Verify coordinate transformations
+    assert len(collection.ome_attributes.coordinateTransformations) == 2
+    coord_transform_0 = collection.ome_attributes.coordinateTransformations[0]
+    assert coord_transform_0.input == "image_a"
+    assert coord_transform_0.output == "world"
+    assert coord_transform_0.translation == (0, 0)
+    coord_transform_1 = collection.ome_attributes.coordinateTransformations[1]
+    assert coord_transform_1.input == "image_b"
+    assert coord_transform_1.output == "world"
+    assert coord_transform_1.translation == (0, 256)
+
+    # Verify coordinate systems
+    assert len(collection.ome_attributes.coordinateSystems) == 1
+    assert collection.ome_attributes.coordinateSystems[0].name == "world"
+
+    # Verify version
+    assert collection.ome_attributes.version == "0.6"

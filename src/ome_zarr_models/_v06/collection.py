@@ -1,4 +1,5 @@
 import warnings
+from collections.abc import Sequence
 from typing import Self
 
 import zarr
@@ -6,7 +7,7 @@ from pydantic import Field
 from pydantic_zarr.v3 import GroupSpec
 
 from ome_zarr_models._utils import TransformGraph, _from_zarr_v3
-from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs
+from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs, BaseZarrAttrs
 from ome_zarr_models._v06.coordinate_transforms import (
     AnyTransform,
     CoordinateSystem,
@@ -49,6 +50,53 @@ class Collection(BaseGroupv06[CollectionAttrs]):
             A Zarr group that has valid OME-Zarr image metadata.
         """
         return _from_zarr_v3(group, cls, CollectionAttrs)
+
+    @classmethod
+    def new(
+        cls,
+        *,
+        images: Sequence[tuple[str, Image]],
+        coord_transforms: Sequence[AnyTransform] = (),
+        coord_systems: Sequence[CoordinateSystem] = (),
+    ) -> "Collection":
+        """
+        Create a new `Collection` from a sequence of images and coordinate metadata.
+
+        Parameters
+        ----------
+        images :
+            A sequence of (name, Image) tuples representing the images to include in
+            this collection. The name is the path to the image within the collection
+            group.
+        coord_transforms :
+            Coordinate transforms to add to this collection.
+        coord_systems :
+            Coordinate systems to add to this collection.
+
+        Notes
+        -----
+        This class does not store or copy any array data. To save array data,
+        first write this class to a Zarr store, and then write data to the Zarr
+        arrays in that store.
+        """
+        members_flat = {}
+        for name, image in images:
+            base_path = "/" + name.lstrip("/")
+            # Get the flattened representation of the image
+            image_flat = image.to_flat(root_path=base_path)
+            # Merge into the collection's flat dict
+            members_flat.update(image_flat)
+
+        return Collection(
+            members=GroupSpec.from_flat(members_flat).members,
+            attributes=BaseZarrAttrs(
+                ome=CollectionAttrs(
+                    coordinateTransformations=tuple(coord_transforms),
+                    coordinateSystems=tuple(coord_systems),
+                    version="0.6",
+                )
+            ),
+        )
 
     @property
     def images(self) -> dict[str, Image]:
