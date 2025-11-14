@@ -4,7 +4,6 @@ import typing
 from typing import Self
 
 from pydantic import (
-    BaseModel,
     Field,
     JsonValue,
     field_validator,
@@ -22,9 +21,6 @@ from ome_zarr_models._v06.coordinate_transforms import (
     Translation,
 )
 from ome_zarr_models.base import BaseAttrs
-from ome_zarr_models.common.validation import (
-    check_length,
-)
 
 __all__ = ["Dataset", "Multiscale"]
 
@@ -265,6 +261,7 @@ class Dataset(BaseAttrs):
             The name of the output coordinate system after this dataset is
             scaled and translated.
         """
+        transform: transforms.Scale | transforms.Sequence
         if translation is None:
             transform = transforms.Scale(
                 scale=tuple(scale), input=path, output=coord_sys_output_name
