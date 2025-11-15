@@ -457,27 +457,6 @@ class Coordinates(Transform):
         )
 
 
-class Inverse(Transform):
-    """Inverse transform."""
-
-    type: Literal["inverseOf"] = "inverseOf"
-    transformation: "AnyTransform"
-
-    @property
-    def has_inverse(self) -> bool:
-        return False
-
-    def get_inverse(self) -> "Coordinates":
-        raise NotImplementedError
-
-    @property
-    def _short_name(self) -> str:
-        return f"inverseOf[{self.transformation._short_name}]"
-
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        return self.transformation.transform_point(point)
-
-
 class Bijection(Transform):
     """
     An invertible transform.
@@ -537,7 +516,6 @@ AnyTransform = Annotated[
     | Sequence
     | Displacements
     | Coordinates
-    | Inverse
     | Bijection
     | ByDimension,
     Field(discriminator="type"),
