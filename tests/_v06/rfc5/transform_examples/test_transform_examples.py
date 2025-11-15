@@ -41,6 +41,8 @@ def test_basic(zarr_path: Path) -> None:
     # These have broken metadata; once metadata is fixed, re-enable tests
     if "byDimension" in str(zarr_path):
         pytest.xfail("byDimension not correctly implemented")
+    if "inv" in str(zarr_path):
+        pytest.xfail("Inverse transforms no longer supported")
 
     cls = Collection if zarr_path_relative.parts[0] == "user_stories" else Image
     zarr_group = zarr.open_group(zarr_path, mode="r")
