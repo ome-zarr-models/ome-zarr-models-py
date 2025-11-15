@@ -12,6 +12,12 @@ from ome_zarr_models.common.validation import unique_items_validator
 TPoint = tuple[float, ...]
 
 
+class NoAffineError(RuntimeError):
+    """
+    Exception raised when it's not possible to convert a transform to an affine.
+    """
+
+
 class Axis(BaseAttrs):
     """
     Model for an element of `Multiscale.axes`.
@@ -116,7 +122,7 @@ class Transform(BaseAttrs, ABC):
 
         Raises
         ------
-        NotImplementedError :
+        NoAffineError :
             If this transform can't be converted to an affine transform.
         """
 
@@ -147,7 +153,7 @@ class Identity(Transform):
         return tuple(point)
 
     def as_affine(self) -> "Affine":
-        raise NotImplementedError
+        raise NoAffineError
 
 
 class MapAxis(Transform):
@@ -501,20 +507,30 @@ class Sequence(Transform):
 
     def as_affine(self) -> "Affine":
         if not all(hasattr(t, "ndim") for t in self.transformations):
-            raise NotImplementedError
+            raise NoAffineError(
+                "Can't determine dimensionality of all transforms in this sequence."
+            )
         ndim = self.transformations[0].ndim  # type:ignore[union-attr]
         if not all(t.ndim == ndim for t in self.transformations):  # type:ignore[union-attr]
-            raise NotImplementedError
+            raise NoAffineError(
+                "Not all transforms have the same dimensionality in this sequence"
+            )
 
         matrix = np.identity(ndim)
         translation = np.zeros(ndim)
-        for t in self.transformations:
-            new_affine = t.as_affine()
-            new_matrix = np.array(new_affine._matrix)
-            matrix = new_matrix @ matrix
-            translation = np.dot(new_matrix, translation) + np.array(
-                new_affine._translation
-            )
+        try:
+            for t in self.transformations:
+                new_affine = t.as_affine()
+                new_matrix = np.array(new_affine._matrix)
+                matrix = new_matrix @ matrix
+                translation = np.dot(new_matrix, translation) + np.array(
+                    new_affine._translation
+                )
+        except NoAffineError as e:
+            raise NoAffineError(
+                "At least one transform in this sequence cannot be converted "
+                "to an affine transform."
+            ) from e
 
         return Affine._from_matrix_vector(
             matrix=matrix.tolist(), vector=translation.tolist()
@@ -545,7 +561,7 @@ class Displacements(Transform):
         )
 
     def as_affine(self) -> "Affine":
-        raise NotImplementedError
+        raise NoAffineError
 
 
 class Coordinates(Transform):
@@ -568,7 +584,7 @@ class Coordinates(Transform):
         )
 
     def as_affine(self) -> "Affine":
-        raise NotImplementedError
+        raise NoAffineError
 
 
 class Bijection(Transform):
@@ -601,7 +617,7 @@ class Bijection(Transform):
         return self.forward.transform_point(point)
 
     def as_affine(self) -> "Affine":
-        raise NotImplementedError
+        raise NoAffineError
 
 
 class ByDimension(Transform):
@@ -623,7 +639,7 @@ class ByDimension(Transform):
         raise NotImplementedError
 
     def as_affine(self) -> "Affine":
-        raise NotImplementedError
+        raise NoAffineError
 
 
 AnyTransform = Annotated[
