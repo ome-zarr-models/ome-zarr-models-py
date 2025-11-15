@@ -13,20 +13,13 @@ from ome_zarr_models._utils import TransformGraph, _from_zarr_v3
 from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs, BaseZarrAttrs
 from ome_zarr_models._v06.coordinate_transforms import (
     AnyTransform,
-    Axis,
     CoordinateSystem,
-    Scale,
-    Sequence,
-    Translation,
 )
 from ome_zarr_models._v06.labels import Labels
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
 
 if TYPE_CHECKING:
     from ome_zarr_models.v05 import Image as Imagev05
-    from ome_zarr_models.v05.multiscales import (  # type: ignore[attr-defined]
-        ValidTransform as ValidTransformv05,
-    )
 
 __all__ = ["Image", "ImageAttrs"]
 
@@ -214,35 +207,11 @@ class Image(BaseGroupv06[ImageAttrs]):
         -------
         OME-Zarr version 0.6 image model.
         """
-        DEFAULT_SYS_NAME = "physical"
         new_members = image_v05.members
         new_attributes = ImageAttrs(
             version="0.6",
             multiscales=[
-                Multiscale(
-                    datasets=tuple(
-                        Dataset(
-                            path=ds.path,
-                            coordinateTransformations=(
-                                _v05_transform_to_v06(
-                                    ds.coordinateTransformations
-                                ).model_copy(
-                                    update={"input": ds.path, "output": DEFAULT_SYS_NAME}
-                                ),
-                            ),
-                        )
-                        for ds in ms.datasets
-                    ),
-                    coordinateSystems=(
-                        CoordinateSystem(
-                            name=DEFAULT_SYS_NAME,
-                            axes=tuple(
-                                Axis(name=ax.name, type=ax.type, unit=ax.unit)
-                                for ax in ms.axes
-                            ),
-                        ),
-                    ),
-                )
+                Multiscale.from_v05(ms, intrinsic_system_name="physical")
                 for ms in image_v05.ome_attributes.multiscales
             ],
         )
@@ -361,27 +330,3 @@ class Image(BaseGroupv06[ImageAttrs]):
         Create a coordinate transformation graph for this image.
         """
         return self.ome_attributes.transform_graph()
-
-
-def _v05_transform_to_v06(transform: "ValidTransformv05") -> Scale | Sequence:
-    from ome_zarr_models.common.coordinate_transformations import (
-        VectorScale,
-        VectorTranslation,
-    )
-
-    # Scale (always present)
-    if isinstance(transform[0], VectorScale):
-        scale = Scale(scale=tuple(transform[0].scale))
-    else:
-        scale = Scale(path=transform[0].path)
-
-    if len(transform) == 1:
-        return scale
-
-    else:
-        # Translate
-        if isinstance(transform[1], VectorTranslation):
-            translate = Translation(translation=tuple(transform[1].translation))
-        else:
-            translate = Translation(path=transform[1].translation)
-        return Sequence(transformations=(scale, translate))

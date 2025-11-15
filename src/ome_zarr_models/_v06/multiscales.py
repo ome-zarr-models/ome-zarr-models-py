@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import typing
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
 from pydantic import (
     Field,
@@ -13,14 +13,20 @@ from pydantic import (
 import ome_zarr_models._v06.coordinate_transforms as transforms
 from ome_zarr_models._v06.coordinate_transforms import (
     AnyTransform,
+    Axis,
     CoordinateSystem,
     Identity,
     Scale,
     Sequence,
-    # Transform,
     Translation,
 )
 from ome_zarr_models.base import BaseAttrs
+
+if TYPE_CHECKING:
+    from ome_zarr_models.v05.multiscales import Multiscale as Multiscalev05
+    from ome_zarr_models.v05.multiscales import (  # type: ignore[attr-defined]
+        ValidTransform as ValidTransformv05,
+    )
 
 __all__ = ["Dataset", "Multiscale"]
 
@@ -74,6 +80,46 @@ class Multiscale(BaseAttrs):
         This is the last entry in the `coordinateSystems` attribute.
         """
         return self.coordinateSystems[-1]
+
+    @classmethod
+    def from_v05(
+        cls, multiscale_v05: Multiscalev05, intrinsic_system_name: str
+    ) -> Self:
+        """
+        Convert a OME-Zarr 0.5 multiscales to OME-Zarr 0.6.
+
+        Parameters
+        ----------
+        multiscale_v05 :
+            OME-Zarr 0.5 multiscales
+        intrinsic_system_name :
+            Name to give the intrinsic coordinate system in the new multiscales.
+        """
+        return cls(
+            datasets=tuple(
+                Dataset(
+                    path=ds.path,
+                    coordinateTransformations=(
+                        _v05_transform_to_v06(ds.coordinateTransformations).model_copy(
+                            update={
+                                "input": ds.path,
+                                "output": intrinsic_system_name,
+                            }
+                        ),
+                    ),
+                )
+                for ds in multiscale_v05.datasets
+            ),
+            coordinateSystems=(
+                CoordinateSystem(
+                    name=intrinsic_system_name,
+                    axes=tuple(
+                        Axis(name=ax.name, type=ax.type, unit=ax.unit)
+                        for ax in multiscale_v05.axes
+                    ),
+                ),
+            ),
+        )
 
     @model_validator(mode="after")
     def _ensure_same_output_cs_for_all_datasets(data: Self) -> Self:
@@ -313,3 +359,27 @@ class Dataset(BaseAttrs):
                 f"Got {scale.ndim} and {translation.ndim}."
             )
         return transforms
+
+
+def _v05_transform_to_v06(transform: ValidTransformv05) -> Scale | Sequence:
+    from ome_zarr_models.common.coordinate_transformations import (
+        VectorScale,
+        VectorTranslation,
+    )
+
+    # Scale (always present)
+    if isinstance(transform[0], VectorScale):
+        scale = Scale(scale=tuple(transform[0].scale))
+    else:
+        scale = Scale(path=transform[0].path)
+
+    if len(transform) == 1:
+        return scale
+
+    else:
+        # Translate
+        if isinstance(transform[1], VectorTranslation):
+            translate = Translation(translation=tuple(transform[1].translation))
+        else:
+            translate = Translation(path=transform[1].translation)
+        return Sequence(transformations=(scale, translate))
