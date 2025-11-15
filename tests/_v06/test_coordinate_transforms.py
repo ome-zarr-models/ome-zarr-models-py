@@ -111,6 +111,40 @@ def test_inverse_transform_point(
     assert actual_point == expected_point
 
 
+@pytest.mark.parametrize(
+    "transform, expected_affine",
+    (
+        (
+            Translation(translation=(1, 2, 3)),
+            ((1.0, 0.0, 0.0, 1.0), (0.0, 1.0, 0.0, 2.0), (0.0, 0.0, 1.0, 3.0)),
+        ),
+        (
+            MapAxis(mapAxis=(2, 0, 1)),
+            ((0.0, 0.0, 1.0, 0.0), (1.0, 0.0, 0.0, 0.0), (0.0, 1.0, 0.0, 0.0)),
+        ),
+        (
+            Scale(scale=(-1, 5, 0.2)),
+            ((-1.0, 0.0, 0.0, 0.0), (0.0, 5.0, 0.0, 0.0), (0.0, 0.0, 0.2, 0.0)),
+        ),
+        (
+            Rotation(rotation=((1, 0, 0), (0, 1, 0), (0, 0, 1))),
+            ((1.0, 0.0, 0.0, 0.0), (0.0, 1.0, 0.0, 0.0), (0.0, 0.0, 1.0, 0.0)),
+        ),
+    ),
+)
+def test_as_affine(
+    transform: Transform, expected_affine: tuple[tuple[int, ...], ...]
+) -> None:
+    """
+    Test transforming a single point.
+    """
+    actual_affine = transform.as_affine()
+    assert actual_affine.affine_matrix == expected_affine
+
+    point = (-5, 2, 1)
+    assert actual_affine.transform_point(point) == transform.transform_point(point)
+
+
 def test_invalid_affine() -> None:
     with pytest.raises(
         ValidationError,
