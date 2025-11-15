@@ -617,7 +617,14 @@ class Bijection(Transform):
         return self.forward.transform_point(point)
 
     def as_affine(self) -> "Affine":
-        raise NoAffineError
+        try:
+            return self.forward.as_affine().model_copy(
+                update={"input": self.input, "output": self.output, "name": self.name}
+            )
+        except NoAffineError as e:
+            raise NoAffineError(
+                "Forward transform could not be converted to an affine"
+            ) from e
 
 
 class ByDimension(Transform):

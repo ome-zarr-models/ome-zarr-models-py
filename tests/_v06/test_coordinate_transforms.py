@@ -145,6 +145,13 @@ def test_inverse_transform_point(
             Rotation(rotation=((1, 0, 0), (0, 1, 0), (0, 0, 1))),
             ((1.0, 0.0, 0.0, 0.0), (0.0, 1.0, 0.0, 0.0), (0.0, 0.0, 1.0, 0.0)),
         ),
+        (
+            Bijection(
+                forward=Translation(translation=(1, 2, -4)),
+                inverse=Translation(translation=(-1, -2, 4)),
+            ),
+            ((1.0, 0.0, 0.0, 1.0), (0.0, 1.0, 0.0, 2.0), (0.0, 0.0, 1.0, -4.0)),
+        ),
     ),
 )
 def test_as_affine(
