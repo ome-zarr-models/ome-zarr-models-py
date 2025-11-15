@@ -246,7 +246,13 @@ class TransformGraph:
         self._graph: dict[str, dict[str, Transform]] = defaultdict(dict)
         self._named_systems: dict[str, CoordinateSystem] = {}
         self._default_system = ""
-        self._subgraphs: dict[str, TransformGraph] = {}
+        # If this graph represents a parent group, it can contain sub-groups
+        # that represent the graphs of the images in the parent group. This is
+        # a mapping from coordinate system (in this, the parent group) to the
+        # graph of one of the child images.
+        #
+        # If this graph is a child image already, this dictionary stays empty.
+        self._image_graphs: dict[str, TransformGraph] = {}
 
     def add_system(self, system: CoordinateSystem) -> None:
         """
@@ -258,7 +264,7 @@ class TransformGraph:
         """
         Add a subgraph to this graph.
         """
-        self._subgraphs[path] = graph
+        self._image_graphs[path] = graph
 
     def set_default_system(self, system_name: str) -> None:
         """
@@ -294,13 +300,13 @@ class TransformGraph:
         # Add main graph
         with graph_gv.subgraph(name="cluster_") as subgraph_gv:
             self._add_nodes_edges(self, subgraph_gv)
-            if len(self._subgraphs):
+            if len(self._image_graphs):
                 subgraph_gv.attr(label="Top level collection", **GRAPHVIZ_ATTRS)
 
         # Add any subgraphs
-        for graph_name in self._subgraphs:
+        for graph_name in self._image_graphs:
             with graph_gv.subgraph(name=f"cluster_{graph_name}") as subgraph_gv:
-                subgraph = self._subgraphs[graph_name]
+                subgraph = self._image_graphs[graph_name]
                 self._add_nodes_edges(subgraph, subgraph_gv, path=graph_name)
                 # Add edge between default coordinate system and path name in
                 # the collection
