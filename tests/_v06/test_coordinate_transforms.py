@@ -8,6 +8,7 @@ from ome_zarr_models._v06.coordinate_transforms import (
     Bijection,
     Identity,
     MapAxis,
+    NoAffineError,
     Rotation,
     Scale,
     Sequence,
@@ -109,6 +110,92 @@ def test_inverse_transform_point(
     """
     actual_point = transform.get_inverse().transform_point((0, 1, 2))
     assert actual_point == expected_point
+
+
+@pytest.mark.parametrize(
+    "transform, expected_affine",
+    (
+        (
+            Translation(translation=(1, 2, 3)),
+            ((1.0, 0.0, 0.0, 1.0), (0.0, 1.0, 0.0, 2.0), (0.0, 0.0, 1.0, 3.0)),
+        ),
+        (
+            MapAxis(mapAxis=(2, 0, 1)),
+            ((0.0, 0.0, 1.0, 0.0), (1.0, 0.0, 0.0, 0.0), (0.0, 1.0, 0.0, 0.0)),
+        ),
+        (
+            Scale(scale=(-1, 5, 0.2)),
+            ((-1.0, 0.0, 0.0, 0.0), (0.0, 5.0, 0.0, 0.0), (0.0, 0.0, 0.2, 0.0)),
+        ),
+        (
+            Rotation(rotation=((1, 0, 0), (0, 1, 0), (0, 0, 1))),
+            ((1.0, 0.0, 0.0, 0.0), (0.0, 1.0, 0.0, 0.0), (0.0, 0.0, 1.0, 0.0)),
+        ),
+        (
+            Sequence(
+                transformations=(
+                    Scale(scale=(-1, 5, 0.2)),
+                    Rotation(rotation=((1, 0, 0), (0, 1, 0), (0, 0, 1))),
+                    Translation(translation=(1, 2, 3)),
+                )
+            ),
+            ((-1.0, 0.0, 0.0, 1.0), (0.0, 5.0, 0.0, 2.0), (0.0, 0.0, 0.2, 3.0)),
+        ),
+        (
+            Rotation(rotation=((1, 0, 0), (0, 1, 0), (0, 0, 1))),
+            ((1.0, 0.0, 0.0, 0.0), (0.0, 1.0, 0.0, 0.0), (0.0, 0.0, 1.0, 0.0)),
+        ),
+        (
+            Bijection(
+                forward=Translation(translation=(1, 2, -4)),
+                inverse=Translation(translation=(-1, -2, 4)),
+            ),
+            ((1.0, 0.0, 0.0, 1.0), (0.0, 1.0, 0.0, 2.0), (0.0, 0.0, 1.0, -4.0)),
+        ),
+        (
+            Affine(
+                affine=(
+                    (1.0, 0.0, 0.0, 1.0),
+                    (0.0, 1.0, 0.0, 2.0),
+                    (0.0, 0.0, 1.0, -4.0),
+                )
+            ),
+            ((1.0, 0.0, 0.0, 1.0), (0.0, 1.0, 0.0, 2.0), (0.0, 0.0, 1.0, -4.0)),
+        ),
+    ),
+)
+def test_as_affine(
+    transform: Transform, expected_affine: tuple[tuple[int, ...], ...]
+) -> None:
+    """
+    Test transforming a single point.
+    """
+    actual_affine = transform.as_affine()
+    assert actual_affine.affine_matrix == expected_affine
+
+    point = (-5, 2, 1)
+    assert actual_affine.transform_point(point) == transform.transform_point(point)
+
+
+@pytest.mark.parametrize(
+    "transform",
+    (
+        Identity(),
+        Sequence(
+            transformations=(
+                Translation(translation=(1,)),
+                Identity(),
+            )
+        ),
+        Bijection(
+            forward=Identity(),
+            inverse=Identity(),
+        ),
+    ),
+)
+def test_no_affine(transform: Transform) -> None:
+    with pytest.raises(NoAffineError):
+        transform.as_affine()
 
 
 def test_invalid_affine() -> None:

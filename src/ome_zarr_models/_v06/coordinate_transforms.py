@@ -3,12 +3,19 @@ import typing
 from abc import ABC, abstractmethod
 from typing import Annotated, Literal, Self, TypeVar
 
+import numpy as np
 from pydantic import Field, JsonValue, field_validator, model_validator
 
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.validation import unique_items_validator
 
 TPoint = tuple[float, ...]
+
+
+class NoAffineError(RuntimeError):
+    """
+    Exception raised when it's not possible to convert a transform to an affine.
+    """
 
 
 class Axis(BaseAttrs):
@@ -86,6 +93,13 @@ class Transform(BaseAttrs, ABC):
             raise ValueError(msg)
         return self
 
+    @property
+    @abstractmethod
+    def has_inverse(self) -> bool:
+        """
+        True if ome-zarr models can return an inverse from `get_inverse()`.
+        """
+
     @abstractmethod
     def get_inverse(self) -> "Transform":
         """
@@ -101,11 +115,15 @@ class Transform(BaseAttrs, ABC):
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
         """Apply transform a single point."""
 
-    @property
     @abstractmethod
-    def has_inverse(self) -> bool:
+    def as_affine(self) -> "Affine":
         """
-        True if ome-zarr models can return an inverse from `get_inverse()`.
+        Convert this transform to an equivalent affine transform.
+
+        Raises
+        ------
+        NoAffineError :
+            If this transform can't be converted to an affine transform.
         """
 
     @property
@@ -133,6 +151,9 @@ class Identity(Transform):
 
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
         return tuple(point)
+
+    def as_affine(self) -> "Affine":
+        raise NoAffineError
 
 
 class MapAxis(Transform):
@@ -168,6 +189,20 @@ class MapAxis(Transform):
                 f"Not all axes present from 0 to {len(mapAxis) - 1}: {mapAxis}"
             )
         return mapAxis
+
+    def as_affine(self) -> "Affine":
+        matrix = np.zeros((self.ndim, self.ndim))
+        vector = np.zeros(self.ndim)
+        for row, col in enumerate(self.mapAxis):
+            matrix[row, col] = 1
+
+        return Affine._from_matrix_vector(
+            matrix=tuple(tuple(row) for row in matrix),
+            vector=tuple(vector),
+            input=self.input,
+            output=self.output,
+            name=self.name,
+        )
 
 
 class Translation(Transform):
@@ -212,6 +247,15 @@ class Translation(Transform):
 
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
         return tuple(p + t for p, t in zip(point, self.translation_vector, strict=True))
+
+    def as_affine(self) -> "Affine":
+        return Affine._from_matrix_vector(
+            matrix=tuple(tuple(row) for row in np.identity(self.ndim)),
+            vector=self.translation_vector,
+            input=self.input,
+            output=self.output,
+            name=self.name,
+        )
 
     @model_validator(mode="after")
     def check_metadata_set(self) -> Self:
@@ -260,14 +304,27 @@ class Scale(Transform):
         """
         return len(self.scale_vector)
 
+    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+        return tuple(p * s for p, s in zip(point, self.scale_vector, strict=True))
+
+    def as_affine(self) -> "Affine":
+        matrix = np.identity(self.ndim)
+        for i, scale in enumerate(self.scale_vector):
+            matrix[i, i] = scale
+
+        return Affine._from_matrix_vector(
+            matrix=tuple(tuple(row) for row in matrix),
+            vector=tuple(np.zeros(self.ndim)),
+            input=self.input,
+            output=self.output,
+            name=self.name,
+        )
+
     @model_validator(mode="after")
     def check_metadata_set(self) -> Self:
         if self.scale is None and self.path is None:
             raise ValueError("One of 'scale' or 'path' must be given")
         return self
-
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        return tuple(p * s for p, s in zip(point, self.scale_vector, strict=True))
 
 
 class Affine(Transform):
@@ -276,6 +333,22 @@ class Affine(Transform):
     type: Literal["affine"] = "affine"
     affine: tuple[tuple[float, ...], ...] | None = None
     path: str | None = None
+
+    @classmethod
+    def _from_matrix_vector(
+        cls,
+        matrix: tuple[tuple[float, ...], ...],
+        vector: typing.Sequence[float],
+        input: str | None = None,
+        output: str | None = None,
+        name: str | None = None,
+    ) -> Self:
+        return cls(
+            affine=tuple((*row, x) for row, x in zip(matrix, vector, strict=True)),
+            input=input,
+            output=output,
+            name=name,
+        )
 
     @property
     def ndim(self) -> int:
@@ -305,6 +378,14 @@ class Affine(Transform):
             raise ValueError("One of 'affine' or 'path' must be given")
         return self
 
+    @property
+    def _matrix(self) -> list[tuple[float, ...]]:
+        return [row[:-1] for row in self.affine_matrix]
+
+    @property
+    def _translation(self) -> list[float]:
+        return [row[-1] for row in self.affine_matrix]
+
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
         if len(point) != len(self.affine_matrix):
             raise ValueError(
@@ -312,15 +393,18 @@ class Affine(Transform):
                 f"dimensionality of transform ({len(self.affine_matrix)})"
             )
         point_tuple = tuple(point)
-        matrix = [row[:-1] for row in self.affine_matrix]
-        translation = [row[-1] for row in self.affine_matrix]
         point_out = [0.0 for _ in point_tuple]
 
         for i in range(len(point_out)):
-            point_out[i] = sum(m * p for m, p in zip(matrix[i], point, strict=True))
-            point_out[i] += translation[i]
+            point_out[i] = sum(
+                m * p for m, p in zip(self._matrix[i], point, strict=True)
+            )
+            point_out[i] += self._translation[i]
 
         return tuple(point_out)
+
+    def as_affine(self) -> "Affine":
+        return self.model_copy()
 
     _TAffine = TypeVar("_TAffine", bound=tuple[tuple[float, ...], ...] | None)
 
@@ -379,6 +463,15 @@ class Rotation(Transform):
         affine = tuple([(*row, 0.0) for row in rotation])
         return Affine(affine=affine).transform_point(point)
 
+    def as_affine(self) -> "Affine":
+        return Affine._from_matrix_vector(
+            matrix=self.rotation_matrix,
+            vector=tuple(np.zeros(self.ndim)),
+            input=self.input,
+            output=self.output,
+            name=self.name,
+        )
+
 
 class Sequence(Transform):
     """Sequence transformation."""
@@ -412,6 +505,37 @@ class Sequence(Transform):
             update={"transformations": (*self.transformations, transform)}
         )
 
+    def as_affine(self) -> "Affine":
+        if not all(hasattr(t, "ndim") for t in self.transformations):
+            raise NoAffineError(
+                "Can't determine dimensionality of all transforms in this sequence."
+            )
+        ndim = self.transformations[0].ndim  # type:ignore[union-attr]
+        if not all(t.ndim == ndim for t in self.transformations):  # type:ignore[union-attr]
+            raise NoAffineError(
+                "Not all transforms have the same dimensionality in this sequence"
+            )
+
+        matrix = np.identity(ndim)
+        translation = np.zeros(ndim)
+        try:
+            for t in self.transformations:
+                new_affine = t.as_affine()
+                new_matrix = np.array(new_affine._matrix)
+                matrix = new_matrix @ matrix
+                translation = np.dot(new_matrix, translation) + np.array(
+                    new_affine._translation
+                )
+        except NoAffineError as e:
+            raise NoAffineError(
+                "At least one transform in this sequence cannot be converted "
+                "to an affine transform."
+            ) from e
+
+        return Affine._from_matrix_vector(
+            matrix=matrix.tolist(), vector=translation.tolist()
+        )
+
     @property
     def _short_name(self) -> str:
         return f"sequence[{', '.join([t._short_name for t in self.transformations])}]"
@@ -436,6 +560,9 @@ class Displacements(Transform):
             "Transforming using a displacement field not yet implemented"
         )
 
+    def as_affine(self) -> "Affine":
+        raise NoAffineError
+
 
 class Coordinates(Transform):
     """Coordinate field transform."""
@@ -455,6 +582,9 @@ class Coordinates(Transform):
         raise NotImplementedError(
             "Transforming using a coordinate field not yet implemented"
         )
+
+    def as_affine(self) -> "Affine":
+        raise NoAffineError
 
 
 class Bijection(Transform):
@@ -486,6 +616,16 @@ class Bijection(Transform):
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
         return self.forward.transform_point(point)
 
+    def as_affine(self) -> "Affine":
+        try:
+            return self.forward.as_affine().model_copy(
+                update={"input": self.input, "output": self.output, "name": self.name}
+            )
+        except NoAffineError as e:
+            raise NoAffineError(
+                "Forward transform could not be converted to an affine"
+            ) from e
+
 
 class ByDimension(Transform):
     """
@@ -504,6 +644,9 @@ class ByDimension(Transform):
 
     def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
         raise NotImplementedError
+
+    def as_affine(self) -> "Affine":
+        raise NoAffineError
 
 
 AnyTransform = Annotated[
