@@ -8,6 +8,7 @@ from ome_zarr_models._v06.coordinate_transforms import (
     Bijection,
     Identity,
     MapAxis,
+    NoAffineError,
     Rotation,
     Scale,
     Sequence,
@@ -157,6 +158,15 @@ def test_as_affine(
 
     point = (-5, 2, 1)
     assert actual_affine.transform_point(point) == transform.transform_point(point)
+
+
+@pytest.mark.parametrize(
+    "transform",
+    (Identity(), Sequence(transformations=(Translation(translation=(1,)), Identity()))),
+)
+def test_no_affine(transform: Transform) -> None:
+    with pytest.raises(NoAffineError):
+        transform.as_affine()
 
 
 def test_invalid_affine() -> None:
