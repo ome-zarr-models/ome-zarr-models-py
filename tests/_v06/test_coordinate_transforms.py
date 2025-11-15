@@ -130,6 +130,20 @@ def test_inverse_transform_point(
             Rotation(rotation=((1, 0, 0), (0, 1, 0), (0, 0, 1))),
             ((1.0, 0.0, 0.0, 0.0), (0.0, 1.0, 0.0, 0.0), (0.0, 0.0, 1.0, 0.0)),
         ),
+        (
+            Sequence(
+                transformations=(
+                    Scale(scale=(-1, 5, 0.2)),
+                    Rotation(rotation=((1, 0, 0), (0, 1, 0), (0, 0, 1))),
+                    Translation(translation=(1, 2, 3)),
+                )
+            ),
+            ((-1.0, 0.0, 0.0, 1.0), (0.0, 5.0, 0.0, 2.0), (0.0, 0.0, 0.2, 3.0)),
+        ),
+        (
+            Rotation(rotation=((1, 0, 0), (0, 1, 0), (0, 0, 1))),
+            ((1.0, 0.0, 0.0, 0.0), (0.0, 1.0, 0.0, 0.0), (0.0, 0.0, 1.0, 0.0)),
+        ),
     ),
 )
 def test_as_affine(
