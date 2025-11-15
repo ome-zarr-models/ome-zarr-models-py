@@ -83,7 +83,10 @@ class Multiscale(BaseAttrs):
 
     @classmethod
     def from_v05(
-        cls, multiscale_v05: Multiscalev05, intrinsic_system_name: str
+        cls,
+        multiscale_v05: Multiscalev05,
+        intrinsic_system_name: str,
+        top_level_system: CoordinateSystem | None = None,
     ) -> Self:
         """
         Convert a OME-Zarr 0.5 multiscales to OME-Zarr 0.6.
@@ -94,8 +97,12 @@ class Multiscale(BaseAttrs):
             OME-Zarr 0.5 multiscales
         intrinsic_system_name :
             Name to give the intrinsic coordinate system in the new multiscales.
+        top_level_system :
+            The coordinate system that the top-level coordinate transform in the
+            multiscales transforms into. If the top-level transform is present, must be
+            given. Otherwise, will not be used.
         """
-        return cls(
+        new_ms = cls(
             datasets=tuple(
                 Dataset(
                     path=ds.path,
@@ -119,7 +126,32 @@ class Multiscale(BaseAttrs):
                     ),
                 ),
             ),
+            metadata=multiscale_v05.metadata,
+            name=multiscale_v05.name,
+            type=multiscale_v05.type,
         )
+        if multiscale_v05.coordinateTransformations is not None:
+            if top_level_system is None:
+                raise ValueError(
+                    "top_level_system must be provided because a top-level "
+                    "coordinate transform is present in the input multiscales."
+                )
+            new_ms = new_ms.model_copy(
+                update={
+                    "coordinateTransformations": (
+                        _v05_transform_to_v06(
+                            multiscale_v05.coordinateTransformations
+                        ).model_copy(
+                            update={
+                                "input": intrinsic_system_name,
+                                "output": top_level_system.name,
+                            }
+                        ),
+                    ),
+                    "coordinateSystems": (*new_ms.coordinateSystems, top_level_system),
+                }
+            )
+        return new_ms
 
     @model_validator(mode="after")
     def _ensure_same_output_cs_for_all_datasets(data: Self) -> Self:
