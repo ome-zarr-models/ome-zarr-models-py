@@ -169,7 +169,19 @@ def test_as_affine(
 
 @pytest.mark.parametrize(
     "transform",
-    (Identity(), Sequence(transformations=(Translation(translation=(1,)), Identity()))),
+    (
+        Identity(),
+        Sequence(
+            transformations=(
+                Translation(translation=(1,)),
+                Identity(),
+                Bijection(
+                    forward=Identity(),
+                    inverse=Identity(),
+                ),
+            )
+        ),
+    ),
 )
 def test_no_affine(transform: Transform) -> None:
     with pytest.raises(NoAffineError):
