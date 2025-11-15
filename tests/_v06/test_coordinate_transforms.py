@@ -152,6 +152,16 @@ def test_inverse_transform_point(
             ),
             ((1.0, 0.0, 0.0, 1.0), (0.0, 1.0, 0.0, 2.0), (0.0, 0.0, 1.0, -4.0)),
         ),
+        (
+            Affine(
+                affine=(
+                    (1.0, 0.0, 0.0, 1.0),
+                    (0.0, 1.0, 0.0, 2.0),
+                    (0.0, 0.0, 1.0, -4.0),
+                )
+            ),
+            ((1.0, 0.0, 0.0, 1.0), (0.0, 1.0, 0.0, 2.0), (0.0, 0.0, 1.0, -4.0)),
+        ),
     ),
 )
 def test_as_affine(
@@ -175,11 +185,11 @@ def test_as_affine(
             transformations=(
                 Translation(translation=(1,)),
                 Identity(),
-                Bijection(
-                    forward=Identity(),
-                    inverse=Identity(),
-                ),
             )
+        ),
+        Bijection(
+            forward=Identity(),
+            inverse=Identity(),
         ),
     ),
 )
