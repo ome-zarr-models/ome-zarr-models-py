@@ -1,11 +1,9 @@
 import typing
 from typing import TYPE_CHECKING, Self
 
+# Import needed for pydantic type resolution
 import pydantic_zarr  # noqa: F401
 import zarr
-import zarr.errors
-
-# Import needed for pydantic type resolution
 from pydantic import Field, JsonValue, model_validator
 from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
