@@ -99,6 +99,9 @@ class Collection(BaseGroupv06[CollectionAttrs]):
 
     @property
     def images(self) -> dict[str, Image]:
+        """
+        Mapping from path to image.
+        """
         if self.members is None:
             return {}
 
