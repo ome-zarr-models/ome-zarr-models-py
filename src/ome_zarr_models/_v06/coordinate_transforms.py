@@ -480,6 +480,25 @@ class Sequence(Transform):
     transformations: tuple["AnyTransform", ...]
 
     @property
+    def ndim(self) -> int:
+        ndim: int | None = getattr(self.transformations[0], "ndim", None)
+        if ndim is None:
+            raise RuntimeError(
+                f"{self.transformations[0]} does not have a dimensionality"
+            )
+        for t in self.transformations[1:]:
+            ndim_t = getattr(t, "ndim", None)
+            if ndim_t is None:
+                raise RuntimeError(f"{t} does not have a dimensionality")
+            elif ndim_t != ndim:
+                raise RuntimeError(
+                    f"Dimensionality of {t} not the same as first transfor in sequence "
+                    f"({self.transformations[0]})"
+                )
+
+        return ndim
+
+    @property
     def has_inverse(self) -> bool:
         return all(t.has_inverse for t in self.transformations)
 
@@ -506,31 +525,28 @@ class Sequence(Transform):
         )
 
     def as_affine(self) -> "Affine":
-        if not all(hasattr(t, "ndim") for t in self.transformations):
+        try:
+            ndim = self.ndim
+        except RuntimeError as e:
             raise NoAffineError(
-                "Can't determine dimensionality of all transforms in this sequence."
-            )
-        ndim = self.transformations[0].ndim  # type:ignore[union-attr]
-        if not all(t.ndim == ndim for t in self.transformations):  # type:ignore[union-attr]
-            raise NoAffineError(
-                "Not all transforms have the same dimensionality in this sequence"
-            )
+                "Cannot determine dimensionality of all transforms in sequence."
+            ) from e
 
         matrix = np.identity(ndim)
         translation = np.zeros(ndim)
-        try:
-            for t in self.transformations:
+        for t in self.transformations:
+            try:
                 new_affine = t.as_affine()
-                new_matrix = np.array(new_affine._matrix)
-                matrix = new_matrix @ matrix
-                translation = np.dot(new_matrix, translation) + np.array(
-                    new_affine._translation
-                )
-        except NoAffineError as e:
-            raise NoAffineError(
-                "At least one transform in this sequence cannot be converted "
-                "to an affine transform."
-            ) from e
+            except NoAffineError as e:
+                raise NoAffineError(
+                    "At least one transform in sequence cannot be converted to "
+                    f"an affine ({t})."
+                ) from e
+            new_matrix = np.array(new_affine._matrix)
+            matrix = new_matrix @ matrix
+            translation = np.dot(new_matrix, translation) + np.array(
+                new_affine._translation
+            )
 
         return Affine._from_matrix_vector(
             matrix=matrix.tolist(), vector=translation.tolist()
