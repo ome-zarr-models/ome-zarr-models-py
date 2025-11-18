@@ -10,6 +10,17 @@ from ome_zarr_models._v06.coordinate_transforms import (
     Translation,
 )
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
+from ome_zarr_models.common.coordinate_transformations import (
+    VectorScale,
+    VectorTranslation,
+)
+from ome_zarr_models.v05.axes import Axis as Axisv05
+from ome_zarr_models.v05.multiscales import (
+    Dataset as Datasetv05,
+)
+from ome_zarr_models.v05.multiscales import (
+    Multiscale as Multiscalev05,
+)
 
 COORDINATE_SYSTEM_NAME_FOR_TESTS = "coordinate_system_name_reserved_for_tests"
 
@@ -287,4 +298,106 @@ def test_default_coordinate_systems() -> None:
             Axis(name="x", type=None, discrete=None, unit=None, longName=None),
             Axis(name="y", type=None, discrete=None, unit=None, longName=None),
         ),
+    )
+
+
+def test_from_v05() -> None:
+    ms = Multiscalev05(
+        axes=(
+            Axisv05(name="x", type="space", unit="meter"),
+            Axisv05(name="y", type="space", unit="meter"),
+        ),
+        datasets=(
+            Datasetv05(
+                path="0",
+                coordinateTransformations=(
+                    VectorScale(type="scale", scale=[2, -4]),
+                    VectorTranslation(type="translation", translation=[5, 3]),
+                ),
+            ),
+        ),
+        coordinateTransformations=(VectorScale(type="scale", scale=[6, 3]),),
+        metadata={"key": "value"},
+        name="my_multiscale",
+        type="my_type",
+    )
+    assert Multiscale.from_v05(
+        ms,
+        intrinsic_system_name="intrinsic",
+        top_level_system=CoordinateSystem(
+            name="top_level", axes=(Axis(name="x"), Axis(name="y"))
+        ),
+    ) == Multiscale(
+        coordinateSystems=(
+            CoordinateSystem(
+                name="intrinsic",
+                axes=(
+                    Axis(
+                        name="x",
+                        type="space",
+                        discrete=None,
+                        unit="meter",
+                        longName=None,
+                    ),
+                    Axis(
+                        name="y",
+                        type="space",
+                        discrete=None,
+                        unit="meter",
+                        longName=None,
+                    ),
+                ),
+            ),
+            CoordinateSystem(
+                name="top_level",
+                axes=(
+                    Axis(name="x", type=None, discrete=None, unit=None, longName=None),
+                    Axis(name="y", type=None, discrete=None, unit=None, longName=None),
+                ),
+            ),
+        ),
+        datasets=(
+            Dataset(
+                path="0",
+                coordinateTransformations=(
+                    Sequence(
+                        type="sequence",
+                        input="0",
+                        output="intrinsic",
+                        name=None,
+                        transformations=(
+                            Scale(
+                                type="scale",
+                                input=None,
+                                output=None,
+                                name=None,
+                                scale=(2.0, -4.0),
+                                path=None,
+                            ),
+                            Translation(
+                                type="translation",
+                                input=None,
+                                output=None,
+                                name=None,
+                                translation=(5.0, 3.0),
+                                path=None,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        coordinateTransformations=(
+            Scale(
+                type="scale",
+                input="intrinsic",
+                output="top_level",
+                name=None,
+                scale=(6.0, 3.0),
+                path=None,
+            ),
+        ),
+        metadata={"key": "value"},
+        name="my_multiscale",
+        type="my_type",
     )
