@@ -1,10 +1,9 @@
-from collections.abc import Sequence
-from typing import Self
+import typing
+from typing import TYPE_CHECKING, Self
 
 # Import needed for pydantic type resolution
 import pydantic_zarr  # noqa: F401
 import zarr
-import zarr.errors
 from pydantic import Field, JsonValue, model_validator
 from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
@@ -16,6 +15,9 @@ from ome_zarr_models._v06.coordinate_transforms import (
 )
 from ome_zarr_models._v06.labels import Labels
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
+
+if TYPE_CHECKING:
+    from ome_zarr_models.v05 import Image as Imagev05
 
 __all__ = ["Image", "ImageAttrs"]
 
@@ -86,16 +88,16 @@ class Image(BaseGroupv06[ImageAttrs]):
     def new(
         cls,
         *,
-        array_specs: Sequence[AnyArraySpec],
-        paths: Sequence[str],
-        scales: Sequence[Sequence[float]],
-        translations: Sequence[Sequence[float] | None],
+        array_specs: typing.Sequence[AnyArraySpec],
+        paths: typing.Sequence[str],
+        scales: typing.Sequence[typing.Sequence[float]],
+        translations: typing.Sequence[typing.Sequence[float] | None],
         physical_coord_system: CoordinateSystem,
         name: str,
         multiscale_type: str | None = None,
         metadata: JsonValue | None = None,
-        coord_transforms: Sequence[AnyTransform] = (),
-        coord_systems: Sequence[CoordinateSystem] = (),
+        coord_transforms: typing.Sequence[AnyTransform] = (),
+        coord_systems: typing.Sequence[CoordinateSystem] = (),
     ) -> "Image":
         """
         Create a new `Image` from a sequence of multiscale arrays
@@ -188,6 +190,30 @@ class Image(BaseGroupv06[ImageAttrs]):
                 )
             ),
         )
+
+    @classmethod
+    def from_v05(cls, image_v05: "Imagev05") -> Self:
+        """
+        Convert an v05 model to a v06 model.
+
+        Parameters
+        ----------
+        image_v05 :
+            OME-Zarr version 0.5 image model.
+
+        Returns
+        -------
+        OME-Zarr version 0.6 image model.
+        """
+        new_members = image_v05.members
+        new_attributes = ImageAttrs(
+            version="0.6",
+            multiscales=[
+                Multiscale.from_v05(ms, intrinsic_system_name="physical")
+                for ms in image_v05.ome_attributes.multiscales
+            ],
+        )
+        return cls(members=new_members, attributes=BaseZarrAttrs(ome=new_attributes))
 
     @model_validator(mode="after")
     def _check_arrays_compatible(self) -> Self:
