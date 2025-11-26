@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import argparse
 import sys
+import warnings
 from typing import TYPE_CHECKING, Literal
 
 from ome_zarr_models import __version__, open_ome_zarr
+from ome_zarr_models.exceptions import ValidationWarning
 
 if TYPE_CHECKING:
     from zarr.storage import StoreLike
@@ -70,7 +72,8 @@ def validate(path: StoreLike, version: Literal["0.4", "0.5"] | None = None) -> N
     ```
     """
     try:
-        open_ome_zarr(path, version=version)
+        with warnings.catch_warnings(action="error", category=ValidationWarning):
+            open_ome_zarr(path, version=version)
     except Exception as e:
         print(f"{e}\n")
         print(f"❌ Invalid OME-Zarr: {path}")

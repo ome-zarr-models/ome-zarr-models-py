@@ -105,6 +105,7 @@ nav:
       - Shared:
           - Base objects: api/common/base.md
           - Validation: api/common/validation.md
+          - Exceptions: api/common/exceptions.md
           - Well: api/common/well.md
   - Changelog: changelog.md
   - Contributing: contributing.md
