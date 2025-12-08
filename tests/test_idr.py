@@ -2,7 +2,8 @@
 Test loading data from IDR.
 """
 
-from contextlib import nullcontext
+from contextlib import AbstractContextManager, nullcontext
+from typing import Any
 
 import pytest
 import zarr
@@ -20,10 +21,18 @@ from ome_zarr_models.exceptions import ValidationWarning
             ome_zarr_models.v05.Image,
             None,
         ),
-        # ("https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0010/76-45.ome.zarr", ome_zarr_models.v05.HCS, re.escape("'version' field not specified in plate metadata"))
+        # The next dataset takes a long time (> 10 mins) to open, so comment out for now
+        # ("https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0010/76-45.ome.zarr",
+        # ome_zarr_models.v05.HCS,
+        # re.escape("'version' field not specified in plate metadata"))
     ],
 )
-def test_load_remote_data(url: str, cls, expected_warning: str | None) -> None:
+def test_load_remote_data(
+    url: str,
+    cls: type[ome_zarr_models.v05.base.BaseGroupv05[Any]],
+    expected_warning: str | None,
+) -> None:
+    ctx: AbstractContextManager[Any]
     if expected_warning is not None:
         ctx = pytest.warns(ValidationWarning, match=expected_warning)
     else:
