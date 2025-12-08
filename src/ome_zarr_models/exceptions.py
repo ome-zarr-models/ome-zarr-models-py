@@ -2,6 +2,7 @@
 Custom exceptions and warnings used by `ome-zarr-models`
 """
 
+
 class ValidationWarning(UserWarning):
     """
     Warning emitted for OME-Zarr data that can be interpreted
