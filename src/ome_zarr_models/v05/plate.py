@@ -35,7 +35,7 @@ class Plate(PlateBase):
     )
 
     @model_validator(mode="after")
-    def check_version_give(self) -> Self:
+    def check_version_given(self) -> Self:
         if "version" not in self.model_fields_set:
             warnings.warn(
                 "'version' field not specified in plate metadata, "
