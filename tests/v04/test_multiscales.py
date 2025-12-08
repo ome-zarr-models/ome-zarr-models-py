@@ -381,9 +381,7 @@ def test_multiscale_group_datasets_exist(
     group_attrs = ImageAttrs(multiscales=(default_multiscale,))
     good_items: dict[str, AnyArraySpec] = {
         d.path: ArraySpec(
-            shape=(1, 1, 1, 1),
-            dtype="uint8",
-            chunks=(1, 1, 1, 1),
+            shape=(1, 1, 1, 1), dtype="uint8", chunks=(1, 1, 1, 1), attributes={}
         )
         for d in default_multiscale.datasets
     }
@@ -391,9 +389,7 @@ def test_multiscale_group_datasets_exist(
 
     bad_items: dict[str, AnyArraySpec] = {
         d.path + "x": ArraySpec(
-            shape=(1, 1, 1, 1),
-            dtype="uint8",
-            chunks=(1, 1, 1, 1),
+            shape=(1, 1, 1, 1), dtype="uint8", chunks=(1, 1, 1, 1), attributes={}
         )
         for d in default_multiscale.datasets
     }
