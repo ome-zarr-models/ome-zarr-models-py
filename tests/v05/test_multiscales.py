@@ -453,7 +453,7 @@ def test_multiscale_group_ectopic_group() -> None:
     )
     # remove an array, then re-create the model
     group_model_broken = group_model.model_copy(
-        update={"members": {array_names[0]: GroupSpec()}}
+        update={"members": {array_names[0]: GroupSpec(attributes={})}}
     )
     with pytest.raises(
         ValidationError,
