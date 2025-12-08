@@ -422,7 +422,7 @@ def test_multiscale_group_datasets_ndim() -> None:
     with pytest.raises(ValueError, match=re.escape(match)):
         Image.new(
             array_specs=[
-                ArraySpec(shape=(10,), chunks=(10,), dtype="uint8")
+                ArraySpec(shape=(10,), chunks=(10,), dtype="uint8", attributes={})
                 for _ in range(bad_ndim)
             ],
             paths=[str(i) for i in range(true_ndim)],
@@ -475,7 +475,7 @@ def test_multiscale_group_ectopic_group() -> None:
     )
     # remove an array, then re-create the model
     group_model_broken = group_model.model_copy(
-        update={"members": {array_names[0]: GroupSpec()}}
+        update={"members": {array_names[0]: GroupSpec(attributes={})}}
     )
     with pytest.raises(
         ValidationError,
@@ -488,7 +488,7 @@ def test_from_zarr_missing_metadata(
     store: Store,
     request: pytest.FixtureRequest,
 ) -> None:
-    group_model: AnyGroupSpec = GroupSpec()
+    group_model: AnyGroupSpec = GroupSpec(attributes={})
     group = group_model.to_zarr(store, path="test")
     # store_path = store.path if hasattr(store, "path") else ""
     match = "multiscales\n  Field required"

@@ -77,8 +77,8 @@ def test_image(store: Store) -> None:
 def test_new_image() -> None:
     new_image = Image.new(
         array_specs=[
-            ArraySpec(shape=(5, 5), chunks=(2, 2), dtype=np.uint8),
-            ArraySpec(shape=(3, 3), chunks=(2, 2), dtype=np.uint8),
+            ArraySpec(shape=(5, 5), chunks=(2, 2), dtype=np.uint8, attributes={}),
+            ArraySpec(shape=(3, 3), chunks=(2, 2), dtype=np.uint8, attributes={}),
         ],
         paths=["scale0", "scale1"],
         axes=[
@@ -164,8 +164,8 @@ def test_new_image() -> None:
 def example_image() -> Image:
     return Image.new(
         array_specs=[
-            ArraySpec(shape=(5, 5), chunks=(2, 2), dtype=np.uint8),
-            ArraySpec(shape=(3, 3), chunks=(2, 2), dtype=np.uint8),
+            ArraySpec(shape=(5, 5), chunks=(2, 2), dtype=np.uint8, attributes={}),
+            ArraySpec(shape=(3, 3), chunks=(2, 2), dtype=np.uint8, attributes={}),
         ],
         paths=["scale0", "scale1"],
         axes=[
@@ -212,8 +212,8 @@ def test_new_image_wrong_transforms() -> None:
     ):
         Image.new(
             array_specs=[
-                ArraySpec(shape=(5, 5), chunks=(2, 2), dtype=np.uint8),
-                ArraySpec(shape=(3, 3), chunks=(2, 2), dtype=np.uint8),
+                ArraySpec(shape=(5, 5), chunks=(2, 2), dtype=np.uint8, attributes={}),
+                ArraySpec(shape=(3, 3), chunks=(2, 2), dtype=np.uint8, attributes={}),
             ],
             paths=["scale0", "scale1"],
             axes=[
@@ -238,8 +238,8 @@ def test_global_transform(example_image: Image) -> None:
 def test_no_global_transform() -> None:
     new_image = Image.new(
         array_specs=[
-            ArraySpec(shape=(5, 5), chunks=(2, 2), dtype=np.uint8),
-            ArraySpec(shape=(3, 3), chunks=(2, 2), dtype=np.uint8),
+            ArraySpec(shape=(5, 5), chunks=(2, 2), dtype=np.uint8, attributes={}),
+            ArraySpec(shape=(3, 3), chunks=(2, 2), dtype=np.uint8, attributes={}),
         ],
         paths=["scale0", "scale1"],
         axes=[
