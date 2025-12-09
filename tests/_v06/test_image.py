@@ -206,6 +206,7 @@ def test_image_new() -> None:
         fill_value=0,
         codecs=[NamedConfig(name="bytes")],
         dimension_names=["y", "x"],
+        attributes={}
     )
 
     array_specs: list[AnyArraySpec] = [
