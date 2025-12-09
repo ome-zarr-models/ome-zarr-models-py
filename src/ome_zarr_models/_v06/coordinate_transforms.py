@@ -464,8 +464,6 @@ class Rotation(Transform):
     @model_validator(mode="after")
     def check_rotation_matrix(self) -> Self:
         matrix_array = np.array(self.rotation_matrix)
-        print(np.identity(self.ndim))
-        print(matrix_array @ matrix_array.T)
         if not np.allclose(matrix_array @ matrix_array.T, np.identity(self.ndim)):
             raise ValueError(
                 f"Provided matrix is not a pure rotation matrix: {matrix_array}"
