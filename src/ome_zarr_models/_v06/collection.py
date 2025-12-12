@@ -26,7 +26,7 @@ class CollectionAttrs(BaseOMEAttrs):
         for transform in self.coordinateTransformations:
             for coordinate_system in (transform.input, transform.output):
                 if isinstance(coordinate_system, CoordinateSystemIdentifier):
-                        paths[coordinate_system.path] = Image
+                    paths[coordinate_system.path] = Image
         return paths
 
 

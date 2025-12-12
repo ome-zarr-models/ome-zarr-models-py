@@ -60,6 +60,7 @@ class CoordinateSystem(BaseAttrs):
     def ndim(self) -> int:
         return len(self.axes)
 
+
 class CoordinateSystemIdentifier(BaseAttrs):
     """
     Model for a coordinate system identifier.
@@ -67,6 +68,7 @@ class CoordinateSystemIdentifier(BaseAttrs):
 
     name: str
     path: str
+
 
 class Transform(BaseAttrs, ABC):
     """
