@@ -8,6 +8,7 @@ from ome_zarr_models._v06.coordinate_transforms import (
     Axis,
     CoordinateSystem,
     Translation,
+    CoordinateSystemIdentifier,
 )
 from ome_zarr_models._v06.image import Image
 
@@ -188,7 +189,7 @@ def test_load_container() -> None:
         coordinateTransformations=(
             Translation(
                 type="translation",
-                input="tile_0",
+                input=CoordinateSystemIdentifier(name="physical", path="tile_0"),
                 output="world",
                 name="tile_0_mm to world",
                 translation=(0.0, 0.0),
@@ -196,7 +197,7 @@ def test_load_container() -> None:
             ),
             Translation(
                 type="translation",
-                input="tile_1",
+                input=CoordinateSystemIdentifier(name="physical", path="tile_1"),
                 output="world",
                 name="tile_1_mm to world",
                 translation=(0.0, 348.0),

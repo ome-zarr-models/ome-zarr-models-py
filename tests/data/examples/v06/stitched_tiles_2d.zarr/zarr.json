@@ -8,14 +8,14 @@
         {
           "type": "translation",
           "output": "world",
-          "input": "tile_0",
+          "input": {"path":  "tile_0", "name":  "physical"},
           "translation": [0, 0],
           "name": "tile_0_mm to world"
         },
         {
           "type": "translation",
           "output": "world",
-          "input": "tile_1",
+          "input": {"path":  "tile_1", "name":  "physical"},
           "translation": [0, 348],
           "name": "tile_1_mm to world"
         }
