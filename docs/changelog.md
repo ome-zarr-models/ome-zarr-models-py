@@ -7,6 +7,12 @@
 ome-zarr-models now has support for fixing common issues with OME-Zarr metadata when loading.
 See [the metadata fixes page](fixes.md) for more information.
 
+### Improvements
+
+- Added a better error message when the `'ome'` key is completely absent from Zarr group metadata.
+- Fixed an import in the documentation examples
+- Added search to the documentation
+
 ## 1.3
 
 ### Bug fixes
@@ -17,12 +23,15 @@ See [the metadata fixes page](fixes.md) for more information.
 
 ### New Features
 
-- [ome_zarr_models.open_ome_zarr][] now accepts any store containing a group that can be opened with [zarr.open_group][].
+- [ome_zarr_models.open_ome_zarr][] now accepts any store containing a group that can be opened
+  with [zarr.open_group][].
 
 ### Improvements
 
-- Various optimisations have been made to reduce the number of file requests when creating a model class from an existing [zarr.Group][].
-- [ome_zarr_models.open_ome_zarr][] now includes the name of the group it was trying to validate alongside the validation error message.
+- Various optimisations have been made to reduce the number of file requests when creating a model class from an
+  existing [zarr.Group][].
+- [ome_zarr_models.open_ome_zarr][] now includes the name of the group it was trying to validate alongside the
+  validation error message.
 
 ## Bug fixes
 
@@ -34,13 +43,17 @@ See [the metadata fixes page](fixes.md) for more information.
 
 - Added a command line interface (CLI) for validating and viewing metadata of OME-Zarr groups.
   See [the CLI docs page](cli.md) for more info.
-- All models now support being created from Zarr groups in remote HTTP stores, and more generally from any groups stored in any unlistable store.
-- [ome_zarr_models.open_ome_zarr][] now has an optional `version` argument that can be used to specify the OME-Zarr version of the group you are trying to open.
-- If [ome_zarr_models.open_ome_zarr][] fails to load the Zarr group, validation error messages will now be printed to help with debugging why the Zarr group might not be valid OME-Zarr data.
+- All models now support being created from Zarr groups in remote HTTP stores, and more generally from any groups stored
+  in any unlistable store.
+- [ome_zarr_models.open_ome_zarr][] now has an optional `version` argument that can be used to specify the OME-Zarr
+  version of the group you are trying to open.
+- If [ome_zarr_models.open_ome_zarr][] fails to load the Zarr group, validation error messages will now be printed to
+  help with debugging why the Zarr group might not be valid OME-Zarr data.
 
 ### Fixes
 
-- Opening an OME-Zarr 0.5 Image group that had an integer data type with [ome_zarr_models.open_ome_zarr][] previously identified the group as an ImageLabel group.
+- Opening an OME-Zarr 0.5 Image group that had an integer data type with [ome_zarr_models.open_ome_zarr][] previously
+  identified the group as an ImageLabel group.
   Image groups are now always identified as image groups, unless they contain the "image-label" metadata field.
 
 ## 1.0
@@ -60,10 +73,12 @@ To support OME-Zarr 0.5, minimum dependencies have been updated to:
 ### Breaking changes
 
 - `ome_zarr_models.common.image_label_types.Label` has moved to [ome_zarr_models.v04.image_label_types.Label][].
-- [ome_zarr_models.common.validation.check_array_path][] now takes a mandatory `expected_zarr_version` keyword-only argument.
-- [ome_zarr_models.common.validation.check_group_spec][] and [ome_zarr_models.common.validation.check_array_spec][] raise a `ValueError` instead of a `RuntimeError`.
+- [ome_zarr_models.common.validation.check_array_path][] now takes a mandatory `expected_zarr_version` keyword-only
+  argument.
+- [ome_zarr_models.common.validation.check_group_spec][] and [ome_zarr_models.common.validation.check_array_spec][]
+  raise a `ValueError` instead of a `RuntimeError`.
 
-## 0.1.10
+## 0.1.10
 
 ### Bug fixes
 
@@ -72,7 +87,8 @@ To support OME-Zarr 0.5, minimum dependencies have been updated to:
 
 ### Breaking changes
 
-- `HCS.well_groups` will now only return well groups that exist, instead of erroring out if a well group is defined in the HCS metadata but does not exist as a Zarr group.
+- `HCS.well_groups` will now only return well groups that exist, instead of erroring out if a well group is defined in
+  the HCS metadata but does not exist as a Zarr group.
 
 ## 0.1.9
 
@@ -104,7 +120,8 @@ To support OME-Zarr 0.5, minimum dependencies have been updated to:
 
 ### Minor improvements
 
-- [ome_zarr_models.v04.Image.new][] now checks that `scales` and `translations` are both the same length as `paths`, and raises an error if they are not.
+- [ome_zarr_models.v04.Image.new][] now checks that `scales` and `translations` are both the same length as `paths`, and
+  raises an error if they are not.
 
 ## 0.1.5
 
@@ -114,7 +131,8 @@ To support OME-Zarr 0.5, minimum dependencies have been updated to:
 
 ### Minor improvements
 
-- Improved the error message in [ome_zarr_models.open_ome_zarr][] when a Zarr group can't be validated with any OME-Zarr groups.
+- Improved the error message in [ome_zarr_models.open_ome_zarr][] when a Zarr group can't be validated with any OME-Zarr
+  groups.
 - Simplified the class inheritance structure across the package.
 
 ### Documentation improvements
@@ -137,7 +155,8 @@ To support OME-Zarr 0.5, minimum dependencies have been updated to:
 
 ### New features
 
-- The main OME-Zarr classes are now imported into the `ome_zarr_models.v04` namespace, making them easier to import (e.g., what was `ome_zarr_models.v04.hcs.HCS` can now just be `ome_zarr_models.v04.HCS`).
+- The main OME-Zarr classes are now imported into the `ome_zarr_models.v04` namespace, making them easier to import (
+  e.g., what was `ome_zarr_models.v04.hcs.HCS` can now just be `ome_zarr_models.v04.HCS`).
 
 ## 0.1.2
 
@@ -147,7 +166,8 @@ To support OME-Zarr 0.5, minimum dependencies have been updated to:
 
 ### New features
 
-- Updated the return type on [ome_zarr_models.base.BaseGroup.ome_zarr_version] to allow "0.5" to be returned, in anticipation of upcoming support for OME-Zarr version 0.5.
+- Updated the return type on [ome_zarr_models.base.BaseGroup.ome_zarr_version] to allow "0.5" to be returned, in
+  anticipation of upcoming support for OME-Zarr version 0.5.
 
 ### Bug fixes
 
