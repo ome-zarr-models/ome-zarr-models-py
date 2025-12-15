@@ -5,7 +5,7 @@ In these cases a ValidationWarning will be emitted explaining the fix made.
 This provides a useful interface for software packages and users to read metadata with mistakes, but still access it from ome-zarr-models with those mistakes corrected.
 
 ome-zarr-models will always write specification-compliant metadata.
-The `ome-zarr-models validate` command will always validate on invalid metadata, regardless of whether a fix is available or not.
+The `ome-zarr-models validate` command will always raise an error on invalid metadata, regardless of whether a fix is available or not.
 
 If you have a suggestion for a fix we could add, please open an issue!
 
