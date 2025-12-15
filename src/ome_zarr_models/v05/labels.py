@@ -86,7 +86,7 @@ class LabelsAttrs(BaseOMEAttrs):
 
 
 class Labels(
-    BaseGroupv05[LabelsAttrs],
+    BaseGroupv05[LabelsAttrs]
 ):
     """
     An OME-Zarr labels dataset.
@@ -143,6 +143,12 @@ class Labels(
         List of paths to image-label groups within this labels group.
         """
         return self.attributes.ome.labels
+
+    def label_groups(self) -> dict[str, "ImageLabel"]:
+        """
+        Mapping from path to ImageLabel group, for all labels groups.
+        """
+        return {path: self.get_image_labels_group(path) for path in self.label_paths}
 
     def get_image_labels_group(self, path: str) -> "ImageLabel":
         """
