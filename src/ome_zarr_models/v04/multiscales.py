@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 from collections import Counter
 from typing import TYPE_CHECKING, Any, Literal, Self
 
@@ -19,6 +20,7 @@ from ome_zarr_models.common.coordinate_transformations import (
     ValidTransform,
     VectorScale,
     VectorTransform,
+    VectorTranslation,
     _build_transforms,
     _ndim,
 )
@@ -27,6 +29,7 @@ from ome_zarr_models.common.validation import (
     check_ordered_scales,
     unique_items_validator,
 )
+from ome_zarr_models.exceptions import ValidationWarning
 from ome_zarr_models.v04.axes import Axes
 
 if TYPE_CHECKING:
@@ -243,23 +246,40 @@ class Dataset(BaseAttrs):
         transforms = Transforms(transforms=transforms_obj).transforms
         check_length(transforms, valid_lengths=[1, 2], variable_name="transforms")
 
-        maybe_scale = transforms[0]
-        if maybe_scale.type != "scale":
-            msg = (
-                "The first element of `coordinateTransformations` must be a scale "
-                f"transform. Got {maybe_scale} instead."
-            )
-            raise ValueError(msg)
-        if len(transforms) == 2:
-            maybe_trans = transforms[1]
-            if (maybe_trans.type) != "translation":
-                msg = (
-                    "The second element of `coordinateTransformations` must be a "
-                    f"translation transform. Got {maybe_trans} instead."
+        transform_types = tuple(t.type for t in transforms)
+        if transform_types == ("scale",) or transform_types == ("scale", "translation"):
+            return transforms_obj
+        elif transform_types == ("translation", "scale"):
+            if isinstance(transforms[0], VectorTranslation) and isinstance(
+                transforms[1], VectorScale
+            ):
+                # Can only do the swap if we know the vectors
+                warnings.warn(
+                    "Translation and scale are in the wrong order "
+                    "(scale should come first). Swapping transforms.",
+                    ValidationWarning,
+                    stacklevel=2,
                 )
-                raise ValueError(msg)
+                new_transforms = (
+                    transforms[1],
+                    VectorTranslation(
+                        type="translation",
+                        translation=[
+                            t * s
+                            for t, s in zip(
+                                transforms[0].translation,
+                                transforms[1].scale,
+                                strict=False,
+                            )
+                        ],
+                    ),
+                )
+                return new_transforms
 
-        return transforms_obj
+        raise ValueError(
+            "Expected a scale or (scale, translation) transform. "
+            f"Got {transform_types} instead."
+        )
 
     @field_validator("coordinateTransformations", mode="after")
     @classmethod

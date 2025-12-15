@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.4
+
+### Fixing metadata
+
+ome-zarr-models now has support for fixing common issues with OME-Zarr metadata when loading.
+See [the metadata fixes page](fixes.md) for more information.
+
 ## 1.3
 
 ### Bug fixes

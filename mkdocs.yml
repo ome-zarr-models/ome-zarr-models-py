@@ -82,6 +82,7 @@ nav:
   - Command line: cli.md
   - Python tutorial: tutorial.py
   - How do I...?: how-to.md
+  - Metadata fixes: fixes.md
   - API reference:
       - api/index.md
       - v05:
@@ -105,6 +106,7 @@ nav:
       - Shared:
           - Base objects: api/common/base.md
           - Validation: api/common/validation.md
+          - Exceptions: api/common/exceptions.md
           - Well: api/common/well.md
   - Changelog: changelog.md
   - Contributing: contributing.md

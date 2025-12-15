@@ -12,6 +12,7 @@ from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, ArraySpec, GroupSpec
 from ome_zarr_models.common.coordinate_transformations import (
     _build_transforms,
 )
+from ome_zarr_models.exceptions import ValidationWarning
 from ome_zarr_models.v05.axes import Axis
 from ome_zarr_models.v05.coordinate_transformations import (
     VectorScale,
@@ -233,11 +234,7 @@ def test_transform_invalid_length(
 @pytest.mark.parametrize(
     "transforms",
     [
-        (VectorTranslation.build((1, 1, 1)),) * 2,
-        (
-            VectorTranslation.build((1, 1, 1)),
-            VectorScale.build((1, 1, 1)),
-        ),
+        (VectorTranslation.build((1, 1, 1)), VectorTranslation.build((1, 1, 1))),
     ],
 )
 def test_transform_invalid_first_element(
@@ -248,8 +245,10 @@ def test_transform_invalid_first_element(
     """
     with pytest.raises(
         ValidationError,
-        match="The first element of `coordinateTransformations` "
-        "must be a scale transform",
+        match=re.escape(
+            "Expected a scale or (scale, translation) transform. "
+            "Got ('translation', 'translation') instead"
+        ),
     ):
         Dataset(path="foo", coordinateTransformations=transforms)
 
@@ -271,10 +270,34 @@ def test_transform_invalid_second_element(
     """
     with pytest.raises(
         ValidationError,
-        match="The second element of `coordinateTransformations` "
-        "must be a translation transform",
+        match=re.escape(
+            "Expected a scale or (scale, translation) transform. "
+            "Got ('scale', 'scale') instead"
+        ),
     ):
         Dataset(path="foo", coordinateTransformations=transforms)
+
+
+def test_swap_translation_scale() -> None:
+    with pytest.warns(
+        ValidationWarning,
+        match=re.escape(
+            "Translation and scale are in the wrong order (scale should come first). "
+            "Swapping transforms."
+        ),
+    ):
+        ds = Dataset(
+            path="foo",
+            coordinateTransformations=(
+                VectorTranslation.build((0.5, -4, -3)),
+                VectorScale.build((2, 4, -1)),
+            ),
+        )
+
+    assert ds.coordinateTransformations == (
+        VectorScale(type="scale", scale=[2.0, 4.0, -1.0]),
+        VectorTranslation(type="translation", translation=[1.0, -16.0, 3.0]),
+    )
 
 
 def test_validate_axes_top_transforms() -> None:

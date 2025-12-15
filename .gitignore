@@ -11,3 +11,5 @@ coverage.xml
 
 # Where `mkdocs build` puts local website build
 site
+
+.idea
