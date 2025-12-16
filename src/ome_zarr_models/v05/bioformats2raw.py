@@ -1,5 +1,6 @@
-from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs
 from pydantic import Field
+
+from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs
 
 
 class Bioformats2rawAttrs(BaseOMEAttrs):
