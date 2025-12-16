@@ -49,7 +49,7 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
-          paths: [ src ]
+          paths: [src]
           inventories:
             - https://docs.python.org/3/objects.inv
             - https://pydantic-zarr.readthedocs.io/stable/objects.inv

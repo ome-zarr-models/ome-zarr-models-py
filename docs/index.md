@@ -5,7 +5,7 @@ A Python package for loading and validating OME-Zarr data.
 The core of this package is a set of classes for representing different OME-Zarr groups:
 
 | OME-Zarr 0.5                                   | OME-Zarr 0.4                                           |
-|------------------------------------------------|--------------------------------------------------------|
+| ---------------------------------------------- | ------------------------------------------------------ |
 | [`HCS`][ome_zarr_models.v05.HCS]               | [`HCS`][ome_zarr_models.v04.HCS]                       |
 | [`Image`][ome_zarr_models.v05.Image]           | [`Image`][ome_zarr_models.v04.Image]                   |
 | [`Labels`][ome_zarr_models.v05.Labels]         | [`Labels`][ome_zarr_models.v04.Labels]                 |
@@ -79,7 +79,7 @@ Versions 1.x of `ome-zarr-models` require `zarr-python` version 3, and support v
   written to, so **we have chosen to validate against the original release of OME-Zarr 0.5** (
   commit [8a0f886](https://github.com/ome/ngff/tree/8a0f886aac791060e329874b624126d3530c2b6f)).
   This means we do not:
-    - Validate "omero" metadata.
+  - Validate "omero" metadata.
 - For labels, [the OME-Zarr specification says](https://ngff.openmicroscopy.org/0.5/index.html#labels-md) "Intermediate
   groups between "labels" and the images within it are allowed, but these MUST NOT contain metadata.". Because it is not
   clear what "metadata" means in this sentence, we do not validate this part of the specification.
