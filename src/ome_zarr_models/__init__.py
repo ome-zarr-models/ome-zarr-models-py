@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Any, Literal
 import zarr
 import zarr.storage
 
+import ome_zarr_models.v04.bioformats2raw
 import ome_zarr_models.v04.hcs
 import ome_zarr_models.v04.image
 import ome_zarr_models.v04.image_label
@@ -36,6 +37,7 @@ _V04_groups: list[type[BaseGroupv04[Any]]] = [
     ome_zarr_models.v04.image.Image,
     ome_zarr_models.v04.labels.Labels,
     ome_zarr_models.v04.well.Well,
+    ome_zarr_models.v04.bioformats2raw.BioFormats2Raw,
 ]
 
 _V05_groups: list[type[BaseGroupv05[Any]]] = [
