@@ -23,7 +23,7 @@ class BioFormats2RawAttrs(BaseAttrsv2):
 
 class BioFormats2Raw(BaseGroupv04[BioFormats2RawAttrs]):
     """
-    An OME-Zarr labels dataset.
+    An OME-Zarr bioformats2raw dataset.
     """
 
     @classmethod
@@ -34,7 +34,7 @@ class BioFormats2Raw(BaseGroupv04[BioFormats2RawAttrs]):
         Parameters
         ----------
         group : zarr.Group
-            A Zarr group that has valid OME-Zarr labels metadata.
+            A Zarr group that has valid OME-Zarr bioformats2raw metadata.
         """
         # on unlistable storage backends, the members of this group will be {}
         group_spec_in: pydantic_zarr.v2.AnyGroupSpec
