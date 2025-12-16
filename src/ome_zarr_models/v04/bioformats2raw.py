@@ -14,6 +14,12 @@ from ome_zarr_models.v04.plate import Plate
 class BioFormats2RawAttrs(BaseAttrsv2):
     """
     A model of the attributes contained in a bioformats2raw zarr group.
+
+    Warnings
+    --------
+    It is not recommended to write new bioformats2raw groups.
+    bioformats2raw is designed to support existing legacy data, and will be superseded
+    by other OME-Zarr features in the future.
     """
 
     bioformats2raw_layout: Literal[3] = Field(..., alias="bioformats2raw.layout")
@@ -24,6 +30,13 @@ class BioFormats2RawAttrs(BaseAttrsv2):
 class BioFormats2Raw(BaseGroupv04[BioFormats2RawAttrs]):
     """
     An OME-Zarr bioformats2raw dataset.
+
+    Warnings
+    --------
+    It is not recommended to write new bioformats2raw groups.
+    bioformats2raw is designed to support existing legacy data, and will be superseded
+    by other OME-Zarr features in the future.
+
     """
 
     @classmethod
