@@ -282,9 +282,24 @@ class TransformGraph:
         """
         Add a transform to the graph.
         """
+        from ome_zarr_models._v06.coordinate_transforms import (
+            CoordinateSystemIdentifier,
+        )
+
         if transform.input is None or transform.output is None:
             raise ValueError("transform must have both input and output set")
-        self._graph[transform.input][transform.output] = transform
+        input_name = (
+            transform.input.name
+            if isinstance(transform.input, CoordinateSystemIdentifier)
+            else transform.input
+        )
+        output_name = (
+            transform.output.name
+            if isinstance(transform.output, CoordinateSystemIdentifier)
+            else transform.output
+        )
+
+        self._graph[input_name][output_name] = transform
 
     def to_graphviz(self) -> graphviz.Digraph:
         """
