@@ -70,6 +70,9 @@ class CoordinateSystemIdentifier(BaseAttrs):
     path: str
 
 
+TCoordSysIdentifier = CoordinateSystemIdentifier | str | None
+
+
 class Transform(BaseAttrs, ABC):
     """
     Model of a coordinate transformation.
@@ -85,8 +88,8 @@ class Transform(BaseAttrs, ABC):
     """
 
     type: str
-    input: str | CoordinateSystemIdentifier | None = None
-    output: str | CoordinateSystemIdentifier | None = None
+    input: TCoordSysIdentifier = None
+    output: TCoordSysIdentifier = None
     name: str | None = None
 
     @model_validator(mode="after")
@@ -348,8 +351,8 @@ class Affine(Transform):
         cls,
         matrix: tuple[tuple[float, ...], ...],
         vector: typing.Sequence[float],
-        input: str | None = None,
-        output: str | None = None,
+        input: TCoordSysIdentifier = None,
+        output: TCoordSysIdentifier = None,
         name: str | None = None,
     ) -> Self:
         return cls(
