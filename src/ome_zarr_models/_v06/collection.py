@@ -21,7 +21,6 @@ class CollectionAttrs(BaseOMEAttrs):
     coordinateSystems: tuple[CoordinateSystem, ...] = Field(default=())
 
     def get_group_paths(self) -> dict[str, type[Image]]:  # type: ignore[override]
-        coord_sys_names = [c.name for c in self.coordinateSystems]
         paths = {}
         for transform in self.coordinateTransformations:
             for coordinate_system in (transform.input, transform.output):
