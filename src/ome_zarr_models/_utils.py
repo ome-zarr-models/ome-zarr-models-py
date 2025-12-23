@@ -5,8 +5,8 @@ Private utilities.
 from __future__ import annotations
 
 from collections import Counter, defaultdict
-from dataclasses import MISSING, fields, is_dataclass
-from typing import TYPE_CHECKING, Any, TypeVar
+from dataclasses import MISSING, dataclass, fields, is_dataclass
+from typing import TYPE_CHECKING, Any, Self, TypeVar
 
 import pydantic
 import pydantic_zarr.v2
@@ -27,7 +27,11 @@ if TYPE_CHECKING:
     from zarr.abc.store import Store
 
     from ome_zarr_models._v06.base import BaseGroupv06
-    from ome_zarr_models._v06.coordinate_transforms import CoordinateSystem, Transform
+    from ome_zarr_models._v06.coordinate_transforms import (
+        CoordinateSystem,
+        CoordinateSystemIdentifier,
+        Transform,
+    )
     from ome_zarr_models.v04.base import BaseGroupv04
     from ome_zarr_models.v05.base import BaseGroupv05
 
@@ -236,6 +240,23 @@ def dataclass_to_pydantic(dataclass_type: type) -> type[pydantic.BaseModel]:
 GRAPHVIZ_ATTRS = {"fontname": "open-sans"}
 
 
+@dataclass(frozen=True)
+class TransformGraphNode:
+    name: str
+    path: str
+
+    @classmethod
+    def from_identifier(cls, identifier: str | CoordinateSystemIdentifier) -> Self:
+        from ome_zarr_models._v06.coordinate_transforms import (
+            CoordinateSystemIdentifier,
+        )
+
+        if isinstance(identifier, CoordinateSystemIdentifier):
+            return cls(name=identifier.name, path=identifier.path)
+        else:
+            return cls(name=identifier, path="")
+
+
 class TransformGraph:
     """
     A graph representing coordinate transforms.
@@ -243,40 +264,26 @@ class TransformGraph:
 
     def __init__(self) -> None:
         # Mapping from input coordinate system to a dict of {output_system: transform}
-        self._graph: dict[str, dict[str, Transform]] = defaultdict(dict)
-        self._named_systems: dict[str, CoordinateSystem] = {}
-        self._default_system = ""
-        # If this graph represents a parent group, it can contain sub-groups
-        # that represent the graphs of the images in the parent group. This is
-        # a mapping from coordinate system (in this, the parent group) to the
-        # graph of one of the child images.
-        #
+        self._graph: dict[TransformGraphNode, dict[TransformGraphNode, Transform]] = (
+            defaultdict(dict)
+        )
+        # Mapping from system name to coordinate system
+        self._systems: dict[str, CoordinateSystem] = {}
+        # Mapping from path to child transform graphs
         # If this graph is a child image already, this dictionary stays empty.
-        self._image_graphs: dict[str, TransformGraph] = {}
+        self._child_graphs: dict[str, TransformGraph] = {}
 
     def add_system(self, system: CoordinateSystem) -> None:
         """
         Add a named coordinate system to the graph.
         """
-        self._named_systems[system.name] = system
+        self._systems[system.name] = system
 
     def add_subgraph(self, path: str, graph: TransformGraph) -> None:
         """
         Add a subgraph to this graph.
         """
-        self._image_graphs[path] = graph
-
-    def set_default_system(self, system_name: str) -> None:
-        """
-        Set the default coordinate system used when transforming
-        out of this graph.
-        """
-        if system_name not in self._named_systems:
-            raise ValueError(
-                f"System named '{system_name}' not in list of named coordinate systems "
-                f"({self._named_systems.keys()})"
-            )
-        self._default_system = system_name
+        self._child_graphs[path] = graph
 
     def add_transform(self, transform: Transform) -> None:
         """
@@ -284,7 +291,26 @@ class TransformGraph:
         """
         if transform.input is None or transform.output is None:
             raise ValueError("transform must have both input and output set")
-        self._graph[transform.input][transform.output] = transform
+        input_ = TransformGraphNode.from_identifier(transform.input)
+        output_ = TransformGraphNode.from_identifier(transform.output)
+        self._graph[input_][output_] = transform
+
+    @property
+    def _path_system_names(self) -> set[str]:
+        """
+        Any coordinate systems referred to in the input/output of transforms,
+        but not present in the named coordinate systems list.
+        """
+        systems = set()
+        for sys_in in self._graph:
+            systems.add(sys_in)
+            for sys_out in self._graph[sys_in]:
+                systems.add(sys_out)
+
+        # Filter out any systems that point to another path
+        system_names = {sys.name for sys in systems if sys.path == ""}
+        # Filter out named coordinate systems
+        return system_names - set(self._systems.keys())
 
     def to_graphviz(self) -> graphviz.Digraph:
         """
@@ -299,46 +325,41 @@ class TransformGraph:
         graph_gv = graphviz.Digraph()
         # Add main graph
         with graph_gv.subgraph(name="cluster_") as subgraph_gv:
-            self._add_nodes_edges(self, subgraph_gv)
-            if len(self._image_graphs):
+            self._add_nodes_edges(self, subgraph_gv, path="")
+            if len(self._child_graphs) > 0:
                 subgraph_gv.attr(label="Top level collection", **GRAPHVIZ_ATTRS)
 
         # Add any subgraphs
-        for graph_name in self._image_graphs:
-            with graph_gv.subgraph(name=f"cluster_{graph_name}") as subgraph_gv:
-                subgraph = self._image_graphs[graph_name]
-                self._add_nodes_edges(subgraph, subgraph_gv, path=graph_name)
-                # Add edge between default coordinate system and path name in
-                # the collection
+        for child_path in self._child_graphs:
+            with graph_gv.subgraph(name=f"cluster_{child_path}") as subgraph_gv:
+                subgraph = self._child_graphs[child_path]
+                self._add_nodes_edges(subgraph, subgraph_gv, path=child_path)
+                subgraph_gv.attr(label=child_path, **GRAPHVIZ_ATTRS)
+
+        # Add transforms that go between different subgraphs
+        for input_sys in self._graph:
+            for output_sys in self._graph[input_sys]:
+                # Don't add internal transforms
+                if (input_sys.path, output_sys.path) == ("", ""):
+                    continue
                 graph_gv.edge(
-                    self._node_key(graph_name, subgraph._default_system),
-                    self._node_key("", graph_name),
-                    arrowhead="none",
-                    style="dashed",
+                    self._node_key(input_sys.path, input_sys.name),
+                    self._node_key(output_sys.path, output_sys.name),
+                    label=self._graph[input_sys][output_sys]._short_name,
                     **GRAPHVIZ_ATTRS,
                 )
-                subgraph_gv.attr(label=graph_name, **GRAPHVIZ_ATTRS)
 
         return graph_gv
 
-    @property
-    def _path_systems(self) -> set[str]:
-        systems = set()
-        for sys_in in self._graph:
-            systems.add(sys_in)
-            for sys_out in self._graph[sys_in]:
-                systems.add(sys_out)
-
-        return systems - set(self._named_systems.keys())
-
     @classmethod
     def _add_nodes_edges(
-        cls, graph: TransformGraph, graphviz_graph: graphviz.Digraph, path: str = ""
+        cls, graph: TransformGraph, graphviz_graph: graphviz.Digraph, path: str
     ) -> None:
         """
         Add nodes and edges to a graphviz graph.
         """
-        for system_name in graph._named_systems:
+        # Add named systems as nodes
+        for system_name in graph._systems:
             graphviz_graph.node(
                 cls._node_key(path, system_name),
                 label=system_name,
@@ -346,8 +367,8 @@ class TransformGraph:
                 fillcolor="#fdbb84",
                 **GRAPHVIZ_ATTRS,
             )
-
-        for system_name in graph._path_systems:
+        # Add path systems as nodes
+        for system_name in graph._path_system_names:
             graphviz_graph.node(
                 cls._node_key(path, system_name),
                 label=system_name,
@@ -355,11 +376,15 @@ class TransformGraph:
                 **GRAPHVIZ_ATTRS,
             )
 
+        # Add transforms as edges
         for input_sys in graph._graph:
             for output_sys in graph._graph[input_sys]:
+                # Only add transforms internal to this group
+                if (input_sys.path, output_sys.path) != ("", ""):
+                    continue
                 graphviz_graph.edge(
-                    cls._node_key(path, input_sys),
-                    cls._node_key(path, output_sys),
+                    cls._node_key(path, input_sys.name),
+                    cls._node_key(path, output_sys.name),
                     label=graph._graph[input_sys][output_sys]._short_name,
                     **GRAPHVIZ_ATTRS,
                 )

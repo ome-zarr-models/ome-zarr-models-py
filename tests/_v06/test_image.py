@@ -3,6 +3,7 @@ from pydantic_zarr.v3 import AnyArraySpec, ArraySpec, NamedConfig
 from zarr.abc.store import Store
 from zarr.storage import MemoryStore
 
+from ome_zarr_models._utils import TransformGraphNode
 from ome_zarr_models._v06.coordinate_transforms import (
     Axis,
     CoordinateSystem,
@@ -378,8 +379,18 @@ def test_transform_graph() -> None:
 
     graph = image.transform_graph()
     assert graph._graph == {
-        "0": {
-            "coord_sys0": Scale(
+        TransformGraphNode(name="coord_sys0", path=""): {
+            TransformGraphNode(name="coord_sys1", path=""): Scale(
+                type="scale",
+                input="coord_sys0",
+                output="coord_sys1",
+                name=None,
+                scale=(0.1, 1.0, 1.0, 1.0, 1.0),
+                path=None,
+            )
+        },
+        TransformGraphNode(name="0", path=""): {
+            TransformGraphNode(name="coord_sys0", path=""): Scale(
                 type="scale",
                 input="0",
                 output="coord_sys0",
@@ -388,8 +399,8 @@ def test_transform_graph() -> None:
                 path=None,
             )
         },
-        "1": {
-            "coord_sys0": Scale(
+        TransformGraphNode(name="1", path=""): {
+            TransformGraphNode(name="coord_sys0", path=""): Scale(
                 type="scale",
                 input="1",
                 output="coord_sys0",
@@ -398,23 +409,13 @@ def test_transform_graph() -> None:
                 path=None,
             )
         },
-        "2": {
-            "coord_sys0": Scale(
+        TransformGraphNode(name="2", path=""): {
+            TransformGraphNode(name="coord_sys0", path=""): Scale(
                 type="scale",
                 input="2",
                 output="coord_sys0",
                 name=None,
                 scale=(1.0, 1.0, 2.0, 2.0, 2.0),
-                path=None,
-            )
-        },
-        "coord_sys0": {
-            "coord_sys1": Scale(
-                type="scale",
-                input="coord_sys0",
-                output="coord_sys1",
-                name=None,
-                scale=(0.1, 1.0, 1.0, 1.0, 1.0),
                 path=None,
             )
         },

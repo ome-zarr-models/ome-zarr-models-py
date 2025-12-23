@@ -62,8 +62,6 @@ class ImageAttrs(BaseOMEAttrs):
                 for transform in dataset.coordinateTransformations:
                     graph.add_transform(transform)
 
-        graph.set_default_system(self.multiscales[0].coordinateSystems[0].name)
-
         return graph
 
 
