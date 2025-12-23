@@ -33,6 +33,14 @@ def test_no_parameters(transform_cls: type[Transform]) -> None:
         (Translation(translation=(-1, 23)), Translation(translation=(1, -23))),
         (Scale(scale=(-1, 2, 0.5)), Scale(scale=(-1, 0.5, 2))),
         (
+            Rotation(rotation=(((0, 1), (-1, 0)))),
+            Rotation(rotation=(((0, -1), (1, 0)))),
+        ),
+        (
+            Affine(affine=((1, 0, 0, 2), (0, 1, 0, -5), (0, 0, 1, 0))),
+            Affine(affine=((1, 0, 0, -2), (0, 1, 0, 5), (0, 0, 1, 0))),
+        ),
+        (
             Sequence(
                 transformations=(
                     Scale(scale=(0.5, -2)),
@@ -73,6 +81,8 @@ def test_inverse(transform: Transform, inverse_expected: Transform) -> None:
         (Affine(affine=((1, 0, 0, 10), (0, 1, 0, -4), (0, 0, 1, 2))), (10, -3, 4)),
         # TODO: change the rotation matrix to not the identity
         (Rotation(rotation=((1, 0, 0), (0, 1, 0), (0, 0, 1))), (0, 1, 2)),
+        # TODO: change the matrix part of the affine to not the identity
+        (Affine(affine=((1, 0, 0, 2), (0, 1, 0, -5), (0, 0, 1, 0))), (2, -4, 2)),
         (
             Sequence(
                 transformations=(
@@ -222,3 +232,10 @@ def test_validate_mapaxis() -> None:
         ValidationError, match=re.escape("Not all axes present from 0 to 2")
     ):
         MapAxis(mapAxis=(0, 3, 1))
+
+
+def test_none_rotation() -> None:
+    with pytest.raises(
+        ValidationError, match="Provided matrix is not a pure rotation matrix"
+    ):
+        Rotation(rotation=((0, 2), (-1, 0)))
