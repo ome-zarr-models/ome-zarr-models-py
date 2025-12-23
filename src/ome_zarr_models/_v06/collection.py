@@ -11,6 +11,7 @@ from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs, BaseZarrAttrs
 from ome_zarr_models._v06.coordinate_transforms import (
     AnyTransform,
     CoordinateSystem,
+    CoordinateSystemIdentifier,
 )
 from ome_zarr_models._v06.image import Image
 
@@ -20,14 +21,11 @@ class CollectionAttrs(BaseOMEAttrs):
     coordinateSystems: tuple[CoordinateSystem, ...] = Field(default=())
 
     def get_group_paths(self) -> dict[str, type[Image]]:  # type: ignore[override]
-        coord_sys_names = [c.name for c in self.coordinateSystems]
         paths = {}
         for transform in self.coordinateTransformations:
-            if transform.input is not None and transform.input not in coord_sys_names:
-                paths[transform.input] = Image
-            if transform.output is not None and transform.output not in coord_sys_names:
-                paths[transform.output] = Image
-
+            for coordinate_system in (transform.input, transform.output):
+                if isinstance(coordinate_system, CoordinateSystemIdentifier):
+                    paths[coordinate_system.path] = Image
         return paths
 
 
