@@ -37,6 +37,10 @@ def test_no_parameters(transform_cls: type[Transform]) -> None:
             Rotation(rotation=(((0, -1), (1, 0)))),
         ),
         (
+            Affine(affine=((1, 0, 0, 2), (0, 1, 0, -5), (0, 0, 1, 0))),
+            Affine(affine=((1, 0, 0, -2), (0, 1, 0, 5), (0, 0, 1, 0))),
+        ),
+        (
             Sequence(
                 transformations=(
                     Scale(scale=(0.5, -2)),

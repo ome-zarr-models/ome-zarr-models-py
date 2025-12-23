@@ -371,7 +371,7 @@ class Affine(Transform):
 
     def get_inverse(self) -> "Affine":
         matrix_inv = np.linalg.inv(self._matrix)
-        translation_inv = np.dot(matrix_inv, self._translation)
+        translation_inv = -np.dot(matrix_inv, self._translation)
         affine = tuple(
             (*tuple(matrix_inv[i]), translation_inv[i]) for i in range(self.ndim)
         )
