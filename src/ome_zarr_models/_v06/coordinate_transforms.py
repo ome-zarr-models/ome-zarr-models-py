@@ -1,4 +1,3 @@
-import copy
 import typing
 from abc import ABC, abstractmethod
 from typing import Annotated, Literal, Self, TypeVar
@@ -371,7 +370,15 @@ class Affine(Transform):
         return False
 
     def get_inverse(self) -> "Affine":
-        raise NotImplementedError
+        matrix_inv = np.linalg.inv(self._matrix)
+        translation_inv = -np.dot(matrix_inv, self._translation)
+        affine = tuple(
+            (*tuple(matrix_inv[i]), translation_inv[i]) for i in range(self.ndim)
+        )
+
+        return Affine(
+            affine=affine, input=self.output, output=self.input, name=self._inverse_name
+        )
 
     @property
     def affine_matrix(self) -> tuple[tuple[float, ...], ...]:
@@ -404,16 +411,7 @@ class Affine(Transform):
                 f"Dimensionality of point ({len(point)}) does not match "
                 f"dimensionality of transform ({len(self.affine_matrix)})"
             )
-        point_tuple = tuple(point)
-        point_out = [0.0 for _ in point_tuple]
-
-        for i in range(len(point_out)):
-            point_out[i] = sum(
-                m * p for m, p in zip(self._matrix[i], point, strict=True)
-            )
-            point_out[i] += self._translation[i]
-
-        return tuple(point_out)
+        return tuple(np.dot(self._matrix, point) + self._translation)
 
     def as_affine(self) -> "Affine":
         return self.model_copy()
@@ -451,7 +449,12 @@ class Rotation(Transform):
         return False
 
     def get_inverse(self) -> "Rotation":
-        raise NotImplementedError
+        new_matrix = np.linalg.inv(np.array(self.rotation_matrix))
+        return Rotation(
+            rotation=tuple(tuple(row) for row in new_matrix),
+            input=self.output,
+            output=self.input,
+        )
 
     @property
     def rotation_matrix(self) -> tuple[tuple[float, ...], ...]:
@@ -470,10 +473,17 @@ class Rotation(Transform):
             raise ValueError("One of 'rotation' or 'path' must be given")
         return self
 
+    @model_validator(mode="after")
+    def check_rotation_matrix(self) -> Self:
+        matrix_array = np.array(self.rotation_matrix)
+        if not np.allclose(matrix_array @ matrix_array.T, np.identity(self.ndim)):
+            raise ValueError(
+                f"Provided matrix is not a pure rotation matrix: {matrix_array}"
+            )
+        return self
+
     def transform_point(self, point: typing.Sequence[float]) -> TPoint:
-        rotation = copy.deepcopy(self.rotation_matrix)
-        affine = tuple([(*row, 0.0) for row in rotation])
-        return Affine(affine=affine).transform_point(point)
+        return tuple(np.dot(np.array(self.rotation_matrix), np.array(point)))
 
     def as_affine(self) -> "Affine":
         return Affine._from_matrix_vector(
