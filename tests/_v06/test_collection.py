@@ -3,7 +3,6 @@ from pathlib import Path
 import zarr
 from pydantic_zarr.v3 import AnyArraySpec, ArraySpec, GroupSpec, NamedConfig
 
-from ome_zarr_models._v06.collection import Collection, CollectionAttrs
 from ome_zarr_models._v06.coordinate_transforms import (
     Axis,
     CoordinateSystem,
@@ -11,6 +10,7 @@ from ome_zarr_models._v06.coordinate_transforms import (
     Translation,
 )
 from ome_zarr_models._v06.image import Image
+from ome_zarr_models._v06.scene import Scene, SceneAttrs
 
 
 def test_load_container() -> None:
@@ -21,7 +21,7 @@ def test_load_container() -> None:
         / "v06"
         / "stitched_tiles_2d.zarr"
     )
-    container = Collection.from_zarr(group)
+    container = Scene.from_zarr(group)
     assert container.members == {
         "tile_0": GroupSpec(
             zarr_format=3,
@@ -184,7 +184,7 @@ def test_load_container() -> None:
             },
         ),
     }
-    assert container.ome_attributes == CollectionAttrs(
+    assert container.ome_attributes == SceneAttrs(
         version="0.6",
         coordinateTransformations=(
             Translation(
@@ -228,8 +228,7 @@ def test_load_container() -> None:
     )
 
 
-def test_collection_new() -> None:
-    """Test creating a new collection with Collection.new()."""
+def test_scene_new() -> None:
     # Create array spec
     array_spec: AnyArraySpec = ArraySpec(
         zarr_format=3,
@@ -285,7 +284,7 @@ def test_collection_new() -> None:
         name="image_b",
     )
 
-    # Create collection with coordinate transformations
+    # Create scene with coordinate transformations
     transform_a_world = Translation(
         translation=(0, 0),
         input="image_a",
@@ -297,54 +296,54 @@ def test_collection_new() -> None:
         output="world",
     )
 
-    collection = Collection.new(
+    scene = Scene.new(
         images={"image_a": image_a, "image_b": image_b},
         coord_transforms=[transform_a_world, transform_b_world],
         coord_systems=[world_coord_system],
     )
 
-    # Verify collection structure
-    assert collection.members is not None
-    assert "image_a" in collection.members
-    assert "image_b" in collection.members
+    # Verify scene structure
+    assert scene.members is not None
+    assert "image_a" in scene.members
+    assert "image_b" in scene.members
 
     # Verify that members are GroupSpecs with nested ArraySpecs
-    image_a_member = collection.members["image_a"]
+    image_a_member = scene.members["image_a"]
     assert isinstance(image_a_member, GroupSpec)
     assert image_a_member.members is not None
     assert "0" in image_a_member.members
     assert isinstance(image_a_member.members["0"], ArraySpec)
 
-    image_b_member = collection.members["image_b"]
+    image_b_member = scene.members["image_b"]
     assert isinstance(image_b_member, GroupSpec)
     assert image_b_member.members is not None
     assert "0" in image_b_member.members
     assert isinstance(image_b_member.members["0"], ArraySpec)
 
     # Verify array specs have correct shapes
-    assert isinstance(collection.members["image_a"], GroupSpec)
-    assert collection.members["image_a"].members is not None
-    assert collection.members["image_a"].members["0"].shape == (256, 256)
-    assert isinstance(collection.members["image_b"], GroupSpec)
-    assert collection.members["image_b"].members is not None
-    assert collection.members["image_b"].members["0"].shape == (256, 256)
+    assert isinstance(scene.members["image_a"], GroupSpec)
+    assert scene.members["image_a"].members is not None
+    assert scene.members["image_a"].members["0"].shape == (256, 256)
+    assert isinstance(scene.members["image_b"], GroupSpec)
+    assert scene.members["image_b"].members is not None
+    assert scene.members["image_b"].members["0"].shape == (256, 256)
 
     # Verify coordinate transformations
-    assert len(collection.ome_attributes.coordinateTransformations) == 2
-    coord_transform_0 = collection.ome_attributes.coordinateTransformations[0]
+    assert len(scene.ome_attributes.coordinateTransformations) == 2
+    coord_transform_0 = scene.ome_attributes.coordinateTransformations[0]
     assert isinstance(coord_transform_0, Translation)
     assert coord_transform_0.input == "image_a"
     assert coord_transform_0.output == "world"
     assert coord_transform_0.translation == (0, 0)
-    coord_transform_1 = collection.ome_attributes.coordinateTransformations[1]
+    coord_transform_1 = scene.ome_attributes.coordinateTransformations[1]
     assert isinstance(coord_transform_1, Translation)
     assert coord_transform_1.input == "image_b"
     assert coord_transform_1.output == "world"
     assert coord_transform_1.translation == (0, 256)
 
     # Verify coordinate systems
-    assert len(collection.ome_attributes.coordinateSystems) == 1
-    assert collection.ome_attributes.coordinateSystems[0].name == "world"
+    assert len(scene.ome_attributes.coordinateSystems) == 1
+    assert scene.ome_attributes.coordinateSystems[0].name == "world"
 
     # Verify version
-    assert collection.ome_attributes.version == "0.6"
+    assert scene.ome_attributes.version == "0.6"
