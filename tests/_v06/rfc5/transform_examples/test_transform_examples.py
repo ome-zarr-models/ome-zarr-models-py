@@ -4,8 +4,8 @@ import pytest
 import zarr
 import zarr.errors
 
-from ome_zarr_models._v06.collection import Collection
 from ome_zarr_models._v06.image import Image
+from ome_zarr_models._v06.scene import Scene
 
 TEST_DATA_PATH = Path(__file__).parent / "ngff-rfc5-coordinate-transformation-examples"
 
@@ -44,7 +44,7 @@ def test_basic(zarr_path: Path) -> None:
     if "inv" in str(zarr_path):
         pytest.xfail("Inverse transforms no longer supported")
 
-    cls = Collection if zarr_path_relative.parts[0] == "user_stories" else Image
+    cls = Scene if zarr_path_relative.parts[0] == "user_stories" else Image
     zarr_group = zarr.open_group(zarr_path, mode="r")
     try:
         cls.from_zarr(zarr_group)
