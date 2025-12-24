@@ -327,7 +327,7 @@ class TransformGraph:
         with graph_gv.subgraph(name="cluster_") as subgraph_gv:
             self._add_nodes_edges(self, subgraph_gv, path="")
             if len(self._child_graphs) > 0:
-                subgraph_gv.attr(label="Top level collection", **GRAPHVIZ_ATTRS)
+                subgraph_gv.attr(label="Scene", **GRAPHVIZ_ATTRS)
 
         # Add any subgraphs
         for child_path in self._child_graphs:
