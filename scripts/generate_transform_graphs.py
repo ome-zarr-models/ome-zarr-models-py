@@ -6,8 +6,8 @@ from pathlib import Path
 
 import zarr
 
-from ome_zarr_models._v06.collection import Collection
 from ome_zarr_models._v06.image import Image
+from ome_zarr_models._v06.scene import Scene
 
 EXAMPLE_PATH = (
     Path(__file__).parent.parent
@@ -46,10 +46,10 @@ for zarr_path in get_all_zarrs(EXAMPLE_PATH):
     graph_path = OUTPUT_PATH / relative_path.parent
     graph_path.mkdir(exist_ok=True, parents=True)
 
-    group: Collection | Image
+    group: Scene | Image
     try:
         if relative_path.parts[0] == "user_stories":
-            group = Collection.from_zarr(zarr.open_group(zarr_path, mode="r"))
+            group = Scene.from_zarr(zarr.open_group(zarr_path, mode="r"))
         else:
             group = Image.from_zarr(zarr.open_group(zarr_path, mode="r"))
     except Exception:

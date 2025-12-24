@@ -118,7 +118,7 @@ class Image(BaseGroupv06[ImageAttrs]):
             The physical coordinate system after the scale and translations have been
             applied to each array.
         name :
-            A name for the multiscale collection.
+            A name for the multiscale image.
         multiscale_type :
             Type of downscaling method used to generate the multiscale image pyramid.
             Optional.

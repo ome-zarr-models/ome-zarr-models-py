@@ -7,8 +7,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Literal
 
 from ome_zarr_models import __version__, open_ome_zarr
-from ome_zarr_models._v06.collection import Collection
 from ome_zarr_models._v06.image import Image
+from ome_zarr_models._v06.scene import Scene
 from ome_zarr_models.exceptions import ValidationWarning
 
 if TYPE_CHECKING:
@@ -146,9 +146,9 @@ def render_transform_graph(path: StoreLike, output_image_path: PathLike[str]) ->
         print(f"❌ Invalid Zarr group: {path}")
         sys.exit(1)
 
-    model: Image | Collection
+    model: Image | Scene
     try:
-        model = Collection.from_zarr(group)
+        model = Scene.from_zarr(group)
     except Exception as _:
         try:
             model = Image.from_zarr(group)
