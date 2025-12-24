@@ -16,7 +16,7 @@ from ome_zarr_models._v06.coordinate_transforms import (
 from ome_zarr_models._v06.image import Image
 
 
-class CollectionAttrs(BaseOMEAttrs):
+class SceneAttrs(BaseOMEAttrs):
     coordinateTransformations: tuple[AnyTransform, ...] = Field(default=())
     coordinateSystems: tuple[CoordinateSystem, ...] = Field(default=())
 
@@ -29,7 +29,7 @@ class CollectionAttrs(BaseOMEAttrs):
         return paths
 
 
-class Collection(BaseGroupv06[CollectionAttrs]):
+class Scene(BaseGroupv06[SceneAttrs]):
     """
     An OME-Zarr container group.
 
@@ -40,14 +40,14 @@ class Collection(BaseGroupv06[CollectionAttrs]):
     @classmethod
     def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
         """
-        Create an OME-Zarr collection from a `zarr.Group`.
+        Create an OME-Zarr scene from a `zarr.Group`.
 
         Parameters
         ----------
         group : zarr.Group
             A Zarr group that has valid OME-Zarr image metadata.
         """
-        return _from_zarr_v3(group, cls, CollectionAttrs)
+        return _from_zarr_v3(group, cls, SceneAttrs)
 
     @classmethod
     def new(
@@ -56,19 +56,19 @@ class Collection(BaseGroupv06[CollectionAttrs]):
         images: dict[str, Image],
         coord_transforms: Sequence[AnyTransform] = (),
         coord_systems: Sequence[CoordinateSystem] = (),
-    ) -> "Collection":
+    ) -> "Scene":
         """
-        Create a new `Collection` from a sequence of images and coordinate metadata.
+        Create a new `Scene` from a sequence of images and coordinate metadata.
 
         Parameters
         ----------
         images :
             A dictionary mapping image names to Image objects. The keys are the paths
-            to the images within the collection group.
+            to the images within the scene.
         coord_transforms :
-            Coordinate transforms to add to this collection.
+            Coordinate transforms to add to this scene.
         coord_systems :
-            Coordinate systems to add to this collection.
+            Coordinate systems to add to this scene.
 
         Notes
         -----
@@ -81,13 +81,13 @@ class Collection(BaseGroupv06[CollectionAttrs]):
             base_path = "/" + name.lstrip("/")
             # Get the flattened representation of the image
             image_flat = image.to_flat(root_path=base_path)
-            # Merge into the collection's flat dict
+            # Merge into the scene's flat dict
             members_flat.update(image_flat)
 
-        return Collection(
+        return Scene(
             members=GroupSpec.from_flat(members_flat).members,
             attributes=BaseZarrAttrs(
-                ome=CollectionAttrs(
+                ome=SceneAttrs(
                     coordinateTransformations=tuple(coord_transforms),
                     coordinateSystems=tuple(coord_systems),
                     version="0.6",
