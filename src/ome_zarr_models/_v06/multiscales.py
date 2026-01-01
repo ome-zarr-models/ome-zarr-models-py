@@ -269,8 +269,25 @@ class Multiscale(BaseAttrs):
     '''
 
     @model_validator(mode="after")
+    def check_dataset_transform_output(self) -> Self:
+        """
+        Check the output of transforms in 'datasets' is the intrinsic system.
+        """
+        for dataset in self.datasets:
+            for transform in dataset.coordinateTransformations:
+                if transform.output != self.intrinsic_coordinate_system.name:
+                    raise ValueError(
+                        f"Output of transform for dataset at path '{dataset.path}' "
+                        f"('{transform.output}') "
+                        "is not the intrinsic coordinate system "
+                        f"('{self.intrinsic_coordinate_system.name}')."
+                    )
+        return self
+
+    @model_validator(mode="after")
     def check_cs_input_output(self) -> Self:
-        """Check input and output for each coordinate system.
+        """
+        Check input and output for each coordinate system.
 
         The input and output must either be a path relative to the current file in the
         zarr store or must be a name that is present in the list of coordinate systems.
