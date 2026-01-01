@@ -21,6 +21,7 @@ from ome_zarr_models._v06.coordinate_transforms import (
     Translation,
 )
 from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.common.validation import unique_items_validator
 
 if TYPE_CHECKING:
     from ome_zarr_models.v05.multiscales import Multiscale as Multiscalev05
@@ -301,6 +302,18 @@ class Multiscale(BaseAttrs):
                     f"{transformation.output}. Must be one of {cs_names}."
                 )
         return self
+
+    @field_validator("coordinateSystems", mode="after")
+    @classmethod
+    def check_unique_system_names(
+        cls, systems: tuple[CoordinateSystem, ...]
+    ) -> tuple[CoordinateSystem, ...]:
+        sys_names = [sys.name for sys in systems]
+        try:
+            unique_items_validator(sys_names)
+        except ValueError as e:
+            raise ValueError(f"Duplicate coordinate system names: {sys_names}") from e
+        return systems
 
 
 class Dataset(BaseAttrs):
