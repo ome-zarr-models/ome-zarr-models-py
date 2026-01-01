@@ -37,21 +37,59 @@
           {
             "name": "coord_sys0",
             "axes": [
-              { "name": "t", "type": "time", "unit": "millisecond" },
-              { "name": "c", "type": "channel" },
-              { "name": "z", "type": "space", "unit": "micrometer" },
-              { "name": "y", "type": "space", "unit": "micrometer" },
-              { "name": "x", "type": "space", "unit": "micrometer" }
+              {
+                "name": "t",
+                "type": "time",
+                "unit": "millisecond"
+              },
+              {
+                "name": "c",
+                "type": "channel"
+              },
+              {
+                "name": "z",
+                "type": "space",
+                "unit": "micrometer"
+              },
+              {
+                "name": "y",
+                "type": "space",
+                "unit": "micrometer"
+              },
+              {
+                "name": "x",
+                "type": "space",
+                "unit": "micrometer"
+              }
             ]
           },
           {
             "name": "coord_sys1",
             "axes": [
-              { "name": "t", "type": "time", "unit": "millisecond" },
-              { "name": "c", "type": "channel" },
-              { "name": "z", "type": "space", "unit": "micrometer" },
-              { "name": "y", "type": "space", "unit": "micrometer" },
-              { "name": "x", "type": "space", "unit": "micrometer" }
+              {
+                "name": "t",
+                "type": "time",
+                "unit": "millisecond"
+              },
+              {
+                "name": "c",
+                "type": "channel"
+              },
+              {
+                "name": "z",
+                "type": "space",
+                "unit": "micrometer"
+              },
+              {
+                "name": "y",
+                "type": "space",
+                "unit": "micrometer"
+              },
+              {
+                "name": "x",
+                "type": "space",
+                "unit": "micrometer"
+              }
             ]
           }
         ],
@@ -62,7 +100,7 @@
               {
                 "type": "scale",
                 "scale": [1.0, 1.0, 0.5, 0.5, 0.5],
-                "input": "/0",
+                "input": "0",
                 "output": "coord_sys0"
               }
             ]
@@ -73,7 +111,7 @@
               {
                 "type": "scale",
                 "scale": [1.0, 1.0, 1.0, 1.0, 1.0],
-                "input": "/1",
+                "input": "1",
                 "output": "coord_sys0"
               }
             ]
@@ -84,7 +122,7 @@
               {
                 "type": "scale",
                 "scale": [1.0, 1.0, 2.0, 2.0, 2.0],
-                "input": "/2",
+                "input": "2",
                 "output": "coord_sys0"
               }
             ]
@@ -103,7 +141,9 @@
           "method": "skimage.transform.pyramid_gaussian",
           "version": "0.16.1",
           "args": "[true]",
-          "kwargs": { "multichannel": true }
+          "kwargs": {
+            "multichannel": true
+          }
         }
       }
     ]
