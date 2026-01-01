@@ -1,3 +1,5 @@
+import re
+
 import pytest
 from pydantic import ValidationError
 
@@ -401,3 +403,41 @@ def test_from_v05() -> None:
         name="my_multiscale",
         type="my_type",
     )
+
+
+def test_unique_system_names() -> None:
+    with pytest.raises(
+        ValidationError,
+        match=re.escape("Duplicate coordinate system names: ['name', 'name']"),
+    ):
+        Multiscale(
+            coordinateTransformations=None,
+            coordinateSystems=(
+                CoordinateSystem(
+                    name="name",
+                    axes=(
+                        Axis(name="x"),
+                        Axis(name="y"),
+                    ),
+                ),
+                CoordinateSystem(
+                    name="name",
+                    axes=(
+                        Axis(name="j"),
+                        Axis(name="i"),
+                    ),
+                ),
+            ),
+            datasets=(
+                Dataset(
+                    path="0",
+                    coordinateTransformations=(
+                        Scale(
+                            scale=(2.0, 2.0),
+                            input="0",
+                            output="out",
+                        ),
+                    ),
+                ),
+            ),
+        )
