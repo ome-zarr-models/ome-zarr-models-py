@@ -40,4 +40,4 @@ def test_load_remote_data(
 
     with ctx:
         grp = cls.from_zarr(zarr.open_group(url))
-    assert isinstance(grp, ome_zarr_models.v05.Image)
+    assert isinstance(grp, cls)

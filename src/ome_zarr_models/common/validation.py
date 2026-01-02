@@ -155,6 +155,8 @@ def check_group_path(
 
     Raises
     ------
+    FileNotFoundError
+        If the path doesn't exist.
     ValueError
         If the group doesn't exist, or the group is not the expected Zarr version.
     """
