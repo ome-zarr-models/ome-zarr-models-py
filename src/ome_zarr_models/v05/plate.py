@@ -19,6 +19,7 @@ from ome_zarr_models.exceptions import ValidationWarning
 __all__ = [
     "Acquisition",
     "Column",
+    "Plate",
     "PlateBase",
     "Row",
     "WellInPlate",
