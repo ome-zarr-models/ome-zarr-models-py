@@ -1,0 +1,274 @@
+interactions:
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0062A/6001240_labels.zarr/.zgroup
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000001511cabc-0069595b25-7518e06c-default</RequestId><HostId>7518e06c-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "218"
+        Content-Type:
+          - application/xml
+        Date:
+          - Sat, 03 Jan 2026 18:08:37 GMT
+        x-amz-request-id:
+          - tx00000000000001511cabc-0069595b25-7518e06c-default
+      status:
+        code: 404
+        message: Not Found
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0062A/6001240_labels.zarr/.zmetadata
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx0000000000000161fd98f-0069595b25-7547eb43-default</RequestId><HostId>7547eb43-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "218"
+        Content-Type:
+          - application/xml
+        Date:
+          - Sat, 03 Jan 2026 18:08:37 GMT
+        x-amz-request-id:
+          - tx0000000000000161fd98f-0069595b25-7547eb43-default
+      status:
+        code: 404
+        message: Not Found
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0062A/6001240_labels.zarr/.zattrs
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000001511cabd-0069595b25-7518e06c-default</RequestId><HostId>7518e06c-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "218"
+        Content-Type:
+          - application/xml
+        Date:
+          - Sat, 03 Jan 2026 18:08:37 GMT
+        x-amz-request-id:
+          - tx00000000000001511cabd-0069595b25-7518e06c-default
+      status:
+        code: 404
+        message: Not Found
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0062A/6001240_labels.zarr/zarr.json
+    response:
+      body:
+        string:
+          '{"attributes": {"ome": {"version": "0.5", "_creator": {"name": "omero-zarr"},
+          "multiscales": [{"axes": [{"name": "c", "type": "channel"}, {"name": "z",
+          "type": "space", "unit": "micrometer"}, {"name": "y", "type": "space", "unit":
+          "micrometer"}, {"name": "x", "type": "space", "unit": "micrometer"}], "datasets":
+          [{"coordinateTransformations": [{"scale": [1.0, 0.5002025531914894, 0.3603981534640209,
+          0.3603981534640209], "type": "scale"}], "path": "0"}, {"coordinateTransformations":
+          [{"scale": [1.0, 0.5002025531914894, 0.7207963069280418, 0.7207963069280418],
+          "type": "scale"}], "path": "1"}, {"coordinateTransformations": [{"scale":
+          [1.0, 0.5002025531914894, 1.4415926138560835, 1.4415926138560835], "type":
+          "scale"}], "path": "2"}]}], "omero": {"channels": [{"active": true, "coefficient":
+          1.0, "color": "0000FF", "family": "linear", "inverted": false, "label": "LaminB1",
+          "window": {"end": 1500.0, "max": 65535.0, "min": 0.0, "start": 0.0}}, {"active":
+          true, "coefficient": 1.0, "color": "FFFF00", "family": "linear", "inverted":
+          false, "label": "Dapi", "window": {"end": 1500.0, "max": 65535.0, "min": 0.0,
+          "start": 0.0}}], "id": 1, "rdefs": {"defaultT": 0, "defaultZ": 118, "model":
+          "color"}}}}, "zarr_format": 3, "node_type": "group"}'
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "1243"
+        Content-Type:
+          - application/json
+        Date:
+          - Sat, 03 Jan 2026 18:08:37 GMT
+        Etag:
+          - '"064277cec351dc92f5810aa7eb580e69"'
+        Last-Modified:
+          - Thu, 21 Nov 2024 23:36:58 GMT
+        x-amz-request-id:
+          - tx0000000000000161fd990-0069595b25-7547eb43-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0062A/6001240_labels.zarr/0/zarr.json
+    response:
+      body:
+        string: '{"chunk_grid":{"configuration":{"chunk_shape":[1,10,512,512]},"name":"regular"},"chunk_key_encoding":{"name":"default"},"codecs":[{"configuration":{"chunk_shape":[1,1,256,256],"codecs":[{"configuration":{"endian":"little"},"name":"bytes"},{"configuration":{"blocksize":0,"clevel":5,"cname":"zstd","shuffle":"shuffle","typesize":2},"name":"blosc"}],"index_codecs":[{"configuration":{"endian":"little"},"name":"bytes"},{"name":"crc32c"}]},"name":"sharding_indexed"}],"data_type":"uint16","dimension_names":["c","z","y","x"],"fill_value":0,"node_type":"array","shape":[2,236,275,271],"zarr_format":3}'
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "597"
+        Content-Type:
+          - application/json
+        Date:
+          - Sat, 03 Jan 2026 18:08:37 GMT
+        Etag:
+          - '"0cdba3e818cd5355bd8be263546026bb"'
+        Last-Modified:
+          - Thu, 21 Nov 2024 23:36:57 GMT
+        x-amz-request-id:
+          - tx00000000000001511cabe-0069595b25-7518e06c-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0062A/6001240_labels.zarr/1/zarr.json
+    response:
+      body:
+        string: '{"chunk_grid":{"configuration":{"chunk_shape":[1,10,512,512]},"name":"regular"},"chunk_key_encoding":{"name":"default"},"codecs":[{"configuration":{"chunk_shape":[1,1,256,256],"codecs":[{"configuration":{"endian":"little"},"name":"bytes"},{"configuration":{"blocksize":0,"clevel":5,"cname":"zstd","shuffle":"shuffle","typesize":2},"name":"blosc"}],"index_codecs":[{"configuration":{"endian":"little"},"name":"bytes"},{"name":"crc32c"}]},"name":"sharding_indexed"}],"data_type":"uint16","dimension_names":["c","z","y","x"],"fill_value":0,"node_type":"array","shape":[2,236,137,135],"zarr_format":3}'
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "597"
+        Content-Type:
+          - application/json
+        Date:
+          - Sat, 03 Jan 2026 18:08:37 GMT
+        Etag:
+          - '"87152598ad211c5d02e71890510a5e9f"'
+        Last-Modified:
+          - Thu, 21 Nov 2024 23:36:58 GMT
+        x-amz-request-id:
+          - tx0000000000000161fd991-0069595b25-7547eb43-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0062A/6001240_labels.zarr/2/zarr.json
+    response:
+      body:
+        string: '{"chunk_grid":{"configuration":{"chunk_shape":[1,10,512,512]},"name":"regular"},"chunk_key_encoding":{"name":"default"},"codecs":[{"configuration":{"chunk_shape":[1,1,256,256],"codecs":[{"configuration":{"endian":"little"},"name":"bytes"},{"configuration":{"blocksize":0,"clevel":5,"cname":"zstd","shuffle":"shuffle","typesize":2},"name":"blosc"}],"index_codecs":[{"configuration":{"endian":"little"},"name":"bytes"},{"name":"crc32c"}]},"name":"sharding_indexed"}],"data_type":"uint16","dimension_names":["c","z","y","x"],"fill_value":0,"node_type":"array","shape":[2,236,68,67],"zarr_format":3}'
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "595"
+        Content-Type:
+          - application/json
+        Date:
+          - Sat, 03 Jan 2026 18:08:37 GMT
+        Etag:
+          - '"9d0f2057e744636e104b47f37015540d"'
+        Last-Modified:
+          - Thu, 21 Nov 2024 23:36:58 GMT
+        x-amz-request-id:
+          - tx00000000000001511cabf-0069595b25-7518e06c-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0062A/6001240_labels.zarr/labels/zarr.json
+    response:
+      body:
+        string:
+          '{"attributes": {"ome": {"labels": ["0"]}}, "zarr_format": 3, "node_type":
+          "group"}'
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "82"
+        Content-Type:
+          - application/json
+        Date:
+          - Sat, 03 Jan 2026 18:08:37 GMT
+        Etag:
+          - '"4ee6bf061129117fdffffe4bfb9b5ba7"'
+        Last-Modified:
+          - Thu, 21 Nov 2024 23:36:58 GMT
+        x-amz-request-id:
+          - tx0000000000000161fd992-0069595b25-7547eb43-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0062A/6001240_labels.zarr/labels/zarr.json
+    response:
+      body:
+        string:
+          '{"attributes": {"ome": {"labels": ["0"]}}, "zarr_format": 3, "node_type":
+          "group"}'
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "82"
+        Content-Type:
+          - application/json
+        Date:
+          - Sat, 03 Jan 2026 18:08:37 GMT
+        Etag:
+          - '"4ee6bf061129117fdffffe4bfb9b5ba7"'
+        Last-Modified:
+          - Thu, 21 Nov 2024 23:36:58 GMT
+        x-amz-request-id:
+          - tx00000000000001511cac0-0069595b25-7518e06c-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+version: 1

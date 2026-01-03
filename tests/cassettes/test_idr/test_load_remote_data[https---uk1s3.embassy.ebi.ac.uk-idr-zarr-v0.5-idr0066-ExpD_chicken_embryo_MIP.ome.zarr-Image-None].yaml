@@ -1,0 +1,473 @@
+interactions:
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr/.zmetadata
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000001511ca63-0069595ab3-7518e06c-default</RequestId><HostId>7518e06c-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "218"
+        Content-Type:
+          - application/xml
+        Date:
+          - Sat, 03 Jan 2026 18:06:43 GMT
+        x-amz-request-id:
+          - tx00000000000001511ca63-0069595ab3-7518e06c-default
+      status:
+        code: 404
+        message: Not Found
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr/.zattrs
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000001511ca64-0069595ab3-7518e06c-default</RequestId><HostId>7518e06c-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "218"
+        Content-Type:
+          - application/xml
+        Date:
+          - Sat, 03 Jan 2026 18:06:43 GMT
+        x-amz-request-id:
+          - tx00000000000001511ca64-0069595ab3-7518e06c-default
+      status:
+        code: 404
+        message: Not Found
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr/.zgroup
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000001771dddd-0069595ab3-7548e961-default</RequestId><HostId>7548e961-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "218"
+        Content-Type:
+          - application/xml
+        Date:
+          - Sat, 03 Jan 2026 18:06:43 GMT
+        x-amz-request-id:
+          - tx00000000000001771dddd-0069595ab3-7548e961-default
+      status:
+        code: 404
+        message: Not Found
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr/zarr.json
+    response:
+      body:
+        string:
+          '{"attributes": {"ome": {"version": "0.5", "_creator": {"name": "ome2024-ngff-challenge",
+          "version": "1.0.2", "notes": null}, "multiscales": [{"axes": [{"name": "y",
+          "type": "space", "unit": "micrometer"}, {"name": "x", "type": "space", "unit":
+          "micrometer"}], "datasets": [{"coordinateTransformations": [{"scale": [1.6,
+          1.6], "type": "scale"}], "path": "0"}, {"coordinateTransformations": [{"scale":
+          [3.2, 3.2], "type": "scale"}], "path": "1"}, {"coordinateTransformations":
+          [{"scale": [6.4, 6.4], "type": "scale"}], "path": "2"}, {"coordinateTransformations":
+          [{"scale": [12.8, 12.8], "type": "scale"}], "path": "3"}, {"coordinateTransformations":
+          [{"scale": [25.6, 25.6], "type": "scale"}], "path": "4"}, {"coordinateTransformations":
+          [{"scale": [51.2, 51.2], "type": "scale"}], "path": "5"}, {"coordinateTransformations":
+          [{"scale": [102.4, 102.4], "type": "scale"}], "path": "6"}, {"coordinateTransformations":
+          [{"scale": [204.8, 204.8], "type": "scale"}], "path": "7"}], "name": "/"}],
+          "omero": {"channels": [{"active": true, "coefficient": 1.0, "color": "FFFFFF",
+          "family": "linear", "inverted": false, "label": "Cy3", "window": {"end": 55.0,
+          "max": 255.0, "min": 0.0, "start": 0.0}}], "id": 1, "rdefs": {"defaultT":
+          0, "defaultZ": 0, "model": "greyscale"}}}}, "zarr_format": 3, "node_type":
+          "group"}'
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "1306"
+        Content-Type:
+          - application/json
+        Date:
+          - Sat, 03 Jan 2026 18:06:43 GMT
+        Etag:
+          - '"3ee2165bfb6a7103b0a6c02f5a5e38ac"'
+        Last-Modified:
+          - Thu, 21 Nov 2024 23:47:01 GMT
+        x-amz-request-id:
+          - tx00000000000001771ddde-0069595ab3-7548e961-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr/0/zarr.json
+    response:
+      body:
+        string:
+          '{"chunk_grid": {"configuration": {"chunk_shape": [2048, 2048]}, "name":
+          "regular"}, "chunk_key_encoding": {"name": "default"}, "codecs": [{"configuration":
+          {"chunk_shape": [256, 256], "codecs": [{"name": "bytes"}, {"configuration":
+          {"blocksize": 0, "clevel": 5, "cname": "zstd", "shuffle": "bitshuffle", "typesize":
+          1}, "name": "blosc"}], "index_codecs": [{"configuration": {"endian": "little"},
+          "name": "bytes"}, {"name": "crc32c"}]}, "name": "sharding_indexed"}], "data_type":
+          "uint8", "dimension_names": ["y", "x"], "fill_value": 0, "node_type": "array",
+          "shape": [8978, 6510], "zarr_format": 3, "attributes": {"_ome2024_ngff_challenge_stats":
+          {"input": "", "output": "", "start": 1729085217.2919362, "stop": 1729085219.378162,
+          "read": 29620797, "written": 19813141, "elapsed": 2.086225748062134, "threads":
+          16, "cpu_count": 16, "sched_affinity": 16}}}'
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "855"
+        Content-Type:
+          - application/json
+        Date:
+          - Sat, 03 Jan 2026 18:06:43 GMT
+        Etag:
+          - '"9043564ff5c21342c6b007cff279ca81"'
+        Last-Modified:
+          - Thu, 21 Nov 2024 23:47:01 GMT
+        x-amz-request-id:
+          - tx00000000000001511ca65-0069595ab3-7518e06c-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr/1/zarr.json
+    response:
+      body:
+        string:
+          '{"chunk_grid": {"configuration": {"chunk_shape": [2048, 2048]}, "name":
+          "regular"}, "chunk_key_encoding": {"name": "default"}, "codecs": [{"configuration":
+          {"chunk_shape": [256, 256], "codecs": [{"name": "bytes"}, {"configuration":
+          {"blocksize": 0, "clevel": 5, "cname": "zstd", "shuffle": "bitshuffle", "typesize":
+          1}, "name": "blosc"}], "index_codecs": [{"configuration": {"endian": "little"},
+          "name": "bytes"}, {"name": "crc32c"}]}, "name": "sharding_indexed"}], "data_type":
+          "uint8", "dimension_names": ["y", "x"], "fill_value": 0, "node_type": "array",
+          "shape": [4489, 3255], "zarr_format": 3, "attributes": {"_ome2024_ngff_challenge_stats":
+          {"input": "", "output": "", "start": 1729085219.4806092, "stop": 1729085219.9208982,
+          "read": 7529704, "written": 5313738, "elapsed": 0.4402890205383301, "threads":
+          16, "cpu_count": 16, "sched_affinity": 16}}}'
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "855"
+        Content-Type:
+          - application/json
+        Date:
+          - Sat, 03 Jan 2026 18:06:43 GMT
+        Etag:
+          - '"0b58fb4af902f7a38fe5ad9b3036be57"'
+        Last-Modified:
+          - Thu, 21 Nov 2024 23:47:01 GMT
+        x-amz-request-id:
+          - tx00000000000001511ca66-0069595ab3-7518e06c-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr/2/zarr.json
+    response:
+      body:
+        string:
+          '{"chunk_grid": {"configuration": {"chunk_shape": [2048, 2048]}, "name":
+          "regular"}, "chunk_key_encoding": {"name": "default"}, "codecs": [{"configuration":
+          {"chunk_shape": [256, 256], "codecs": [{"name": "bytes"}, {"configuration":
+          {"blocksize": 0, "clevel": 5, "cname": "zstd", "shuffle": "bitshuffle", "typesize":
+          1}, "name": "blosc"}], "index_codecs": [{"configuration": {"endian": "little"},
+          "name": "bytes"}, {"name": "crc32c"}]}, "name": "sharding_indexed"}], "data_type":
+          "uint8", "dimension_names": ["y", "x"], "fill_value": 0, "node_type": "array",
+          "shape": [2244, 1627], "zarr_format": 3, "attributes": {"_ome2024_ngff_challenge_stats":
+          {"input": "", "output": "", "start": 1729085220.1890664, "stop": 1729085220.455311,
+          "read": 1980204, "written": 1412021, "elapsed": 0.26624464988708496, "threads":
+          16, "cpu_count": 16, "sched_affinity": 16}}}'
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "855"
+        Content-Type:
+          - application/json
+        Date:
+          - Sat, 03 Jan 2026 18:06:43 GMT
+        Etag:
+          - '"a0ca76b04824cab41837e1636870f3d7"'
+        Last-Modified:
+          - Thu, 21 Nov 2024 23:47:01 GMT
+        x-amz-request-id:
+          - tx00000000000001771dddf-0069595ab3-7548e961-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr/3/zarr.json
+    response:
+      body:
+        string:
+          '{"chunk_grid": {"configuration": {"chunk_shape": [2048, 2048]}, "name":
+          "regular"}, "chunk_key_encoding": {"name": "default"}, "codecs": [{"configuration":
+          {"chunk_shape": [256, 256], "codecs": [{"name": "bytes"}, {"configuration":
+          {"blocksize": 0, "clevel": 5, "cname": "zstd", "shuffle": "bitshuffle", "typesize":
+          1}, "name": "blosc"}], "index_codecs": [{"configuration": {"endian": "little"},
+          "name": "bytes"}, {"name": "crc32c"}]}, "name": "sharding_indexed"}], "data_type":
+          "uint8", "dimension_names": ["y", "x"], "fill_value": 0, "node_type": "array",
+          "shape": [1122, 813], "zarr_format": 3, "attributes": {"_ome2024_ngff_challenge_stats":
+          {"input": "", "output": "", "start": 1729085220.5030446, "stop": 1729085220.6317737,
+          "read": 510798, "written": 371051, "elapsed": 0.12872910499572754, "threads":
+          16, "cpu_count": 16, "sched_affinity": 16}}}'
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "853"
+        Content-Type:
+          - application/json
+        Date:
+          - Sat, 03 Jan 2026 18:06:43 GMT
+        Etag:
+          - '"2cb607b32af5c833fdee1b7b138d5f31"'
+        Last-Modified:
+          - Thu, 21 Nov 2024 23:47:01 GMT
+        x-amz-request-id:
+          - tx00000000000001771dde0-0069595ab3-7548e961-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr/4/zarr.json
+    response:
+      body:
+        string:
+          '{"chunk_grid": {"configuration": {"chunk_shape": [2048, 2048]}, "name":
+          "regular"}, "chunk_key_encoding": {"name": "default"}, "codecs": [{"configuration":
+          {"chunk_shape": [256, 256], "codecs": [{"name": "bytes"}, {"configuration":
+          {"blocksize": 0, "clevel": 5, "cname": "zstd", "shuffle": "bitshuffle", "typesize":
+          1}, "name": "blosc"}], "index_codecs": [{"configuration": {"endian": "little"},
+          "name": "bytes"}, {"name": "crc32c"}]}, "name": "sharding_indexed"}], "data_type":
+          "uint8", "dimension_names": ["y", "x"], "fill_value": 0, "node_type": "array",
+          "shape": [561, 406], "zarr_format": 3, "attributes": {"_ome2024_ngff_challenge_stats":
+          {"input": "", "output": "", "start": 1729085220.7549112, "stop": 1729085220.8107944,
+          "read": 133911, "written": 99335, "elapsed": 0.055883169174194336, "threads":
+          16, "cpu_count": 16, "sched_affinity": 16}}}'
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "852"
+        Content-Type:
+          - application/json
+        Date:
+          - Sat, 03 Jan 2026 18:06:43 GMT
+        Etag:
+          - '"a2744962aafc29df816f6893be568964"'
+        Last-Modified:
+          - Thu, 21 Nov 2024 23:47:01 GMT
+        x-amz-request-id:
+          - tx00000000000001511ca67-0069595ab3-7518e06c-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr/5/zarr.json
+    response:
+      body:
+        string:
+          '{"chunk_grid": {"configuration": {"chunk_shape": [2048, 2048]}, "name":
+          "regular"}, "chunk_key_encoding": {"name": "default"}, "codecs": [{"configuration":
+          {"chunk_shape": [256, 256], "codecs": [{"name": "bytes"}, {"configuration":
+          {"blocksize": 0, "clevel": 5, "cname": "zstd", "shuffle": "bitshuffle", "typesize":
+          1}, "name": "blosc"}], "index_codecs": [{"configuration": {"endian": "little"},
+          "name": "bytes"}, {"name": "crc32c"}]}, "name": "sharding_indexed"}], "data_type":
+          "uint8", "dimension_names": ["y", "x"], "fill_value": 0, "node_type": "array",
+          "shape": [280, 203], "zarr_format": 3, "attributes": {"_ome2024_ngff_challenge_stats":
+          {"input": "", "output": "", "start": 1729085220.852728, "stop": 1729085220.8804672,
+          "read": 36408, "written": 26760, "elapsed": 0.027739286422729492, "threads":
+          16, "cpu_count": 16, "sched_affinity": 16}}}'
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "850"
+        Content-Type:
+          - application/json
+        Date:
+          - Sat, 03 Jan 2026 18:06:43 GMT
+        Etag:
+          - '"fd8d97173a3521211ab27d06a303c07e"'
+        Last-Modified:
+          - Thu, 21 Nov 2024 23:47:01 GMT
+        x-amz-request-id:
+          - tx00000000000001511ca68-0069595ab3-7518e06c-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr/6/zarr.json
+    response:
+      body:
+        string:
+          '{"chunk_grid": {"configuration": {"chunk_shape": [2048, 2048]}, "name":
+          "regular"}, "chunk_key_encoding": {"name": "default"}, "codecs": [{"configuration":
+          {"chunk_shape": [256, 256], "codecs": [{"name": "bytes"}, {"configuration":
+          {"blocksize": 0, "clevel": 5, "cname": "zstd", "shuffle": "bitshuffle", "typesize":
+          1}, "name": "blosc"}], "index_codecs": [{"configuration": {"endian": "little"},
+          "name": "bytes"}, {"name": "crc32c"}]}, "name": "sharding_indexed"}], "data_type":
+          "uint8", "dimension_names": ["y", "x"], "fill_value": 0, "node_type": "array",
+          "shape": [140, 101], "zarr_format": 3, "attributes": {"_ome2024_ngff_challenge_stats":
+          {"input": "", "output": "", "start": 1729085220.9772055, "stop": 1729085221.0321193,
+          "read": 9845, "written": 7913, "elapsed": 0.05491375923156738, "threads":
+          16, "cpu_count": 16, "sched_affinity": 16}}}'
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "848"
+        Content-Type:
+          - application/json
+        Date:
+          - Sat, 03 Jan 2026 18:06:44 GMT
+        Etag:
+          - '"5d6671f13953fcd1da6ee27fd6127de4"'
+        Last-Modified:
+          - Thu, 21 Nov 2024 23:47:01 GMT
+        x-amz-request-id:
+          - tx00000000000001771dde1-0069595ab4-7548e961-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr/7/zarr.json
+    response:
+      body:
+        string:
+          '{"chunk_grid": {"configuration": {"chunk_shape": [2048, 2048]}, "name":
+          "regular"}, "chunk_key_encoding": {"name": "default"}, "codecs": [{"configuration":
+          {"chunk_shape": [256, 256], "codecs": [{"name": "bytes"}, {"configuration":
+          {"blocksize": 0, "clevel": 5, "cname": "zstd", "shuffle": "bitshuffle", "typesize":
+          1}, "name": "blosc"}], "index_codecs": [{"configuration": {"endian": "little"},
+          "name": "bytes"}, {"name": "crc32c"}]}, "name": "sharding_indexed"}], "data_type":
+          "uint8", "dimension_names": ["y", "x"], "fill_value": 0, "node_type": "array",
+          "shape": [70, 50], "zarr_format": 3, "attributes": {"_ome2024_ngff_challenge_stats":
+          {"input": "", "output": "", "start": 1729085221.1716456, "stop": 1729085221.211354,
+          "read": 2677, "written": 2953, "elapsed": 0.03970837593078613, "threads":
+          16, "cpu_count": 16, "sched_affinity": 16}}}'
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "845"
+        Content-Type:
+          - application/json
+        Date:
+          - Sat, 03 Jan 2026 18:06:44 GMT
+        Etag:
+          - '"93589ab7f57a0d66fdc48c478d00a6fa"'
+        Last-Modified:
+          - Thu, 21 Nov 2024 23:47:01 GMT
+        x-amz-request-id:
+          - tx00000000000001771dde2-0069595ab4-7548e961-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr/labels/zarr.json
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000001511ca69-0069595ab4-7518e06c-default</RequestId><HostId>7518e06c-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "218"
+        Content-Type:
+          - application/xml
+        Date:
+          - Sat, 03 Jan 2026 18:06:44 GMT
+        x-amz-request-id:
+          - tx00000000000001511ca69-0069595ab4-7518e06c-default
+      status:
+        code: 404
+        message: Not Found
+version: 1
