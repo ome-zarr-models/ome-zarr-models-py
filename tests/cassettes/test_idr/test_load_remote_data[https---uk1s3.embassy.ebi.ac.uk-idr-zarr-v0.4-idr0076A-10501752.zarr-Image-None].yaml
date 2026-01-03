@@ -1,848 +1,853 @@
 interactions:
-- request:
-    body: null
-    headers: {}
-    method: GET
-    uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/.zgroup
-  response:
-    body:
-      string: "{\n    \"zarr_format\": 2\n}"
-    headers:
-      Accept-Ranges:
-      - bytes
-      Connection:
-      - Keep-Alive
-      Content-Length:
-      - '24'
-      Content-Type:
-      - binary/octet-stream
-      Date:
-      - Sat, 03 Jan 2026 18:12:23 GMT
-      Etag:
-      - '"e20297935e73dd0154104d4ea53040ab"'
-      Last-Modified:
-      - Tue, 21 Jun 2022 09:42:31 GMT
-      x-amz-request-id:
-      - tx00000000000001511cc06-0069595c07-7518e06c-default
-      x-rgw-object-type:
-      - Normal
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers: {}
-    method: GET
-    uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/.zmetadata
-  response:
-    body:
-      string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx0000000000000161fdb20-0069595c07-7547eb43-default</RequestId><HostId>7547eb43-default-default</HostId></Error>
-    headers:
-      Accept-Ranges:
-      - bytes
-      Connection:
-      - Keep-Alive
-      Content-Length:
-      - '218'
-      Content-Type:
-      - application/xml
-      Date:
-      - Sat, 03 Jan 2026 18:12:23 GMT
-      x-amz-request-id:
-      - tx0000000000000161fdb20-0069595c07-7547eb43-default
-    status:
-      code: 404
-      message: Not Found
-- request:
-    body: null
-    headers: {}
-    method: GET
-    uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/.zattrs
-  response:
-    body:
-      string: "{\n    \"_creator\": {\n        \"name\": \"omero-zarr\",\n        \"version\":
-        \"0.4.0\"\n    },\n    \"multiscales\": [\n        {\n            \"axes\":
-        [\n                {\n                    \"name\": \"c\",\n                    \"type\":
-        \"channel\"\n                },\n                {\n                    \"name\":
-        \"y\",\n                    \"type\": \"space\"\n                },\n                {\n
-        \                   \"name\": \"x\",\n                    \"type\": \"space\"\n
-        \               }\n            ],\n            \"datasets\": [\n                {\n
-        \                   \"coordinateTransformations\": [\n                        {\n
-        \                           \"scale\": [\n                                1.0,\n
-        \                               1.0,\n                                1.0\n
-        \                           ],\n                            \"type\": \"scale\"\n
-        \                       }\n                    ],\n                    \"path\":
-        \"0\"\n                },\n                {\n                    \"coordinateTransformations\":
-        [\n                        {\n                            \"scale\": [\n                                1.0,\n
-        \                               2.0,\n                                2.0\n
-        \                           ],\n                            \"type\": \"scale\"\n
-        \                       }\n                    ],\n                    \"path\":
-        \"1\"\n                },\n                {\n                    \"coordinateTransformations\":
-        [\n                        {\n                            \"scale\": [\n                                1.0,\n
-        \                               4.0,\n                                4.0\n
-        \                           ],\n                            \"type\": \"scale\"\n
-        \                       }\n                    ],\n                    \"path\":
-        \"2\"\n                },\n                {\n                    \"coordinateTransformations\":
-        [\n                        {\n                            \"scale\": [\n                                1.0,\n
-        \                               8.0,\n                                8.0\n
-        \                           ],\n                            \"type\": \"scale\"\n
-        \                       }\n                    ],\n                    \"path\":
-        \"3\"\n                }\n            ],\n            \"version\": \"0.4\"\n
-        \       }\n    ],\n    \"omero\": {\n        \"channels\": [\n            {\n
-        \               \"active\": true,\n                \"coefficient\": 1.0,\n
-        \               \"color\": \"00FF00\",\n                \"family\": \"linear\",\n
-        \               \"inverted\": false,\n                \"label\": \"Total HH3-113In\",\n
-        \               \"window\": {\n                    \"end\": 10.0,\n                    \"max\":
-        37.209999084472656,\n                    \"min\": 0.0,\n                    \"start\":
-        0.0\n                }\n            },\n            {\n                \"active\":
-        false,\n                \"coefficient\": 1.0,\n                \"color\":
-        \"00FF00\",\n                \"family\": \"linear\",\n                \"inverted\":
-        false,\n                \"label\": \"Xe126-126Xe\",\n                \"window\":
-        {\n                    \"end\": 9.612000465393066,\n                    \"max\":
-        9.612000465393066,\n                    \"min\": 0.0,\n                    \"start\":
-        0.0\n                }\n            },\n            {\n                \"active\":
-        false,\n                \"coefficient\": 1.0,\n                \"color\":
-        \"0000FF\",\n                \"family\": \"linear\",\n                \"inverted\":
-        false,\n                \"label\": \"I127-127I\",\n                \"window\":
-        {\n                    \"end\": 80.37100219726562,\n                    \"max\":
-        80.37100219726562,\n                    \"min\": 6.741000175476074,\n                    \"start\":
-        6.741000175476074\n                }\n            },\n            {\n                \"active\":
-        false,\n                \"coefficient\": 1.0,\n                \"color\":
-        \"FF0000\",\n                \"family\": \"linear\",\n                \"inverted\":
-        false,\n                \"label\": \"Xe131-131Xe\",\n                \"window\":
-        {\n                    \"end\": 115.31999969482422,\n                    \"max\":
-        115.31999969482422,\n                    \"min\": 24.672000885009766,\n                    \"start\":
-        24.672000885009766\n                }\n            },\n            {\n                \"active\":
-        false,\n                \"coefficient\": 1.0,\n                \"color\":
-        \"00FF00\",\n                \"family\": \"linear\",\n                \"inverted\":
-        false,\n                \"label\": \"Xe134-134Xe\",\n                \"window\":
-        {\n                    \"end\": 70.39299774169922,\n                    \"max\":
-        70.39299774169922,\n                    \"min\": 5.019000053405762,\n                    \"start\":
-        5.019000053405762\n                }\n            },\n            {\n                \"active\":
-        false,\n                \"coefficient\": 1.0,\n                \"color\":
-        \"0000FF\",\n                \"family\": \"linear\",\n                \"inverted\":
-        false,\n                \"label\": \"H3K27me3-139La\",\n                \"window\":
-        {\n                    \"end\": 1263.41796875,\n                    \"max\":
-        1263.41796875,\n                    \"min\": 0.0,\n                    \"start\":
-        0.0\n                }\n            },\n            {\n                \"active\":
-        false,\n                \"coefficient\": 1.0,\n                \"color\":
-        \"FF0000\",\n                \"family\": \"linear\",\n                \"inverted\":
-        false,\n                \"label\": \"Ce140-140Ce\",\n                \"window\":
-        {\n                    \"end\": 12.770000457763672,\n                    \"max\":
-        12.770000457763672,\n                    \"min\": 0.0,\n                    \"start\":
-        0.0\n                }\n            },\n            {\n                \"active\":
-        true,\n                \"coefficient\": 1.0,\n                \"color\": \"FF0000\",\n
-        \               \"family\": \"linear\",\n                \"inverted\": false,\n
-        \               \"label\": \"CK5-141Pr\",\n                \"window\": {\n
-        \                   \"end\": 10.0,\n                    \"max\": 2580.3720703125,\n
-        \                   \"min\": 0.0,\n                    \"start\": 0.0\n                }\n
-        \           },\n            {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"0000FF\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"Fibronectin-Nd142\",\n                \"window\": {\n                    \"end\":
-        200.04600524902344,\n                    \"max\": 200.04600524902344,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"FF0000\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"CK19-143Nd\",\n                \"window\": {\n                    \"end\":
-        41.757999420166016,\n                    \"max\": 41.757999420166016,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"00FF00\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"CK8_18-144Nd\",\n                \"window\": {\n                    \"end\":
-        66.18699645996094,\n                    \"max\": 66.18699645996094,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"0000FF\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"Twist-145Nd\",\n                \"window\": {\n                    \"end\":
-        9.618000030517578,\n                    \"max\": 9.618000030517578,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": true,\n                \"coefficient\":
-        1.0,\n                \"color\": \"0000FF\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"CD68-146Nd\",\n                \"window\": {\n                    \"end\":
-        10.0,\n                    \"max\": 15.168000221252441,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"00FF00\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"CK14-147Sm\",\n                \"window\": {\n                    \"end\":
-        16.53499984741211,\n                    \"max\": 16.53499984741211,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": true,\n                \"coefficient\":
-        1.0,\n                \"color\": \"0000FF\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"SMA-148Nd\",\n                \"window\": {\n                    \"end\":
-        34.952999114990234,\n                    \"max\": 34.952999114990234,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"FF0000\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"Vimentin-149Sm\",\n                \"window\": {\n                    \"end\":
-        14.227999687194824,\n                    \"max\": 14.227999687194824,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"00FF00\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"C-myc-Nd150\",\n                \"window\": {\n                    \"end\":
-        9.128999710083008,\n                    \"max\": 9.128999710083008,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"0000FF\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"HER2-Eu151\",\n                \"window\": {\n                    \"end\":
-        320.7130126953125,\n                    \"max\": 320.7130126953125,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"FF0000\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"CD3-Sm152\",\n                \"window\": {\n                    \"end\":
-        8.194999694824219,\n                    \"max\": 8.194999694824219,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"00FF00\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"p-HH3-Eu153\",\n                \"window\": {\n                    \"end\":
-        9.90999984741211,\n                    \"max\": 9.90999984741211,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"0000FF\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"p-ERK1/2-154Sm\",\n                \"window\": {\n                    \"end\":
-        247.23800659179688,\n                    \"max\": 247.23800659179688,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"FF0000\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"Slug-155Gd\",\n                \"window\": {\n                    \"end\":
-        78.06500244140625,\n                    \"max\": 78.06500244140625,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"00FF00\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"ER-156Gd\",\n                \"window\": {\n                    \"end\":
-        36.064998626708984,\n                    \"max\": 36.064998626708984,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"0000FF\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"PR-158Gd\",\n                \"window\": {\n                    \"end\":
-        1793.6810302734375,\n                    \"max\": 1793.6810302734375,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"FF0000\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"p53-159Tb\",\n                \"window\": {\n                    \"end\":
-        9.720000267028809,\n                    \"max\": 9.720000267028809,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": true,\n                \"coefficient\":
-        1.0,\n                \"color\": \"FFFF00\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"CD44-160Gd\",\n                \"window\": {\n                    \"end\":
-        10.0,\n                    \"max\": 236.2050018310547,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"0000FF\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"EpCAM-161Dy\",\n                \"window\": {\n                    \"end\":
-        12.475000381469727,\n                    \"max\": 12.475000381469727,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"FF0000\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"CD45-162Dy\",\n                \"window\": {\n                    \"end\":
-        105.46399688720703,\n                    \"max\": 105.46399688720703,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"00FF00\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"GATA3-163Dy\",\n                \"window\": {\n                    \"end\":
-        240.4759979248047,\n                    \"max\": 240.4759979248047,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": true,\n                \"coefficient\":
-        1.0,\n                \"color\": \"00FFFF\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"CD20-164Dy\",\n                \"window\": {\n                    \"end\":
-        10.0,\n                    \"max\": 22.915000915527344,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"FF0000\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"Beta-catenin-165Ho\",\n                \"window\": {\n                    \"end\":
-        33.46500015258789,\n                    \"max\": 33.46500015258789,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"00FF00\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"CAIX-166Er\",\n                \"window\": {\n                    \"end\":
-        84.91999816894531,\n                    \"max\": 84.91999816894531,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"0000FF\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"E_Cadherin-167Er\",\n                \"window\": {\n                    \"end\":
-        28.315000534057617,\n                    \"max\": 28.315000534057617,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": true,\n                \"coefficient\":
-        1.0,\n                \"color\": \"FF00FF\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"Ki67-168Er\",\n                \"window\": {\n                    \"end\":
-        10.0,\n                    \"max\": 78.24600219726562,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"00FF00\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"EGFR-169Tm\",\n                \"window\": {\n                    \"end\":
-        12.744999885559082,\n                    \"max\": 12.744999885559082,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"0000FF\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"pS6-170Er\",\n                \"window\": {\n                    \"end\":
-        134.2740020751953,\n                    \"max\": 134.2740020751953,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"FF0000\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"Sox9-171Yb\",\n                \"window\": {\n                    \"end\":
-        12.847999572753906,\n                    \"max\": 12.847999572753906,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"00FF00\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"vWF-CD31-Yb172\",\n                \"window\": {\n                    \"end\":
-        36.50400161743164,\n                    \"max\": 36.50400161743164,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"0000FF\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"mTOR-173Yb\",\n                \"window\": {\n                    \"end\":
-        9.255000114440918,\n                    \"max\": 9.255000114440918,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"FF0000\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"CK7-174Yb\",\n                \"window\": {\n                    \"end\":
-        41.37300109863281,\n                    \"max\": 41.37300109863281,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": true,\n                \"coefficient\":
-        1.0,\n                \"color\": \"FFFFFF\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"panCK-175Lu\",\n                \"window\": {\n                    \"end\":
-        10.0,\n                    \"max\": 6430.4970703125,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"0000FF\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"cPARP-cCasp3-176Yb\",\n                \"window\": {\n                    \"end\":
-        167.16400146484375,\n                    \"max\": 167.16400146484375,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"FF0000\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"DNA1-191Ir\",\n                \"window\": {\n                    \"end\":
-        223.0959930419922,\n                    \"max\": 223.0959930419922,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"00FF00\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"DNA2-193Ir\",\n                \"window\": {\n                    \"end\":
-        366.4469909667969,\n                    \"max\": 366.4469909667969,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"0000FF\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"Hg202-202Hg\",\n                \"window\": {\n                    \"end\":
-        16.400999069213867,\n                    \"max\": 16.400999069213867,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"FF0000\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"Pb202-202Pb\",\n                \"window\": {\n                    \"end\":
-        10.22599983215332,\n                    \"max\": 10.22599983215332,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"00FF00\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"Pb206-206Pb\",\n                \"window\": {\n                    \"end\":
-        11.28499984741211,\n                    \"max\": 11.28499984741211,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"0000FF\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"Pb207-207Pb\",\n                \"window\": {\n                    \"end\":
-        10.97700023651123,\n                    \"max\": 10.97700023651123,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"FF0000\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"Pb208-208Pb\",\n                \"window\": {\n                    \"end\":
-        12.706999778747559,\n                    \"max\": 12.706999778747559,\n                    \"min\":
-        0.0,\n                    \"start\": 0.0\n                }\n            },\n
-        \           {\n                \"active\": false,\n                \"coefficient\":
-        1.0,\n                \"color\": \"00FF00\",\n                \"family\":
-        \"linear\",\n                \"inverted\": false,\n                \"label\":
-        \"ArAr80-80ArAr\",\n                \"window\": {\n                    \"end\":
-        7036.3828125,\n                    \"max\": 7036.3828125,\n                    \"min\":
-        5555.56103515625,\n                    \"start\": 5555.56103515625\n                }\n
-        \           }\n        ],\n        \"id\": 1,\n        \"rdefs\": {\n            \"defaultT\":
-        0,\n            \"defaultZ\": 0,\n            \"model\": \"color\"\n        },\n
-        \       \"version\": \"0.4\"\n    }\n}"
-    headers:
-      Accept-Ranges:
-      - bytes
-      Connection:
-      - Keep-Alive
-      Content-Length:
-      - '24827'
-      Content-Type:
-      - binary/octet-stream
-      Date:
-      - Sat, 03 Jan 2026 18:12:23 GMT
-      Etag:
-      - '"4d0a0cfde15868f131ce2dcae97c9bce"'
-      Last-Modified:
-      - Tue, 21 Jun 2022 09:42:31 GMT
-      x-amz-request-id:
-      - tx00000000000001511cc07-0069595c07-7518e06c-default
-      x-rgw-object-type:
-      - Normal
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers: {}
-    method: GET
-    uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/zarr.json
-  response:
-    body:
-      string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000001771df34-0069595c07-7548e961-default</RequestId><HostId>7548e961-default-default</HostId></Error>
-    headers:
-      Accept-Ranges:
-      - bytes
-      Connection:
-      - Keep-Alive
-      Content-Length:
-      - '218'
-      Content-Type:
-      - application/xml
-      Date:
-      - Sat, 03 Jan 2026 18:12:23 GMT
-      x-amz-request-id:
-      - tx00000000000001771df34-0069595c07-7548e961-default
-    status:
-      code: 404
-      message: Not Found
-- request:
-    body: null
-    headers: {}
-    method: GET
-    uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/0/.zarray
-  response:
-    body:
-      string: "{\n    \"chunks\": [\n        1,\n        494,\n        464\n    ],\n
-        \   \"compressor\": {\n        \"blocksize\": 0,\n        \"clevel\": 5,\n
-        \       \"cname\": \"lz4\",\n        \"id\": \"blosc\",\n        \"shuffle\":
-        1\n    },\n    \"dimension_separator\": \"/\",\n    \"dtype\": \"<f8\",\n
-        \   \"fill_value\": 0.0,\n    \"filters\": null,\n    \"order\": \"C\",\n
-        \   \"shape\": [\n        50,\n        494,\n        464\n    ],\n    \"zarr_format\":
-        2\n}"
-    headers:
-      Accept-Ranges:
-      - bytes
-      Connection:
-      - Keep-Alive
-      Content-Length:
-      - '396'
-      Content-Type:
-      - binary/octet-stream
-      Date:
-      - Sat, 03 Jan 2026 18:12:23 GMT
-      Etag:
-      - '"2fac3803347a9a8589b7b6adc47bafd9"'
-      Last-Modified:
-      - Tue, 21 Jun 2022 09:42:31 GMT
-      x-amz-request-id:
-      - tx00000000000001511cc08-0069595c07-7518e06c-default
-      x-rgw-object-type:
-      - Normal
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers: {}
-    method: GET
-    uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/0/.zattrs
-  response:
-    body:
-      string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx0000000000000161fdb21-0069595c07-7547eb43-default</RequestId><HostId>7547eb43-default-default</HostId></Error>
-    headers:
-      Accept-Ranges:
-      - bytes
-      Connection:
-      - Keep-Alive
-      Content-Length:
-      - '218'
-      Content-Type:
-      - application/xml
-      Date:
-      - Sat, 03 Jan 2026 18:12:23 GMT
-      x-amz-request-id:
-      - tx0000000000000161fdb21-0069595c07-7547eb43-default
-    status:
-      code: 404
-      message: Not Found
-- request:
-    body: null
-    headers: {}
-    method: GET
-    uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/1/.zarray
-  response:
-    body:
-      string: "{\n    \"chunks\": [\n        1,\n        247,\n        232\n    ],\n
-        \   \"compressor\": {\n        \"blocksize\": 0,\n        \"clevel\": 5,\n
-        \       \"cname\": \"lz4\",\n        \"id\": \"blosc\",\n        \"shuffle\":
-        1\n    },\n    \"dimension_separator\": \"/\",\n    \"dtype\": \"<f8\",\n
-        \   \"fill_value\": 0.0,\n    \"filters\": null,\n    \"order\": \"C\",\n
-        \   \"shape\": [\n        50,\n        247,\n        232\n    ],\n    \"zarr_format\":
-        2\n}"
-    headers:
-      Accept-Ranges:
-      - bytes
-      Connection:
-      - Keep-Alive
-      Content-Length:
-      - '396'
-      Content-Type:
-      - binary/octet-stream
-      Date:
-      - Sat, 03 Jan 2026 18:12:23 GMT
-      Etag:
-      - '"a22fa31c117a67cef6a43b84e2e8ae78"'
-      Last-Modified:
-      - Tue, 21 Jun 2022 09:42:31 GMT
-      x-amz-request-id:
-      - tx00000000000001511cc09-0069595c07-7518e06c-default
-      x-rgw-object-type:
-      - Normal
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers: {}
-    method: GET
-    uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/1/.zattrs
-  response:
-    body:
-      string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000001771df35-0069595c07-7548e961-default</RequestId><HostId>7548e961-default-default</HostId></Error>
-    headers:
-      Accept-Ranges:
-      - bytes
-      Connection:
-      - Keep-Alive
-      Content-Length:
-      - '218'
-      Content-Type:
-      - application/xml
-      Date:
-      - Sat, 03 Jan 2026 18:12:23 GMT
-      x-amz-request-id:
-      - tx00000000000001771df35-0069595c07-7548e961-default
-    status:
-      code: 404
-      message: Not Found
-- request:
-    body: null
-    headers: {}
-    method: GET
-    uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/2/.zarray
-  response:
-    body:
-      string: "{\n    \"chunks\": [\n        1,\n        123,\n        116\n    ],\n
-        \   \"compressor\": {\n        \"blocksize\": 0,\n        \"clevel\": 5,\n
-        \       \"cname\": \"lz4\",\n        \"id\": \"blosc\",\n        \"shuffle\":
-        1\n    },\n    \"dimension_separator\": \"/\",\n    \"dtype\": \"<f8\",\n
-        \   \"fill_value\": 0.0,\n    \"filters\": null,\n    \"order\": \"C\",\n
-        \   \"shape\": [\n        50,\n        123,\n        116\n    ],\n    \"zarr_format\":
-        2\n}"
-    headers:
-      Accept-Ranges:
-      - bytes
-      Connection:
-      - Keep-Alive
-      Content-Length:
-      - '396'
-      Content-Type:
-      - binary/octet-stream
-      Date:
-      - Sat, 03 Jan 2026 18:12:23 GMT
-      Etag:
-      - '"ffc7c5ee1e3761251c87158f9adeec74"'
-      Last-Modified:
-      - Tue, 21 Jun 2022 09:42:32 GMT
-      x-amz-request-id:
-      - tx00000000000001511cc0a-0069595c07-7518e06c-default
-      x-rgw-object-type:
-      - Normal
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers: {}
-    method: GET
-    uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/2/.zattrs
-  response:
-    body:
-      string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx0000000000000161fdb22-0069595c07-7547eb43-default</RequestId><HostId>7547eb43-default-default</HostId></Error>
-    headers:
-      Accept-Ranges:
-      - bytes
-      Connection:
-      - Keep-Alive
-      Content-Length:
-      - '218'
-      Content-Type:
-      - application/xml
-      Date:
-      - Sat, 03 Jan 2026 18:12:23 GMT
-      x-amz-request-id:
-      - tx0000000000000161fdb22-0069595c07-7547eb43-default
-    status:
-      code: 404
-      message: Not Found
-- request:
-    body: null
-    headers: {}
-    method: GET
-    uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/3/.zarray
-  response:
-    body:
-      string: "{\n    \"chunks\": [\n        1,\n        61,\n        58\n    ],\n
-        \   \"compressor\": {\n        \"blocksize\": 0,\n        \"clevel\": 5,\n
-        \       \"cname\": \"lz4\",\n        \"id\": \"blosc\",\n        \"shuffle\":
-        1\n    },\n    \"dimension_separator\": \"/\",\n    \"dtype\": \"<f8\",\n
-        \   \"fill_value\": 0.0,\n    \"filters\": null,\n    \"order\": \"C\",\n
-        \   \"shape\": [\n        50,\n        61,\n        58\n    ],\n    \"zarr_format\":
-        2\n}"
-    headers:
-      Accept-Ranges:
-      - bytes
-      Connection:
-      - Keep-Alive
-      Content-Length:
-      - '392'
-      Content-Type:
-      - binary/octet-stream
-      Date:
-      - Sat, 03 Jan 2026 18:12:23 GMT
-      Etag:
-      - '"8109af09d4fc957ea087d2a0a4dab9bc"'
-      Last-Modified:
-      - Tue, 21 Jun 2022 09:42:32 GMT
-      x-amz-request-id:
-      - tx00000000000001511cc0b-0069595c07-7518e06c-default
-      x-rgw-object-type:
-      - Normal
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers: {}
-    method: GET
-    uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/3/.zattrs
-  response:
-    body:
-      string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000001771df36-0069595c07-7548e961-default</RequestId><HostId>7548e961-default-default</HostId></Error>
-    headers:
-      Accept-Ranges:
-      - bytes
-      Connection:
-      - Keep-Alive
-      Content-Length:
-      - '218'
-      Content-Type:
-      - application/xml
-      Date:
-      - Sat, 03 Jan 2026 18:12:24 GMT
-      x-amz-request-id:
-      - tx00000000000001771df36-0069595c07-7548e961-default
-    status:
-      code: 404
-      message: Not Found
-- request:
-    body: null
-    headers: {}
-    method: GET
-    uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/labels/.zmetadata
-  response:
-    body:
-      string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000001511cc0f-0069595c08-7518e06c-default</RequestId><HostId>7518e06c-default-default</HostId></Error>
-    headers:
-      Accept-Ranges:
-      - bytes
-      Connection:
-      - Keep-Alive
-      Content-Length:
-      - '218'
-      Content-Type:
-      - application/xml
-      Date:
-      - Sat, 03 Jan 2026 18:12:24 GMT
-      x-amz-request-id:
-      - tx00000000000001511cc0f-0069595c08-7518e06c-default
-    status:
-      code: 404
-      message: Not Found
-- request:
-    body: null
-    headers: {}
-    method: GET
-    uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/labels/.zattrs
-  response:
-    body:
-      string: "{\n    \"labels\": [\n        \"0\"\n    ]\n}"
-    headers:
-      Accept-Ranges:
-      - bytes
-      Connection:
-      - Keep-Alive
-      Content-Length:
-      - '37'
-      Content-Type:
-      - binary/octet-stream
-      Date:
-      - Sat, 03 Jan 2026 18:12:24 GMT
-      Etag:
-      - '"c97d7c95611dc5992b6bd1834519e40f"'
-      Last-Modified:
-      - Tue, 21 Jun 2022 09:42:32 GMT
-      x-amz-request-id:
-      - tx0000000000000161fdb24-0069595c08-7547eb43-default
-      x-rgw-object-type:
-      - Normal
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers: {}
-    method: GET
-    uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/labels/.zgroup
-  response:
-    body:
-      string: "{\n    \"zarr_format\": 2\n}"
-    headers:
-      Accept-Ranges:
-      - bytes
-      Connection:
-      - Keep-Alive
-      Content-Length:
-      - '24'
-      Content-Type:
-      - binary/octet-stream
-      Date:
-      - Sat, 03 Jan 2026 18:12:24 GMT
-      Etag:
-      - '"e20297935e73dd0154104d4ea53040ab"'
-      Last-Modified:
-      - Tue, 21 Jun 2022 09:42:32 GMT
-      x-amz-request-id:
-      - tx00000000000001511cc0e-0069595c08-7518e06c-default
-      x-rgw-object-type:
-      - Normal
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers: {}
-    method: GET
-    uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/labels/.zgroup
-  response:
-    body:
-      string: "{\n    \"zarr_format\": 2\n}"
-    headers:
-      Accept-Ranges:
-      - bytes
-      Connection:
-      - Keep-Alive
-      Content-Length:
-      - '24'
-      Content-Type:
-      - binary/octet-stream
-      Date:
-      - Sat, 03 Jan 2026 18:12:24 GMT
-      Etag:
-      - '"e20297935e73dd0154104d4ea53040ab"'
-      Last-Modified:
-      - Tue, 21 Jun 2022 09:42:32 GMT
-      x-amz-request-id:
-      - tx00000000000001511cc10-0069595c08-7518e06c-default
-      x-rgw-object-type:
-      - Normal
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers: {}
-    method: GET
-    uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/labels/.zattrs
-  response:
-    body:
-      string: "{\n    \"labels\": [\n        \"0\"\n    ]\n}"
-    headers:
-      Accept-Ranges:
-      - bytes
-      Connection:
-      - Keep-Alive
-      Content-Length:
-      - '37'
-      Content-Type:
-      - binary/octet-stream
-      Date:
-      - Sat, 03 Jan 2026 18:12:24 GMT
-      Etag:
-      - '"c97d7c95611dc5992b6bd1834519e40f"'
-      Last-Modified:
-      - Tue, 21 Jun 2022 09:42:32 GMT
-      x-amz-request-id:
-      - tx0000000000000161fdb25-0069595c08-7547eb43-default
-      x-rgw-object-type:
-      - Normal
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers: {}
-    method: GET
-    uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/labels/.zarray
-  response:
-    body:
-      string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000001771df37-0069595c08-7548e961-default</RequestId><HostId>7548e961-default-default</HostId></Error>
-    headers:
-      Accept-Ranges:
-      - bytes
-      Connection:
-      - Keep-Alive
-      Content-Length:
-      - '218'
-      Content-Type:
-      - application/xml
-      Date:
-      - Sat, 03 Jan 2026 18:12:24 GMT
-      x-amz-request-id:
-      - tx00000000000001771df37-0069595c08-7548e961-default
-    status:
-      code: 404
-      message: Not Found
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/.zgroup
+    response:
+      body:
+        string: "{\n    \"zarr_format\": 2\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "24"
+        Content-Type:
+          - binary/octet-stream
+        Date:
+          - Sat, 03 Jan 2026 18:12:23 GMT
+        Etag:
+          - '"e20297935e73dd0154104d4ea53040ab"'
+        Last-Modified:
+          - Tue, 21 Jun 2022 09:42:31 GMT
+        x-amz-request-id:
+          - tx00000000000001511cc06-0069595c07-7518e06c-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/.zmetadata
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx0000000000000161fdb20-0069595c07-7547eb43-default</RequestId><HostId>7547eb43-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "218"
+        Content-Type:
+          - application/xml
+        Date:
+          - Sat, 03 Jan 2026 18:12:23 GMT
+        x-amz-request-id:
+          - tx0000000000000161fdb20-0069595c07-7547eb43-default
+      status:
+        code: 404
+        message: Not Found
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/.zattrs
+    response:
+      body:
+        string:
+          "{\n    \"_creator\": {\n        \"name\": \"omero-zarr\",\n        \"version\":
+          \"0.4.0\"\n    },\n    \"multiscales\": [\n        {\n            \"axes\":
+          [\n                {\n                    \"name\": \"c\",\n                    \"type\":
+          \"channel\"\n                },\n                {\n                    \"name\":
+          \"y\",\n                    \"type\": \"space\"\n                },\n                {\n
+          \                   \"name\": \"x\",\n                    \"type\": \"space\"\n
+          \               }\n            ],\n            \"datasets\": [\n                {\n
+          \                   \"coordinateTransformations\": [\n                        {\n
+          \                           \"scale\": [\n                                1.0,\n
+          \                               1.0,\n                                1.0\n
+          \                           ],\n                            \"type\": \"scale\"\n
+          \                       }\n                    ],\n                    \"path\":
+          \"0\"\n                },\n                {\n                    \"coordinateTransformations\":
+          [\n                        {\n                            \"scale\": [\n                                1.0,\n
+          \                               2.0,\n                                2.0\n
+          \                           ],\n                            \"type\": \"scale\"\n
+          \                       }\n                    ],\n                    \"path\":
+          \"1\"\n                },\n                {\n                    \"coordinateTransformations\":
+          [\n                        {\n                            \"scale\": [\n                                1.0,\n
+          \                               4.0,\n                                4.0\n
+          \                           ],\n                            \"type\": \"scale\"\n
+          \                       }\n                    ],\n                    \"path\":
+          \"2\"\n                },\n                {\n                    \"coordinateTransformations\":
+          [\n                        {\n                            \"scale\": [\n                                1.0,\n
+          \                               8.0,\n                                8.0\n
+          \                           ],\n                            \"type\": \"scale\"\n
+          \                       }\n                    ],\n                    \"path\":
+          \"3\"\n                }\n            ],\n            \"version\": \"0.4\"\n
+          \       }\n    ],\n    \"omero\": {\n        \"channels\": [\n            {\n
+          \               \"active\": true,\n                \"coefficient\": 1.0,\n
+          \               \"color\": \"00FF00\",\n                \"family\": \"linear\",\n
+          \               \"inverted\": false,\n                \"label\": \"Total HH3-113In\",\n
+          \               \"window\": {\n                    \"end\": 10.0,\n                    \"max\":
+          37.209999084472656,\n                    \"min\": 0.0,\n                    \"start\":
+          0.0\n                }\n            },\n            {\n                \"active\":
+          false,\n                \"coefficient\": 1.0,\n                \"color\":
+          \"00FF00\",\n                \"family\": \"linear\",\n                \"inverted\":
+          false,\n                \"label\": \"Xe126-126Xe\",\n                \"window\":
+          {\n                    \"end\": 9.612000465393066,\n                    \"max\":
+          9.612000465393066,\n                    \"min\": 0.0,\n                    \"start\":
+          0.0\n                }\n            },\n            {\n                \"active\":
+          false,\n                \"coefficient\": 1.0,\n                \"color\":
+          \"0000FF\",\n                \"family\": \"linear\",\n                \"inverted\":
+          false,\n                \"label\": \"I127-127I\",\n                \"window\":
+          {\n                    \"end\": 80.37100219726562,\n                    \"max\":
+          80.37100219726562,\n                    \"min\": 6.741000175476074,\n                    \"start\":
+          6.741000175476074\n                }\n            },\n            {\n                \"active\":
+          false,\n                \"coefficient\": 1.0,\n                \"color\":
+          \"FF0000\",\n                \"family\": \"linear\",\n                \"inverted\":
+          false,\n                \"label\": \"Xe131-131Xe\",\n                \"window\":
+          {\n                    \"end\": 115.31999969482422,\n                    \"max\":
+          115.31999969482422,\n                    \"min\": 24.672000885009766,\n                    \"start\":
+          24.672000885009766\n                }\n            },\n            {\n                \"active\":
+          false,\n                \"coefficient\": 1.0,\n                \"color\":
+          \"00FF00\",\n                \"family\": \"linear\",\n                \"inverted\":
+          false,\n                \"label\": \"Xe134-134Xe\",\n                \"window\":
+          {\n                    \"end\": 70.39299774169922,\n                    \"max\":
+          70.39299774169922,\n                    \"min\": 5.019000053405762,\n                    \"start\":
+          5.019000053405762\n                }\n            },\n            {\n                \"active\":
+          false,\n                \"coefficient\": 1.0,\n                \"color\":
+          \"0000FF\",\n                \"family\": \"linear\",\n                \"inverted\":
+          false,\n                \"label\": \"H3K27me3-139La\",\n                \"window\":
+          {\n                    \"end\": 1263.41796875,\n                    \"max\":
+          1263.41796875,\n                    \"min\": 0.0,\n                    \"start\":
+          0.0\n                }\n            },\n            {\n                \"active\":
+          false,\n                \"coefficient\": 1.0,\n                \"color\":
+          \"FF0000\",\n                \"family\": \"linear\",\n                \"inverted\":
+          false,\n                \"label\": \"Ce140-140Ce\",\n                \"window\":
+          {\n                    \"end\": 12.770000457763672,\n                    \"max\":
+          12.770000457763672,\n                    \"min\": 0.0,\n                    \"start\":
+          0.0\n                }\n            },\n            {\n                \"active\":
+          true,\n                \"coefficient\": 1.0,\n                \"color\": \"FF0000\",\n
+          \               \"family\": \"linear\",\n                \"inverted\": false,\n
+          \               \"label\": \"CK5-141Pr\",\n                \"window\": {\n
+          \                   \"end\": 10.0,\n                    \"max\": 2580.3720703125,\n
+          \                   \"min\": 0.0,\n                    \"start\": 0.0\n                }\n
+          \           },\n            {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"0000FF\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"Fibronectin-Nd142\",\n                \"window\": {\n                    \"end\":
+          200.04600524902344,\n                    \"max\": 200.04600524902344,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"FF0000\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"CK19-143Nd\",\n                \"window\": {\n                    \"end\":
+          41.757999420166016,\n                    \"max\": 41.757999420166016,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"00FF00\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"CK8_18-144Nd\",\n                \"window\": {\n                    \"end\":
+          66.18699645996094,\n                    \"max\": 66.18699645996094,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"0000FF\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"Twist-145Nd\",\n                \"window\": {\n                    \"end\":
+          9.618000030517578,\n                    \"max\": 9.618000030517578,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": true,\n                \"coefficient\":
+          1.0,\n                \"color\": \"0000FF\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"CD68-146Nd\",\n                \"window\": {\n                    \"end\":
+          10.0,\n                    \"max\": 15.168000221252441,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"00FF00\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"CK14-147Sm\",\n                \"window\": {\n                    \"end\":
+          16.53499984741211,\n                    \"max\": 16.53499984741211,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": true,\n                \"coefficient\":
+          1.0,\n                \"color\": \"0000FF\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"SMA-148Nd\",\n                \"window\": {\n                    \"end\":
+          34.952999114990234,\n                    \"max\": 34.952999114990234,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"FF0000\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"Vimentin-149Sm\",\n                \"window\": {\n                    \"end\":
+          14.227999687194824,\n                    \"max\": 14.227999687194824,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"00FF00\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"C-myc-Nd150\",\n                \"window\": {\n                    \"end\":
+          9.128999710083008,\n                    \"max\": 9.128999710083008,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"0000FF\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"HER2-Eu151\",\n                \"window\": {\n                    \"end\":
+          320.7130126953125,\n                    \"max\": 320.7130126953125,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"FF0000\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"CD3-Sm152\",\n                \"window\": {\n                    \"end\":
+          8.194999694824219,\n                    \"max\": 8.194999694824219,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"00FF00\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"p-HH3-Eu153\",\n                \"window\": {\n                    \"end\":
+          9.90999984741211,\n                    \"max\": 9.90999984741211,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"0000FF\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"p-ERK1/2-154Sm\",\n                \"window\": {\n                    \"end\":
+          247.23800659179688,\n                    \"max\": 247.23800659179688,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"FF0000\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"Slug-155Gd\",\n                \"window\": {\n                    \"end\":
+          78.06500244140625,\n                    \"max\": 78.06500244140625,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"00FF00\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"ER-156Gd\",\n                \"window\": {\n                    \"end\":
+          36.064998626708984,\n                    \"max\": 36.064998626708984,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"0000FF\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"PR-158Gd\",\n                \"window\": {\n                    \"end\":
+          1793.6810302734375,\n                    \"max\": 1793.6810302734375,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"FF0000\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"p53-159Tb\",\n                \"window\": {\n                    \"end\":
+          9.720000267028809,\n                    \"max\": 9.720000267028809,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": true,\n                \"coefficient\":
+          1.0,\n                \"color\": \"FFFF00\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"CD44-160Gd\",\n                \"window\": {\n                    \"end\":
+          10.0,\n                    \"max\": 236.2050018310547,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"0000FF\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"EpCAM-161Dy\",\n                \"window\": {\n                    \"end\":
+          12.475000381469727,\n                    \"max\": 12.475000381469727,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"FF0000\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"CD45-162Dy\",\n                \"window\": {\n                    \"end\":
+          105.46399688720703,\n                    \"max\": 105.46399688720703,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"00FF00\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"GATA3-163Dy\",\n                \"window\": {\n                    \"end\":
+          240.4759979248047,\n                    \"max\": 240.4759979248047,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": true,\n                \"coefficient\":
+          1.0,\n                \"color\": \"00FFFF\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"CD20-164Dy\",\n                \"window\": {\n                    \"end\":
+          10.0,\n                    \"max\": 22.915000915527344,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"FF0000\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"Beta-catenin-165Ho\",\n                \"window\": {\n                    \"end\":
+          33.46500015258789,\n                    \"max\": 33.46500015258789,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"00FF00\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"CAIX-166Er\",\n                \"window\": {\n                    \"end\":
+          84.91999816894531,\n                    \"max\": 84.91999816894531,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"0000FF\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"E_Cadherin-167Er\",\n                \"window\": {\n                    \"end\":
+          28.315000534057617,\n                    \"max\": 28.315000534057617,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": true,\n                \"coefficient\":
+          1.0,\n                \"color\": \"FF00FF\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"Ki67-168Er\",\n                \"window\": {\n                    \"end\":
+          10.0,\n                    \"max\": 78.24600219726562,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"00FF00\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"EGFR-169Tm\",\n                \"window\": {\n                    \"end\":
+          12.744999885559082,\n                    \"max\": 12.744999885559082,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"0000FF\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"pS6-170Er\",\n                \"window\": {\n                    \"end\":
+          134.2740020751953,\n                    \"max\": 134.2740020751953,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"FF0000\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"Sox9-171Yb\",\n                \"window\": {\n                    \"end\":
+          12.847999572753906,\n                    \"max\": 12.847999572753906,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"00FF00\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"vWF-CD31-Yb172\",\n                \"window\": {\n                    \"end\":
+          36.50400161743164,\n                    \"max\": 36.50400161743164,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"0000FF\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"mTOR-173Yb\",\n                \"window\": {\n                    \"end\":
+          9.255000114440918,\n                    \"max\": 9.255000114440918,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"FF0000\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"CK7-174Yb\",\n                \"window\": {\n                    \"end\":
+          41.37300109863281,\n                    \"max\": 41.37300109863281,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": true,\n                \"coefficient\":
+          1.0,\n                \"color\": \"FFFFFF\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"panCK-175Lu\",\n                \"window\": {\n                    \"end\":
+          10.0,\n                    \"max\": 6430.4970703125,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"0000FF\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"cPARP-cCasp3-176Yb\",\n                \"window\": {\n                    \"end\":
+          167.16400146484375,\n                    \"max\": 167.16400146484375,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"FF0000\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"DNA1-191Ir\",\n                \"window\": {\n                    \"end\":
+          223.0959930419922,\n                    \"max\": 223.0959930419922,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"00FF00\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"DNA2-193Ir\",\n                \"window\": {\n                    \"end\":
+          366.4469909667969,\n                    \"max\": 366.4469909667969,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"0000FF\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"Hg202-202Hg\",\n                \"window\": {\n                    \"end\":
+          16.400999069213867,\n                    \"max\": 16.400999069213867,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"FF0000\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"Pb202-202Pb\",\n                \"window\": {\n                    \"end\":
+          10.22599983215332,\n                    \"max\": 10.22599983215332,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"00FF00\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"Pb206-206Pb\",\n                \"window\": {\n                    \"end\":
+          11.28499984741211,\n                    \"max\": 11.28499984741211,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"0000FF\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"Pb207-207Pb\",\n                \"window\": {\n                    \"end\":
+          10.97700023651123,\n                    \"max\": 10.97700023651123,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"FF0000\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"Pb208-208Pb\",\n                \"window\": {\n                    \"end\":
+          12.706999778747559,\n                    \"max\": 12.706999778747559,\n                    \"min\":
+          0.0,\n                    \"start\": 0.0\n                }\n            },\n
+          \           {\n                \"active\": false,\n                \"coefficient\":
+          1.0,\n                \"color\": \"00FF00\",\n                \"family\":
+          \"linear\",\n                \"inverted\": false,\n                \"label\":
+          \"ArAr80-80ArAr\",\n                \"window\": {\n                    \"end\":
+          7036.3828125,\n                    \"max\": 7036.3828125,\n                    \"min\":
+          5555.56103515625,\n                    \"start\": 5555.56103515625\n                }\n
+          \           }\n        ],\n        \"id\": 1,\n        \"rdefs\": {\n            \"defaultT\":
+          0,\n            \"defaultZ\": 0,\n            \"model\": \"color\"\n        },\n
+          \       \"version\": \"0.4\"\n    }\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "24827"
+        Content-Type:
+          - binary/octet-stream
+        Date:
+          - Sat, 03 Jan 2026 18:12:23 GMT
+        Etag:
+          - '"4d0a0cfde15868f131ce2dcae97c9bce"'
+        Last-Modified:
+          - Tue, 21 Jun 2022 09:42:31 GMT
+        x-amz-request-id:
+          - tx00000000000001511cc07-0069595c07-7518e06c-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/zarr.json
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000001771df34-0069595c07-7548e961-default</RequestId><HostId>7548e961-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "218"
+        Content-Type:
+          - application/xml
+        Date:
+          - Sat, 03 Jan 2026 18:12:23 GMT
+        x-amz-request-id:
+          - tx00000000000001771df34-0069595c07-7548e961-default
+      status:
+        code: 404
+        message: Not Found
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/0/.zarray
+    response:
+      body:
+        string:
+          "{\n    \"chunks\": [\n        1,\n        494,\n        464\n    ],\n
+          \   \"compressor\": {\n        \"blocksize\": 0,\n        \"clevel\": 5,\n
+          \       \"cname\": \"lz4\",\n        \"id\": \"blosc\",\n        \"shuffle\":
+          1\n    },\n    \"dimension_separator\": \"/\",\n    \"dtype\": \"<f8\",\n
+          \   \"fill_value\": 0.0,\n    \"filters\": null,\n    \"order\": \"C\",\n
+          \   \"shape\": [\n        50,\n        494,\n        464\n    ],\n    \"zarr_format\":
+          2\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "396"
+        Content-Type:
+          - binary/octet-stream
+        Date:
+          - Sat, 03 Jan 2026 18:12:23 GMT
+        Etag:
+          - '"2fac3803347a9a8589b7b6adc47bafd9"'
+        Last-Modified:
+          - Tue, 21 Jun 2022 09:42:31 GMT
+        x-amz-request-id:
+          - tx00000000000001511cc08-0069595c07-7518e06c-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/0/.zattrs
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx0000000000000161fdb21-0069595c07-7547eb43-default</RequestId><HostId>7547eb43-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "218"
+        Content-Type:
+          - application/xml
+        Date:
+          - Sat, 03 Jan 2026 18:12:23 GMT
+        x-amz-request-id:
+          - tx0000000000000161fdb21-0069595c07-7547eb43-default
+      status:
+        code: 404
+        message: Not Found
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/1/.zarray
+    response:
+      body:
+        string:
+          "{\n    \"chunks\": [\n        1,\n        247,\n        232\n    ],\n
+          \   \"compressor\": {\n        \"blocksize\": 0,\n        \"clevel\": 5,\n
+          \       \"cname\": \"lz4\",\n        \"id\": \"blosc\",\n        \"shuffle\":
+          1\n    },\n    \"dimension_separator\": \"/\",\n    \"dtype\": \"<f8\",\n
+          \   \"fill_value\": 0.0,\n    \"filters\": null,\n    \"order\": \"C\",\n
+          \   \"shape\": [\n        50,\n        247,\n        232\n    ],\n    \"zarr_format\":
+          2\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "396"
+        Content-Type:
+          - binary/octet-stream
+        Date:
+          - Sat, 03 Jan 2026 18:12:23 GMT
+        Etag:
+          - '"a22fa31c117a67cef6a43b84e2e8ae78"'
+        Last-Modified:
+          - Tue, 21 Jun 2022 09:42:31 GMT
+        x-amz-request-id:
+          - tx00000000000001511cc09-0069595c07-7518e06c-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/1/.zattrs
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000001771df35-0069595c07-7548e961-default</RequestId><HostId>7548e961-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "218"
+        Content-Type:
+          - application/xml
+        Date:
+          - Sat, 03 Jan 2026 18:12:23 GMT
+        x-amz-request-id:
+          - tx00000000000001771df35-0069595c07-7548e961-default
+      status:
+        code: 404
+        message: Not Found
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/2/.zarray
+    response:
+      body:
+        string:
+          "{\n    \"chunks\": [\n        1,\n        123,\n        116\n    ],\n
+          \   \"compressor\": {\n        \"blocksize\": 0,\n        \"clevel\": 5,\n
+          \       \"cname\": \"lz4\",\n        \"id\": \"blosc\",\n        \"shuffle\":
+          1\n    },\n    \"dimension_separator\": \"/\",\n    \"dtype\": \"<f8\",\n
+          \   \"fill_value\": 0.0,\n    \"filters\": null,\n    \"order\": \"C\",\n
+          \   \"shape\": [\n        50,\n        123,\n        116\n    ],\n    \"zarr_format\":
+          2\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "396"
+        Content-Type:
+          - binary/octet-stream
+        Date:
+          - Sat, 03 Jan 2026 18:12:23 GMT
+        Etag:
+          - '"ffc7c5ee1e3761251c87158f9adeec74"'
+        Last-Modified:
+          - Tue, 21 Jun 2022 09:42:32 GMT
+        x-amz-request-id:
+          - tx00000000000001511cc0a-0069595c07-7518e06c-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/2/.zattrs
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx0000000000000161fdb22-0069595c07-7547eb43-default</RequestId><HostId>7547eb43-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "218"
+        Content-Type:
+          - application/xml
+        Date:
+          - Sat, 03 Jan 2026 18:12:23 GMT
+        x-amz-request-id:
+          - tx0000000000000161fdb22-0069595c07-7547eb43-default
+      status:
+        code: 404
+        message: Not Found
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/3/.zarray
+    response:
+      body:
+        string:
+          "{\n    \"chunks\": [\n        1,\n        61,\n        58\n    ],\n
+          \   \"compressor\": {\n        \"blocksize\": 0,\n        \"clevel\": 5,\n
+          \       \"cname\": \"lz4\",\n        \"id\": \"blosc\",\n        \"shuffle\":
+          1\n    },\n    \"dimension_separator\": \"/\",\n    \"dtype\": \"<f8\",\n
+          \   \"fill_value\": 0.0,\n    \"filters\": null,\n    \"order\": \"C\",\n
+          \   \"shape\": [\n        50,\n        61,\n        58\n    ],\n    \"zarr_format\":
+          2\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "392"
+        Content-Type:
+          - binary/octet-stream
+        Date:
+          - Sat, 03 Jan 2026 18:12:23 GMT
+        Etag:
+          - '"8109af09d4fc957ea087d2a0a4dab9bc"'
+        Last-Modified:
+          - Tue, 21 Jun 2022 09:42:32 GMT
+        x-amz-request-id:
+          - tx00000000000001511cc0b-0069595c07-7518e06c-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/3/.zattrs
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000001771df36-0069595c07-7548e961-default</RequestId><HostId>7548e961-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "218"
+        Content-Type:
+          - application/xml
+        Date:
+          - Sat, 03 Jan 2026 18:12:24 GMT
+        x-amz-request-id:
+          - tx00000000000001771df36-0069595c07-7548e961-default
+      status:
+        code: 404
+        message: Not Found
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/labels/.zmetadata
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000001511cc0f-0069595c08-7518e06c-default</RequestId><HostId>7518e06c-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "218"
+        Content-Type:
+          - application/xml
+        Date:
+          - Sat, 03 Jan 2026 18:12:24 GMT
+        x-amz-request-id:
+          - tx00000000000001511cc0f-0069595c08-7518e06c-default
+      status:
+        code: 404
+        message: Not Found
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/labels/.zattrs
+    response:
+      body:
+        string: "{\n    \"labels\": [\n        \"0\"\n    ]\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "37"
+        Content-Type:
+          - binary/octet-stream
+        Date:
+          - Sat, 03 Jan 2026 18:12:24 GMT
+        Etag:
+          - '"c97d7c95611dc5992b6bd1834519e40f"'
+        Last-Modified:
+          - Tue, 21 Jun 2022 09:42:32 GMT
+        x-amz-request-id:
+          - tx0000000000000161fdb24-0069595c08-7547eb43-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/labels/.zgroup
+    response:
+      body:
+        string: "{\n    \"zarr_format\": 2\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "24"
+        Content-Type:
+          - binary/octet-stream
+        Date:
+          - Sat, 03 Jan 2026 18:12:24 GMT
+        Etag:
+          - '"e20297935e73dd0154104d4ea53040ab"'
+        Last-Modified:
+          - Tue, 21 Jun 2022 09:42:32 GMT
+        x-amz-request-id:
+          - tx00000000000001511cc0e-0069595c08-7518e06c-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/labels/.zgroup
+    response:
+      body:
+        string: "{\n    \"zarr_format\": 2\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "24"
+        Content-Type:
+          - binary/octet-stream
+        Date:
+          - Sat, 03 Jan 2026 18:12:24 GMT
+        Etag:
+          - '"e20297935e73dd0154104d4ea53040ab"'
+        Last-Modified:
+          - Tue, 21 Jun 2022 09:42:32 GMT
+        x-amz-request-id:
+          - tx00000000000001511cc10-0069595c08-7518e06c-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/labels/.zattrs
+    response:
+      body:
+        string: "{\n    \"labels\": [\n        \"0\"\n    ]\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "37"
+        Content-Type:
+          - binary/octet-stream
+        Date:
+          - Sat, 03 Jan 2026 18:12:24 GMT
+        Etag:
+          - '"c97d7c95611dc5992b6bd1834519e40f"'
+        Last-Modified:
+          - Tue, 21 Jun 2022 09:42:32 GMT
+        x-amz-request-id:
+          - tx0000000000000161fdb25-0069595c08-7547eb43-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr/labels/.zarray
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000001771df37-0069595c08-7548e961-default</RequestId><HostId>7548e961-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "218"
+        Content-Type:
+          - application/xml
+        Date:
+          - Sat, 03 Jan 2026 18:12:24 GMT
+        x-amz-request-id:
+          - tx00000000000001771df37-0069595c08-7548e961-default
+      status:
+        code: 404
+        message: Not Found
 version: 1
