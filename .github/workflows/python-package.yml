@@ -6,9 +6,9 @@ concurrency:
 
 on:
   push:
-    branches: [ "main", "rfc*" ]
+    branches: ["main", "rfc*"]
   pull_request:
-    branches: [ "main", "rfc*" ]
+    branches: ["main", "rfc*"]
   workflow_dispatch:
 
 jobs:
