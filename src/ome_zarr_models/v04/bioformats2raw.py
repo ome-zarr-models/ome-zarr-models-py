@@ -20,6 +20,12 @@ class BioFormats2RawAttrs(BaseAttrsv2):
     It is not recommended to write new bioformats2raw groups.
     bioformats2raw is designed to support existing legacy data, and will be superseded
     by other OME-Zarr features in the future.
+
+    Notes
+    -----
+    Currently this class does not offer a way to access OME-XML metadata.
+    Please comment on [issue #374](https://github.com/ome-zarr-models/ome-zarr-models-py/issues/374)
+    if you would find accessing OME-XML metadata useful.
     """
 
     bioformats2raw_layout: Literal[3] = Field(..., alias="bioformats2raw.layout")
