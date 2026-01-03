@@ -22,6 +22,24 @@ from ome_zarr_models.exceptions import ValidationWarning
             None,
         ),
         (
+            "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr",
+            ome_zarr_models.v05.Image,
+            None,
+        ),
+        # See https://github.com/IDR/ome-ngff-samples/issues/30
+        # (
+        #    "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0062A/6001240_labels.zarr",
+        #    ome_zarr_models.v05.Image,
+        #    None,
+        # ),
+        (
+            "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0157/"
+            "Asterella gracilis SWE/"
+            "IMG_1033-1112 Asterella gracilis (Mannia gracilis) stature.ome.zarr",
+            ome_zarr_models.v05.Image,
+            None,
+        ),
+        (
             "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0033A/BR00109990_C2.zarr",
             ome_zarr_models.v05.BioFormats2Raw,
             None,
@@ -30,6 +48,11 @@ from ome_zarr_models.exceptions import ValidationWarning
         # ("https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0010/76-45.ome.zarr",
         # ome_zarr_models.v05.HCS,
         # re.escape("'version' field not specified in plate metadata"))
+        (
+            "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0076A/10501752.zarr",
+            ome_zarr_models.v04.Image,
+            None,
+        ),
     ],
 )
 def test_load_remote_data(
