@@ -1,6 +1,6 @@
 from typing import Literal, Self
 
-import pydantic_zarr
+import pydantic_zarr.v2
 import zarr
 from pydantic import Field, JsonValue
 
