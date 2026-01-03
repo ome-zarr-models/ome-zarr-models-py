@@ -37,6 +37,11 @@ class BioFormats2Raw(BaseGroupv04[BioFormats2RawAttrs]):
     bioformats2raw is designed to support existing legacy data, and will be superseded
     by other OME-Zarr features in the future.
 
+    Notes
+    -----
+    Currently this class does not offer a way to access OME-XML metadata.
+    Please comment on [issue #374](https://github.com/ome-zarr-models/ome-zarr-models-py/issues/374)
+    if you would find accessing OME-XML metadata useful.
     """
 
     @classmethod
