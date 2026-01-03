@@ -1,6 +1,5 @@
 import pytest
 import zarr
-from pydantic_zarr.v3 import ArraySpec, GroupSpec
 from zarr.abc.store import Store
 
 from ome_zarr_models.exceptions import ValidationWarning
