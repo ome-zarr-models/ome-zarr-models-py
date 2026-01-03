@@ -30,7 +30,13 @@ class BioFormats2Raw(
     BaseGroupv05[BioFormats2RawAttrs],
 ):
     """
-    An OME-Zarr labels dataset.
+    An OME-Zarr bioformats2raw dataset.
+
+    Warnings
+    --------
+    It is not recommended to write new bioformats2raw groups.
+    bioformats2raw is designed to support existing legacy data, and will be superseded
+    by other OME-Zarr features in the future.
     """
 
     @classmethod
