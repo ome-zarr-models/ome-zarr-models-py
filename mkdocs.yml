@@ -95,6 +95,7 @@ nav:
               - api/v05/image-label.md
               - api/v05/labels.md
               - api/v05/well.md
+              - api/v05/bioformats2raw.md
               - api/v05/other.md
       - v04:
           - api/v04/groups.md

@@ -12,13 +12,14 @@ specification.
 
 ## OME-Zarr 0.5
 
-| OME-Zarr group objects                         | Metadata attributes                                                  | Creation helper                                      |
-| ---------------------------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------- |
-| [`HCS`][ome_zarr_models.v05.HCS]               | [`HCSAttrs`][ome_zarr_models.v05.hcs.HCSAttrs]                       |
-| [`Image`][ome_zarr_models.v05.Image]           | [`ImageAttrs`][ome_zarr_models.v05.image.ImageAttrs]                 | [`Image.new()`][ome_zarr_models.v05.image.Image.new] |
-| [`Labels`][ome_zarr_models.v05.Labels]         | [`LabelsAttrs`][ome_zarr_models.v05.labels.LabelsAttrs]              |
-| [`ImageLabel`][ome_zarr_models.v05.ImageLabel] | [`ImageLabelAttrs`][ome_zarr_models.v05.image_label.ImageLabelAttrs] |
-| [`Well`][ome_zarr_models.v05.Well]             | [`WellAttrs`][ome_zarr_models.v05.well.WellAttrs]                    |
+| OME-Zarr group objects                                 | Metadata attributes                                                             | Creation helper                                      |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| [`HCS`][ome_zarr_models.v05.HCS]                       | [`HCSAttrs`][ome_zarr_models.v05.hcs.HCSAttrs]                                  |
+| [`Image`][ome_zarr_models.v05.Image]                   | [`ImageAttrs`][ome_zarr_models.v05.image.ImageAttrs]                            | [`Image.new()`][ome_zarr_models.v05.image.Image.new] |
+| [`Labels`][ome_zarr_models.v05.Labels]                 | [`LabelsAttrs`][ome_zarr_models.v05.labels.LabelsAttrs]                         |
+| [`ImageLabel`][ome_zarr_models.v05.ImageLabel]         | [`ImageLabelAttrs`][ome_zarr_models.v05.image_label.ImageLabelAttrs]            |
+| [`Well`][ome_zarr_models.v05.Well]                     | [`WellAttrs`][ome_zarr_models.v05.well.WellAttrs]                               |
+| [`BioFormats2Raw`][ome_zarr_models.v05.BioFormats2Raw] | [`BioFormats2RawAttrs`][ome_zarr_models.v05.bioformats2raw.BioFormats2RawAttrs] |
 
 ## OME-Zarr 0.4
 
