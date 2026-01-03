@@ -21,6 +21,11 @@ from ome_zarr_models.exceptions import ValidationWarning
             ome_zarr_models.v05.Image,
             None,
         ),
+        (
+            "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0033A/BR00109990_C2.zarr",
+            ome_zarr_models.v05.BioFormats2Raw,
+            None,
+        ),
         # The next dataset takes a long time (> 10 mins) to open, so comment out for now
         # ("https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0010/76-45.ome.zarr",
         # ome_zarr_models.v05.HCS,
