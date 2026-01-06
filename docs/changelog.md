@@ -8,7 +8,7 @@
 
 ### Documentation improvements
 
-- Added [ome_zarr_models.v05.Plate][] to the API docs.
+- Added [ome_zarr_models.v05.plate.Plate][] to the API docs.
 
 ## 1.4
 
