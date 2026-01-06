@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.5
+
+### bioformats2raw
+
+`ome-zarr-models` now has support for bioformats2raw groups.
+
+### Documentation improvements
+
+- Added [ome_zarr_models.v05.Plate][] to the API docs.
+
 ## 1.4
 
 ### Fixing metadata
