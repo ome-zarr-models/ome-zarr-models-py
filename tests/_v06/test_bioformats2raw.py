@@ -1,10 +1,8 @@
 import pytest
-import zarr
 from zarr.abc.store import Store
 
 from ome_zarr_models.exceptions import ValidationWarning
 from ome_zarr_models.v05.bioformats2raw import BioFormats2Raw, BioFormats2RawAttrs
-from ome_zarr_models.v05.image import Image
 from ome_zarr_models.v05.plate import (
     Acquisition,
     Column,
