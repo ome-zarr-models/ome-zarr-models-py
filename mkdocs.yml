@@ -112,6 +112,16 @@ nav:
           - Validation: api/common/validation.md
           - Exceptions: api/common/exceptions.md
           - Well: api/common/well.md
+      - Dev:
+          - api/dev/groups.md
+          - Metadata classes:
+              - api/dev/hcs.md
+              - api/dev/image.md
+              - api/dev/image-label.md
+              - api/dev/labels.md
+              - api/dev/well.md
+              - api/dev/bioformats2raw.md
+              - api/dev/other.md
   - Changelog: changelog.md
   - Contributing: contributing.md
 

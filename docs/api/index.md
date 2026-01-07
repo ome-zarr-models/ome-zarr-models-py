@@ -35,3 +35,18 @@ specification.
 ## Helper functions
 
 ::: ome_zarr_models
+
+## Development version
+
+This is the latest in-progress development version of the OME-Zarr specification.
+**Warning**: only to be used for experimentation and evaluating the work-in-progress specification.
+The development version of OME-Zarr and implementation in `ome-zarr-models` may change without notice.
+
+| OME-Zarr group objects                                  | Metadata attributes                                                              | Creation helper                                      |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| [`HCS`][ome_zarr_models._v06.HCS]                       | [`HCSAttrs`][ome_zarr_models._v06.hcs.HCSAttrs]                                  |
+| [`Image`][ome_zarr_models._v06.Image]                   | [`ImageAttrs`][ome_zarr_models._v06.image.ImageAttrs]                            | [`Image.new()`][ome_zarr_models.v04.image.Image.new] |
+| [`Labels`][ome_zarr_models._v06.Labels]                 | [`LabelsAttrs`][ome_zarr_models._v06.labels.LabelsAttrs]                         |
+| [`ImageLabel`][ome_zarr_models._v06.ImageLabel]         | [`ImageLabelAttrs`][ome_zarr_models._v06.image_label.ImageLabelAttrs]            |
+| [`Well`][ome_zarr_models._v06.Well]                     | [`WellAttrs`][ome_zarr_models._v06.well.WellAttrs]                               |
+| [`BioFormats2Raw`][ome_zarr_models._v06.BioFormats2Raw] | [`BioFormats2RawAttrs`][ome_zarr_models._v06.bioformats2raw.BioFormats2RawAttrs] |
