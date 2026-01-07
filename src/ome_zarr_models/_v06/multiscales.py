@@ -271,17 +271,17 @@ class Multiscale(BaseAttrs):
     @model_validator(mode="after")
     def check_dataset_transform_output(self) -> Self:
         """
-        Check the output of transforms in 'datasets' is the intrinsic system.
+        Check the output of all transforms in 'datasets' are the same.
         """
+        outputs = []
         for dataset in self.datasets:
             for transform in dataset.coordinateTransformations:
-                if transform.output != self.intrinsic_coordinate_system.name:
-                    raise ValueError(
-                        f"Output of transform for dataset at path '{dataset.path}' "
-                        f"('{transform.output}') "
-                        "is not the intrinsic coordinate system "
-                        f"('{self.intrinsic_coordinate_system.name}')."
-                    )
+                outputs.append(transform.output)
+        if len(set(outputs)) > 1:
+            raise ValueError(
+                "All coordinate transform outputs inside 'datasets'"
+                f" must be identical. Got {outputs}"
+            )
         return self
 
     @model_validator(mode="after")
