@@ -270,8 +270,25 @@ class Multiscale(BaseAttrs):
     '''
 
     @model_validator(mode="after")
+    def check_dataset_transform_output(self) -> Self:
+        """
+        Check the output of all transforms in 'datasets' are the same.
+        """
+        outputs = []
+        for dataset in self.datasets:
+            for transform in dataset.coordinateTransformations:
+                outputs.append(transform.output)
+        if len(set(outputs)) > 1:
+            raise ValueError(
+                "All coordinate transform outputs inside 'datasets'"
+                f" must be identical. Got {outputs}"
+            )
+        return self
+
+    @model_validator(mode="after")
     def check_cs_input_output(self) -> Self:
-        """Check input and output for each coordinate system.
+        """
+        Check input and output for each coordinate system.
 
         The input and output must either be a path relative to the current file in the
         zarr store or must be a name that is present in the list of coordinate systems.
