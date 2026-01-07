@@ -81,7 +81,7 @@ def test_image_label(store: Store) -> None:
                         coordinateTransformations=[
                             Scale(
                                 type="scale",
-                                input="/0",
+                                input="0",
                                 output="coord_sys0",
                                 name=None,
                                 scale=[1.0, 1.0, 0.5, 0.5, 0.5],
@@ -93,7 +93,7 @@ def test_image_label(store: Store) -> None:
                         coordinateTransformations=[
                             Scale(
                                 type="scale",
-                                input="/1",
+                                input="1",
                                 output="coord_sys0",
                                 name=None,
                                 scale=[1.0, 1.0, 1.0, 1.0, 1.0],
@@ -105,7 +105,7 @@ def test_image_label(store: Store) -> None:
                         coordinateTransformations=[
                             Scale(
                                 type="scale",
-                                input="/2",
+                                input="2",
                                 output="coord_sys0",
                                 name=None,
                                 scale=[1.0, 1.0, 2.0, 2.0, 2.0],

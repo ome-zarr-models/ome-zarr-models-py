@@ -55,7 +55,7 @@ def test_ensure_scale_translation() -> None:
         coordinateTransformations=(
             Scale(
                 scale=[1.0, 1.0],
-                input="/0",
+                input="0",
                 output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
             ),
         )
@@ -73,7 +73,7 @@ def test_ensure_scale_translation() -> None:
             coordinateTransformations=(
                 Translation(
                     translation=[1.0, 1.0],
-                    input="/0",
+                    input="0",
                     output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
                 ),
             )
@@ -89,7 +89,7 @@ def test_ensure_scale_translation() -> None:
             coordinateTransformations=(
                 Translation(
                     translation=[1.0, 1.0],
-                    input="/0",
+                    input="0",
                     output="intermediate",  # can be anything, this case is not
                     # valid anyway
                 ),
@@ -117,7 +117,7 @@ def test_ensure_scale_translation() -> None:
                         output=None,
                     ),
                 ),
-                input="/0",
+                input="0",
                 output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
             ),
         )
@@ -131,7 +131,7 @@ def test_ensure_scale_translation() -> None:
         _ = _gen_multiscale(
             coordinateTransformations=(
                 Sequence(
-                    input="/0",
+                    input="0",
                     output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
                     transformations=[
                         Scale(scale=[1.0, 1.0], input=None, output=None),
@@ -172,7 +172,7 @@ def test_invalid_dimensionalities() -> None:
                     coordinateTransformations=(
                         Scale(
                             scale=[1.0, 1.0, 1.0],
-                            input="/0",
+                            input="0",
                             output="out",
                         ),
                     ),
@@ -193,7 +193,7 @@ def test_invalid_dimensionalities() -> None:
                                     output=None,
                                 ),
                             ),
-                            input="/1",
+                            input="1",
                             output="out",
                         ),
                     ),
@@ -225,7 +225,7 @@ def test_ensure_ordered_scales() -> None:
                     coordinateTransformations=(
                         Scale(
                             scale=[2.0, 2.0],
-                            input="/0",
+                            input="0",
                             output="out",
                         ),
                     ),
@@ -246,7 +246,7 @@ def test_ensure_ordered_scales() -> None:
                                     output=None,
                                 ),
                             ),
-                            input="/1",
+                            input="1",
                             output="out",
                         ),
                     ),
