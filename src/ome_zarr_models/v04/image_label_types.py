@@ -11,7 +11,7 @@ from ome_zarr_models.common.image_label_types import (
     Uint8,
 )
 
-__all__ = ["RGBA", "Color", "LabelBase", "Property", "Source", "Uint8"]
+__all__ = ["RGBA", "Color", "Property", "Source", "Uint8"]
 
 
 class Label(LabelBase):
