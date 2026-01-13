@@ -19,11 +19,15 @@ RGBA = tuple[Uint8, Uint8, Uint8, Uint8]
 
 class Color(BaseAttrs):
     """
-    A label value and RGBA.
+    A colour used for a specific label value when showing labels.
     """
 
-    label_value: int = Field(..., alias="label-value")
-    rgba: RGBA | None
+    label_value: int = Field(
+        ...,
+        alias="label-value",
+        description="Pixel value of label in image data that this colour is used for.",
+    )
+    rgba: RGBA | None = Field(..., description="RGBA colour.")
 
 
 class Source(BaseAttrs):
@@ -52,10 +56,19 @@ class LabelBase(BaseAttrs):
 
     # TODO: validate
     # "All the values under the label-value (of colors) key MUST be unique."
-    colors: tuple[Color, ...] | None = None
-    properties: tuple[Property, ...] | None = None
-    source: Source | None = None
-    version: str | None = None
+    colors: tuple[Color, ...] | None = Field(
+        default=None, description="Colours for showing the labels."
+    )
+    properties: tuple[Property, ...] | None = Field(
+        default=None, description="Additional properties for each label value."
+    )
+    source: Source | None = Field(
+        default=None,
+        description="Information about the source data used to create the labels.",
+    )
+    version: str | None = Field(
+        default=None, description="Version of the image labels metadata."
+    )
 
     @model_validator(mode="after")
     def _check_label_values(self) -> Self:

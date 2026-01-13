@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.1
+
+### Documentation improvements
+
+- Added more descriptions to fields describing image-label metadata.
+
 ## 1.5
 
 ### bioformats2raw
