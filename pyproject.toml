@@ -29,7 +29,7 @@ docs = [
     "mkdocs-jupyter==0.25.1",
     "matplotlib==3.10.6",
     "rich==14.1.0",
-    "griffe-pydantic==1.1.7",
+    "griffe-fieldz==0.4.0",
     "fsspec[http]==2025.9.0",
 ]
 
@@ -59,27 +59,27 @@ line-length = 88
 [tool.ruff.lint]
 pydocstyle = { convention = "numpy" }
 select = [
-    "E",    # style errors
-    "W",    # style warnings
-    "F",    # flakes
-    "D",    # pydocstyle
-    "I",    # isort
-    "UP",   # pyupgrade
-    "C4",   # flake8-comprehensions
-    "B",    # flake8-bugbear
+    "E", # style errors
+    "W", # style warnings
+    "F", # flakes
+    "D", # pydocstyle
+    "I", # isort
+    "UP", # pyupgrade
+    "C4", # flake8-comprehensions
+    "B", # flake8-bugbear
     "A001", # flake8-builtins
-    "RUF",  # ruff-specific rules
-    "TC",   # flake8-type-checking
-    "TID",  # flake8-tidy-imports
+    "RUF", # ruff-specific rules
+    "TC", # flake8-type-checking
+    "TID", # flake8-tidy-imports
 ]
 ignore = [
-    "D401",  # First line should be in imperative mood (remove to opt in)
-    "D200",  # One line docstring should fit on one line.
-    "D205",  # 1 blank line required between summary line and description
-    "D400",  # First line should end with a period
-    "D100",  # Missing docstring in public module
-    "D102",  # Missing docstring in public method
-    "D104",  # Missing docstring in public package
+    "D401", # First line should be in imperative mood (remove to opt in)
+    "D200", # One line docstring should fit on one line.
+    "D205", # 1 blank line required between summary line and description
+    "D400", # First line should end with a period
+    "D100", # Missing docstring in public module
+    "D102", # Missing docstring in public method
+    "D104", # Missing docstring in public package
     "TC001", # Move application import `...` into a type-checking block. This messes with nested pydantic models
 
 ]
