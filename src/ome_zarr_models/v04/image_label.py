@@ -24,6 +24,9 @@ class ImageLabelAttrs(BaseAttrsv2):
 class ImageLabel(BaseGroupv04[ImageLabelAttrs]):
     """
     An image label dataset.
+
+    Represents an image segmentation where each unique pixel value represents a
+    separate segmented object.
     """
 
     @classmethod
