@@ -69,8 +69,10 @@ plugins:
             signature_crossrefs: true
             show_labels: false
             extensions:
-              - griffe_pydantic:
-                  schema: false
+              - griffe_fieldz:
+                  include_inherited: true
+                  strip_annotated: true
+                  add_fields_to: "docstring-attributes"
 
 strict: true
 validation:
