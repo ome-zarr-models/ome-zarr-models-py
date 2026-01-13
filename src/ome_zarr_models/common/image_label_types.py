@@ -57,7 +57,7 @@ class LabelBase(BaseAttrs):
     # TODO: validate
     # "All the values under the label-value (of colors) key MUST be unique."
     colors: tuple[Color, ...] | None = Field(
-        ..., description="Colours for showing the labels."
+        default=None, description="Colours for showing the labels."
     )
     properties: tuple[Property, ...] | None = Field(
         default=None, description="Additional properties for each label value."
