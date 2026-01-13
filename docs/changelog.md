@@ -4,6 +4,7 @@
 
 ### Documentation improvements
 
+- Improved the layout of metadata class API documentation by putting all attributes in a table.
 - Added more descriptions to fields describing image-label metadata.
 
 ## 1.5
