@@ -190,7 +190,9 @@ class Image(BaseGroupv06[ImageAttrs]):
         )
 
     @classmethod
-    def from_v05(cls, image_v05: "Imagev05") -> Self:
+    def from_v05(
+        cls, image_v05: "Imagev05", *, intrinsic_system_name: str = "physical"
+    ) -> Self:
         """
         Convert an v05 model to a v06 model.
 
@@ -198,6 +200,10 @@ class Image(BaseGroupv06[ImageAttrs]):
         ----------
         image_v05 :
             OME-Zarr version 0.5 image model.
+        intrinsic_system_name :
+            Name of the coordinate system that all the image array data transforms into.
+            In OME-Zarr 0.5 this was the coordinate system in physical units used
+            to display the dta.
 
         Returns
         -------
@@ -207,7 +213,7 @@ class Image(BaseGroupv06[ImageAttrs]):
         new_attributes = ImageAttrs(
             version="0.6",
             multiscales=[
-                Multiscale.from_v05(ms, intrinsic_system_name="physical")
+                Multiscale.from_v05(ms, intrinsic_system_name=intrinsic_system_name)
                 for ms in image_v05.ome_attributes.multiscales
             ],
         )
