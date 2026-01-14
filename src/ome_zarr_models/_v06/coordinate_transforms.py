@@ -348,7 +348,7 @@ class Affine(Transform):
     @classmethod
     def _from_matrix_vector(
         cls,
-        matrix: tuple[tuple[float, ...], ...],
+        matrix: typing.Sequence[typing.Sequence[float]],
         vector: typing.Sequence[float],
         input: TCoordSysIdentifier = None,
         output: TCoordSysIdentifier = None,
