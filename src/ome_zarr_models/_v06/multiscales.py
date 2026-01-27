@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import typing
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING, Annotated, Self
 
 from pydantic import (
     Field,
@@ -35,6 +35,11 @@ __all__ = ["Dataset", "Multiscale"]
 VALID_NDIM = (2, 3, 4, 5)
 
 
+ValidMultiscaleTransform = Annotated[
+    Scale | Identity | Sequence, Field(discriminator="type")
+]
+
+
 class Multiscale(BaseAttrs):
     """
     An element of multiscales metadata.
@@ -42,7 +47,7 @@ class Multiscale(BaseAttrs):
 
     coordinateSystems: tuple[CoordinateSystem, ...] = Field(..., min_length=1)
     datasets: tuple[Dataset, ...] = Field(..., min_length=1)
-    coordinateTransformations: tuple[AnyTransform, ...] | None = None
+    coordinateTransformations: tuple[ValidMultiscaleTransform] | None = None
     metadata: JsonValue = None
     name: JsonValue | None = None
     type: JsonValue = None
