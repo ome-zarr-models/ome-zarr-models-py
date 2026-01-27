@@ -51,4 +51,4 @@ def test_basic(zarr_path: Path) -> None:
 
 def test_get_all_zarrs() -> None:
     zarrs = get_all_zarrs(TEST_DATA_PATH)
-    assert len([z.relative_to(TEST_DATA_PATH) for z in zarrs]) == 39
+    assert len([z.relative_to(TEST_DATA_PATH) for z in zarrs]) == 35
