@@ -10,7 +10,7 @@ from ome_zarr_models._v06.coordinate_transforms import (
     Translation,
 )
 from ome_zarr_models._v06.image import Image
-from ome_zarr_models._v06.scene import Scene, SceneAttrs
+from ome_zarr_models._v06.scene import BaseSceneAttrs, Scene, SceneAttrs
 
 
 def test_load_container() -> None:
@@ -184,43 +184,45 @@ def test_load_container() -> None:
             },
         ),
     }
-    assert container.ome_attributes == SceneAttrs(
+    assert container.ome_attributes == BaseSceneAttrs(
         version="0.6",
-        coordinateTransformations=(
-            Translation(
-                type="translation",
-                input=CoordinateSystemIdentifier(name="physical", path="tile_0"),
-                output="world",
-                name="tile_0_mm to world",
-                translation=(0.0, 0.0),
-                path=None,
+        scene=SceneAttrs(
+            coordinateTransformations=(
+                Translation(
+                    type="translation",
+                    input=CoordinateSystemIdentifier(name="physical", path="tile_0"),
+                    output="world",
+                    name="tile_0_mm to world",
+                    translation=(0.0, 0.0),
+                    path=None,
+                ),
+                Translation(
+                    type="translation",
+                    input=CoordinateSystemIdentifier(name="physical", path="tile_1"),
+                    output="world",
+                    name="tile_1_mm to world",
+                    translation=(0.0, 348.0),
+                    path=None,
+                ),
             ),
-            Translation(
-                type="translation",
-                input=CoordinateSystemIdentifier(name="physical", path="tile_1"),
-                output="world",
-                name="tile_1_mm to world",
-                translation=(0.0, 348.0),
-                path=None,
-            ),
-        ),
-        coordinateSystems=(
-            CoordinateSystem(
-                name="world",
-                axes=(
-                    Axis(
-                        name="x",
-                        type="space",
-                        discrete=False,
-                        unit="micrometer",
-                        longName=None,
-                    ),
-                    Axis(
-                        name="y",
-                        type="space",
-                        discrete=False,
-                        unit="micrometer",
-                        longName=None,
+            coordinateSystems=(
+                CoordinateSystem(
+                    name="world",
+                    axes=(
+                        Axis(
+                            name="x",
+                            type="space",
+                            discrete=False,
+                            unit="micrometer",
+                            longName=None,
+                        ),
+                        Axis(
+                            name="y",
+                            type="space",
+                            discrete=False,
+                            unit="micrometer",
+                            longName=None,
+                        ),
                     ),
                 ),
             ),
@@ -329,21 +331,21 @@ def test_scene_new() -> None:
     assert scene.members["image_b"].members["0"].shape == (256, 256)
 
     # Verify coordinate transformations
-    assert len(scene.ome_attributes.coordinateTransformations) == 2
-    coord_transform_0 = scene.ome_attributes.coordinateTransformations[0]
+    assert len(scene.ome_attributes.scene.coordinateTransformations) == 2
+    coord_transform_0 = scene.ome_attributes.scene.coordinateTransformations[0]
     assert isinstance(coord_transform_0, Translation)
     assert coord_transform_0.input == "image_a"
     assert coord_transform_0.output == "world"
     assert coord_transform_0.translation == (0, 0)
-    coord_transform_1 = scene.ome_attributes.coordinateTransformations[1]
+    coord_transform_1 = scene.ome_attributes.scene.coordinateTransformations[1]
     assert isinstance(coord_transform_1, Translation)
     assert coord_transform_1.input == "image_b"
     assert coord_transform_1.output == "world"
     assert coord_transform_1.translation == (0, 256)
 
     # Verify coordinate systems
-    assert len(scene.ome_attributes.coordinateSystems) == 1
-    assert scene.ome_attributes.coordinateSystems[0].name == "world"
+    assert len(scene.ome_attributes.scene.coordinateSystems) == 1
+    assert scene.ome_attributes.scene.coordinateSystems[0].name == "world"
 
     # Verify version
     assert scene.ome_attributes.version == "0.6"
