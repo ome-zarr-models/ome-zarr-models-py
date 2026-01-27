@@ -35,11 +35,6 @@ __all__ = ["Dataset", "Multiscale"]
 VALID_NDIM = (2, 3, 4, 5)
 
 
-ValidMultiscaleTransform = Annotated[
-    Scale | Identity | Sequence, Field(discriminator="type")
-]
-
-
 class Multiscale(BaseAttrs):
     """
     An element of multiscales metadata.
@@ -47,7 +42,7 @@ class Multiscale(BaseAttrs):
 
     coordinateSystems: tuple[CoordinateSystem, ...] = Field(..., min_length=1)
     datasets: tuple[Dataset, ...] = Field(..., min_length=1)
-    coordinateTransformations: tuple[ValidMultiscaleTransform] | None = None
+    coordinateTransformations: tuple[AnyTransform, ...] | None = None
     metadata: JsonValue = None
     name: JsonValue | None = None
     type: JsonValue = None
@@ -347,7 +342,9 @@ class Dataset(BaseAttrs):
     # TODO: can we validate that the paths must be ordered from highest resolution to
     # smallest using scale metadata?
     path: str
-    coordinateTransformations: tuple[Scale | Identity | Sequence]
+    coordinateTransformations: tuple[
+        Annotated[Scale | Identity | Sequence, Field(discriminator="type")]
+    ]
 
     @classmethod
     def build(

@@ -39,6 +39,8 @@ def test_basic(zarr_path: Path) -> None:
     zarr_path_relative = zarr_path.relative_to(TEST_DATA_PATH)
     cls = Scene if zarr_path_relative.parts[0] == "user_stories" else Image
     zarr_group = zarr.open_group(zarr_path, mode="r")
+    if zarr_path_relative == Path("2d/axis_dependent/byDimension.zarr"):
+        pytest.xfail("Example data broken")
     try:
         cls.from_zarr(zarr_group)
     except NotImplementedError as e:
