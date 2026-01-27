@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import typing
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING, Annotated, Self
 
 from pydantic import (
     Field,
@@ -342,7 +342,9 @@ class Dataset(BaseAttrs):
     # TODO: can we validate that the paths must be ordered from highest resolution to
     # smallest using scale metadata?
     path: str
-    coordinateTransformations: tuple[Scale | Identity | Sequence]
+    coordinateTransformations: tuple[
+        Annotated[Scale | Identity | Sequence, Field(discriminator="type")]
+    ]
 
     @classmethod
     def build(

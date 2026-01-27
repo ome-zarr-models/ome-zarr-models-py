@@ -36,16 +36,11 @@ def test_basic(zarr_path: Path) -> None:
     Currently this just smoke tests that they load,
     and not that the values are as expected.
     """
-    print(zarr_path)
     zarr_path_relative = zarr_path.relative_to(TEST_DATA_PATH)
-    # These have broken metadata; once metadata is fixed, re-enable tests
-    if "byDimension" in str(zarr_path):
-        pytest.xfail("byDimension not correctly implemented")
-    if "inv" in str(zarr_path):
-        pytest.xfail("Inverse transforms no longer supported")
-
     cls = Scene if zarr_path_relative.parts[0] == "user_stories" else Image
     zarr_group = zarr.open_group(zarr_path, mode="r")
+    if zarr_path_relative == Path("2d/axis_dependent/byDimension.zarr"):
+        pytest.xfail("Example data broken")
     try:
         cls.from_zarr(zarr_group)
     except NotImplementedError as e:
@@ -58,4 +53,4 @@ def test_basic(zarr_path: Path) -> None:
 
 def test_get_all_zarrs() -> None:
     zarrs = get_all_zarrs(TEST_DATA_PATH)
-    assert len([z.relative_to(TEST_DATA_PATH) for z in zarrs]) == 39
+    assert len([z.relative_to(TEST_DATA_PATH) for z in zarrs]) == 35
