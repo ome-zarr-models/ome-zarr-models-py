@@ -108,8 +108,6 @@ class Image(BaseGroupv06[ImageAttrs]):
             image at multiple levels of detail.
         paths :
             The paths to the arrays within the new Zarr group.
-        axes :
-            `Axis` objects describing the axes of the arrays.
         scales :
             For each array, a scale value for each axis of the array.
         translations :

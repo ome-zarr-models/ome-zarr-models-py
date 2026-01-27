@@ -121,7 +121,9 @@ nav:
               - api/dev/image.md
               - api/dev/image-label.md
               - api/dev/labels.md
+              - api/dev/scene.md
               - api/dev/well.md
+              - api/dev/coordinates.md
               - api/dev/bioformats2raw.md
               - api/dev/other.md
   - Changelog: changelog.md
