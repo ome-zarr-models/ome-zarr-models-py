@@ -44,7 +44,7 @@ markdown_extensions:
 plugins:
   - search
   - mkdocs-jupyter:
-      execute: true
+      execute: false
       allow_errors: false
   - mkdocstrings:
       handlers:
