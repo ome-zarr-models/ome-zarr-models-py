@@ -3,7 +3,7 @@ from collections.abc import Sequence
 from typing import Self
 
 import zarr
-from pydantic import Field
+from pydantic import BaseModel, Field
 from pydantic_zarr.v3 import GroupSpec
 
 from ome_zarr_models._utils import TransformGraph, _from_zarr_v3
@@ -16,20 +16,24 @@ from ome_zarr_models._v06.coordinate_transforms import (
 from ome_zarr_models._v06.image import Image
 
 
-class SceneAttrs(BaseOMEAttrs):
+class SceneAttrs(BaseModel):
     coordinateTransformations: tuple[AnyTransform, ...] = Field(default=())
     coordinateSystems: tuple[CoordinateSystem, ...] = Field(default=())
 
+
+class BaseSceneAttrs(BaseOMEAttrs):
+    scene: SceneAttrs
+
     def get_group_paths(self) -> dict[str, type[Image]]:  # type: ignore[override]
         paths = {}
-        for transform in self.coordinateTransformations:
+        for transform in self.scene.coordinateTransformations:
             for coordinate_system in (transform.input, transform.output):
                 if isinstance(coordinate_system, CoordinateSystemIdentifier):
                     paths[coordinate_system.path] = Image
         return paths
 
 
-class Scene(BaseGroupv06[SceneAttrs]):
+class Scene(BaseGroupv06[BaseSceneAttrs]):
     """
     An OME-Zarr container group.
 
@@ -47,7 +51,7 @@ class Scene(BaseGroupv06[SceneAttrs]):
         group : zarr.Group
             A Zarr group that has valid OME-Zarr image metadata.
         """
-        return _from_zarr_v3(group, cls, SceneAttrs)
+        return _from_zarr_v3(group, cls, BaseSceneAttrs)
 
     @classmethod
     def new(
@@ -87,9 +91,11 @@ class Scene(BaseGroupv06[SceneAttrs]):
         return Scene(
             members=GroupSpec.from_flat(members_flat).members,
             attributes=BaseZarrAttrs(
-                ome=SceneAttrs(
-                    coordinateTransformations=tuple(coord_transforms),
-                    coordinateSystems=tuple(coord_systems),
+                ome=BaseSceneAttrs(
+                    scene=SceneAttrs(
+                        coordinateTransformations=tuple(coord_transforms),
+                        coordinateSystems=tuple(coord_systems),
+                    ),
                     version="0.6",
                 )
             ),
@@ -123,10 +129,10 @@ class Scene(BaseGroupv06[SceneAttrs]):
         graph = TransformGraph()
 
         # Coordinate systems
-        for system in self.ome_attributes.coordinateSystems:
+        for system in self.ome_attributes.scene.coordinateSystems:
             graph.add_system(system)
         # Coordinate transforms
-        for transform in self.ome_attributes.coordinateTransformations:
+        for transform in self.ome_attributes.scene.coordinateTransformations:
             graph.add_transform(transform)
 
         images = self.images
