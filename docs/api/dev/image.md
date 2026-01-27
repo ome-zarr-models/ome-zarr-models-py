@@ -7,8 +7,3 @@
 
 <!-- prettier-ignore -->
 ::: ome_zarr_models._v06.multiscales
-
-## Coordinates metadata
-
-<!-- prettier-ignore -->
-::: ome_zarr_models._v06.coordinate_transforms

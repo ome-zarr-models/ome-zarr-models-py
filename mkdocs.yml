@@ -44,7 +44,7 @@ markdown_extensions:
 plugins:
   - search
   - mkdocs-jupyter:
-      execute: true
+      execute: false
       allow_errors: false
   - mkdocstrings:
       handlers:
@@ -121,7 +121,9 @@ nav:
               - api/dev/image.md
               - api/dev/image-label.md
               - api/dev/labels.md
+              - api/dev/scene.md
               - api/dev/well.md
+              - api/dev/coordinates.md
               - api/dev/bioformats2raw.md
               - api/dev/other.md
   - Changelog: changelog.md
