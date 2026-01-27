@@ -22,7 +22,7 @@ def _gen_dataset(
         coordinateTransformations=(
             Scale(
                 scale=scale_factors,
-                input=f"/{path}",
+                input=f"{path}",
                 output=output_coordinate_system,
             ),
         ),

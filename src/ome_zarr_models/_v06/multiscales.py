@@ -390,6 +390,16 @@ class Dataset(BaseAttrs):
             coordinateTransformations=(transform,),
         )
 
+    @model_validator(mode="after")
+    def check_cs_input(self) -> Self:
+        for transformation in self.coordinateTransformations:
+            if transformation.input != self.path:
+                raise ValueError(
+                    "Input for a dataset transform must be the dataset array path: "
+                    f"'{self.path}'. Got '{transformation.input}' instead."
+                )
+        return self
+
     @field_validator("coordinateTransformations", mode="after")
     @classmethod
     def _ensure_transform_dimensionality(
