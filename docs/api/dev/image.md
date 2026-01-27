@@ -8,12 +8,7 @@
 <!-- prettier-ignore -->
 ::: ome_zarr_models._v06.multiscales
 
-## Coordinate transformation metadata
+## Coordinates metadata
 
 <!-- prettier-ignore -->
-::: ome_zarr_models._v06.coordinate_transformations
-
-## Axes metadata
-
-<!-- prettier-ignore -->
-::: ome_zarr_models._v06.axes
+::: ome_zarr_models._v06.coordinate_transforms
