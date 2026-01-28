@@ -121,7 +121,7 @@ class Transform(BaseAttrs, ABC):
     @abstractmethod
     def has_inverse(self) -> bool:
         """
-        `True` if on inverse can be returned from `get_inverse()`.
+        `True` if an inverse can be returned from `get_inverse()`.
         """
 
     @abstractmethod
