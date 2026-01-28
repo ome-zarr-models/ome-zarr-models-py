@@ -649,7 +649,8 @@ class Coordinates(Transform):
     )
     interpolation: str = Field(
         ...,
-        description="Interpolation scheme that should be used when applying the transform.",
+        description="Interpolation scheme that should be used when applying"
+        " the transform.",
     )
 
     @property
