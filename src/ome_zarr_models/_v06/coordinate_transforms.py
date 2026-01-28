@@ -8,8 +8,6 @@ from pydantic import Field, JsonValue, field_validator, model_validator
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.validation import unique_items_validator
 
-TPoint = tuple[float, ...]
-
 
 class NoAffineError(RuntimeError):
     """
@@ -25,26 +23,30 @@ class Axis(BaseAttrs):
     # Explicitly name could be any JsonValue, but implicitly it must match Zarr array
     # dimension_names which limits it to str | None
 
-    name: str | None
+    name: str | None = Field(..., description="Axis name.")
     type: (
         Literal["array", "space", "time", "channel", "coordinate", "displacement"]
         | str
         | None
-    ) = None
-    discrete: bool | None = None
+    ) = Field(default=None, description="Axis type.")
+    discrete: bool | None = Field(
+        default=None,
+        description="Whether coordinates on this axis can take discrete "
+        "(e.g., array coordinates) or continuous (e.g., length coordinates) values.",
+    )
     # Unit probably intended to be str, but the spec doesn't explicitly specify
-    unit: str | JsonValue | None = None
-    longName: str | None = None
+    unit: str | JsonValue | None = Field(default=None, description="Axis units.")
+    longName: str | None = Field(default=None, description="Longer name for axis..")
 
 
 class CoordinateSystem(BaseAttrs):
     """
-    Model of a coordinate system.
+    A coordinate system.
     """
 
     # Use min_length=1 to ensure name is non-empty
-    name: str = Field(min_length=1)
-    axes: tuple[Axis, ...] = Field(min_length=1)
+    name: str = Field(min_length=1, description="Coordinate system name.")
+    axes: tuple[Axis, ...] = Field(min_length=1, description="Coordinate system axes.")
 
     @field_validator("axes", mode="after")
     @classmethod
@@ -62,11 +64,16 @@ class CoordinateSystem(BaseAttrs):
 
 class CoordinateSystemIdentifier(BaseAttrs):
     """
-    Model for a coordinate system identifier.
+    A coordinate system identifier.
+
+    Used for referring to a coordinate system that is defined at another path
+    relative to the current Zarr group.
     """
 
-    name: str
-    path: str
+    name: str = Field(..., description="Coordinate system name.")
+    path: str = Field(
+        ..., description="Path to Zarr group where the coordinate system is defined."
+    )
 
 
 TCoordSysIdentifier = CoordinateSystemIdentifier | str | None
@@ -74,22 +81,28 @@ TCoordSysIdentifier = CoordinateSystemIdentifier | str | None
 
 class Transform(BaseAttrs, ABC):
     """
-    Model of a coordinate transformation.
+    Base model of a coordinate transformation.
 
     Notes
     -----
     Coordinate transformations have a `transform_point` method to transform a single
-    point. This only operates on a `tuple` of coordinate points, and not other objects
+    point. This only operates on a `tuple` of coordinate points, not other objects
     that could represent points (e.g., NumPy arrays). This is a deliberate choice to
     keep the dependencies of `ome-zarr-models` slim. Other libraries are encouraged
     to implement their own coordinate transforms, and use the `transform_point` methods
     here as reference implementations to check their own implementations.
     """
 
-    type: str
-    input: TCoordSysIdentifier = None
-    output: TCoordSysIdentifier = None
-    name: str | None = None
+    type: str = Field(..., description="Unique identifier for type of transform.")
+    input: TCoordSysIdentifier = Field(
+        default=None, description="Input coordinate system identifier."
+    )
+    output: TCoordSysIdentifier = Field(
+        default=None, description="Output coordinate system identifier."
+    )
+    name: str | None = Field(
+        default=None, description="Name for the specific transform."
+    )
 
     @model_validator(mode="after")
     def _ensure_consistent_input_output(self: Self) -> Self:
@@ -108,7 +121,7 @@ class Transform(BaseAttrs, ABC):
     @abstractmethod
     def has_inverse(self) -> bool:
         """
-        True if ome-zarr models can return an inverse from `get_inverse()`.
+        `True` if an inverse can be returned from `get_inverse()`.
         """
 
     @abstractmethod
@@ -119,11 +132,11 @@ class Transform(BaseAttrs, ABC):
         Raises
         ------
         NotImplementedError
-            If this the inverse for this transform is not yet implemented.
+            If this the inverse for this transform is not implemented.
         """
 
     @abstractmethod
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
         """Apply transform a single point."""
 
     @abstractmethod
@@ -133,7 +146,7 @@ class Transform(BaseAttrs, ABC):
 
         Raises
         ------
-        NoAffineError :
+        NoAffineError
             If this transform can't be converted to an affine transform.
         """
 
@@ -160,7 +173,7 @@ class Identity(Transform):
     def get_inverse(self) -> "Identity":
         return Identity(input=self.output, output=self.input, name=self._inverse_name)
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
         return tuple(point)
 
     def as_affine(self) -> "Affine":
@@ -171,7 +184,9 @@ class MapAxis(Transform):
     """Axis mapping transform."""
 
     type: Literal["mapAxis"] = "mapAxis"
-    mapAxis: tuple[int, ...]
+    mapAxis: tuple[int, ...] = Field(
+        ..., description="The axes to map axis numbers [0, 1, 2... etc.] to."
+    )
 
     @property
     def ndim(self) -> int:
@@ -189,7 +204,7 @@ class MapAxis(Transform):
             mapAxis=tuple([self.mapAxis.index(i) for i in range(self.ndim)]),
         )
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
         return tuple(point[i] for i in self.mapAxis)
 
     @field_validator("mapAxis", mode="after")
@@ -220,8 +235,12 @@ class Translation(Transform):
     """Translation transformation."""
 
     type: Literal["translation"] = "translation"
-    translation: tuple[float, ...] | None = None
-    path: str | None = None
+    translation: tuple[float, ...] | None = Field(
+        default=None, description="Translation vector."
+    )
+    path: str | None = Field(
+        default=None, description="Path to translation vector stored as a Zarr array."
+    )
 
     @property
     def ndim(self) -> int:
@@ -256,7 +275,7 @@ class Translation(Transform):
         else:
             raise RuntimeError("Both self.translation and self.path are None")
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
         return tuple(p + t for p, t in zip(point, self.translation_vector, strict=True))
 
     def as_affine(self) -> "Affine":
@@ -279,8 +298,12 @@ class Scale(Transform):
     """Scale transformation."""
 
     type: Literal["scale"] = "scale"
-    scale: tuple[float, ...] | None = None
-    path: str | None = None
+    scale: tuple[float, ...] | None = Field(
+        default=None, description="Scale factors for each axis."
+    )
+    path: str | None = Field(
+        default=None, description="Path to scale factors stored in a Zarr array."
+    )
 
     @property
     def has_inverse(self) -> bool:
@@ -315,7 +338,7 @@ class Scale(Transform):
         """
         return len(self.scale_vector)
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
         return tuple(p * s for p, s in zip(point, self.scale_vector, strict=True))
 
     def as_affine(self) -> "Affine":
@@ -342,8 +365,12 @@ class Affine(Transform):
     """Affine transform."""
 
     type: Literal["affine"] = "affine"
-    affine: tuple[tuple[float, ...], ...] | None = None
-    path: str | None = None
+    affine: tuple[tuple[float, ...], ...] | None = Field(
+        default=None, description="Affine matrix"
+    )
+    path: str | None = Field(
+        default=None, description="Path to affine matrix stored as a Zarr array."
+    )
 
     @classmethod
     def _from_matrix_vector(
@@ -405,7 +432,7 @@ class Affine(Transform):
     def _translation(self) -> list[float]:
         return [row[-1] for row in self.affine_matrix]
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
         if len(point) != len(self.affine_matrix):
             raise ValueError(
                 f"Dimensionality of point ({len(point)}) does not match "
@@ -437,8 +464,12 @@ class Rotation(Transform):
     """Rotation transform."""
 
     type: Literal["rotation"] = "rotation"
-    rotation: tuple[tuple[float, ...], ...] | None = None
-    path: str | None = None
+    rotation: tuple[tuple[float, ...], ...] | None = Field(
+        default=None, description="Rotation matrix."
+    )
+    path: str | None = Field(
+        default=None, description="Path to rotation matrix stored as a Zarr array."
+    )
 
     @property
     def ndim(self) -> int:
@@ -482,7 +513,7 @@ class Rotation(Transform):
             )
         return self
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
         return tuple(np.dot(np.array(self.rotation_matrix), np.array(point)))
 
     def as_affine(self) -> "Affine":
@@ -532,7 +563,7 @@ class Sequence(Transform):
             transformations=(t.get_inverse() for t in self.transformations[::-1]),
         )
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
         point_tuple = tuple(point)
         for transform in self.transformations:
             point_tuple = transform.transform_point(point_tuple)
@@ -583,8 +614,10 @@ class Displacements(Transform):
     """Displacement field transform."""
 
     type: Literal["displacements"] = "displacements"
-    path: str
-    interpolation: str
+    path: str = Field(..., description="Path to the Zarr array displacement field.")
+    interpolation: str = Field(
+        ..., description="Interpolation method to be used when applying the transform."
+    )
 
     @property
     def has_inverse(self) -> bool:
@@ -593,7 +626,7 @@ class Displacements(Transform):
     def get_inverse(self) -> "Displacements":
         raise NotImplementedError
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
         raise NotImplementedError(
             "Transforming using a displacement field not yet implemented"
         )
@@ -603,11 +636,22 @@ class Displacements(Transform):
 
 
 class Coordinates(Transform):
-    """Coordinate field transform."""
+    """
+    Coordinate field transform.
+
+    This transform stores an explicit map from points in the input
+    coordinate system to their corresponding points in the output coordinate system.
+    """
 
     type: Literal["coordinates"] = "coordinates"
-    path: str
-    interpolation: str
+    path: str = Field(
+        ..., description="Path to the Zarr array containing the coordinate mapping."
+    )
+    interpolation: str = Field(
+        ...,
+        description="Interpolation scheme that should be used when applying"
+        " the transform.",
+    )
 
     @property
     def has_inverse(self) -> bool:
@@ -616,7 +660,7 @@ class Coordinates(Transform):
     def get_inverse(self) -> "Coordinates":
         raise NotImplementedError
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
         raise NotImplementedError(
             "Transforming using a coordinate field not yet implemented"
         )
@@ -627,12 +671,12 @@ class Coordinates(Transform):
 
 class Bijection(Transform):
     """
-    An invertible transform.
+    A transform that also contains an explicit inverse transform.
     """
 
     type: Literal["bijection"] = "bijection"
-    forward: "AnyTransform"
-    inverse: "AnyTransform"
+    forward: "AnyTransform" = Field(..., description="Forward transform")
+    inverse: "AnyTransform" = Field(..., description="Inverse transform")
 
     @property
     def has_inverse(self) -> bool:
@@ -651,7 +695,7 @@ class Bijection(Transform):
     def _short_name(self) -> str:
         return f"bijection[{self.forward._short_name}]"
 
-    def transform_point(self, point: typing.Sequence[float]) -> TPoint:
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
         return self.forward.transform_point(point)
 
     def as_affine(self) -> "Affine":
@@ -671,7 +715,9 @@ class ByDimension(Transform):
     """
 
     type: Literal["byDimension"] = "byDimension"
-    transformations: tuple["AnyTransform", ...]
+    transformations: tuple["AnyTransform", ...] = Field(
+        ..., description="Transformations."
+    )
 
     @property
     def has_inverse(self) -> bool:
