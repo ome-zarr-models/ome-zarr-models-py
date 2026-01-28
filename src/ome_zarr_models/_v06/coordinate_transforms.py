@@ -37,12 +37,12 @@ class Axis(BaseAttrs):
 
 class CoordinateSystem(BaseAttrs):
     """
-    Model of a coordinate system.
+    A coordinate system.
     """
 
     # Use min_length=1 to ensure name is non-empty
-    name: str = Field(min_length=1)
-    axes: tuple[Axis, ...] = Field(min_length=1)
+    name: str = Field(min_length=1, description="Coordinate system name.")
+    axes: tuple[Axis, ...] = Field(min_length=1, description="Coordinate system axes.")
 
     @field_validator("axes", mode="after")
     @classmethod
@@ -60,11 +60,16 @@ class CoordinateSystem(BaseAttrs):
 
 class CoordinateSystemIdentifier(BaseAttrs):
     """
-    Model for a coordinate system identifier.
+    A coordinate system identifier.
+
+    Used for referring to a coordinate system that is defined at another path
+    relative to the current Zarr group.
     """
 
-    name: str
-    path: str
+    name: str = Field(..., description="Coordinate system name.")
+    path: str = Field(
+        ..., description="Path to Zarr group where the coordinate system is defined."
+    )
 
 
 TCoordSysIdentifier = CoordinateSystemIdentifier | str | None
