@@ -23,16 +23,20 @@ class Axis(BaseAttrs):
     # Explicitly name could be any JsonValue, but implicitly it must match Zarr array
     # dimension_names which limits it to str | None
 
-    name: str | None
+    name: str | None = Field(..., description="Axis name.")
     type: (
         Literal["array", "space", "time", "channel", "coordinate", "displacement"]
         | str
         | None
-    ) = None
-    discrete: bool | None = None
+    ) = Field(default=None, description="Axis type.")
+    discrete: bool | None = Field(
+        default=None,
+        description="Whether coordinates on this axis can take discrete "
+        "(e.g., array coordinates) or continuous (e.g., length coordinates) values.",
+    )
     # Unit probably intended to be str, but the spec doesn't explicitly specify
-    unit: str | JsonValue | None = None
-    longName: str | None = None
+    unit: str | JsonValue | None = Field(default=None, description="Axis units.")
+    longName: str | None = Field(default=None, description="Longer name for axis..")
 
 
 class CoordinateSystem(BaseAttrs):
@@ -89,7 +93,7 @@ class Transform(BaseAttrs, ABC):
     here as reference implementations to check their own implementations.
     """
 
-    type: str = Field(..., description="Unique identifiera for type of transform.")
+    type: str = Field(..., description="Unique identifier for type of transform.")
     input: TCoordSysIdentifier = Field(
         default=None, description="Input coordinate system identifier."
     )
