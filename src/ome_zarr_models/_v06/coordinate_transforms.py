@@ -346,8 +346,12 @@ class Affine(Transform):
     """Affine transform."""
 
     type: Literal["affine"] = "affine"
-    affine: tuple[tuple[float, ...], ...] | None = None
-    path: str | None = None
+    affine: tuple[tuple[float, ...], ...] | None = Field(
+        default=None, description="Affine matrix"
+    )
+    path: str | None = Field(
+        default=None, description="Path to affine matrix stored as a Zarr array."
+    )
 
     @classmethod
     def _from_matrix_vector(
