@@ -89,7 +89,7 @@ class Transform(BaseAttrs, ABC):
         default=None, description="Input coordinate system identifier."
     )
     output: TCoordSysIdentifier = Field(
-        default=None, description="Input coordinate system identifier."
+        default=None, description="Output coordinate system identifier."
     )
     name: str | None = Field(
         default=None, description="Name for the specific transform."
