@@ -184,7 +184,9 @@ class MapAxis(Transform):
     """Axis mapping transform."""
 
     type: Literal["mapAxis"] = "mapAxis"
-    mapAxis: tuple[int, ...]
+    mapAxis: tuple[int, ...] = Field(
+        ..., description="The axes to map axis numbers [0, 1, 2... etc.] to."
+    )
 
     @property
     def ndim(self) -> int:
@@ -233,8 +235,12 @@ class Translation(Transform):
     """Translation transformation."""
 
     type: Literal["translation"] = "translation"
-    translation: tuple[float, ...] | None = None
-    path: str | None = None
+    translation: tuple[float, ...] | None = Field(
+        default=None, description="Translation vector."
+    )
+    path: str | None = Field(
+        default=None, description="Path to translation vector stored as a Zarr array."
+    )
 
     @property
     def ndim(self) -> int:
@@ -292,8 +298,12 @@ class Scale(Transform):
     """Scale transformation."""
 
     type: Literal["scale"] = "scale"
-    scale: tuple[float, ...] | None = None
-    path: str | None = None
+    scale: tuple[float, ...] | None = Field(
+        default=None, description="Scale factors for each axis."
+    )
+    path: str | None = Field(
+        default=None, description="Path to scale factors stored in a Zarr array."
+    )
 
     @property
     def has_inverse(self) -> bool:
@@ -454,8 +464,12 @@ class Rotation(Transform):
     """Rotation transform."""
 
     type: Literal["rotation"] = "rotation"
-    rotation: tuple[tuple[float, ...], ...] | None = None
-    path: str | None = None
+    rotation: tuple[tuple[float, ...], ...] | None = Field(
+        default=None, description="Rotation matrix."
+    )
+    path: str | None = Field(
+        default=None, description="Path to rotation matrix stored as a Zarr array."
+    )
 
     @property
     def ndim(self) -> int:
@@ -600,8 +614,10 @@ class Displacements(Transform):
     """Displacement field transform."""
 
     type: Literal["displacements"] = "displacements"
-    path: str
-    interpolation: str
+    path: str = Field(..., description="Path to the Zarr array displacement field.")
+    interpolation: str = Field(
+        ..., description="Interpolation method to be used when applying the transform."
+    )
 
     @property
     def has_inverse(self) -> bool:
@@ -620,11 +636,21 @@ class Displacements(Transform):
 
 
 class Coordinates(Transform):
-    """Coordinate field transform."""
+    """
+    Coordinate field transform.
+
+    This transform stores an explicit map from points in the input
+    coordinate system to their corresponding points in the output coordinate system.
+    """
 
     type: Literal["coordinates"] = "coordinates"
-    path: str
-    interpolation: str
+    path: str = Field(
+        ..., description="Path to the Zarr array containing the coordinate mapping."
+    )
+    interpolation: str = Field(
+        ...,
+        description="Interpolation scheme that should be used when applying the transform.",
+    )
 
     @property
     def has_inverse(self) -> bool:
@@ -644,12 +670,12 @@ class Coordinates(Transform):
 
 class Bijection(Transform):
     """
-    An invertible transform.
+    A transform that also contains an explicit inverse transform.
     """
 
     type: Literal["bijection"] = "bijection"
-    forward: "AnyTransform"
-    inverse: "AnyTransform"
+    forward: "AnyTransform" = Field(..., description="Forward transform")
+    inverse: "AnyTransform" = Field(..., description="Inverse transform")
 
     @property
     def has_inverse(self) -> bool:
@@ -688,7 +714,9 @@ class ByDimension(Transform):
     """
 
     type: Literal["byDimension"] = "byDimension"
-    transformations: tuple["AnyTransform", ...]
+    transformations: tuple["AnyTransform", ...] = Field(
+        ..., description="Transformations."
+    )
 
     @property
     def has_inverse(self) -> bool:
