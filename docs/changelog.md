@@ -1,10 +1,8 @@
 # Changelog
 
-## 1.5.2
+## 1.5.1
 
 Require Python < 3.14. Due to issues with Python 3.14 and `pydantic`, `ome-zarr-models` is not yet compatible with Python 3.14.
-
-## 1.5.1
 
 ### Documentation improvements
 
