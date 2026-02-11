@@ -1,0 +1,30 @@
+(Transform "SimilarityTransform")
+(NumberOfParameters 4)
+(TransformParameters 1.397173 -0.267845 5628.854744 1725.246504)
+(InitialTransformParametersFileName "NoInitialTransform")
+(HowToCombineTransforms "Compose")
+
+// Image specific
+(FixedImageDimension 2)
+(MovingImageDimension 2)
+(FixedInternalImagePixelType "float")
+(MovingInternalImagePixelType "float")
+(Size 18592 13056)
+(Index 0 0)
+(Spacing 1.0000000000 1.0000000000)
+(Origin 0.0000000000 0.0000000000)
+(Direction 1.0000000000 0.0000000000 0.0000000000 1.0000000000)
+(UseDirectionCosines "false")
+
+// SimilarityTransform specific
+(CenterOfRotationPoint 9710.07 6986.04)
+
+// ResampleInterpolator specific
+(ResampleInterpolator "FinalNearestNeighborInterpolator")
+
+// Resampler specific
+(Resampler "DefaultResampler"
+(DefaultPixelValue 0.000000)
+(ResultImageFormat "tif")
+(ResultImagePixelType "unsigned short")
+(CompressResultImage "false")
