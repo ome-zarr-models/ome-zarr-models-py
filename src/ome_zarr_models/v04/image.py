@@ -96,7 +96,7 @@ class Image(BaseGroupv04[ImageAttrs]):
         translations :
             For each array, a translation value for each axis the array.
         name :
-            A name for the multiscale collection.
+            A name for the multiscale image.
         multiscale_type :
             Type of downscaling method used to generate the multiscale image pyramid.
             Optional.

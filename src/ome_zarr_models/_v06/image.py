@@ -1,19 +1,23 @@
-from collections.abc import Sequence
-from typing import Self
+import typing
+from typing import TYPE_CHECKING, Self
 
 # Import needed for pydantic type resolution
 import pydantic_zarr  # noqa: F401
 import zarr
-import zarr.errors
 from pydantic import Field, JsonValue, model_validator
 from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
-from ome_zarr_models._utils import _from_zarr_v3
-from ome_zarr_models._v06.axes import Axis
+from ome_zarr_models._utils import TransformGraph, _from_zarr_v3
 from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs, BaseZarrAttrs
+from ome_zarr_models._v06.coordinate_transforms import (
+    AnyTransform,
+    CoordinateSystem,
+)
 from ome_zarr_models._v06.labels import Labels
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
-from ome_zarr_models.common.coordinate_transformations import _build_transforms
+
+if TYPE_CHECKING:
+    from ome_zarr_models.v05 import Image as Imagev05
 
 __all__ = ["Image", "ImageAttrs"]
 
@@ -39,6 +43,27 @@ class ImageAttrs(BaseOMEAttrs):
     def get_optional_group_paths(self) -> dict[str, type[Labels]]:  # type: ignore[override]
         return {"labels": Labels}
 
+    def transform_graph(self) -> TransformGraph:
+        """
+        Create a coordinate transformation graph for these image attributes.
+        """
+        graph = TransformGraph()
+
+        for multiscales in self.multiscales:
+            # Coordinate systems
+            for system in multiscales.coordinateSystems:
+                graph.add_system(system)
+            # Coordinate transforms
+            if multiscales.coordinateTransformations is not None:
+                for transform in multiscales.coordinateTransformations:
+                    graph.add_transform(transform)
+            # Coordinate transforms in datasets
+            for dataset in multiscales.datasets:
+                for transform in dataset.coordinateTransformations:
+                    graph.add_transform(transform)
+
+        return graph
+
 
 class Image(BaseGroupv06[ImageAttrs]):
     """
@@ -61,16 +86,16 @@ class Image(BaseGroupv06[ImageAttrs]):
     def new(
         cls,
         *,
-        array_specs: Sequence[AnyArraySpec],
-        paths: Sequence[str],
-        axes: Sequence[Axis],
-        scales: Sequence[Sequence[float]],
-        translations: Sequence[Sequence[float] | None],
-        name: str | None = None,
+        array_specs: typing.Sequence[AnyArraySpec],
+        paths: typing.Sequence[str],
+        scales: typing.Sequence[typing.Sequence[float]],
+        translations: typing.Sequence[typing.Sequence[float] | None],
+        physical_coord_system: CoordinateSystem,
+        name: str,
         multiscale_type: str | None = None,
         metadata: JsonValue | None = None,
-        global_scale: Sequence[float] | None = None,
-        global_translation: Sequence[float] | None = None,
+        coord_transforms: typing.Sequence[AnyTransform] = (),
+        coord_systems: typing.Sequence[CoordinateSystem] = (),
     ) -> "Image":
         """
         Create a new `Image` from a sequence of multiscale arrays
@@ -83,23 +108,24 @@ class Image(BaseGroupv06[ImageAttrs]):
             image at multiple levels of detail.
         paths :
             The paths to the arrays within the new Zarr group.
-        axes :
-            `Axis` objects describing the axes of the arrays.
         scales :
             For each array, a scale value for each axis of the array.
         translations :
             For each array, a translation value for each axis the array.
+        physical_coord_system :
+            The physical coordinate system after the scale and translations have been
+            applied to each array.
         name :
-            A name for the multiscale collection.
+            A name for the multiscale image.
         multiscale_type :
             Type of downscaling method used to generate the multiscale image pyramid.
             Optional.
         metadata :
             Arbitrary metadata to store in the multiscales group.
-        global_scale :
-            A global scale value for each axis of every array.
-        global_translation :
-            A global translation value for each axis of every array.
+        coord_transforms :
+            Additional coordinate transforms to add to this image.
+        coord_systems :
+            Additional coordinate systems to add to this image.
 
         Notes
         -----
@@ -117,16 +143,6 @@ class Image(BaseGroupv06[ImageAttrs]):
             for key, arr in zip(paths, array_specs, strict=True)
         }
 
-        if global_scale is None and global_translation is None:
-            global_transform = None
-        elif global_scale is None:
-            raise ValueError(
-                "If global_translation is specified, "
-                "global_scale must also be specified."
-            )
-        else:
-            global_transform = _build_transforms(global_scale, global_translation)
-
         if len(scales) != len(paths):
             raise ValueError(
                 f"Length of 'scales' ({len(scales)}) does not match "
@@ -137,15 +153,24 @@ class Image(BaseGroupv06[ImageAttrs]):
                 f"Length of 'translations' ({len(translations)}) does not match "
                 f"length of 'paths' ({len(paths)})"
             )
+
         multimeta = Multiscale(
-            axes=tuple(axes),
             datasets=tuple(
-                Dataset.build(path=path, scale=scale, translation=translation)
+                Dataset.build(
+                    path=path,
+                    scale=scale,
+                    translation=translation,
+                    coord_sys_output_name=physical_coord_system.name,
+                )
                 for path, scale, translation in zip(
                     paths, scales, translations, strict=True
                 )
             ),
-            coordinateTransformations=global_transform,
+            coordinateTransformations=coord_transforms,
+            coordinateSystems=(
+                physical_coord_system,
+                *coord_systems,
+            ),
             metadata=metadata,
             name=name,
             type=multiscale_type,
@@ -162,6 +187,36 @@ class Image(BaseGroupv06[ImageAttrs]):
             ),
         )
 
+    @classmethod
+    def from_v05(
+        cls, image_v05: "Imagev05", *, intrinsic_system_name: str = "physical"
+    ) -> Self:
+        """
+        Convert an v05 model to a v06 model.
+
+        Parameters
+        ----------
+        image_v05 :
+            OME-Zarr version 0.5 image model.
+        intrinsic_system_name :
+            Name of the coordinate system that all the image array data transforms into.
+            In OME-Zarr 0.5 this was the coordinate system in physical units used
+            to display the dta.
+
+        Returns
+        -------
+        OME-Zarr version 0.6 image model.
+        """
+        new_members = image_v05.members
+        new_attributes = ImageAttrs(
+            version="0.6",
+            multiscales=[
+                Multiscale.from_v05(ms, intrinsic_system_name=intrinsic_system_name)
+                for ms in image_v05.ome_attributes.multiscales
+            ],
+        )
+        return cls(members=new_members, attributes=BaseZarrAttrs(ome=new_attributes))
+
     @model_validator(mode="after")
     def _check_arrays_compatible(self) -> Self:
         """
@@ -176,8 +231,7 @@ class Image(BaseGroupv06[ImageAttrs]):
         flat_self = self.to_flat()
 
         for multiscale in multimeta:
-            multiscale_ndim = len(multiscale.axes)
-            multiscale_dim_names = tuple(a.name for a in multiscale.axes)
+            multiscale_ndim = multiscale.ndim
             for dataset in multiscale.datasets:
                 try:
                     maybe_arr: AnyArraySpec | AnyGroupSpec = flat_self[
@@ -201,24 +255,6 @@ class Image(BaseGroupv06[ImageAttrs]):
                         "which does not match the dimensionality of the array "
                         f"found in this group at path '{dataset.path}' ({arr_ndim}). "
                         "The number of axes must match the array dimensionality."
-                    )
-
-                    raise ValueError(msg)
-
-                arr_dim_names = maybe_arr.dimension_names
-                if arr_dim_names is None:
-                    msg = (
-                        f"The array in this group at  '{dataset.path}' has no "
-                        "dimension_names metadata."
-                    )
-                    raise ValueError(msg)
-                elif arr_dim_names != multiscale_dim_names:
-                    msg = (
-                        f"The multiscale metadata has {multiscale_dim_names} "
-                        "axes names "
-                        "which does not match the dimension names of the array "
-                        f"found in this group at path '{dataset.path}' "
-                        f"({arr_dim_names}). "
                     )
 
                     raise ValueError(msg)
@@ -288,3 +324,9 @@ class Image(BaseGroupv06[ImageAttrs]):
             tuple(dataset for dataset in multiscale.datasets)
             for multiscale in self.ome_attributes.multiscales
         )
+
+    def transform_graph(self) -> TransformGraph:
+        """
+        Create a coordinate transformation graph for this image.
+        """
+        return self.ome_attributes.transform_graph()
