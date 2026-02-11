@@ -55,6 +55,16 @@ def main() -> None:
         "output_image_path", type=str, help="Path to save image of transform graph to"
     )
 
+    # convert an elastix transform file to an OME-Zarr transform
+    elastix_cmd = subparsers.add_parser(
+        "convert-elastix",
+        help="Convert an elastix transform parameter file to "
+        "OME-Zarr transformation JSON",
+    )
+    elastix_cmd.add_argument(
+        "path", type=str, help="Path to elastix transform parameter file"
+    )
+
     args = parser.parse_args()
 
     # Execute the appropriate command
@@ -65,6 +75,13 @@ def main() -> None:
             info(args.path)
         case "transform-graph":
             render_transform_graph(args.path, args.output_image_path)
+        case "convert-elastix":
+            from ome_zarr_models._v06.coordinate_transforms import Transform
+
+            with open(args.path) as f:
+                lines = f.readlines()
+            tform = Transform.from_elastix_params(lines)
+            print(tform.model_dump_json(indent=4))
         case None:
             parser.print_help()
             sys.exit(1)

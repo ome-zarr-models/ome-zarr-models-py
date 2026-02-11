@@ -1,4 +1,5 @@
 import re
+from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
@@ -239,3 +240,12 @@ def test_none_rotation() -> None:
         ValidationError, match="Provided matrix is not a pure rotation matrix"
     ):
         Rotation(rotation=((0, 2), (-1, 0)))
+
+
+def test_from_elastix() -> None:
+    with open(
+        Path(__file__).parent.parent / "data" / "ElastixTransformParameters.txt"
+    ) as f:
+        lines = f.readlines()
+
+    assert Transform.from_elastix_params(lines) == Identity()

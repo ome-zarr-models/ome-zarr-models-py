@@ -161,6 +161,38 @@ class Transform(BaseAttrs, ABC):
     def _short_name(self) -> str:
         return self.type
 
+    @staticmethod
+    def from_elastix_params(elastix_lines: list[str]) -> "AnyTransform":
+        """
+        Create an OME-Zarr transform model from lines from an elastix parameter file.
+
+        Parameters
+        ----------
+        elastix_lines :
+            Lines from an elastix parameter file.
+        """
+        # Start with a batch of text parsing to get all the parameters in a dict
+        elastix_lines = [line for line in elastix_lines if line.startswith("(")]
+        elastix_lines = [
+            line.strip().removeprefix("(").removesuffix(")") for line in elastix_lines
+        ]
+        elastix_lines_split = [line.split(" ", maxsplit=1) for line in elastix_lines]
+        elastix_params = {
+            line[0]: line[1].strip("'").strip('"') for line in elastix_lines_split
+        }
+
+        transform_type = elastix_params.get("Transform")
+        if transform_type is None:
+            raise ValueError(
+                "Did not find 'TransformType' in elastix transform file lines."
+            )
+
+        # raise ValueError(f"Transform type '{transform_type}' is not supported.")
+        # print(elastix_params)
+
+        # TODO: actually parse and return correct transform
+        return Identity()
+
 
 class Identity(Transform):
     """Identity transformation."""
