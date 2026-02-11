@@ -32,7 +32,7 @@ jobs:
         run: uv sync --python ${{ matrix.python-version }}
 
       - name: Run tests
-        run: uv run pytest --record-mode=none --python ${{ matrix.python-version }}
+        run: uv run --python ${{ matrix.python-version }} pytest --record-mode=none
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
