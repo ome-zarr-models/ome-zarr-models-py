@@ -379,8 +379,8 @@ def test_transform_graph() -> None:
 
     graph = image.transform_graph()
     assert graph._graph == {
-        TransformGraphNode(name="coord_sys0", path=""): {
-            TransformGraphNode(name="coord_sys1", path=""): Scale(
+        TransformGraphNode(name="coord_sys0", path=None): {
+            TransformGraphNode(name="coord_sys1", path=None): Scale(
                 type="scale",
                 input="coord_sys0",
                 output="coord_sys1",
@@ -389,8 +389,8 @@ def test_transform_graph() -> None:
                 path=None,
             )
         },
-        TransformGraphNode(name="0", path=""): {
-            TransformGraphNode(name="coord_sys0", path=""): Scale(
+        TransformGraphNode(name="0", path=None): {
+            TransformGraphNode(name="coord_sys0", path=None): Scale(
                 type="scale",
                 input="0",
                 output="coord_sys0",
@@ -399,8 +399,8 @@ def test_transform_graph() -> None:
                 path=None,
             )
         },
-        TransformGraphNode(name="1", path=""): {
-            TransformGraphNode(name="coord_sys0", path=""): Scale(
+        TransformGraphNode(name="1", path=None): {
+            TransformGraphNode(name="coord_sys0", path=None): Scale(
                 type="scale",
                 input="1",
                 output="coord_sys0",
@@ -409,8 +409,8 @@ def test_transform_graph() -> None:
                 path=None,
             )
         },
-        TransformGraphNode(name="2", path=""): {
-            TransformGraphNode(name="coord_sys0", path=""): Scale(
+        TransformGraphNode(name="2", path=None): {
+            TransformGraphNode(name="coord_sys0", path=None): Scale(
                 type="scale",
                 input="2",
                 output="coord_sys0",
