@@ -149,10 +149,13 @@ def render_transform_graph(path: StoreLike, output_image_path: PathLike[str]) ->
     model: Image | Scene
     try:
         model = Scene.from_zarr(group)
-    except Exception as _:
+    except Exception as scene_exception:
         try:
             model = Image.from_zarr(group)
         except Exception as e:
+            print("Error parsing as Scene:")
+            print(f"{scene_exception}\n")
+            print("Error parsing as Image:")
             print(f"{e}\n")
             print(f"❌ Invalid OME-Zarr group: {path}")
             sys.exit(1)
