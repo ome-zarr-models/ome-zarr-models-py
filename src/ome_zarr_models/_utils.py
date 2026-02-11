@@ -243,7 +243,7 @@ GRAPHVIZ_ATTRS = {"fontname": "open-sans"}
 @dataclass(frozen=True)
 class TransformGraphNode:
     name: str
-    path: str
+    path: str | None
 
     @classmethod
     def from_identifier(cls, identifier: str | CoordinateSystemIdentifier) -> Self:
@@ -254,7 +254,7 @@ class TransformGraphNode:
         if isinstance(identifier, CoordinateSystemIdentifier):
             return cls(name=identifier.name, path=identifier.path)
         else:
-            return cls(name=identifier, path="")
+            return cls(name=identifier, path=None)
 
 
 class TransformGraph:
@@ -308,7 +308,7 @@ class TransformGraph:
                 systems.add(sys_out)
 
         # Filter out any systems that point to another path
-        system_names = {sys.name for sys in systems if sys.path == ""}
+        system_names = {sys.name for sys in systems if sys.path is None}
         # Filter out named coordinate systems
         return system_names - set(self._systems.keys())
 
@@ -353,7 +353,7 @@ class TransformGraph:
 
     @classmethod
     def _add_nodes_edges(
-        cls, graph: TransformGraph, graphviz_graph: graphviz.Digraph, path: str
+        cls, graph: TransformGraph, graphviz_graph: graphviz.Digraph, path: str | None
     ) -> None:
         """
         Add nodes and edges to a graphviz graph.
@@ -390,7 +390,7 @@ class TransformGraph:
                 )
 
     @staticmethod
-    def _node_key(path: str, system_name: str) -> str:
+    def _node_key(path: str | None, system_name: str) -> str:
         """
         Unique key for nodes in graphviz graphs.
         """

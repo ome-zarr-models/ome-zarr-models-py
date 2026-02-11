@@ -28,7 +28,10 @@ class BaseSceneAttrs(BaseOMEAttrs):
         paths = {}
         for transform in self.scene.coordinateTransformations:
             for coordinate_system in (transform.input, transform.output):
-                if isinstance(coordinate_system, CoordinateSystemIdentifier):
+                if (
+                    isinstance(coordinate_system, CoordinateSystemIdentifier)
+                    and coordinate_system.path is not None
+                ):
                     paths[coordinate_system.path] = Image
         return paths
 
