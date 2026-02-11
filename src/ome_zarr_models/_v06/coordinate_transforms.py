@@ -71,8 +71,9 @@ class CoordinateSystemIdentifier(BaseAttrs):
     """
 
     name: str = Field(..., description="Coordinate system name.")
-    path: str = Field(
-        ..., description="Path to Zarr group where the coordinate system is defined."
+    path: str | None = Field(
+        default=None,
+        description="Path to Zarr group where the coordinate system is defined.",
     )
 
 
