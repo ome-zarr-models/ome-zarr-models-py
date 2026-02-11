@@ -1,7 +1,7 @@
 from collections.abc import Sequence
-from typing import Literal
+from typing import Literal, Self
 
-from pydantic import JsonValue
+from pydantic import BaseModel, JsonValue, model_validator
 
 from ome_zarr_models.base import BaseAttrs
 
@@ -9,6 +9,15 @@ __all__ = ["Axes", "Axis", "AxisType"]
 
 
 AxisType = Literal["space", "time", "channel"]
+
+
+class Orientation(BaseModel):
+    """
+    Model for an orientation object.
+    """
+
+    type: JsonValue
+    value: JsonValue
 
 
 class Axis(BaseAttrs):
@@ -23,6 +32,16 @@ class Axis(BaseAttrs):
     type: str | None = None
     # Unit probably intended to be str, but the spec doesn't explicitly specify
     unit: str | JsonValue | None = None
+    orientation: Orientation | None = None
+
+    @model_validator(mode="after")
+    def _check_orientation_only_on_spatial(self) -> Self:
+        if self.type != "space" and self.orientation is not None:
+            raise ValueError(
+                f"Orientation can only be set on a spatial axis "
+                f"(got Axis type='{self.type}')"
+            )
+        return self
 
 
 Axes = Sequence[Axis]
