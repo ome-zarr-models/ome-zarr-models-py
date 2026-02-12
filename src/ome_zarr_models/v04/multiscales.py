@@ -34,7 +34,7 @@ from ome_zarr_models.v04.axes import Axes
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
-    from ..v05.multiscales import Multiscale as MultiscaleV05
+    from ome_zarr_models.v05.multiscales import Multiscale as MultiscaleV05
 
 
 __all__ = ["Dataset", "Multiscale"]
@@ -79,7 +79,7 @@ class Multiscale(BaseAttrs):
         - from 0.5 to 0.4
         """
 
-        from ..v05.multiscales import Multiscale as MultiscaleV05
+        from ome_zarr_models.v05.multiscales import Multiscale as MultiscaleV05
         if isinstance(multiscale, Multiscale):
             return multiscale
         elif isinstance(multiscale, MultiscaleV05):
@@ -88,11 +88,11 @@ class Multiscale(BaseAttrs):
             raise ValueError(f"Unsupported version conversion: {type(multiscale)} -> 0.4")
 
     def _to_v05(self) -> "MultiscaleV05":
-        from ..v05.multiscales import (
+        from ome_zarr_models.v05.multiscales import (
             Multiscale as MultiscaleV05,
             Dataset as DatasetV05,
         )
-        from ..v05.axes import Axis as AxisV05
+        from ome_zarr_models.v05.axes import Axis as AxisV05
         return MultiscaleV05(
             axes=tuple([AxisV05.model_validate(a.model_dump()) for a in self.axes]),
             datasets=tuple(
