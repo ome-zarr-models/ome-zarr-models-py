@@ -511,6 +511,30 @@ def test_from_zarr_missing_metadata(
     with pytest.raises(ValidationError, match=match):
         Image.from_zarr(group)
 
+def test_conversion_v04_to_v05(default_multiscale: Multiscale) -> None:
+    """
+    Test that converting a v0.4 Multiscale to v0.5 and back again results in the same model
+    """
+    from ome_zarr_models.v05.multiscales import Multiscale as MultiscaleV05
+
+    # test self-conversion
+    assert default_multiscale.to_version("0.4") == default_multiscale
+    assert Multiscale.from_version(default_multiscale) == default_multiscale
+
+    # test conversion to v05
+    multi_v05 = default_multiscale.to_version("0.5")
+    multi_v05b = MultiscaleV05.from_version(default_multiscale)
+    assert isinstance(multi_v05, MultiscaleV05)
+    assert isinstance(multi_v05b, MultiscaleV05)
+    assert multi_v05 == multi_v05b
+
+    # ...and back to v04
+    multi_v04 = multi_v05.to_version("0.4")
+    multi_v04_b = Multiscale.from_version(multi_v05)
+    assert isinstance(multi_v04, Multiscale)
+    assert isinstance(multi_v04_b, Multiscale)
+    assert multi_v04 == default_multiscale
+    assert multi_v04_b == default_multiscale
 
 def test_from_zarr_missing_array(store: Store) -> None:
     """
