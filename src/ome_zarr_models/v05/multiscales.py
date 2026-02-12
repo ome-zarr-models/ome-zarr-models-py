@@ -55,7 +55,9 @@ class Multiscale(BaseAttrs):
     name: JsonValue | None = None
     type: JsonValue = None
 
-    def to_version(self, version: Literal["0.4", "0.5"]) -> "Multiscale":
+    def to_version(
+        self, version: Literal["0.4", "0.5"]
+    ) -> Union["Multiscale", "MultiscaleV04"]:
         """
         Convert this Multiscale metadata to the specified version.
 
@@ -81,9 +83,11 @@ class Multiscale(BaseAttrs):
         if isinstance(multiscale, Multiscale):
             return multiscale
         elif isinstance(multiscale, MultiscaleV04):
-            return multiscale.to_version("0.5")
+            return multiscale._to_v05()
         else:
-            raise ValueError(f"Unsupported version conversion: {type(multiscale)} -> 0.5")
+            raise ValueError(
+                f"Unsupported version conversion: {type(multiscale)} -> 0.5"
+            )
         
     def _to_v04(self) -> "MultiscaleV04":
         from ome_zarr_models.v04.multiscales import (

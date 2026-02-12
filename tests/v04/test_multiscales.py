@@ -513,7 +513,8 @@ def test_from_zarr_missing_metadata(
 
 def test_conversion_v04_to_v05(default_multiscale: Multiscale) -> None:
     """
-    Test that converting a v0.4 Multiscale to v0.5 and back again results in the same model
+    Test that converting a v0.4 Multiscale to v0.5 and back again results
+    in the same model
     """
     from ome_zarr_models.v05.multiscales import Multiscale as MultiscaleV05
 

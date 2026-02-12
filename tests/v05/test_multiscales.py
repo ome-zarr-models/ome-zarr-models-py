@@ -556,7 +556,8 @@ def test_from_zarr_ectopic_group(store: Store) -> None:
 
 def test_conversion_v05_to_v04(default_multiscale: Multiscale) -> None:
     """
-    Test that converting a v0.4 Multiscale to v0.5 and back again results in the same model
+    Test that converting a v0.4 Multiscale to v0.5 and back again results
+    in the same model
     """
     from ome_zarr_models.v04.multiscales import Multiscale as MultiscaleV04
 
