@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import warnings
 from collections import Counter
-from typing import TYPE_CHECKING, Any, Self
+from typing import TYPE_CHECKING, Any, Literal, Self, Union
 
 from pydantic import (
     BaseModel,
@@ -34,6 +34,7 @@ from ome_zarr_models.v05.axes import Axes
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+    from ome_zarr_models.v04.multiscales import Multiscale as MultiscaleV04
 
 
 __all__ = ["Dataset", "Multiscale"]
@@ -53,6 +54,57 @@ class Multiscale(BaseAttrs):
     metadata: JsonValue = None
     name: JsonValue | None = None
     type: JsonValue = None
+
+    def to_version(self, version: Literal["0.4", "0.5"]) -> "Multiscale":
+        """
+        Convert this Multiscale metadata to the specified version.
+
+        Currently supported conversions are
+        - 0.5 -> 0.4
+        """
+        if version == "0.5":
+            return self
+        elif version == "0.4":
+            return self._to_v04()
+        else:
+            raise ValueError(f"Unsupported version conversion: 0.5 -> {version}")
+        
+    @classmethod
+    def from_version(cls, multiscale: Union["MultiscaleV04", "Multiscale"]) -> "Multiscale":
+        """
+        Convert a Multiscale metadata from another version to this version.
+
+        Currently supported conversions are
+        - 0.4 -> 0.5
+        """
+        from ome_zarr_models.v04.multiscales import Multiscale as MultiscaleV04
+        if isinstance(multiscale, Multiscale):
+            return multiscale
+        elif isinstance(multiscale, MultiscaleV04):
+            return multiscale.to_version("0.5")
+        else:
+            raise ValueError(f"Unsupported version conversion: {type(multiscale)} -> 0.5")
+        
+    def _to_v04(self) -> "MultiscaleV04":
+        from ome_zarr_models.v04.multiscales import (
+            Multiscale as MultiscaleV04,
+            Dataset as DatasetV04
+        )
+        from ome_zarr_models.v04.axes import Axis as AxisV04
+        return MultiscaleV04(
+            axes=tuple([AxisV04.model_validate(a.model_dump()) for a in self.axes]),
+            datasets=tuple(
+                DatasetV04(
+                    path=d.path,
+                    coordinateTransformations=d.coordinateTransformations,
+                )
+                for d in self.datasets
+            ),
+            coordinateTransformations=self.coordinateTransformations,
+            metadata=self.metadata,
+            name=self.name,
+            type=self.type,
+        )
 
     @model_serializer(mode="wrap")
     def _serialize(
