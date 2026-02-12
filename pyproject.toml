@@ -4,7 +4,12 @@ dynamic = ["version"]
 description = "A minimal Python package for reading OME-Zarr (meta)data "
 readme = "README.md"
 requires-python = ">=3.11, <3.14"
-dependencies = ["zarr>= 3.1.1", "pydantic >= 2.11.5", "pydantic-zarr >= 0.8.2"]
+dependencies = [
+    "numpy",
+    "pydantic >= 2.11.5",
+    "pydantic-zarr >= 0.8.2",
+    "zarr>= 3.1.1",
+]
 maintainers = [{ name = "David Stansby" }]
 license = { file = "LICENSE" }
 classifiers = [
@@ -46,7 +51,12 @@ build-backend = "hatchling.build"
 [dependency-groups]
 docs = ["ome-zarr-models[docs]"]
 dev = ["mypy==1.18.2", "ruff==0.13.2", "pre-commit==4.3.0"]
-test = ["pytest==8.4.2", "pytest-cov==7.0.0", "pytest-recording==0.13.4"]
+test = [
+    "pytest==8.4.2",
+    "pytest-cov==7.0.0",
+    "pytest-recording==0.13.4",
+    "graphviz==0.21",
+]
 
 [tool.uv]
 default-groups = ["docs", "dev", "test"]
