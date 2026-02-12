@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Self
+from typing import TYPE_CHECKING, Annotated, Self, Union
 
 from pydantic import (
     Field,
@@ -25,6 +25,7 @@ from ome_zarr_models.common.validation import unique_items_validator
 
 if TYPE_CHECKING:
     from ome_zarr_models.v05.multiscales import Multiscale as Multiscalev05
+    from ome_zarr_models.v04.multiscales import Multiscale as Multiscalev04
     from ome_zarr_models.v05.multiscales import (  # type: ignore[attr-defined]
         ValidTransform as ValidTransformv05,
     )
@@ -83,7 +84,18 @@ class Multiscale(BaseAttrs):
         return self.coordinateSystems[-1]
 
     @classmethod
-    def from_v05(
+    def from_version(cls, multiscale: Union[Multiscale, Multiscalev05, Multiscalev04]) -> Self:
+        if isinstance(multiscale, Multiscale):
+            return multiscale
+        elif isinstance(multiscale, Multiscalev05):
+            return cls._from_v05(multiscale)
+        elif isinstance(multiscale, Multiscalev04):
+            return cls._from_v05(cls.from_version(multiscale))
+        else:
+            raise TypeError(f"Unsupported conversion: {type(multiscale)} -> 0.6")
+
+    @classmethod
+    def _from_v05(
         cls,
         multiscale_v05: Multiscalev05,
         intrinsic_system_name: str,
