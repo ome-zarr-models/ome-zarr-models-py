@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import warnings
 from collections import Counter
-from typing import TYPE_CHECKING, Any, Literal, Self, Union
+from typing import TYPE_CHECKING, Any, Literal, Self
 
 from pydantic import (
     BaseModel,
@@ -34,6 +34,7 @@ from ome_zarr_models.v04.axes import Axes
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
     from ome_zarr_models.v05.multiscales import Multiscale as MultiscaleV05
 
 
@@ -56,7 +57,9 @@ class Multiscale(BaseAttrs):
     type: JsonValue = None
     version: Literal["0.4"] | None = None
 
-    def to_version(self, version: Union[Literal["0.4"], Literal["0.5"]]) -> Union["Multiscale", "MultiscaleV05"]:
+    def to_version(
+        self, version: Literal["0.4"] | Literal["0.5"]
+    ) -> Multiscale | MultiscaleV05:
         """
         Convert this Multiscale metadata to the specified version.
 
@@ -69,30 +72,35 @@ class Multiscale(BaseAttrs):
             return self._to_v05()
         else:
             raise ValueError(f"Unsupported version conversion: 0.4 -> {version}")
-    
+
     @classmethod
-    def from_version(cls, multiscale: Union["MultiscaleV05", "Multiscale"]) -> "Multiscale":
+    def from_version(cls, multiscale: MultiscaleV05 | Multiscale) -> Multiscale:
         """
         Convert a Multiscale metadata from a specified version to this version.
 
         Currently supports conversions:
         - from 0.5 to 0.4
         """
-
         from ome_zarr_models.v05.multiscales import Multiscale as MultiscaleV05
+
         if isinstance(multiscale, Multiscale):
             return multiscale
         elif isinstance(multiscale, MultiscaleV05):
-            return MultiscaleV05.to_version(multiscale, version="0.4")
+            return MultiscaleV05._to_v04(multiscale)
         else:
-            raise ValueError(f"Unsupported version conversion: {type(multiscale)} -> 0.4")
+            raise ValueError(
+                f"Unsupported version conversion: {type(multiscale)} -> 0.4"
+            )
 
-    def _to_v05(self) -> "MultiscaleV05":
+    def _to_v05(self) -> MultiscaleV05:
+        from ome_zarr_models.v05.axes import Axis as AxisV05
         from ome_zarr_models.v05.multiscales import (
-            Multiscale as MultiscaleV05,
             Dataset as DatasetV05,
         )
-        from ome_zarr_models.v05.axes import Axis as AxisV05
+        from ome_zarr_models.v05.multiscales import (
+            Multiscale as MultiscaleV05,
+        )
+
         return MultiscaleV05(
             axes=tuple([AxisV05.model_validate(a.model_dump()) for a in self.axes]),
             datasets=tuple(

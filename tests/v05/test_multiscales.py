@@ -556,7 +556,8 @@ def test_from_zarr_ectopic_group(store: Store) -> None:
 
 def test_conversion_v05_to_v04(default_multiscale: Multiscale) -> None:
     """
-    Test that converting a v0.4 Multiscale to v0.5 and back again results in the same model
+    Test that converting a v0.4 Multiscale to v0.5 and back again results
+    in the same model
     """
     from ome_zarr_models.v04.multiscales import Multiscale as MultiscaleV04
 
@@ -570,7 +571,7 @@ def test_conversion_v05_to_v04(default_multiscale: Multiscale) -> None:
     assert isinstance(multi_v04, MultiscaleV04)
     assert isinstance(multi_v04b, MultiscaleV04)
     assert multi_v04 == multi_v04b
-    
+
     # ...and back to v05
     multi_v05 = multi_v04.to_version("0.5")
     multi_v05_b = Multiscale.from_version(multi_v04)
