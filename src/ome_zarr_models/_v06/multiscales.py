@@ -85,7 +85,8 @@ class Multiscale(BaseAttrs):
 
         Notes
         -----
-        This is the last entry in the `coordinateSystems` attribute.
+        The intrinsic coordinate system is the coordinate system
+        that is referenced as output by the coordinate transformations in the `datasets` attribute.
         """
         output_cs = self.datasets[0].coordinateTransformations[0].output
         return next(
