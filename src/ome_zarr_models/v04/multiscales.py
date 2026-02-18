@@ -57,9 +57,7 @@ class Multiscale(BaseAttrs):
     type: JsonValue = None
     version: Literal["0.4"] | None = None
 
-    def to_version(
-        self, version: Literal["0.5"]
-    ) -> MultiscaleV05:
+    def to_version(self, version: Literal["0.5"]) -> MultiscaleV05:
         """
         Convert this Multiscale metadata to the specified version.
 
@@ -82,7 +80,8 @@ class Multiscale(BaseAttrs):
 
         return MultiscaleV05(
             axes=tuple(
-                [AxisV05(name=a.name, type=a.type, unit=a.unit) for a in self.axes]),
+                [AxisV05(name=a.name, type=a.type, unit=a.unit) for a in self.axes]
+            ),
             datasets=tuple(
                 DatasetV05(
                     path=d.path,
