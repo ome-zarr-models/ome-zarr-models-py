@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import warnings
 from collections import Counter
-from typing import TYPE_CHECKING, Any, Self
+from typing import TYPE_CHECKING, Any, Literal, Self
 
 from pydantic import (
     BaseModel,
@@ -34,6 +34,11 @@ from ome_zarr_models.v05.axes import Axes
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+    from ome_zarr_models.v04.multiscales import Multiscale as MultiscaleV04
+    from ome_zarr_models._v06.coordinate_transforms import (
+        CoordinateSystem as CoordinateSystemV06,
+    )
+    from ome_zarr_models._v06.multiscales import Multiscale as MultiscaleV06
 
 
 __all__ = ["Dataset", "Multiscale"]
@@ -53,6 +58,123 @@ class Multiscale(BaseAttrs):
     metadata: JsonValue = None
     name: JsonValue | None = None
     type: JsonValue = None
+
+    def to_version(
+        self, version: Literal["0.4", "0.6"], **kwargs: Any
+    ) -> MultiscaleV04 | MultiscaleV06:
+        """
+        Convert this Multiscale metadata to the specified version.
+
+        Currently supported conversions are
+        - 0.5 -> 0.4
+        """
+        if version == "0.4":
+            return self._to_v04(**kwargs)
+        elif version == "0.6":
+            return self._to_v06(**kwargs)
+        else:
+            raise ValueError(f"Unsupported version conversion: 0.5 -> {version}")
+
+    def _to_v06(
+        self,
+        intrinsic_system_name: str,
+        top_level_system: CoordinateSystemV06 | None = None,
+    ) -> MultiscaleV06:
+        """
+        Convert a OME-Zarr 0.5 multiscales to OME-Zarr 0.6.
+
+        Parameters
+        ----------
+        multiscale_v05 :
+            OME-Zarr 0.5 multiscales
+        intrinsic_system_name :
+            Name to give the intrinsic coordinate system in the new multiscales.
+        top_level_system :
+            The coordinate system that the top-level coordinate transform in the
+            multiscales transforms into. If the top-level transform is present, must be
+            given. Otherwise, will not be used.
+        """
+        from ome_zarr_models._v06.multiscales import (
+            Multiscale as MultiscaleV06,
+            _v05_transform_to_v06,
+        )
+        from ome_zarr_models._v06.coordinate_transforms import (
+            CoordinateSystem,
+            Axis,
+        )
+
+        new_ms = MultiscaleV06(
+            datasets=tuple(
+                Dataset(
+                    path=ds.path,
+                    coordinateTransformations=(
+                        _v05_transform_to_v06(ds.coordinateTransformations).model_copy(
+                            update={
+                                "input": ds.path,
+                                "output": intrinsic_system_name,
+                            }
+                        ),
+                    ),
+                )
+                for ds in self.datasets
+            ),
+            coordinateSystems=(
+                CoordinateSystem(
+                    name=intrinsic_system_name,
+                    axes=tuple(
+                        Axis(name=ax.name, type=ax.type, unit=ax.unit)
+                        for ax in self.axes
+                    ),
+                ),
+            ),
+            metadata=self.metadata,
+            name=self.name,
+            type=self.type,
+        )
+        if self.coordinateTransformations is not None:
+            if top_level_system is None:
+                raise ValueError(
+                    "top_level_system must be provided because a top-level "
+                    "coordinate transform is present in the input multiscales."
+                )
+            new_ms = new_ms.model_copy(
+                update={
+                    "coordinateTransformations": (
+                        _v05_transform_to_v06(
+                            self.coordinateTransformations
+                        ).model_copy(
+                            update={
+                                "input": intrinsic_system_name,
+                                "output": top_level_system.name,
+                            }
+                        ),
+                    ),
+                    "coordinateSystems": (*new_ms.coordinateSystems, top_level_system),
+                }
+            )
+        return new_ms
+
+    def _to_v04(self) -> MultiscaleV04:
+        from ome_zarr_models.v04.axes import Axis as AxisV04
+        from ome_zarr_models.v04.multiscales import Dataset as DatasetV04
+        from ome_zarr_models.v04.multiscales import Multiscale as MultiscaleV04
+
+        return MultiscaleV04(
+            axes=tuple(
+                [AxisV04(name=a.name, type=a.type, unit=a.unit) for a in self.axes]
+            ),
+            datasets=tuple(
+                DatasetV04(
+                    path=d.path,
+                    coordinateTransformations=d.coordinateTransformations,
+                )
+                for d in self.datasets
+            ),
+            coordinateTransformations=self.coordinateTransformations,
+            metadata=self.metadata,
+            name=self.name,
+            type=self.type,
+        )
 
     @model_serializer(mode="wrap")
     def _serialize(

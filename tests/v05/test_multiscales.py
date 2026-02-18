@@ -554,6 +554,23 @@ def test_from_zarr_ectopic_group(store: Store) -> None:
         Image.from_zarr(broken_group)
 
 
+def test_conversion_v05_to_v04(default_multiscale: Multiscale) -> None:
+    """
+    Test that converting a v0.4 Multiscale to v0.5 and back again results
+    in the same model
+    """
+    from ome_zarr_models.v04.multiscales import Multiscale as MultiscaleV04
+
+    # test conversion to v04
+    multi_v04 = default_multiscale.to_version("0.4")
+    assert isinstance(multi_v04, MultiscaleV04)
+
+    # ...and back to v05
+    multi_v05 = multi_v04.to_version("0.5")
+    assert isinstance(multi_v05, Multiscale)
+    assert multi_v05 == default_multiscale
+
+
 @pytest.mark.skip
 def test_hashable(default_multiscale: Multiscale) -> None:
     """
