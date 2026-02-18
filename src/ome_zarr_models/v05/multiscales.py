@@ -75,7 +75,7 @@ class Multiscale(BaseAttrs):
 
         return MultiscaleV04(
             axes=tuple(
-                [AxisV04(a.name, a.type, a.unit) for a in self.axes]
+                [AxisV04(name=a.name, type=a.type, unit=a.unit) for a in self.axes]
                 ),
             datasets=tuple(
                 DatasetV04(
