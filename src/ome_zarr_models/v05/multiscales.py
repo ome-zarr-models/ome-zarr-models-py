@@ -35,7 +35,10 @@ from ome_zarr_models.v05.axes import Axes
 if TYPE_CHECKING:
     from collections.abc import Sequence
     from ome_zarr_models.v04.multiscales import Multiscale as MultiscaleV04
-    from ome_zarr_models._v06.coordinate_transforms import CoordinateSystem as CoordinateSystemV06
+    from ome_zarr_models._v06.coordinate_transforms import (
+        CoordinateSystem as CoordinateSystemV06,
+    )
+    from ome_zarr_models._v06.multiscales import Multiscale as MultiscaleV06
 
 
 __all__ = ["Dataset", "Multiscale"]
@@ -56,7 +59,9 @@ class Multiscale(BaseAttrs):
     name: JsonValue | None = None
     type: JsonValue = None
 
-    def to_version(self, version: Literal["0.4", "0.6"], **kwargs) -> MultiscaleV04:
+    def to_version(
+        self, version: Literal["0.4", "0.6"], **kwargs: Any
+    ) -> MultiscaleV04 | MultiscaleV06:
         """
         Convert this Multiscale metadata to the specified version.
 
@@ -72,10 +77,9 @@ class Multiscale(BaseAttrs):
 
     def _to_v06(
         self,
-        multiscale_v05: Multiscale,
         intrinsic_system_name: str,
         top_level_system: CoordinateSystemV06 | None = None,
-    ) -> Self:
+    ) -> MultiscaleV06:
         """
         Convert a OME-Zarr 0.5 multiscales to OME-Zarr 0.6.
 
@@ -90,9 +94,16 @@ class Multiscale(BaseAttrs):
             multiscales transforms into. If the top-level transform is present, must be
             given. Otherwise, will not be used.
         """
-        from ome_zarr_models._v06.multiscales import _v05_transform_to_v06
-        from ome_zarr_models._v06.coordinate_transforms import CoordinateSystem, Axis
-        new_ms = self(
+        from ome_zarr_models._v06.multiscales import (
+            Multiscale as MultiscaleV06,
+            _v05_transform_to_v06,
+        )
+        from ome_zarr_models._v06.coordinate_transforms import (
+            CoordinateSystem,
+            Axis,
+        )
+
+        new_ms = MultiscaleV06(
             datasets=tuple(
                 Dataset(
                     path=ds.path,
@@ -105,22 +116,22 @@ class Multiscale(BaseAttrs):
                         ),
                     ),
                 )
-                for ds in multiscale_v05.datasets
+                for ds in self.datasets
             ),
             coordinateSystems=(
                 CoordinateSystem(
                     name=intrinsic_system_name,
                     axes=tuple(
                         Axis(name=ax.name, type=ax.type, unit=ax.unit)
-                        for ax in multiscale_v05.axes
+                        for ax in self.axes
                     ),
                 ),
             ),
-            metadata=multiscale_v05.metadata,
-            name=multiscale_v05.name,
-            type=multiscale_v05.type,
+            metadata=self.metadata,
+            name=self.name,
+            type=self.type,
         )
-        if multiscale_v05.coordinateTransformations is not None:
+        if self.coordinateTransformations is not None:
             if top_level_system is None:
                 raise ValueError(
                     "top_level_system must be provided because a top-level "
@@ -130,7 +141,7 @@ class Multiscale(BaseAttrs):
                 update={
                     "coordinateTransformations": (
                         _v05_transform_to_v06(
-                            multiscale_v05.coordinateTransformations
+                            self.coordinateTransformations
                         ).model_copy(
                             update={
                                 "input": intrinsic_system_name,
