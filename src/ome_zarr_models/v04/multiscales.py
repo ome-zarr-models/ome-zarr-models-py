@@ -58,39 +58,18 @@ class Multiscale(BaseAttrs):
     version: Literal["0.4"] | None = None
 
     def to_version(
-        self, version: Literal["0.4"] | Literal["0.5"]
-    ) -> Multiscale | MultiscaleV05:
+        self, version: Literal["0.5"]
+    ) -> MultiscaleV05:
         """
         Convert this Multiscale metadata to the specified version.
 
         Currently supports conversions:
         - from 0.4 to 0.5
         """
-        if version == "0.4":
-            return self
-        elif version == "0.5":
+        if version == "0.5":
             return self._to_v05()
         else:
             raise ValueError(f"Unsupported version conversion: 0.4 -> {version}")
-
-    @classmethod
-    def from_version(cls, multiscale: MultiscaleV05 | Multiscale) -> Multiscale:
-        """
-        Convert a Multiscale metadata from a specified version to this version.
-
-        Currently supports conversions:
-        - from 0.5 to 0.4
-        """
-        from ome_zarr_models.v05.multiscales import Multiscale as MultiscaleV05
-
-        if isinstance(multiscale, Multiscale):
-            return multiscale
-        elif isinstance(multiscale, MultiscaleV05):
-            return MultiscaleV05._to_v04(multiscale)
-        else:
-            raise ValueError(
-                f"Unsupported version conversion: {type(multiscale)} -> 0.4"
-            )
 
     def _to_v05(self) -> MultiscaleV05:
         from ome_zarr_models.v05.axes import Axis as AxisV05
@@ -102,7 +81,8 @@ class Multiscale(BaseAttrs):
         )
 
         return MultiscaleV05(
-            axes=tuple([AxisV05.model_validate(a.model_dump()) for a in self.axes]),
+            axes=tuple(
+                [AxisV05(a.name, a.type, a.unit) for a in self.axes]),
             datasets=tuple(
                 DatasetV05(
                     path=d.path,
