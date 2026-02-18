@@ -36,6 +36,7 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from ome_zarr_models.v05.multiscales import Multiscale as MultiscaleV05
+    from ome_zarr_models._v06.multiscales import Multiscale as MultiscaleV06
 
 
 __all__ = ["Dataset", "Multiscale"]
@@ -57,15 +58,20 @@ class Multiscale(BaseAttrs):
     type: JsonValue = None
     version: Literal["0.4"] | None = None
 
-    def to_version(self, version: Literal["0.5"]) -> MultiscaleV05:
+    def to_version(
+        self, version: Literal["0.5", "0.6"], **kwargs: Any
+    ) -> MultiscaleV05 | MultiscaleV06:
         """
         Convert this Multiscale metadata to the specified version.
 
         Currently supports conversions:
         - from 0.4 to 0.5
+        - from 0.4 to 0.6
         """
         if version == "0.5":
             return self._to_v05()
+        elif version == "0.6":
+            return self._to_v05()._to_v06(**kwargs)
         else:
             raise ValueError(f"Unsupported version conversion: 0.4 -> {version}")
 
