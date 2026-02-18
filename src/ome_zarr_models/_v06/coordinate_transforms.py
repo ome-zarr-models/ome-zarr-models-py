@@ -1,0 +1,750 @@
+import typing
+from abc import ABC, abstractmethod
+from typing import Annotated, Literal, Self, TypeVar
+
+import numpy as np
+from pydantic import Field, JsonValue, field_validator, model_validator
+
+from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.common.validation import unique_items_validator
+
+
+class NoAffineError(RuntimeError):
+    """
+    Exception raised when it's not possible to convert a transform to an affine.
+    """
+
+
+class Axis(BaseAttrs):
+    """
+    Model for an element of `Multiscale.axes`.
+    """
+
+    # Explicitly name could be any JsonValue, but implicitly it must match Zarr array
+    # dimension_names which limits it to str | None
+
+    name: str | None = Field(..., description="Axis name.")
+    type: (
+        Literal["array", "space", "time", "channel", "coordinate", "displacement"]
+        | str
+        | None
+    ) = Field(default=None, description="Axis type.")
+    discrete: bool | None = Field(
+        default=None,
+        description="Whether coordinates on this axis can take discrete "
+        "(e.g., array coordinates) or continuous (e.g., length coordinates) values.",
+    )
+    # Unit probably intended to be str, but the spec doesn't explicitly specify
+    unit: str | JsonValue | None = Field(default=None, description="Axis units.")
+    longName: str | None = Field(default=None, description="Longer name for axis..")
+
+
+class CoordinateSystem(BaseAttrs):
+    """
+    A coordinate system.
+    """
+
+    # Use min_length=1 to ensure name is non-empty
+    name: str = Field(min_length=1, description="Coordinate system name.")
+    axes: tuple[Axis, ...] = Field(min_length=1, description="Coordinate system axes.")
+
+    @field_validator("axes", mode="after")
+    @classmethod
+    def _ensure_unique_axis_names(cls, axes: tuple[Axis, ...]) -> tuple[Axis, ...]:
+        """
+        Ensures that the names of the axes are unique.
+        """
+        unique_items_validator([a.name for a in axes])
+        return axes
+
+    @property
+    def ndim(self) -> int:
+        return len(self.axes)
+
+
+class CoordinateSystemIdentifier(BaseAttrs):
+    """
+    A coordinate system identifier.
+
+    Used for referring to a coordinate system that is defined at another path
+    relative to the current Zarr group.
+    """
+
+    name: str = Field(..., description="Coordinate system name.")
+    path: str | None = Field(
+        default=None,
+        description="Path to Zarr group where the coordinate system is defined.",
+    )
+
+
+TCoordSysIdentifier = CoordinateSystemIdentifier | str | None
+
+
+class Transform(BaseAttrs, ABC):
+    """
+    Base model of a coordinate transformation.
+
+    Notes
+    -----
+    Coordinate transformations have a `transform_point` method to transform a single
+    point. This only operates on a `tuple` of coordinate points, not other objects
+    that could represent points (e.g., NumPy arrays). This is a deliberate choice to
+    keep the dependencies of `ome-zarr-models` slim. Other libraries are encouraged
+    to implement their own coordinate transforms, and use the `transform_point` methods
+    here as reference implementations to check their own implementations.
+    """
+
+    type: str = Field(..., description="Unique identifier for type of transform.")
+    input: TCoordSysIdentifier = Field(
+        default=None, description="Input coordinate system identifier."
+    )
+    output: TCoordSysIdentifier = Field(
+        default=None, description="Output coordinate system identifier."
+    )
+    name: str | None = Field(
+        default=None, description="Name for the specific transform."
+    )
+
+    @model_validator(mode="after")
+    def _ensure_consistent_input_output(self: Self) -> Self:
+        """
+        Ensures that either both input and output are defined or both are omitted.
+        """
+        if (self.input is None) != (self.output is None):
+            msg = (
+                "Either both input and output must be defined or both must be omitted. "
+                f"Got input={self.input} and output={self.output}."
+            )
+            raise ValueError(msg)
+        return self
+
+    @property
+    @abstractmethod
+    def has_inverse(self) -> bool:
+        """
+        `True` if an inverse can be returned from `get_inverse()`.
+        """
+
+    @abstractmethod
+    def get_inverse(self) -> "Transform":
+        """
+        Inverse of this transform.
+
+        Raises
+        ------
+        NotImplementedError
+            If this the inverse for this transform is not implemented.
+        """
+
+    @abstractmethod
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
+        """Apply transform a single point."""
+
+    @abstractmethod
+    def as_affine(self) -> "Affine":
+        """
+        Convert this transform to an equivalent affine transform.
+
+        Raises
+        ------
+        NoAffineError
+            If this transform can't be converted to an affine transform.
+        """
+
+    @property
+    def _inverse_name(self) -> str | None:
+        if self.name is None:
+            return None
+        return f"{self.name}_inverse"
+
+    @property
+    def _short_name(self) -> str:
+        return self.type
+
+
+class Identity(Transform):
+    """Identity transformation."""
+
+    type: Literal["identity"] = "identity"
+
+    @property
+    def has_inverse(self) -> bool:
+        return True
+
+    def get_inverse(self) -> "Identity":
+        return Identity(input=self.output, output=self.input, name=self._inverse_name)
+
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
+        return tuple(point)
+
+    def as_affine(self) -> "Affine":
+        raise NoAffineError
+
+
+class MapAxis(Transform):
+    """Axis mapping transform."""
+
+    type: Literal["mapAxis"] = "mapAxis"
+    mapAxis: tuple[int, ...] = Field(
+        ..., description="The axes to map axis numbers [0, 1, 2... etc.] to."
+    )
+
+    @property
+    def ndim(self) -> int:
+        return len(self.mapAxis)
+
+    @property
+    def has_inverse(self) -> bool:
+        return True
+
+    def get_inverse(self) -> "MapAxis":
+        return MapAxis(
+            input=self.output,
+            output=self.input,
+            name=self._inverse_name,
+            mapAxis=tuple([self.mapAxis.index(i) for i in range(self.ndim)]),
+        )
+
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
+        return tuple(point[i] for i in self.mapAxis)
+
+    @field_validator("mapAxis", mode="after")
+    @classmethod
+    def check_all_axes(cls, mapAxis: tuple[int, ...]) -> tuple[int, ...]:
+        if set(mapAxis) != set(range(len(mapAxis))):
+            raise ValueError(
+                f"Not all axes present from 0 to {len(mapAxis) - 1}: {mapAxis}"
+            )
+        return mapAxis
+
+    def as_affine(self) -> "Affine":
+        matrix = np.zeros((self.ndim, self.ndim))
+        vector = np.zeros(self.ndim)
+        for row, col in enumerate(self.mapAxis):
+            matrix[row, col] = 1
+
+        return Affine._from_matrix_vector(
+            matrix=tuple(tuple(row) for row in matrix),
+            vector=tuple(vector),
+            input=self.input,
+            output=self.output,
+            name=self.name,
+        )
+
+
+class Translation(Transform):
+    """Translation transformation."""
+
+    type: Literal["translation"] = "translation"
+    translation: tuple[float, ...] | None = Field(
+        default=None, description="Translation vector."
+    )
+    path: str | None = Field(
+        default=None, description="Path to translation vector stored as a Zarr array."
+    )
+
+    @property
+    def ndim(self) -> int:
+        """
+        Number of dimensions.
+        """
+        return len(self.translation_vector)
+
+    @property
+    def has_inverse(self) -> bool:
+        return True
+
+    def get_inverse(self) -> "Translation":
+        return Translation(
+            input=self.output,
+            output=self.input,
+            name=self._inverse_name,
+            translation=tuple([-i for i in self.translation_vector]),
+        )
+
+    @property
+    def translation_vector(self) -> tuple[float, ...]:
+        """
+        Translation vector for this transform.
+        """
+        if self.translation is not None:
+            return self.translation
+        elif self.path is not None:
+            raise NotImplementedError(
+                "Loading translation from a Zarr array not yet implemented"
+            )
+        else:
+            raise RuntimeError("Both self.translation and self.path are None")
+
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
+        return tuple(p + t for p, t in zip(point, self.translation_vector, strict=True))
+
+    def as_affine(self) -> "Affine":
+        return Affine._from_matrix_vector(
+            matrix=tuple(tuple(row) for row in np.identity(self.ndim)),
+            vector=self.translation_vector,
+            input=self.input,
+            output=self.output,
+            name=self.name,
+        )
+
+    @model_validator(mode="after")
+    def check_metadata_set(self) -> Self:
+        if self.translation is None and self.path is None:
+            raise ValueError("One of 'translation' or 'path' must be given")
+        return self
+
+
+class Scale(Transform):
+    """Scale transformation."""
+
+    type: Literal["scale"] = "scale"
+    scale: tuple[float, ...] | None = Field(
+        default=None, description="Scale factors for each axis."
+    )
+    path: str | None = Field(
+        default=None, description="Path to scale factors stored in a Zarr array."
+    )
+
+    @property
+    def has_inverse(self) -> bool:
+        return True
+
+    def get_inverse(self) -> "Scale":
+        return Scale(
+            input=self.output,
+            output=self.input,
+            name=self._inverse_name,
+            scale=tuple([1 / i for i in self.scale_vector]),
+        )
+
+    @property
+    def scale_vector(self) -> tuple[float, ...]:
+        """
+        Scale vector for this transform.
+        """
+        if self.scale is not None:
+            return self.scale
+        elif self.path is not None:
+            raise NotImplementedError(
+                "Loading scale from a Zarr array not yet implemented"
+            )
+        else:
+            raise RuntimeError("Both self.scale and self.path are None")
+
+    @property
+    def ndim(self) -> int:
+        """
+        Number of dimensions.
+        """
+        return len(self.scale_vector)
+
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
+        return tuple(p * s for p, s in zip(point, self.scale_vector, strict=True))
+
+    def as_affine(self) -> "Affine":
+        matrix = np.identity(self.ndim)
+        for i, scale in enumerate(self.scale_vector):
+            matrix[i, i] = scale
+
+        return Affine._from_matrix_vector(
+            matrix=tuple(tuple(row) for row in matrix),
+            vector=tuple(np.zeros(self.ndim)),
+            input=self.input,
+            output=self.output,
+            name=self.name,
+        )
+
+    @model_validator(mode="after")
+    def check_metadata_set(self) -> Self:
+        if self.scale is None and self.path is None:
+            raise ValueError("One of 'scale' or 'path' must be given")
+        return self
+
+
+class Affine(Transform):
+    """Affine transform."""
+
+    type: Literal["affine"] = "affine"
+    affine: tuple[tuple[float, ...], ...] | None = Field(
+        default=None, description="Affine matrix"
+    )
+    path: str | None = Field(
+        default=None, description="Path to affine matrix stored as a Zarr array."
+    )
+
+    @classmethod
+    def _from_matrix_vector(
+        cls,
+        matrix: typing.Sequence[typing.Sequence[float]],
+        vector: typing.Sequence[float],
+        input: TCoordSysIdentifier = None,
+        output: TCoordSysIdentifier = None,
+        name: str | None = None,
+    ) -> Self:
+        return cls(
+            affine=tuple((*row, x) for row, x in zip(matrix, vector, strict=True)),
+            input=input,
+            output=output,
+            name=name,
+        )
+
+    @property
+    def ndim(self) -> int:
+        return len(self.affine_matrix)
+
+    @property
+    def has_inverse(self) -> bool:
+        return False
+
+    def get_inverse(self) -> "Affine":
+        matrix_inv = np.linalg.inv(self._matrix)
+        translation_inv = -np.dot(matrix_inv, self._translation)
+        affine = tuple(
+            (*tuple(matrix_inv[i]), translation_inv[i]) for i in range(self.ndim)
+        )
+
+        return Affine(
+            affine=affine, input=self.output, output=self.input, name=self._inverse_name
+        )
+
+    @property
+    def affine_matrix(self) -> tuple[tuple[float, ...], ...]:
+        if self.affine is not None:
+            return self.affine
+        elif self.path is not None:
+            raise NotImplementedError(
+                "Loading affine matrix from a Zarr array not yet implemented"
+            )
+        else:
+            raise RuntimeError("Both self.affine and self.path are None")
+
+    @model_validator(mode="after")
+    def check_metadata_set(self) -> Self:
+        if self.affine is None and self.path is None:
+            raise ValueError("One of 'affine' or 'path' must be given")
+        return self
+
+    @property
+    def _matrix(self) -> list[tuple[float, ...]]:
+        return [row[:-1] for row in self.affine_matrix]
+
+    @property
+    def _translation(self) -> list[float]:
+        return [row[-1] for row in self.affine_matrix]
+
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
+        if len(point) != len(self.affine_matrix):
+            raise ValueError(
+                f"Dimensionality of point ({len(point)}) does not match "
+                f"dimensionality of transform ({len(self.affine_matrix)})"
+            )
+        return tuple(np.dot(self._matrix, point) + self._translation)
+
+    def as_affine(self) -> "Affine":
+        return self.model_copy()
+
+    _TAffine = TypeVar("_TAffine", bound=tuple[tuple[float, ...], ...] | None)
+
+    @field_validator("affine", mode="after")
+    @classmethod
+    def _validate_affine(cls, affine: _TAffine) -> _TAffine:
+        if affine is None:
+            return affine
+
+        row_lens = [len(row) for row in affine]
+        if not all(r == row_lens[0] for r in row_lens[1:]):
+            raise ValueError(
+                f"Row lengths in affine matrix ({row_lens}) are not all equal."
+            )
+
+        return affine
+
+
+class Rotation(Transform):
+    """Rotation transform."""
+
+    type: Literal["rotation"] = "rotation"
+    rotation: tuple[tuple[float, ...], ...] | None = Field(
+        default=None, description="Rotation matrix."
+    )
+    path: str | None = Field(
+        default=None, description="Path to rotation matrix stored as a Zarr array."
+    )
+
+    @property
+    def ndim(self) -> int:
+        return len(self.rotation_matrix)
+
+    @property
+    def has_inverse(self) -> bool:
+        return False
+
+    def get_inverse(self) -> "Rotation":
+        new_matrix = np.linalg.inv(np.array(self.rotation_matrix))
+        return Rotation(
+            rotation=tuple(tuple(row) for row in new_matrix),
+            input=self.output,
+            output=self.input,
+        )
+
+    @property
+    def rotation_matrix(self) -> tuple[tuple[float, ...], ...]:
+        if self.rotation is not None:
+            return self.rotation
+        elif self.path is not None:
+            raise NotImplementedError(
+                "Loading rotation matrix from a Zarr array not yet implemented"
+            )
+        else:
+            raise RuntimeError("Both self.rotation and self.path are None")
+
+    @model_validator(mode="after")
+    def check_metadata_set(self) -> Self:
+        if self.rotation is None and self.path is None:
+            raise ValueError("One of 'rotation' or 'path' must be given")
+        return self
+
+    @model_validator(mode="after")
+    def check_rotation_matrix(self) -> Self:
+        matrix_array = np.array(self.rotation_matrix)
+        if not np.allclose(matrix_array @ matrix_array.T, np.identity(self.ndim)):
+            raise ValueError(
+                f"Provided matrix is not a pure rotation matrix: {matrix_array}"
+            )
+        return self
+
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
+        return tuple(np.dot(np.array(self.rotation_matrix), np.array(point)))
+
+    def as_affine(self) -> "Affine":
+        return Affine._from_matrix_vector(
+            matrix=self.rotation_matrix,
+            vector=tuple(np.zeros(self.ndim)),
+            input=self.input,
+            output=self.output,
+            name=self.name,
+        )
+
+
+class Sequence(Transform):
+    """Sequence transformation."""
+
+    type: Literal["sequence"] = "sequence"
+    transformations: tuple["AnyTransform", ...]
+
+    @property
+    def ndim(self) -> int:
+        ndim: int | None = getattr(self.transformations[0], "ndim", None)
+        if ndim is None:
+            raise RuntimeError(
+                f"{self.transformations[0]} does not have a dimensionality"
+            )
+        for t in self.transformations[1:]:
+            ndim_t = getattr(t, "ndim", None)
+            if ndim_t is None:
+                raise RuntimeError(f"{t} does not have a dimensionality")
+            elif ndim_t != ndim:
+                raise RuntimeError(
+                    f"Dimensionality of {t} not the same as first transfor in sequence "
+                    f"({self.transformations[0]})"
+                )
+
+        return ndim
+
+    @property
+    def has_inverse(self) -> bool:
+        return all(t.has_inverse for t in self.transformations)
+
+    def get_inverse(self) -> "Sequence":
+        return Sequence(
+            input=self.output,
+            output=self.input,
+            name=self._inverse_name,
+            transformations=(t.get_inverse() for t in self.transformations[::-1]),
+        )
+
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
+        point_tuple = tuple(point)
+        for transform in self.transformations:
+            point_tuple = transform.transform_point(point_tuple)
+        return point_tuple
+
+    def add_transform(self, transform: "AnyTransform") -> "Sequence":
+        """
+        Create a new sequence by adding a transform to the end of this one.
+        """
+        return self.model_copy(
+            update={"transformations": (*self.transformations, transform)}
+        )
+
+    def as_affine(self) -> "Affine":
+        try:
+            ndim = self.ndim
+        except RuntimeError as e:
+            raise NoAffineError(
+                "Cannot determine dimensionality of all transforms in sequence."
+            ) from e
+
+        matrix = np.identity(ndim)
+        translation = np.zeros(ndim)
+        for t in self.transformations:
+            try:
+                new_affine = t.as_affine()
+            except NoAffineError as e:
+                raise NoAffineError(
+                    "At least one transform in sequence cannot be converted to "
+                    f"an affine ({t})."
+                ) from e
+            new_matrix = np.array(new_affine._matrix)
+            matrix = new_matrix @ matrix
+            translation = np.dot(new_matrix, translation) + np.array(
+                new_affine._translation
+            )
+
+        return Affine._from_matrix_vector(
+            matrix=matrix.tolist(), vector=translation.tolist()
+        )
+
+    @property
+    def _short_name(self) -> str:
+        return f"sequence[{', '.join([t._short_name for t in self.transformations])}]"
+
+
+class Displacements(Transform):
+    """Displacement field transform."""
+
+    type: Literal["displacements"] = "displacements"
+    path: str = Field(..., description="Path to the Zarr array displacement field.")
+    interpolation: str = Field(
+        ..., description="Interpolation method to be used when applying the transform."
+    )
+
+    @property
+    def has_inverse(self) -> bool:
+        return False
+
+    def get_inverse(self) -> "Displacements":
+        raise NotImplementedError
+
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
+        raise NotImplementedError(
+            "Transforming using a displacement field not yet implemented"
+        )
+
+    def as_affine(self) -> "Affine":
+        raise NoAffineError
+
+
+class Coordinates(Transform):
+    """
+    Coordinate field transform.
+
+    This transform stores an explicit map from points in the input
+    coordinate system to their corresponding points in the output coordinate system.
+    """
+
+    type: Literal["coordinates"] = "coordinates"
+    path: str = Field(
+        ..., description="Path to the Zarr array containing the coordinate mapping."
+    )
+    interpolation: str = Field(
+        ...,
+        description="Interpolation scheme that should be used when applying"
+        " the transform.",
+    )
+
+    @property
+    def has_inverse(self) -> bool:
+        return False
+
+    def get_inverse(self) -> "Coordinates":
+        raise NotImplementedError
+
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
+        raise NotImplementedError(
+            "Transforming using a coordinate field not yet implemented"
+        )
+
+    def as_affine(self) -> "Affine":
+        raise NoAffineError
+
+
+class Bijection(Transform):
+    """
+    A transform that also contains an explicit inverse transform.
+    """
+
+    type: Literal["bijection"] = "bijection"
+    forward: "AnyTransform" = Field(..., description="Forward transform")
+    inverse: "AnyTransform" = Field(..., description="Inverse transform")
+
+    @property
+    def has_inverse(self) -> bool:
+        return True
+
+    def get_inverse(self) -> "Bijection":
+        return Bijection(
+            input=self.output,
+            output=self.input,
+            name=self._inverse_name,
+            forward=self.inverse,
+            inverse=self.forward,
+        )
+
+    @property
+    def _short_name(self) -> str:
+        return f"bijection[{self.forward._short_name}]"
+
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
+        return self.forward.transform_point(point)
+
+    def as_affine(self) -> "Affine":
+        try:
+            return self.forward.as_affine().model_copy(
+                update={"input": self.input, "output": self.output, "name": self.name}
+            )
+        except NoAffineError as e:
+            raise NoAffineError(
+                "Forward transform could not be converted to an affine"
+            ) from e
+
+
+class ByDimension(Transform):
+    """
+    A transform that operates on a subset of dimensions.
+    """
+
+    type: Literal["byDimension"] = "byDimension"
+    transformations: tuple["AnyTransform", ...] = Field(
+        ..., description="Transformations."
+    )
+
+    @property
+    def has_inverse(self) -> bool:
+        return False
+
+    def get_inverse(self) -> "ByDimension":
+        raise NotImplementedError
+
+    def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
+        raise NotImplementedError
+
+    def as_affine(self) -> "Affine":
+        raise NoAffineError
+
+
+AnyTransform = Annotated[
+    Identity
+    | MapAxis
+    | Translation
+    | Scale
+    | Affine
+    | Rotation
+    | Sequence
+    | Displacements
+    | Coordinates
+    | Bijection
+    | ByDimension,
+    Field(discriminator="type"),
+]

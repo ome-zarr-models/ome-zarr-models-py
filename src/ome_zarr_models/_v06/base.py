@@ -17,7 +17,9 @@ class BaseOMEAttrs(BaseAttrsv3):
     Base class for OME-Zarr 0.6 attributes.
     """
 
-    version: Literal["0.6"]
+    # TODO: added 0.6.dev* to allow for RFC5 testing.
+    # Remove this before final release!
+    version: Literal["0.6", "0.6.dev1", "0.6.dev2", "0.6.dev3"]
 
 
 T = TypeVar("T", bound=BaseOMEAttrs)
