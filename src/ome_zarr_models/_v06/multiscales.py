@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-import typing
-from typing import TYPE_CHECKING, Annotated, Self, Union
+from typing import TYPE_CHECKING, Annotated, Self, Literal, Sequence
 
 from pydantic import (
     Field,
@@ -29,6 +28,13 @@ if TYPE_CHECKING:
     from ome_zarr_models.v05.multiscales import (  # type: ignore[attr-defined]
         ValidTransform as ValidTransformv05,
     )
+
+from ome_zarr_models.common.coordinate_transformations import (
+    VectorScale,
+    PathScale,
+    VectorTranslation,
+    PathTranslation,
+)
 
 __all__ = ["Dataset", "Multiscale"]
 
@@ -81,7 +87,99 @@ class Multiscale(BaseAttrs):
         -----
         This is the last entry in the `coordinateSystems` attribute.
         """
-        return self.coordinateSystems[-1]
+        output_cs = self.datasets[0].coordinateTransformations[0].output
+        return next(
+            cs for cs in self.coordinateSystems if cs.name == output_cs
+        )
+
+    def to_version(self, version: Literal["0.5", "0.4"]) -> Multiscalev05 | Multiscalev04:
+        """
+        Convert this Multiscale metadata to the specified version.
+
+        Currently supports conversions:
+        - from 0.6 to 0.5
+        - from 0.6 to 0.4
+        """
+        if version == "0.5":
+            return self._to_v05()
+        elif version == "0.4":
+            return self._to_v05()._to_v04()
+        else:
+            raise ValueError(f"Unsupported version conversion: 0.6 -> {version}")
+
+    def _to_v05(self) -> Multiscalev05:
+        """
+        Convert this OME-Zarr 0.6 multiscales to OME-Zarr 0.5.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        Multiscalev05
+            OME-Zarr 0.5 multiscales
+
+        Raises
+        ------
+        ValueError
+            If more than one coordinate system is present, or if unsupported
+            transforms are encountered.
+
+        Notes
+        -----
+        This conversion may not preserve all information, as 0.6 is more
+        expressive than 0.5. In particular:
+        - Only the intrinsic coordinate system is retained
+        - Multiple coordinate systems are not supported
+        """
+        from ome_zarr_models.v05.multiscales import Multiscale as Multiscalev05
+        from ome_zarr_models.v05.multiscales import Dataset as DatasetV05
+        from ome_zarr_models.v05.axes import Axis as AxisV05
+
+        # Get the intrinsic (and only portable) coordinate system
+        cs = self.intrinsic_coordinate_system
+
+        # Constraint: Only one coordinate system allowed for conversion to v0.5
+        if len(self.coordinateSystems) > 1:
+            raise UserWarning(
+                f"Cannot convert to v0.5: expected at most 1 coordinate system, "
+                f"but got {len(self.coordinateSystems)}. "
+                f"Discarding all but the instrinsic ({cs.name}) coordinate system."
+            )
+
+        # Convert axes
+        axes = tuple(
+            AxisV05(name=ax.name, type=ax.type, unit=ax.unit)
+            for ax in cs.axes
+        )
+
+        # Convert datasets
+        datasets_v05 = tuple(
+            DatasetV05(
+                path=ds.path,
+                coordinateTransformations=_v06_transform_to_v05(
+                    ds.coordinateTransformations[0]
+                ),
+            )
+            for ds in self.datasets
+        )
+
+        # Convert top-level transforms if present
+        tx_top_level_v05 = None
+        if self.coordinateTransformations is not None:
+            # Should only have one top-level transform
+            tx_top_level_v05 = _v06_transform_to_v05(self.coordinateTransformations[0])
+
+        # Create the v0.5 multiscale
+        return Multiscalev05(
+            axes=axes,
+            datasets=datasets_v05,
+            coordinateTransformations=tx_top_level_v05,
+            metadata=self.metadata,
+            name=self.name,
+            type=self.type,
+        )
 
     @model_validator(mode="after")
     def _ensure_same_output_cs_for_all_datasets(data: Self) -> Self:
@@ -280,8 +378,8 @@ class Dataset(BaseAttrs):
         cls,
         *,
         path: str,
-        scale: typing.Sequence[float],
-        translation: typing.Sequence[float] | None,
+        scale: Sequence[float],
+        translation: Sequence[float] | None,
         coord_sys_output_name: str,
     ) -> Self:
         """
@@ -386,3 +484,118 @@ def _v05_transform_to_v06(transform: ValidTransformv05) -> Scale | Sequence:
         else:
             translate = Translation(path=transform[1].translation)
         return Sequence(transformations=(scale, translate))
+
+
+def _v06_transform_to_v05(
+    transform: AnyTransform,
+) -> tuple[VectorScale | PathScale] | tuple[
+    VectorScale | PathScale, VectorTranslation | PathTranslation
+]:
+    """
+    Convert a 0.6 format transform back to 0.5 format.
+
+    Parameters
+    ----------
+    transform : AnyTransform
+        A 0.6 format transform (Scale, Sequence, Identity, etc.)
+
+    Returns
+    -------
+    tuple
+        A 0.5 format transform tuple (either (Scale,) or (Scale, Translation))
+
+    Raises
+    ------
+    ValueError
+        If an unsupported transform type is encountered.
+
+    Notes
+    -----
+    - Identity transforms are not supported and will raise an error
+    - Sequence transforms must contain exactly 2 transformations: Scale + Translation
+    - Scale and Translation values (not paths) are required for conversion
+    """
+    if isinstance(transform, Scale):
+        # Convert Scale transform to 0.5 format
+        if transform.scale is not None:
+            return (VectorScale(type="scale", scale=list(transform.scale)),)
+        elif transform.path is not None:
+            return (PathScale(type="scale", path=transform.path),)
+        else:
+            raise ValueError("Scale transform must have either 'scale' or 'path'")
+
+    elif isinstance(transform, Identity):
+        raise ValueError(
+            "Identity transforms cannot be converted to v0.5 format. "
+            "Please use Scale with all factors equal to 1."
+        )
+
+    elif isinstance(transform, Sequence):
+        # Sequence should contain Scale and optionally Translation
+        if len(transform.transformations) == 0:
+            raise ValueError(
+                "Sequence transform must contain at least one transformation"
+            )
+
+        elif len(transform.transformations) == 1:
+            # Single transformation in sequence, extract and convert it
+            return _v06_transform_to_v05(transform.transformations[0])
+
+        elif len(transform.transformations) == 2:
+            first = transform.transformations[0]
+            second = transform.transformations[1]
+
+            if not isinstance(first, Scale):
+                raise ValueError(
+                    f"First transformation in Sequence must be Scale, "
+                    f"got {type(first).__name__}"
+                )
+            if not isinstance(second, Translation):
+                raise ValueError(
+                    f"Second transformation in Sequence must be Translation, "
+                    f"got {type(second).__name__}"
+                )
+
+            # Convert scale
+            if first.scale is not None:
+                scale_v05: VectorScale | PathScale = VectorScale(
+                    type="scale", scale=list(first.scale)
+                )
+            elif first.path is not None:
+                scale_v05 = PathScale(type="scale", path=first.path)
+            else:
+                raise ValueError(
+                    "Scale in Sequence must have either scale or path"
+                )
+
+            # Convert translation
+            if second.translation is not None:
+                translation_v05: VectorTranslation | PathTranslation = (
+                    VectorTranslation(
+                        type="translation",
+                        translation=list(second.translation),
+                    )
+                )
+            elif second.path is not None:
+                translation_v05 = PathTranslation(
+                    type="translation", translation=second.path
+                )
+            else:
+                raise ValueError(
+                    "Translation in Sequence must have either translation or path"
+                )
+
+            return (scale_v05, translation_v05)
+
+        else:
+            raise ValueError(
+                f"Sequence with {len(transform.transformations)} transformations "
+                f"is not supported for v0.5 conversion. Expected 1 or 2."
+            )
+
+    else:
+        raise ValueError(
+            f"Unsupported transform type for v0.5 conversion: "
+            f"{type(transform).__name__}. "
+            f"Only Scale, Sequence, and Identity (with limitation) are supported."
+        )
