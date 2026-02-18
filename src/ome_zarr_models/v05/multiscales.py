@@ -34,8 +34,8 @@ from ome_zarr_models.v05.axes import Axes
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
-
     from ome_zarr_models.v04.multiscales import Multiscale as MultiscaleV04
+    from ome_zarr_models._v06.coordinate_transforms import CoordinateSystem as CoordinateSystemV06
 
 
 __all__ = ["Dataset", "Multiscale"]
@@ -56,7 +56,7 @@ class Multiscale(BaseAttrs):
     name: JsonValue | None = None
     type: JsonValue = None
 
-    def to_version(self, version: Literal["0.4"]) -> MultiscaleV04:
+    def to_version(self, version: Literal["0.4", "0.6"], **kwargs) -> MultiscaleV04:
         """
         Convert this Multiscale metadata to the specified version.
 
@@ -64,9 +64,84 @@ class Multiscale(BaseAttrs):
         - 0.5 -> 0.4
         """
         if version == "0.4":
-            return self._to_v04()
+            return self._to_v04(**kwargs)
+        elif version == "0.6":
+            return self._to_v06(**kwargs)
         else:
             raise ValueError(f"Unsupported version conversion: 0.5 -> {version}")
+
+    def _to_v06(
+        self,
+        multiscale_v05: Multiscale,
+        intrinsic_system_name: str,
+        top_level_system: CoordinateSystemV06 | None = None,
+    ) -> Self:
+        """
+        Convert a OME-Zarr 0.5 multiscales to OME-Zarr 0.6.
+
+        Parameters
+        ----------
+        multiscale_v05 :
+            OME-Zarr 0.5 multiscales
+        intrinsic_system_name :
+            Name to give the intrinsic coordinate system in the new multiscales.
+        top_level_system :
+            The coordinate system that the top-level coordinate transform in the
+            multiscales transforms into. If the top-level transform is present, must be
+            given. Otherwise, will not be used.
+        """
+        from ome_zarr_models._v06.multiscales import _v05_transform_to_v06
+        from ome_zarr_models._v06.coordinate_transforms import CoordinateSystem, Axis
+        new_ms = self(
+            datasets=tuple(
+                Dataset(
+                    path=ds.path,
+                    coordinateTransformations=(
+                        _v05_transform_to_v06(ds.coordinateTransformations).model_copy(
+                            update={
+                                "input": ds.path,
+                                "output": intrinsic_system_name,
+                            }
+                        ),
+                    ),
+                )
+                for ds in multiscale_v05.datasets
+            ),
+            coordinateSystems=(
+                CoordinateSystem(
+                    name=intrinsic_system_name,
+                    axes=tuple(
+                        Axis(name=ax.name, type=ax.type, unit=ax.unit)
+                        for ax in multiscale_v05.axes
+                    ),
+                ),
+            ),
+            metadata=multiscale_v05.metadata,
+            name=multiscale_v05.name,
+            type=multiscale_v05.type,
+        )
+        if multiscale_v05.coordinateTransformations is not None:
+            if top_level_system is None:
+                raise ValueError(
+                    "top_level_system must be provided because a top-level "
+                    "coordinate transform is present in the input multiscales."
+                )
+            new_ms = new_ms.model_copy(
+                update={
+                    "coordinateTransformations": (
+                        _v05_transform_to_v06(
+                            multiscale_v05.coordinateTransformations
+                        ).model_copy(
+                            update={
+                                "input": intrinsic_system_name,
+                                "output": top_level_system.name,
+                            }
+                        ),
+                    ),
+                    "coordinateSystems": (*new_ms.coordinateSystems, top_level_system),
+                }
+            )
+        return new_ms
 
     def _to_v04(self) -> MultiscaleV04:
         from ome_zarr_models.v04.axes import Axis as AxisV04
