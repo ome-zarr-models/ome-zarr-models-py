@@ -517,11 +517,103 @@ def test_conversion_v04_to_v05(default_multiscale: Multiscale) -> None:
     Test that converting a v0.4 Multiscale to v0.5 and back again results
     in the same model
     """
-    from ome_zarr_models.v05.multiscales import Multiscale as MultiscaleV05
+    from ome_zarr_models.v05.axes import Axis as AxisV05
+    from ome_zarr_models.v05.multiscales import (
+        Dataset as DatasetV05,
+    )
+    from ome_zarr_models.v05.multiscales import (
+        Multiscale as MultiscaleV05,
+    )
 
+    assert default_multiscale == Multiscale(
+        axes=(
+            Axis(name="c", type="channel", unit=None),
+            Axis(name="z", type="space", unit="meter"),
+            Axis(name="x", type="space", unit="meter"),
+            Axis(name="y", type="space", unit="meter"),
+        ),
+        datasets=(
+            Dataset(
+                path="path0",
+                coordinateTransformations=(
+                    VectorScale(type="scale", scale=[1.0, 1.0, 1.0, 1.0]),
+                    VectorTranslation(
+                        type="translation", translation=[0.0, 0.0, 0.0, 0.0]
+                    ),
+                ),
+            ),
+            Dataset(
+                path="path1",
+                coordinateTransformations=(
+                    VectorScale(type="scale", scale=[1.0, 1.0, 1.0, 1.0]),
+                    VectorTranslation(
+                        type="translation", translation=[0.0, 0.0, 0.0, 0.0]
+                    ),
+                ),
+            ),
+            Dataset(
+                path="path2",
+                coordinateTransformations=(
+                    VectorScale(type="scale", scale=[1.0, 1.0, 1.0, 1.0]),
+                    VectorTranslation(
+                        type="translation", translation=[0.0, 0.0, 0.0, 0.0]
+                    ),
+                ),
+            ),
+        ),
+        coordinateTransformations=(
+            VectorScale(type="scale", scale=[1.0, 1.0, 1.0, 1.0]),
+        ),
+        metadata=None,
+        name=None,
+        type=None,
+        version=None,
+    )
     # test conversion to v05
     multi_v05 = default_multiscale.to_version("0.5")
-    assert isinstance(multi_v05, MultiscaleV05)
+    assert multi_v05 == MultiscaleV05(
+        axes=(
+            AxisV05(name="c", type="channel", unit=None),
+            AxisV05(name="z", type="space", unit="meter"),
+            AxisV05(name="x", type="space", unit="meter"),
+            AxisV05(name="y", type="space", unit="meter"),
+        ),
+        datasets=(
+            DatasetV05(
+                path="path0",
+                coordinateTransformations=(
+                    VectorScale(type="scale", scale=[1.0, 1.0, 1.0, 1.0]),
+                    VectorTranslation(
+                        type="translation", translation=[0.0, 0.0, 0.0, 0.0]
+                    ),
+                ),
+            ),
+            DatasetV05(
+                path="path1",
+                coordinateTransformations=(
+                    VectorScale(type="scale", scale=[1.0, 1.0, 1.0, 1.0]),
+                    VectorTranslation(
+                        type="translation", translation=[0.0, 0.0, 0.0, 0.0]
+                    ),
+                ),
+            ),
+            DatasetV05(
+                path="path2",
+                coordinateTransformations=(
+                    VectorScale(type="scale", scale=[1.0, 1.0, 1.0, 1.0]),
+                    VectorTranslation(
+                        type="translation", translation=[0.0, 0.0, 0.0, 0.0]
+                    ),
+                ),
+            ),
+        ),
+        coordinateTransformations=(
+            VectorScale(type="scale", scale=[1.0, 1.0, 1.0, 1.0]),
+        ),
+        metadata=None,
+        name=None,
+        type=None,
+    )
 
     # ...and back to v04
     multi_v04 = multi_v05.to_version("0.4")
