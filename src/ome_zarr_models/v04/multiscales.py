@@ -35,6 +35,8 @@ from ome_zarr_models.v04.axes import Axes
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
+    from ome_zarr_models.v05.multiscales import Multiscale as MultiscaleV05
+
 
 __all__ = ["Dataset", "Multiscale"]
 
@@ -54,6 +56,44 @@ class Multiscale(BaseAttrs):
     name: JsonValue | None = None
     type: JsonValue = None
     version: Literal["0.4"] | None = None
+
+    def to_version(self, version: Literal["0.5"]) -> MultiscaleV05:
+        """
+        Convert this Multiscale metadata to the specified version.
+
+        Currently supports conversions:
+        - from 0.4 to 0.5
+        """
+        if version == "0.5":
+            return self._to_v05()
+        else:
+            raise ValueError(f"Unsupported version conversion: 0.4 -> {version}")
+
+    def _to_v05(self) -> MultiscaleV05:
+        from ome_zarr_models.v05.axes import Axis as AxisV05
+        from ome_zarr_models.v05.multiscales import (
+            Dataset as DatasetV05,
+        )
+        from ome_zarr_models.v05.multiscales import (
+            Multiscale as MultiscaleV05,
+        )
+
+        return MultiscaleV05(
+            axes=tuple(
+                [AxisV05(name=a.name, type=a.type, unit=a.unit) for a in self.axes]
+            ),
+            datasets=tuple(
+                DatasetV05(
+                    path=d.path,
+                    coordinateTransformations=d.coordinateTransformations,
+                )
+                for d in self.datasets
+            ),
+            coordinateTransformations=self.coordinateTransformations,
+            metadata=self.metadata,
+            name=self.name,
+            type=self.type,
+        )
 
     @model_serializer(mode="wrap")
     def _serialize(

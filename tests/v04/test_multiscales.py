@@ -512,6 +512,23 @@ def test_from_zarr_missing_metadata(
         Image.from_zarr(group)
 
 
+def test_conversion_v04_to_v05(default_multiscale: Multiscale) -> None:
+    """
+    Test that converting a v0.4 Multiscale to v0.5 and back again results
+    in the same model
+    """
+    from ome_zarr_models.v05.multiscales import Multiscale as MultiscaleV05
+
+    # test conversion to v05
+    multi_v05 = default_multiscale.to_version("0.5")
+    assert isinstance(multi_v05, MultiscaleV05)
+
+    # ...and back to v04
+    multi_v04 = multi_v05.to_version("0.4")
+    assert isinstance(multi_v04, Multiscale)
+    assert multi_v04 == default_multiscale
+
+
 def test_from_zarr_missing_array(store: Store) -> None:
     """
     Test that creating a multiscale Group fails when an expected Zarr array is missing
