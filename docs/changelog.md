@@ -4,6 +4,10 @@
 
 Require Python < 3.14. Due to issues with Python 3.14 and `pydantic`, `ome-zarr-models` is not yet compatible with Python 3.14.
 
+### New features
+
+- [ome_zarr_models.v04.Image][] and [ome_zarr_models.v05.Image][] now have methods to convert between OME-Zarr 0.4 and 0.5 models.
+
 ### Documentation improvements
 
 - Improved the layout of metadata class API documentation by putting all attributes in a table.
