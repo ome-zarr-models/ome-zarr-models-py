@@ -1,13 +1,18 @@
 # Changelog
 
-## 1.5.1
+## 1.6
 
 Require Python < 3.14. Due to issues with Python 3.14 and `pydantic`, `ome-zarr-models` is not yet compatible with Python 3.14.
+
+### New features
+
+- [ome_zarr_models.v04.Image][] and [ome_zarr_models.v05.Image][] now have methods to convert between OME-Zarr 0.4 and 0.5 models.
 
 ### Documentation improvements
 
 - Improved the layout of metadata class API documentation by putting all attributes in a table.
 - Added more descriptions to fields describing image-label metadata.
+- Added documentation for the implementation of the next version of OME-Zarr. See [the development groups API reference](api/dev/groups.md) for more information.
 
 ## 1.5
 
