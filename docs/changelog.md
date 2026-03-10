@@ -12,7 +12,7 @@ Require Python < 3.14. Due to issues with Python 3.14 and `pydantic`, `ome-zarr-
 
 - Improved the layout of metadata class API documentation by putting all attributes in a table.
 - Added more descriptions to fields describing image-label metadata.
-- Added documentation for the implementation of the next version of OME-Zarr. See [ome_zarr_models.dev][] for more information.
+- Added documentation for the implementation of the next version of OME-Zarr. See [the development groups API reference](api/dev/groups.md) for more information.
 
 ## 1.5
 
