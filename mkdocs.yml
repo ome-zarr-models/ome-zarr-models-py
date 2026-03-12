@@ -85,6 +85,7 @@ nav:
   - Home: index.md
   - Command line: cli.md
   - Python tutorial: tutorial.py
+  - Version conversion: convert.py
   - How do I...?: how-to.md
   - Metadata fixes: fixes.md
   - API reference:
