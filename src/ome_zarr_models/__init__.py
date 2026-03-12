@@ -127,7 +127,7 @@ def open_ome_zarr(
     groups: Sequence[_AnyGroup]
     match version:
         case None:
-            groups = [*_V05_groups, *_V04_groups]
+            groups = [*_V06_groups, *_V05_groups, *_V04_groups]
         case "0.4":
             groups = _V04_groups
         case "0.5":
