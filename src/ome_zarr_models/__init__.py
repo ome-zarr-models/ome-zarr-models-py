@@ -8,6 +8,7 @@ import ome_zarr_models._v06.hcs
 import ome_zarr_models._v06.image
 import ome_zarr_models._v06.image_label
 import ome_zarr_models._v06.labels
+import ome_zarr_models._v06.scene
 import ome_zarr_models._v06.well
 import ome_zarr_models.v04.bioformats2raw
 import ome_zarr_models.v04.hcs
@@ -74,6 +75,7 @@ _V06_groups: list[type[BaseGroupv06[Any]]] = [
     ome_zarr_models._v06.image.Image,
     ome_zarr_models._v06.labels.Labels,
     ome_zarr_models._v06.well.Well,
+    ome_zarr_models._v06.scene.Scene,
 ]
 
 _ome_zarr_zarr_map: dict[str, Literal[2, 3]] = {"0.4": 2, "0.5": 3, "0.6": 3}
