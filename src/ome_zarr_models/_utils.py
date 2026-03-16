@@ -7,6 +7,7 @@ from __future__ import annotations
 import heapq
 from collections import Counter, defaultdict
 from dataclasses import MISSING, dataclass, fields, is_dataclass
+from functools import total_ordering
 from typing import TYPE_CHECKING, Any, Self, TypeVar
 
 import pydantic
@@ -363,11 +364,25 @@ class TransformGraph:
         for a, graph in self._graph.items():
             edge_weights[a] = dict.fromkeys(graph, 1.0)
 
-        # entries in q are [distance, count, nodeobj, pathlist]
         # count is needed because in py 3.x, tie-breaking fails on the nodes.
         # this way, insertion order is preserved if the weights are the same
-        q = [[0, -1, from_node, []]]
-        q.extend([inf, i, n, []] for i, n in enumerate(nodes) if n is not from_node)
+        @total_ordering
+        @dataclass(frozen=False)
+        class QItem:
+            distance: float
+            count: int
+            node: TransformGraphNode
+            path: list[TransformGraphNode]
+
+            def __lt__(self, other: QItem) -> bool:
+                return (self.distance, self.count) < (other.distance, other.count)
+
+        q = [QItem(distance=0, count=-1, node=from_node, path=[])]
+        q.extend(
+            QItem(distance=inf, count=i, node=n, path=[])
+            for i, n in enumerate(nodes)
+            if n is not from_node
+        )
 
         # this dict will store the distance to node from from_node and the path
         result: dict[TransformGraphNode, list[TransformGraphNode] | None] = {}
@@ -375,31 +390,30 @@ class TransformGraph:
         # definitely starts as a valid heap because of the insert line; from the
         # node to itself is always the shortest distance
         while q:
-            d: float
-            n: TransformGraphNode
-            path: list[TransformGraphNode]
-            d, _, n, path = heapq.heappop(q)  # type: ignore[assignment]
+            qitem = heapq.heappop(q)
 
-            if d == inf:
+            if qitem.distance == inf:
                 # everything left is unreachable from from_node, just copy them to
                 # the results and jump out of the loop
-                result[n] = None
-                for _, _, n, _ in q:  # type: ignore[assignment]
-                    result[n] = None
+                result[qitem.node] = None
+                for qitem_ in q:
+                    result[qitem_.node] = None
                 break
-            result[n] = path
-            path.append(n)
-            if n not in edge_weights:
+            result[qitem.node] = qitem.path
+            qitem.path.append(qitem.node)
+            if qitem.node not in edge_weights:
                 # Not possible to transform from this system
                 continue
-            for n2 in edge_weights[n]:
+            for n2 in edge_weights[qitem.node]:
                 if n2 not in result:  # already visited
                     # find where n2 is in the heap
                     for q_elem in q:
-                        if q_elem[2] == n2:
-                            if (newd := d + edge_weights[n][n2]) < q_elem[0]:  # type: ignore[operator]
-                                q_elem[0] = newd
-                                q_elem[3] = list(path)
+                        if q_elem.node == n2:
+                            if (
+                                newd := qitem.distance + edge_weights[qitem.node][n2]
+                            ) < q_elem.distance:
+                                q_elem.distance = newd
+                                q_elem.path = qitem.path.copy()
                                 heapq.heapify(q)
                             break
                     else:
