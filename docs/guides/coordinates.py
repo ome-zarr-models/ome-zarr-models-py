@@ -7,6 +7,7 @@
 # that are subgroups of the Scene Zarr group.
 
 import zarr
+from IPython.display import SVG, display
 from rich import print
 
 from ome_zarr_models._v06 import Scene
@@ -22,3 +23,28 @@ print(scene.ome_attributes)
 
 # Here we can see that the scene metadata defines one coordinate system and
 # three coordinate transforms.
+#
+# The input to the first two coordinate transforms contain `path` fields.
+# These refer to OME-Zarr image groups stored a Zarr subgroups under the
+# Scene group.
+#
+# This can be verified using the `.images` property to see available images:
+
+print("Images making up the scene:")
+print(scene.images.keys())
+
+# The individual images can also contain their own coordinate transforms and systems.
+#
+# To get a better overview of the complete set of coordinate systems and transforms
+# we can visualize them as a graph where the nodes are systems, connected by
+# directed vertices (arrows) representing the transforms.
+#
+# In `ome-zarr-models` you can do this by getting a transform graph:
+
+transform_graph = scene.transform_graph()
+print(transform_graph)
+
+# To visualize,
+
+svg_string = transform_graph.to_graphviz().pipe(format="svg")
+display(SVG(data=svg_string))
