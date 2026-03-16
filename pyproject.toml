@@ -36,6 +36,7 @@ docs = [
     "rich==14.1.0",
     "griffe-fieldz==0.4.0",
     "fsspec[http]==2025.9.0",
+    "graphviz==0.21",
 ]
 
 [project.scripts]
