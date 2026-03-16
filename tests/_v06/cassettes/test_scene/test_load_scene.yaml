@@ -3,34 +3,10 @@ interactions:
       body: null
       headers: {}
       method: GET
-      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/.zgroup
-    response:
-      body:
-        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000000077fa89-0069b3e463-1b418e0f8-default</RequestId><HostId>1b418e0f8-default-default</HostId></Error>
-      headers:
-        Accept-Ranges:
-          - bytes
-        Connection:
-          - Keep-Alive
-        Content-Length:
-          - "220"
-        Content-Type:
-          - application/xml
-        Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
-        x-amz-request-id:
-          - tx00000000000000077fa89-0069b3e463-1b418e0f8-default
-      status:
-        code: 404
-        message: Not Found
-  - request:
-      body: null
-      headers: {}
-      method: GET
       uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/.zattrs
     response:
       body:
-        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx000000000000000756309-0069b3e463-1b48f1f14-default</RequestId><HostId>1b48f1f14-default-default</HostId></Error>
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx0000000000000007ebd00-0069b84059-1b418e0f8-default</RequestId><HostId>1b418e0f8-default-default</HostId></Error>
       headers:
         Accept-Ranges:
           - bytes
@@ -41,9 +17,9 @@ interactions:
         Content-Type:
           - application/xml
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:37 GMT
         x-amz-request-id:
-          - tx000000000000000756309-0069b3e463-1b48f1f14-default
+          - tx0000000000000007ebd00-0069b84059-1b418e0f8-default
       status:
         code: 404
         message: Not Found
@@ -54,7 +30,7 @@ interactions:
       uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/.zmetadata
     response:
       body:
-        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000000077fa8a-0069b3e463-1b418e0f8-default</RequestId><HostId>1b418e0f8-default-default</HostId></Error>
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx0000000000000007ebd01-0069b84059-1b418e0f8-default</RequestId><HostId>1b418e0f8-default-default</HostId></Error>
       headers:
         Accept-Ranges:
           - bytes
@@ -65,9 +41,33 @@ interactions:
         Content-Type:
           - application/xml
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:37 GMT
         x-amz-request-id:
-          - tx00000000000000077fa8a-0069b3e463-1b418e0f8-default
+          - tx0000000000000007ebd01-0069b84059-1b418e0f8-default
+      status:
+        code: 404
+        message: Not Found
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/.zgroup
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx0000000000000007d4d82-0069b84059-1b57d0792-default</RequestId><HostId>1b57d0792-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "220"
+        Content-Type:
+          - application/xml
+        Date:
+          - Mon, 16 Mar 2026 17:39:37 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d82-0069b84059-1b57d0792-default
       status:
         code: 404
         message: Not Found
@@ -116,13 +116,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:37 GMT
         Etag:
           - '"4db812557427a8f7c51829334c71a3b9"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:48:40 GMT
         x-amz-request-id:
-          - tx00000000000000077fa8b-0069b3e463-1b418e0f8-default
+          - tx0000000000000007d4d83-0069b84059-1b57d0792-default
         x-rgw-object-type:
           - Normal
       status:
@@ -257,13 +257,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:37 GMT
         Etag:
           - '"861196bb0603fccfe44c593df15f6575"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:20 GMT
         x-amz-request-id:
-          - tx00000000000000077fa8c-0069b3e463-1b418e0f8-default
+          - tx0000000000000007ebd02-0069b84059-1b418e0f8-default
         x-rgw-object-type:
           - Normal
       status:
@@ -398,13 +398,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:37 GMT
         Etag:
           - '"861196bb0603fccfe44c593df15f6575"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:20 GMT
         x-amz-request-id:
-          - tx00000000000000075630a-0069b3e463-1b48f1f14-default
+          - tx0000000000000007ebd03-0069b84059-1b418e0f8-default
         x-rgw-object-type:
           - Normal
       status:
@@ -439,13 +439,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:37 GMT
         Etag:
           - '"57a48ee882501b44503c18e2cf53415c"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:18 GMT
         x-amz-request-id:
-          - tx00000000000000077fa8d-0069b3e463-1b418e0f8-default
+          - tx0000000000000007d4d84-0069b84059-1b57d0792-default
         x-rgw-object-type:
           - Normal
       status:
@@ -480,13 +480,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:37 GMT
         Etag:
           - '"8f4f6ab967cc8ca710002f0d5160edcb"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:19 GMT
         x-amz-request-id:
-          - tx00000000000000077fa8e-0069b3e463-1b418e0f8-default
+          - tx0000000000000007d4d85-0069b84059-1b57d0792-default
         x-rgw-object-type:
           - Normal
       status:
@@ -521,13 +521,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:37 GMT
         Etag:
           - '"dca9fc3c20d0a47e751a8a5aa03d4dcc"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:19 GMT
         x-amz-request-id:
-          - tx00000000000000077fa8f-0069b3e463-1b418e0f8-default
+          - tx0000000000000007ebd04-0069b84059-1b418e0f8-default
         x-rgw-object-type:
           - Normal
       status:
@@ -562,13 +562,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:37 GMT
         Etag:
           - '"9d1b30a29e71a91d9da6de3714077c2d"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:19 GMT
         x-amz-request-id:
-          - tx00000000000000075630b-0069b3e463-1b48f1f14-default
+          - tx0000000000000007ebd05-0069b84059-1b418e0f8-default
         x-rgw-object-type:
           - Normal
       status:
@@ -603,13 +603,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:37 GMT
         Etag:
           - '"cc6e954348949bef806a337a9f157d2e"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:20 GMT
         x-amz-request-id:
-          - tx00000000000000077fa90-0069b3e463-1b418e0f8-default
+          - tx0000000000000007d4d86-0069b84059-1b57d0792-default
         x-rgw-object-type:
           - Normal
       status:
@@ -636,13 +636,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:37 GMT
         Etag:
           - '"1aca791965ab8e38a700ac8946911973"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:15 GMT
         x-amz-request-id:
-          - tx00000000000000077fa91-0069b3e463-1b418e0f8-default
+          - tx0000000000000007d4d87-0069b84059-1b57d0792-default
         x-rgw-object-type:
           - Normal
       status:
@@ -669,13 +669,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:37 GMT
         Etag:
           - '"1aca791965ab8e38a700ac8946911973"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:15 GMT
         x-amz-request-id:
-          - tx00000000000000077fa92-0069b3e463-1b418e0f8-default
+          - tx0000000000000007ebd06-0069b84059-1b418e0f8-default
         x-rgw-object-type:
           - Normal
       status:
@@ -786,13 +786,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:37 GMT
         Etag:
           - '"c15a87653bd78ff99f9acd406cb7a59d"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:15 GMT
         x-amz-request-id:
-          - tx00000000000000075630c-0069b3e463-1b48f1f14-default
+          - tx0000000000000007ebd07-0069b84059-1b418e0f8-default
         x-rgw-object-type:
           - Normal
       status:
@@ -826,13 +826,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:37 GMT
         Etag:
           - '"264bcd9f61f5aa22147d32dcf807f51e"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:14 GMT
         x-amz-request-id:
-          - tx00000000000000077fa93-0069b3e463-1b418e0f8-default
+          - tx0000000000000007d4d88-0069b84059-1b57d0792-default
         x-rgw-object-type:
           - Normal
       status:
@@ -866,13 +866,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:37 GMT
         Etag:
           - '"70cd5588af7f324d7220b0cdfca336ad"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:15 GMT
         x-amz-request-id:
-          - tx00000000000000077fa94-0069b3e463-1b418e0f8-default
+          - tx0000000000000007d4d89-0069b84059-1b57d0792-default
         x-rgw-object-type:
           - Normal
       status:
@@ -906,13 +906,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:38 GMT
         Etag:
           - '"948499e39cc7e855612fae4e1c3c1315"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:14 GMT
         x-amz-request-id:
-          - tx00000000000000077fa95-0069b3e463-1b418e0f8-default
+          - tx0000000000000007ebd08-0069b84059-1b418e0f8-default
         x-rgw-object-type:
           - Normal
       status:
@@ -946,13 +946,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:38 GMT
         Etag:
           - '"b7aa1cb53e16d89c6249cbd810380524"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:15 GMT
         x-amz-request-id:
-          - tx00000000000000075630d-0069b3e463-1b48f1f14-default
+          - tx0000000000000007ebd09-0069b8405a-1b418e0f8-default
         x-rgw-object-type:
           - Normal
       status:
@@ -986,13 +986,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:38 GMT
         Etag:
           - '"6c06487da6ec70748ebe467bee70435f"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:15 GMT
         x-amz-request-id:
-          - tx00000000000000077fa96-0069b3e463-1b418e0f8-default
+          - tx0000000000000007d4d8a-0069b8405a-1b57d0792-default
         x-rgw-object-type:
           - Normal
       status:
@@ -1005,7 +1005,7 @@ interactions:
       uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_400_100_400_400_rot10.zarr/labels/channel_0/labels/zarr.json
     response:
       body:
-        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000000077fa97-0069b3e463-1b418e0f8-default</RequestId><HostId>1b418e0f8-default-default</HostId></Error>
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx0000000000000007d4d8b-0069b8405a-1b57d0792-default</RequestId><HostId>1b57d0792-default-default</HostId></Error>
       headers:
         Accept-Ranges:
           - bytes
@@ -1016,9 +1016,9 @@ interactions:
         Content-Type:
           - application/xml
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:38 GMT
         x-amz-request-id:
-          - tx00000000000000077fa97-0069b3e463-1b418e0f8-default
+          - tx0000000000000007d4d8b-0069b8405a-1b57d0792-default
       status:
         code: 404
         message: Not Found
@@ -1151,13 +1151,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:38 GMT
         Etag:
           - '"d11a5b95c67543a63214989b80a054f4"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:25 GMT
         x-amz-request-id:
-          - tx00000000000000077fa98-0069b3e463-1b418e0f8-default
+          - tx0000000000000007ebd0a-0069b8405a-1b418e0f8-default
         x-rgw-object-type:
           - Normal
       status:
@@ -1292,13 +1292,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:38 GMT
         Etag:
           - '"d11a5b95c67543a63214989b80a054f4"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:25 GMT
         x-amz-request-id:
-          - tx00000000000000075630e-0069b3e463-1b48f1f14-default
+          - tx0000000000000007ebd0b-0069b8405a-1b418e0f8-default
         x-rgw-object-type:
           - Normal
       status:
@@ -1333,13 +1333,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:38 GMT
         Etag:
           - '"57a48ee882501b44503c18e2cf53415c"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:23 GMT
         x-amz-request-id:
-          - tx00000000000000077fa99-0069b3e463-1b418e0f8-default
+          - tx0000000000000007d4d8c-0069b8405a-1b57d0792-default
         x-rgw-object-type:
           - Normal
       status:
@@ -1374,13 +1374,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:39 GMT
         Etag:
           - '"8f4f6ab967cc8ca710002f0d5160edcb"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:24 GMT
         x-amz-request-id:
-          - tx00000000000000077fa9a-0069b3e463-1b418e0f8-default
+          - tx0000000000000007d4d8d-0069b8405b-1b57d0792-default
         x-rgw-object-type:
           - Normal
       status:
@@ -1415,13 +1415,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:39 GMT
         Etag:
           - '"dca9fc3c20d0a47e751a8a5aa03d4dcc"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:25 GMT
         x-amz-request-id:
-          - tx00000000000000077fa9b-0069b3e463-1b418e0f8-default
+          - tx0000000000000007ebd0c-0069b8405b-1b418e0f8-default
         x-rgw-object-type:
           - Normal
       status:
@@ -1456,13 +1456,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:39 GMT
         Etag:
           - '"9d1b30a29e71a91d9da6de3714077c2d"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:25 GMT
         x-amz-request-id:
-          - tx00000000000000075630f-0069b3e463-1b48f1f14-default
+          - tx0000000000000007ebd0d-0069b8405b-1b418e0f8-default
         x-rgw-object-type:
           - Normal
       status:
@@ -1497,13 +1497,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:39 GMT
         Etag:
           - '"cc6e954348949bef806a337a9f157d2e"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:25 GMT
         x-amz-request-id:
-          - tx00000000000000077fa9c-0069b3e463-1b418e0f8-default
+          - tx0000000000000007d4d8e-0069b8405b-1b57d0792-default
         x-rgw-object-type:
           - Normal
       status:
@@ -1530,13 +1530,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:39 GMT
         Etag:
           - '"1aca791965ab8e38a700ac8946911973"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:20 GMT
         x-amz-request-id:
-          - tx00000000000000077fa9d-0069b3e463-1b418e0f8-default
+          - tx0000000000000007d4d8f-0069b8405b-1b57d0792-default
         x-rgw-object-type:
           - Normal
       status:
@@ -1563,13 +1563,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:39 GMT
         Etag:
           - '"1aca791965ab8e38a700ac8946911973"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:20 GMT
         x-amz-request-id:
-          - tx00000000000000077fa9e-0069b3e463-1b418e0f8-default
+          - tx0000000000000007ebd0e-0069b8405b-1b418e0f8-default
         x-rgw-object-type:
           - Normal
       status:
@@ -1680,13 +1680,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:39 GMT
         Etag:
           - '"dc58acc4b164d0d5e589942173051829"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:20 GMT
         x-amz-request-id:
-          - tx000000000000000756310-0069b3e463-1b48f1f14-default
+          - tx0000000000000007ebd0f-0069b8405b-1b418e0f8-default
         x-rgw-object-type:
           - Normal
       status:
@@ -1720,13 +1720,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:40 GMT
         Etag:
           - '"264bcd9f61f5aa22147d32dcf807f51e"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:20 GMT
         x-amz-request-id:
-          - tx00000000000000077fa9f-0069b3e463-1b418e0f8-default
+          - tx0000000000000007d4d90-0069b8405b-1b57d0792-default
         x-rgw-object-type:
           - Normal
       status:
@@ -1760,13 +1760,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:40 GMT
         Etag:
           - '"70cd5588af7f324d7220b0cdfca336ad"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:20 GMT
         x-amz-request-id:
-          - tx00000000000000077faa0-0069b3e463-1b418e0f8-default
+          - tx0000000000000007d4d91-0069b8405c-1b57d0792-default
         x-rgw-object-type:
           - Normal
       status:
@@ -1800,13 +1800,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:40 GMT
         Etag:
           - '"948499e39cc7e855612fae4e1c3c1315"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:20 GMT
         x-amz-request-id:
-          - tx00000000000000077faa1-0069b3e463-1b418e0f8-default
+          - tx0000000000000007ebd10-0069b8405c-1b418e0f8-default
         x-rgw-object-type:
           - Normal
       status:
@@ -1840,13 +1840,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:11 GMT
+          - Mon, 16 Mar 2026 17:39:40 GMT
         Etag:
           - '"b7aa1cb53e16d89c6249cbd810380524"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:20 GMT
         x-amz-request-id:
-          - tx000000000000000756311-0069b3e463-1b48f1f14-default
+          - tx0000000000000007ebd11-0069b8405c-1b418e0f8-default
         x-rgw-object-type:
           - Normal
       status:
@@ -1880,13 +1880,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:12 GMT
+          - Mon, 16 Mar 2026 17:39:40 GMT
         Etag:
           - '"6c06487da6ec70748ebe467bee70435f"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:47:20 GMT
         x-amz-request-id:
-          - tx00000000000000077faa2-0069b3e464-1b418e0f8-default
+          - tx0000000000000007d4d92-0069b8405c-1b57d0792-default
         x-rgw-object-type:
           - Normal
       status:
@@ -1899,7 +1899,7 @@ interactions:
       uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_700_700_400_400_rot45.zarr/labels/channel_0/labels/zarr.json
     response:
       body:
-        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000000077faa3-0069b3e464-1b418e0f8-default</RequestId><HostId>1b418e0f8-default-default</HostId></Error>
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx0000000000000007d4d93-0069b8405c-1b57d0792-default</RequestId><HostId>1b57d0792-default-default</HostId></Error>
       headers:
         Accept-Ranges:
           - bytes
@@ -1910,9 +1910,9 @@ interactions:
         Content-Type:
           - application/xml
         Date:
-          - Fri, 13 Mar 2026 10:18:12 GMT
+          - Mon, 16 Mar 2026 17:39:40 GMT
         x-amz-request-id:
-          - tx00000000000000077faa3-0069b3e464-1b418e0f8-default
+          - tx0000000000000007d4d93-0069b8405c-1b57d0792-default
       status:
         code: 404
         message: Not Found
@@ -2038,13 +2038,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:12 GMT
+          - Mon, 16 Mar 2026 17:39:41 GMT
         Etag:
           - '"638b22d4450b04c4e7d939ec33ccde35"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:48:40 GMT
         x-amz-request-id:
-          - tx00000000000000077faa4-0069b3e464-1b418e0f8-default
+          - tx0000000000000007ebd12-0069b8405c-1b418e0f8-default
         x-rgw-object-type:
           - Normal
       status:
@@ -2172,13 +2172,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:12 GMT
+          - Mon, 16 Mar 2026 17:39:41 GMT
         Etag:
           - '"638b22d4450b04c4e7d939ec33ccde35"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:48:40 GMT
         x-amz-request-id:
-          - tx000000000000000756312-0069b3e464-1b48f1f14-default
+          - tx0000000000000007ebd13-0069b8405d-1b418e0f8-default
         x-rgw-object-type:
           - Normal
       status:
@@ -2213,13 +2213,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:12 GMT
+          - Mon, 16 Mar 2026 17:39:41 GMT
         Etag:
           - '"163014e1fa6391827e2dc195a3a45dae"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:48:18 GMT
         x-amz-request-id:
-          - tx00000000000000077faa5-0069b3e464-1b418e0f8-default
+          - tx0000000000000007d4d94-0069b8405d-1b57d0792-default
         x-rgw-object-type:
           - Normal
       status:
@@ -2254,13 +2254,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:12 GMT
+          - Mon, 16 Mar 2026 17:39:41 GMT
         Etag:
           - '"e9f0e35f845fcce2da4b3b31bb8c5027"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:48:33 GMT
         x-amz-request-id:
-          - tx00000000000000077faa6-0069b3e464-1b418e0f8-default
+          - tx0000000000000007d4d95-0069b8405d-1b57d0792-default
         x-rgw-object-type:
           - Normal
       status:
@@ -2295,13 +2295,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:12 GMT
+          - Mon, 16 Mar 2026 17:39:41 GMT
         Etag:
           - '"38d9d203ce9ee86835bc89ba6a906a34"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:48:37 GMT
         x-amz-request-id:
-          - tx00000000000000077faa7-0069b3e464-1b418e0f8-default
+          - tx0000000000000007ebd14-0069b8405d-1b418e0f8-default
         x-rgw-object-type:
           - Normal
       status:
@@ -2336,13 +2336,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:12 GMT
+          - Mon, 16 Mar 2026 17:39:41 GMT
         Etag:
           - '"12212e958098a0bad594165a9e6642bc"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:48:39 GMT
         x-amz-request-id:
-          - tx000000000000000756313-0069b3e464-1b48f1f14-default
+          - tx0000000000000007ebd15-0069b8405d-1b418e0f8-default
         x-rgw-object-type:
           - Normal
       status:
@@ -2377,13 +2377,13 @@ interactions:
         Content-Type:
           - application/json
         Date:
-          - Fri, 13 Mar 2026 10:18:12 GMT
+          - Mon, 16 Mar 2026 17:39:41 GMT
         Etag:
           - '"d69f87980f86779161d4862d5238a165"'
         Last-Modified:
           - Fri, 20 Feb 2026 15:48:40 GMT
         x-amz-request-id:
-          - tx00000000000000077faa8-0069b3e464-1b418e0f8-default
+          - tx0000000000000007d4d96-0069b8405d-1b57d0792-default
         x-rgw-object-type:
           - Normal
       status:
@@ -2396,7 +2396,7 @@ interactions:
       uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_full.zarr/labels/zarr.json
     response:
       body:
-        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx00000000000000077faa9-0069b3e464-1b418e0f8-default</RequestId><HostId>1b418e0f8-default-default</HostId></Error>
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx0000000000000007d4d97-0069b8405d-1b57d0792-default</RequestId><HostId>1b57d0792-default-default</HostId></Error>
       headers:
         Accept-Ranges:
           - bytes
@@ -2407,9 +2407,9 @@ interactions:
         Content-Type:
           - application/xml
         Date:
-          - Fri, 13 Mar 2026 10:18:12 GMT
+          - Mon, 16 Mar 2026 17:39:41 GMT
         x-amz-request-id:
-          - tx00000000000000077faa9-0069b3e464-1b418e0f8-default
+          - tx0000000000000007d4d97-0069b8405d-1b57d0792-default
       status:
         code: 404
         message: Not Found
