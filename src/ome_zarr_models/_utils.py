@@ -244,7 +244,7 @@ GRAPHVIZ_ATTRS = {"fontname": "open-sans"}
 @dataclass(frozen=True)
 class TransformGraphNode:
     name: str
-    path: str | None
+    path: str | None = None
 
     @classmethod
     def from_identifier(cls, identifier: str | CoordinateSystemIdentifier) -> Self:
@@ -255,7 +255,7 @@ class TransformGraphNode:
         if isinstance(identifier, CoordinateSystemIdentifier):
             return cls(name=identifier.name, path=identifier.path)
         else:
-            return cls(name=identifier, path=None)
+            return cls(name=identifier)
 
 
 class TransformGraph:
@@ -334,16 +334,11 @@ class TransformGraph:
         inf = float("inf")
 
         # special-case the 0 or 1-path
-        if to_node is from_node and to_node not in self._graph[from_node]:
+        if to_node is from_node:
             # Means there's no transform necessary to go from it to itself.
             return [to_node]
-        if to_node in self._graph[from_node]:
-            # this will also catch the case where to_node is from_node, but has
-            # a defined transform.
-            return [from_node, to_node]
 
         # otherwise, need to construct the path:
-
         if from_node in self._shortestpaths:
             # already have a cached result
             return self._shortestpaths[from_node].get(to_node)
@@ -371,9 +366,8 @@ class TransformGraph:
         # entries in q are [distance, count, nodeobj, pathlist]
         # count is needed because in py 3.x, tie-breaking fails on the nodes.
         # this way, insertion order is preserved if the weights are the same
-        q: list[tuple[float, int, TransformGraphNode, list[TransformGraphNode]]]
-        q = [(0, -1, from_node, [])]
-        q.extend((inf, i, n, []) for i, n in enumerate(nodes) if n is not from_node)
+        q = [[0, -1, from_node, []]]
+        q.extend([inf, i, n, []] for i, n in enumerate(nodes) if n is not from_node)
 
         # this dict will store the distance to node from from_node and the path
         result: dict[TransformGraphNode, list[TransformGraphNode] | None] = {}
@@ -381,27 +375,31 @@ class TransformGraph:
         # definitely starts as a valid heap because of the insert line; from the
         # node to itself is always the shortest distance
         while q:
-            d, _, n, path = heapq.heappop(q)
+            d: float
+            n: TransformGraphNode
+            path: list[TransformGraphNode]
+            d, _, n, path = heapq.heappop(q)  # type: ignore[assignment]
 
             if d == inf:
                 # everything left is unreachable from from_node, just copy them to
                 # the results and jump out of the loop
                 result[n] = None
-                for _, _, n, _ in q:
+                for _, _, n, _ in q:  # type: ignore[assignment]
                     result[n] = None
                 break
             result[n] = path
             path.append(n)
             if n not in edge_weights:
-                # this is a system that can be transformed to, but not from.
+                # Not possible to transform from this system
                 continue
             for n2 in edge_weights[n]:
                 if n2 not in result:  # already visited
                     # find where n2 is in the heap
                     for q_elem in q:
                         if q_elem[2] == n2:
-                            if (newd := d + edge_weights[n][n2]) < q_elem[0]:
-                                q_elem = (newd, q_elem[1], q_elem[2], list(path))
+                            if (newd := d + edge_weights[n][n2]) < q_elem[0]:  # type: ignore[operator]
+                                q_elem[0] = newd
+                                q_elem[3] = list(path)
                                 heapq.heapify(q)
                             break
                     else:

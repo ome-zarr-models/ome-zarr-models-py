@@ -1,8 +1,7 @@
 import pytest
-import zarr
 
 from ome_zarr_models import open_ome_zarr
-from ome_zarr_models._utils import TransformGraphNode
+from ome_zarr_models._utils import TransformGraph, TransformGraphNode
 from ome_zarr_models._v06 import Scene
 from ome_zarr_models._v06.coordinate_transforms import (
     CoordinateSystemIdentifier,
@@ -16,12 +15,6 @@ SCENE_URL = "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr005
 def test_load_scene() -> None:
     scene = open_ome_zarr(SCENE_URL)
     assert isinstance(scene, Scene)
-
-
-@pytest.mark.default_cassette("test_load_scene.yaml")
-@pytest.mark.vcr
-def test_transform_graph() -> None:
-    scene = Scene.from_zarr(zarr.open_group(SCENE_URL))
     graph = scene.transform_graph()
     assert graph._graph == {
         TransformGraphNode(
@@ -65,3 +58,30 @@ def test_transform_graph() -> None:
             )
         },
     }
+
+
+def test_transform_graph() -> None:
+    graph = TransformGraph()
+    graph.add_transform(
+        Translation(
+            translation=(1, 2, 3),
+            input=CoordinateSystemIdentifier(name="system_1"),
+            output=CoordinateSystemIdentifier(name="system_2"),
+        )
+    )
+    graph.add_transform(
+        Translation(
+            translation=(30, 20, 10),
+            input=CoordinateSystemIdentifier(name="system_2"),
+            output=CoordinateSystemIdentifier(name="system_3"),
+        )
+    )
+
+    assert graph.find_shortest_path(
+        TransformGraphNode(name="system_1"),
+        TransformGraphNode(name="system_3"),
+    ) == [
+        TransformGraphNode(name="system_1"),
+        TransformGraphNode(name="system_2"),
+        TransformGraphNode(name="system_3"),
+    ]
