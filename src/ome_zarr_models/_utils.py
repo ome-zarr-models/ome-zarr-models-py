@@ -508,7 +508,7 @@ class TransformGraph:
         for input_sys in graph._graph:
             for output_sys in graph._graph[input_sys]:
                 # Only add transforms internal to this group
-                if (input_sys.path, output_sys.path) != ("", ""):
+                if (input_sys.path, output_sys.path) != (None, None):
                     continue
                 graphviz_graph.edge(
                     cls._node_key(path, input_sys.name),
