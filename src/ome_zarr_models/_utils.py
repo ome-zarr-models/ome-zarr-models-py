@@ -453,7 +453,7 @@ class TransformGraph:
         graph_gv = graphviz.Digraph()
         # Add main graph
         with graph_gv.subgraph(name="cluster_") as subgraph_gv:
-            self._add_nodes_edges(self, subgraph_gv, path="")
+            self._add_nodes_edges(self, subgraph_gv, path=None)
             if len(self._child_graphs) > 0:
                 subgraph_gv.attr(label="Scene", **GRAPHVIZ_ATTRS)
 
@@ -468,8 +468,11 @@ class TransformGraph:
         for input_sys in self._graph:
             for output_sys in self._graph[input_sys]:
                 # Don't add internal transforms
-                if (input_sys.path, output_sys.path) == ("", ""):
+                if (input_sys.path, output_sys.path) == (None, None):
                     continue
+                print(input_sys.name, output_sys.name)
+                print(input_sys.path, output_sys.path)
+                print()
                 graph_gv.edge(
                     self._node_key(input_sys.path, input_sys.name),
                     self._node_key(output_sys.path, output_sys.name),
