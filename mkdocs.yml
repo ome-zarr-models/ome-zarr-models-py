@@ -86,6 +86,8 @@ nav:
   - Command line: cli.md
   - Python tutorial: tutorial.py
   - Version conversion: convert.py
+  - Guides:
+      - Coordinates: guides/coordinates.py
   - How do I...?: how-to.md
   - Metadata fixes: fixes.md
   - API reference:

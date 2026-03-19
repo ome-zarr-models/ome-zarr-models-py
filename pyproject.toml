@@ -36,6 +36,7 @@ docs = [
     "rich==14.1.0",
     "griffe-fieldz==0.4.0",
     "fsspec[http]==2025.9.0",
+    "graphviz==0.21",
 ]
 
 [project.scripts]
@@ -50,7 +51,7 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 docs = ["ome-zarr-models[docs]"]
-dev = ["mypy==1.18.2", "ruff==0.13.2", "pre-commit==4.3.0"]
+dev = ["mypy==1.18.2", "ruff==0.13.2", "pre-commit==4.3.0", "graphviz==0.21"]
 test = [
     "pytest==8.4.2",
     "pytest-cov==7.0.0",
