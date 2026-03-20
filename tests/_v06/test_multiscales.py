@@ -261,17 +261,17 @@ def test_default_coordinate_systems() -> None:
         coordinateSystems=(
             CoordinateSystem(
                 name="an_other_system",
-                axes=[
-                    Axis(name="x"),
-                    Axis(name="y"),
-                ],
+                axes=(
+                    Axis(name="x", type="space"),
+                    Axis(name="y", type="space"),
+                ),
             ),
             CoordinateSystem(
                 name="physical",
-                axes=[
-                    Axis(name="j"),
-                    Axis(name="i"),
-                ],
+                axes=(
+                    Axis(name="j", type="space"),
+                    Axis(name="i", type="space"),
+                ),
             ),
         ),
         datasets=(
@@ -290,15 +290,15 @@ def test_default_coordinate_systems() -> None:
     assert multiscale.intrinsic_coordinate_system == CoordinateSystem(
         name="physical",
         axes=(
-            Axis(name="j", type=None, discrete=None, unit=None, longName=None),
-            Axis(name="i", type=None, discrete=None, unit=None, longName=None),
+            Axis(name="j", type="space", discrete=None, unit=None, longName=None),
+            Axis(name="i", type="space", discrete=None, unit=None, longName=None),
         ),
     )
     assert multiscale.default_coordinate_system == CoordinateSystem(
         name="an_other_system",
         axes=(
-            Axis(name="x", type=None, discrete=None, unit=None, longName=None),
-            Axis(name="y", type=None, discrete=None, unit=None, longName=None),
+            Axis(name="x", type="space", discrete=None, unit=None, longName=None),
+            Axis(name="y", type="space", discrete=None, unit=None, longName=None),
         ),
     )
 
@@ -327,7 +327,8 @@ def test_from_v05() -> None:
         ms,
         intrinsic_system_name="intrinsic",
         top_level_system=CoordinateSystem(
-            name="top_level", axes=(Axis(name="x"), Axis(name="y"))
+            name="top_level",
+            axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
         ),
     ) == Multiscale(
         coordinateSystems=(
@@ -353,8 +354,12 @@ def test_from_v05() -> None:
             CoordinateSystem(
                 name="top_level",
                 axes=(
-                    Axis(name="x", type=None, discrete=None, unit=None, longName=None),
-                    Axis(name="y", type=None, discrete=None, unit=None, longName=None),
+                    Axis(
+                        name="x", type="space", discrete=None, unit=None, longName=None
+                    ),
+                    Axis(
+                        name="y", type="space", discrete=None, unit=None, longName=None
+                    ),
                 ),
             ),
         ),

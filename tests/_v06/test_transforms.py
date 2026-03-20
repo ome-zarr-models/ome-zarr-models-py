@@ -35,10 +35,10 @@ def wrap_coordinate_transformations_and_systems_into_multiscale(
 ) -> Multiscale:
     extra_cs = CoordinateSystem(
         name=COORDINATE_SYSTEM_NAME_FOR_TESTS,
-        axes=[
-            Axis(name="j"),
-            Axis(name="i"),
-        ],
+        axes=(
+            Axis(name="j", type="space"),
+            Axis(name="i", type="space"),
+        ),
     )
     return Multiscale(
         coordinateTransformations=coordinate_transformations,
@@ -75,7 +75,7 @@ def test_coordinate_system_axes_unique_names() -> None:
 def test_input_output_coordinate_system_valid_for_transformation() -> None:
     axis_names = ["a", "b", "c"]
     cs_names = ["in", "out", "other"]
-    axes = [Axis(name=i) for i in axis_names]
+    axes = tuple(Axis(name=i, type="space") for i in axis_names)
     csystems = tuple([CoordinateSystem(name=i, axes=axes) for i in cs_names])
     invalid_input = (Identity(input="not_working", output="out"),)
     invalid_output = (Identity(input="in", output="not_working"),)
@@ -91,6 +91,7 @@ def test_input_output_coordinate_system_valid_for_transformation() -> None:
             coordinate_systems=csystems, coordinate_transformations=invalid_output
         )
 
+    print(csystems)
     wrap_coordinate_transformations_and_systems_into_multiscale(
         coordinate_systems=csystems, coordinate_transformations=working_transformation
     )

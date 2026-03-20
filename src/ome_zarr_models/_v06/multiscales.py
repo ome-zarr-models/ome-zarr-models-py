@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import typing
+from collections import Counter
 from typing import TYPE_CHECKING, Annotated, Self
 
 from pydantic import (
@@ -21,7 +22,7 @@ from ome_zarr_models._v06.coordinate_transforms import (
     Translation,
 )
 from ome_zarr_models.base import BaseAttrs
-from ome_zarr_models.common.validation import unique_items_validator
+from ome_zarr_models.common.validation import check_length, unique_items_validator
 
 if TYPE_CHECKING:
     from ome_zarr_models.v05.multiscales import Multiscale as Multiscalev05
@@ -30,9 +31,6 @@ if TYPE_CHECKING:
     )
 
 __all__ = ["Dataset", "Multiscale"]
-
-
-VALID_NDIM = (2, 3, 4, 5)
 
 
 class Multiscale(BaseAttrs):
@@ -69,7 +67,7 @@ class Multiscale(BaseAttrs):
         return self.coordinateSystems[0]
 
     @property
-    def intrinsic_coordinate_system(self) -> CoordinateSystem:
+    def intrinsic_coordinate_system(self) -> MultiscaleCoordinateSystem:
         """
         Physical coordinate system.
 
@@ -172,35 +170,6 @@ class Multiscale(BaseAttrs):
             )
         return data
 
-    # TODO: re-implement without assuming type of transform
-    '''
-    @field_validator("datasets", mode="after")
-    @classmethod
-    def _ensure_same_dimensionality_for_all_datasets(
-        cls, datasets: list[Dataset]
-    ) -> list[Dataset]:
-        """
-        Ensure that all datasets have the same dimensionality
-        """
-        dims = []
-        for dataset in datasets:
-            transformation = dataset.coordinateTransformations[0]
-            if isinstance(transformation, Scale):
-                dim = transformation.ndim
-            else:
-                assert isinstance(transformation, Sequence) and isinstance(
-                    transformation.transformations[0], Scale
-                )
-                dim = transformation.transformations[0].ndim
-            dims.append(dim)
-        if len(set(dims)) > 1:
-            raise ValueError(
-                "All `Dataset` instances of a `Multiscale` must have the same "
-                f"dimensionality. Got {dims}."
-            )
-        return datasets
-    '''
-
     @model_validator(mode="after")
     def _ensure_axes_top_transforms(data: Self) -> Self:
         """
@@ -237,13 +206,11 @@ class Multiscale(BaseAttrs):
                     raise ValueError(msg)
         return data
 
-    # TODO: possibly re-implement if the constraint for ordered scales still exists
-    '''
     @field_validator("datasets", mode="after")
     @classmethod
     def _ensure_ordered_scales(cls, datasets: list[Dataset]) -> list[Dataset]:
         """
-        Make sure datasets are ordered from highest resolution to smallest.
+        Make sure datasets are ordered from the highest resolution to smallest.
         """
         scale_transforms: list[Scale] = []
         for dataset in datasets:
@@ -251,9 +218,15 @@ class Multiscale(BaseAttrs):
             if isinstance(transform, Scale):
                 scale_transforms.append(transform)
             else:
-                assert isinstance(transform, Sequence) and isinstance(
-                    transform.transformations[0], Scale
-                )
+                if not isinstance(transform, Sequence):
+                    raise ValueError(
+                        "Transform inside a multiscales must be a scale or sequence"
+                    )
+                if not isinstance(transform.transformations[0], Scale):
+                    raise ValueError(
+                        "Sequence transformation inside a multiscales must start with a "
+                        "scale transform"
+                    )
                 scale = transform.transformations[0]
                 scale_transforms.append(scale)
 
@@ -267,7 +240,6 @@ class Multiscale(BaseAttrs):
                     f"than dataset {i + 1} (scales = {s2})."
                 )
         return datasets
-    '''
 
     @model_validator(mode="after")
     def check_dataset_transform_output(self) -> Self:
@@ -331,6 +303,65 @@ class Multiscale(BaseAttrs):
         except ValueError as e:
             raise ValueError(f"Duplicate coordinate system names: {sys_names}") from e
         return systems
+
+    @model_validator(mode="after")
+    def _validate_axis_length(self) -> Self:
+        """
+        Ensures that there are between 2 and 5 axes (inclusive).
+        """
+        for cs in self.coordinateSystems:
+            check_length(cs.axes, valid_lengths=(2, 3, 4, 5), variable_name="axes")
+        return self
+
+    @model_validator(mode="after")
+    def _ensure_axis_types(self) -> Self:
+        """
+        Ensures that the following conditions are true:
+
+        - there are only 2 or 3 axes with type `space`
+        - the axes with type `space` are last in the list of axes
+        - there is only 1 axis with type `time`
+        - there is only 1 axis with type `channel`
+        - there is only 1 axis with a type that is not `space`, `time`, or `channel`
+        """
+        for cs in self.coordinateSystems:
+            check_length(
+                [ax for ax in cs.axes if ax.type == "space"],
+                valid_lengths=[2, 3],
+                variable_name="space axes",
+            )
+            check_length(
+                [ax for ax in cs.axes if ax.type == "time"],
+                valid_lengths=[0, 1],
+                variable_name="time axes",
+            )
+            check_length(
+                [ax for ax in cs.axes if ax.type == "channel"],
+                valid_lengths=[0, 1],
+                variable_name="channel axes",
+            )
+            check_length(
+                [ax for ax in cs.axes if ax.type not in ["space", "time", "channel"]],
+                valid_lengths=[0, 1],
+                variable_name="custom axes",
+            )
+
+            axis_types = [ax.type for ax in cs.axes]
+            type_census = Counter(axis_types)
+            num_spaces = type_census["space"]
+            if not all(a == "space" for a in axis_types[-num_spaces:]):
+                msg = (
+                    f"All space axes must be at the end of the axes list. "
+                    f"Got axes with order: {axis_types}."
+                )
+                raise ValueError(msg)
+
+            num_times = type_census["time"]
+            if num_times == 1 and axis_types[0] != "time":
+                msg = "Time axis must be at the beginning of axis list."
+                raise ValueError(msg)
+
+        return self
 
 
 class Dataset(BaseAttrs):
