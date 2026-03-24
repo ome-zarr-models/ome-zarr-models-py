@@ -4,6 +4,12 @@ from typing import TYPE_CHECKING, Any, Literal
 import zarr
 import zarr.storage
 
+import ome_zarr_models._v06.hcs
+import ome_zarr_models._v06.image
+import ome_zarr_models._v06.image_label
+import ome_zarr_models._v06.labels
+import ome_zarr_models._v06.scene
+import ome_zarr_models._v06.well
 import ome_zarr_models.v04.bioformats2raw
 import ome_zarr_models.v04.hcs
 import ome_zarr_models.v04.image
@@ -15,6 +21,7 @@ import ome_zarr_models.v05.image
 import ome_zarr_models.v05.image_label
 import ome_zarr_models.v05.labels
 import ome_zarr_models.v05.well
+from ome_zarr_models._v06.base import BaseGroupv06
 from ome_zarr_models.base import BaseGroup
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v05.base import BaseGroupv05
@@ -55,19 +62,32 @@ _V05_groups: list[type[BaseGroupv05[Any]]] = [
     ome_zarr_models.v05.well.Well,
 ]
 
-_ome_zarr_zarr_map: dict[str, Literal[2, 3]] = {
-    "0.4": 2,
-    "0.5": 3,
-}
+_V06_groups: list[type[BaseGroupv06[Any]]] = [
+    ome_zarr_models._v06.hcs.HCS,
+    # ImageLabel does not appear here, as it is impossible to tell the
+    # difference between an ImageLabel and Image group from the metadata
+    #
+    # Instead some custom logic is used to try and construct an
+    # ImageLabel object in open_ome_zarr() below.
+    #
+    # See https://github.com/ome/ngff/issues/339 for more information
+    # and discussion on this change from OME-Zarr 0.4
+    ome_zarr_models._v06.image.Image,
+    ome_zarr_models._v06.labels.Labels,
+    ome_zarr_models._v06.well.Well,
+    ome_zarr_models._v06.scene.Scene,
+]
+
+_ome_zarr_zarr_map: dict[str, Literal[2, 3]] = {"0.4": 2, "0.5": 3, "0.6": 3}
 
 
-_AnyGroup = type[BaseGroupv05[Any] | BaseGroupv04[Any]]
+_AnyGroup = type[BaseGroupv06[Any] | BaseGroupv05[Any] | BaseGroupv04[Any]]
 
 
 def open_ome_zarr(
     group: zarr.Group | zarr.storage.StoreLike,
     *,
-    version: Literal["0.4", "0.5"] | None = None,
+    version: Literal["0.4", "0.5", "0.6"] | None = None,
 ) -> BaseGroup:
     """
     Create an ome-zarr-models object from an existing OME-Zarr group.
@@ -84,7 +104,7 @@ def open_ome_zarr(
     group : zarr.Group, zarr.storage.StoreLike
         Zarr group containing OME-Zarr data. Alternatively any object that can be
         parsed by [zarr.open_group][].
-    version : Literal['0.4', '0.5'], optional
+    version : Literal['0.4', '0.5', '0.6'], optional
         If you know which version of OME-Zarr your data is, you can
         specify it here. If not specified, all versions will be tried.
         The default is None, which means all versions will be tried.
@@ -109,13 +129,15 @@ def open_ome_zarr(
     groups: Sequence[_AnyGroup]
     match version:
         case None:
-            groups = [*_V05_groups, *_V04_groups]
+            groups = [*_V06_groups, *_V05_groups, *_V04_groups]
         case "0.4":
             groups = _V04_groups
         case "0.5":
             groups = _V05_groups
+        case "0.6":
+            groups = _V06_groups
         case _:
-            _versions = ("0.4", "0.5")  # type: ignore[unreachable]
+            _versions = ("0.4", "0.5", "0.6")  # type: ignore[unreachable]
             raise ValueError(
                 f"Unsupported version '{version}', must be one of {_versions}, or None"
             )
@@ -136,6 +158,17 @@ def open_ome_zarr(
     ):
         try:
             return ome_zarr_models.v05.image_label.ImageLabel(
+                attributes=grp.attributes.model_dump(), members=grp.members
+            )
+        except Exception:
+            raise
+
+    elif (
+        isinstance(grp, ome_zarr_models._v06.image.Image)
+        and "image-label" in grp.ome_attributes.model_dump()
+    ):
+        try:
+            return ome_zarr_models._v06.image_label.ImageLabel(
                 attributes=grp.attributes.model_dump(), members=grp.members
             )
         except Exception:
