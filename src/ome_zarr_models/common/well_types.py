@@ -9,7 +9,7 @@ from pydantic import AfterValidator, Field
 
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.validation import (
-    AlphaNumericConstraint,
+    WellImageConstraint,
     unique_items_validator,
 )
 
@@ -21,7 +21,7 @@ class WellImage(BaseAttrs):
     A single image within a well.
     """
 
-    path: Annotated[str, AlphaNumericConstraint]
+    path: Annotated[str, WellImageConstraint]
     acquisition: int | None = Field(
         None, description="A unique identifier within the context of the plate"
     )

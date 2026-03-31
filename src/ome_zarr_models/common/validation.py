@@ -23,6 +23,7 @@ if TYPE_CHECKING:
 
 __all__ = [
     "AlphaNumericConstraint",
+    "WellImageConstraint",
     "RGBHexConstraint",
     "check_array_path",
     "unique_items_validator",
@@ -30,6 +31,9 @@ __all__ = [
 
 AlphaNumericConstraint = StringConstraints(pattern="^[a-zA-Z0-9]*$")
 """Require a string to only contain letters and numbers"""
+
+WellImageConstraint = StringConstraints(pattern="^(?!\.+$)(?!__)[A-Za-z0-9_.-]+$")
+"""Require a string to be a valid well image path"""
 
 RGBHexConstraint = StringConstraints(pattern=r"[0-9a-fA-F]{6}")
 """Require a string to be a valid RGB hex string"""
