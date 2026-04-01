@@ -24,8 +24,8 @@ if TYPE_CHECKING:
 
 __all__ = [
     "AlphaNumericConstraint",
-    "WellImageConstraint",
     "RGBHexConstraint",
+    "WellImageConstraint",
     "check_array_path",
     "unique_items_validator",
 ]
