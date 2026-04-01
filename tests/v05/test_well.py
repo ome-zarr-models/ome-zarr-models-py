@@ -1,9 +1,9 @@
+import pytest
 from zarr.abc.store import Store
 
 from ome_zarr_models.v05.well import Well, WellAttrs
 from ome_zarr_models.v05.well_types import WellImage, WellMeta
 from tests.v05.conftest import json_to_zarr_group
-import pytest
 
 
 def test_well(store: Store) -> None:
@@ -50,8 +50,11 @@ def test_well_image_constraint() -> None:
 
     assert well.get_acquisition_paths() == {1: ["0_1", "1_1"], 2: ["2-1", "3-1"]}
 
+
 def test_well_image_constraint_fails_period() -> None:
-    with pytest.raises(ValueError, match="Well image path must not be only dots, got '.'"):
+    with pytest.raises(
+        ValueError, match="Well image path must not be only dots, got '.'"
+    ):
         WellMeta(
             images=[
                 WellImage(path=".", acquisition=1),
@@ -59,8 +62,11 @@ def test_well_image_constraint_fails_period() -> None:
             version="0.5",
         )
 
+
 def test_well_image_constraint_fails_double_underscore() -> None:
-    with pytest.raises(ValueError, match="Well image path must not start with '__', got '__image'"):
+    with pytest.raises(
+        ValueError, match="Well image path must not start with '__', got '__image'"
+    ):
         WellMeta(
             images=[
                 WellImage(path="__image", acquisition=1),
