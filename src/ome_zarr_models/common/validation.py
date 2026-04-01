@@ -32,7 +32,7 @@ __all__ = [
 AlphaNumericConstraint = StringConstraints(pattern="^[a-zA-Z0-9]*$")
 """Require a string to only contain letters and numbers"""
 
-WellImageConstraint = StringConstraints(pattern="^(?!\.+$)(?!__)[A-Za-z0-9_.-]+$")
+WellImageConstraint = StringConstraints(pattern="^(?!\\.+$)(?!__)[A-Za-z0-9_.-]+$")
 """Require a string to be a valid well image path"""
 
 RGBHexConstraint = StringConstraints(pattern=r"[0-9a-fA-F]{6}")
