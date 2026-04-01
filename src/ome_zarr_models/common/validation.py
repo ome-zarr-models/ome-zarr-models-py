@@ -1,11 +1,12 @@
 # Need to import `annotations` for the pydantic_zarr TypeAlias strings to work
 from __future__ import annotations
 
+import re
 from typing import TYPE_CHECKING, Literal, TypeVar, overload
 
 import zarr
 import zarr.errors
-from pydantic import StringConstraints
+from pydantic import AfterValidator, StringConstraints
 from pydantic_zarr.v2 import AnyArraySpec as AnyArraySpecv2
 from pydantic_zarr.v2 import AnyGroupSpec as AnyGroupSpecv2
 from pydantic_zarr.v2 import ArraySpec as ArraySpecv2
@@ -32,7 +33,29 @@ __all__ = [
 AlphaNumericConstraint = StringConstraints(pattern="^[a-zA-Z0-9]*$")
 """Require a string to only contain letters and numbers"""
 
-WellImageConstraint = StringConstraints(pattern="^(?!\\.+$)(?!__)[A-Za-z0-9_.-]+$")
+_WELL_IMAGE_CHARS = re.compile(r"^[A-Za-z0-9_.-]+$")
+
+
+def _validate_well_image_path(value: str) -> str:
+    """Validate a well image path component.
+
+    Rules:
+    - Only alphanumeric, underscore, dot, and hyphen characters
+    - Must not be only dots (e.g. ".", "..")
+    - Must not start with "__"
+    """
+    if not _WELL_IMAGE_CHARS.match(value):
+        raise ValueError(
+            f"Well image path must only contain [A-Za-z0-9_.-], got {value!r}"
+        )
+    if value.replace(".", "") == "":
+        raise ValueError(f"Well image path must not be only dots, got {value!r}")
+    if value.startswith("__"):
+        raise ValueError(f"Well image path must not start with '__', got {value!r}")
+    return value
+
+
+WellImageConstraint = AfterValidator(_validate_well_image_path)
 """Require a string to be a valid well image path"""
 
 RGBHexConstraint = StringConstraints(pattern=r"[0-9a-fA-F]{6}")
