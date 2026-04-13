@@ -2,8 +2,6 @@
 For reference, see the [image label section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.4/index.html#label-md).
 """
 
-from __future__ import annotations
-
 from typing import Annotated, Self
 
 from pydantic import Field, field_validator, model_validator
