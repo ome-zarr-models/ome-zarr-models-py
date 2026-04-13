@@ -102,7 +102,7 @@ class LabelBase(BaseAttrs):
         """
         if colors is None:
             return None
-        
+
         dupes = duplicates(x.label_value for x in colors)
         if len(dupes) > 0:
             msg = (
