@@ -94,7 +94,9 @@ class LabelBase(BaseAttrs):
         return self
 
     @field_validator("colors", mode="after")
-    def _parse_colors(cls, colors: tuple[Color, ...] | None) -> tuple[Color, ...] | None:
+    def _parse_colors(
+        cls, colors: tuple[Color, ...] | None
+    ) -> tuple[Color, ...] | None:
         """
         Check that color label values are unique.
         """
