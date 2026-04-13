@@ -2,6 +2,8 @@
 For reference, see the [image label section of the OME-Zarr specification](https://ngff.openmicroscopy.org/0.4/index.html#label-md).
 """
 
+from __future__ import annotations
+
 from typing import Annotated, Self
 
 from pydantic import Field, field_validator, model_validator
@@ -92,14 +94,17 @@ class LabelBase(BaseAttrs):
         return self
 
     @field_validator("colors", mode="after")
-    def _parse_colors(
-        cls, colors: tuple[Color, ...] | None
-    ) -> tuple[Color, ...] | None:
+    def _parse_colors(cls, colors: tuple[Color, ...]) -> tuple[Color, ...]:
         """
         Check that color label values are unique.
         """
-        if colors is None:
-            return None
+        # if colors is None:
+        #    msg = (
+        #        "The field `colors` is `None`. `colors` should be a list of "
+        #        "label descriptors."
+        #    )
+        #    warnings.warn(msg, stacklevel=1)
+        
         dupes = duplicates(x.label_value for x in colors)
         if len(dupes) > 0:
             msg = (
