@@ -89,6 +89,14 @@ def test_invalid_rgba() -> None:
         Color(label_value=1, rgba=(255, 255, 3412, 255))
 
 
+def test_null_colors() -> None:
+    """
+    Check that colors=None is valid.
+    """
+    label = Label(colors=None, version="0.4")
+    assert label.colors is None
+
+
 def test_default_source() -> None:
     """
     Check that default image source is '../../'
