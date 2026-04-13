@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import TYPE_CHECKING, Self
 
 from pydantic import Field, JsonValue, model_validator
@@ -15,8 +16,6 @@ from ome_zarr_models.v04.multiscales import Dataset, Multiscale
 from ome_zarr_models.v04.omero import Omero
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
-
     import zarr
 
 
