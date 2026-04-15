@@ -8,6 +8,14 @@ from ome_zarr_models._v06.multiscales import Dataset, Multiscale
 from tests._v06.conftest import json_to_zarr_group
 
 
+def test_null_colors() -> None:
+    """
+    Check that colors=None is valid.
+    """
+    label = Label(colors=None)
+    assert label.colors is None
+
+
 def test_image_label(store: Store) -> None:
     zarr_group = json_to_zarr_group(json_fname="image_label_example.json", store=store)
     zarr_group.create_array(
