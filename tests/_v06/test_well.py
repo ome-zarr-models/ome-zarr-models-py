@@ -52,9 +52,7 @@ def test_well_image_constraint() -> None:
 
 
 def test_well_image_constraint_fails_period() -> None:
-    with pytest.raises(
-        ValueError, match="Well image path must not be only dots, got '.'"
-    ):
+    with pytest.raises(ValueError, match="Invalid node name"):
         WellMeta(
             images=[
                 WellImage(path=".", acquisition=1),
@@ -64,9 +62,7 @@ def test_well_image_constraint_fails_period() -> None:
 
 
 def test_well_image_constraint_fails_double_underscore() -> None:
-    with pytest.raises(
-        ValueError, match="Well image path must not start with '__', got '__image'"
-    ):
+    with pytest.raises(ValueError, match="Invalid node name"):
         WellMeta(
             images=[
                 WellImage(path="__image", acquisition=1),

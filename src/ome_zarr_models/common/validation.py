@@ -25,38 +25,32 @@ if TYPE_CHECKING:
 __all__ = [
     "AlphaNumericConstraint",
     "RGBHexConstraint",
-    "WellImageConstraint",
     "check_array_path",
     "unique_items_validator",
+    "validate_zarr_node",
 ]
 
 AlphaNumericConstraint = StringConstraints(pattern="^[a-zA-Z0-9]*$")
 """Require a string to only contain letters and numbers"""
 
-_WELL_IMAGE_CHARS = re.compile(r"^[A-Za-z0-9_.-]+$")
 
-
-def _validate_well_image_path(value: str) -> str:
-    """Validate a well image path component.
+def validate_zarr_node(value: str) -> str:
+    """
+    Validate a node name per the
+    `zarr v3 node naming spec <https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html#node-names>`_.
 
     Rules:
-    - Only alphanumeric, underscore, dot, and hyphen characters
-    - Must not be only dots (e.g. ".", "..")
-    - Must not start with "__"
+    - Must not be empty
+    - Must not contain '/'
+    - Must not be '.' or '..'
+    - Must not start with '__'
     """
-    if not _WELL_IMAGE_CHARS.match(value):
-        raise ValueError(
-            f"Well image path must only contain [A-Za-z0-9_.-], got {value!r}"
-        )
-    if value.replace(".", "") == "":
-        raise ValueError(f"Well image path must not be only dots, got {value!r}")
-    if value.startswith("__"):
-        raise ValueError(f"Well image path must not start with '__', got {value!r}")
+    if not value:
+        raise ValueError("Node name must not be empty")
+    if "/" in value or value in (".", "..") or value.startswith("__"):
+        raise ValueError(f"Invalid node name: {value!r}")
     return value
 
-
-WellImageConstraint = AfterValidator(_validate_well_image_path)
-"""Require a string to be a valid well image path"""
 
 RGBHexConstraint = StringConstraints(pattern=r"[0-9a-fA-F]{6}")
 """Require a string to be a valid RGB hex string"""

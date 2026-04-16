@@ -37,39 +37,11 @@ def test_get_paths() -> None:
     assert well.get_acquisition_paths() == {1: ["0", "1"], 2: ["2", "3"]}
 
 
-def test_well_image_constraint() -> None:
-    well = WellMeta(
-        images=[
-            WellImage(path="0_1", acquisition=1),
-            WellImage(path="1_1", acquisition=1),
-            WellImage(path="2-1", acquisition=2),
-            WellImage(path="3-1", acquisition=2),
-        ],
-        version="0.5",
-    )
-
-    assert well.get_acquisition_paths() == {1: ["0_1", "1_1"], 2: ["2-1", "3-1"]}
-
-
-def test_well_image_constraint_fails_period() -> None:
-    with pytest.raises(
-        ValueError, match="Well image path must not be only dots, got '.'"
-    ):
+def test_well_image_constraint_fails_non_alphanumeric() -> None:
+    with pytest.raises(ValueError, match="String should match pattern"):
         WellMeta(
             images=[
-                WellImage(path=".", acquisition=1),
-            ],
-            version="0.5",
-        )
-
-
-def test_well_image_constraint_fails_double_underscore() -> None:
-    with pytest.raises(
-        ValueError, match="Well image path must not start with '__', got '__image'"
-    ):
-        WellMeta(
-            images=[
-                WellImage(path="__image", acquisition=1),
+                WellImage(path="0_1", acquisition=1),
             ],
             version="0.5",
         )
