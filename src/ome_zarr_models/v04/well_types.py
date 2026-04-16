@@ -8,7 +8,10 @@ from pydantic import AfterValidator, Field
 
 import ome_zarr_models.common.well_types
 from ome_zarr_models.base import BaseAttrs
-from ome_zarr_models.common.validation import AlphaNumericConstraint, unique_items_validator
+from ome_zarr_models.common.validation import (
+    AlphaNumericConstraint,
+    unique_items_validator,
+)
 
 __all__ = ["WellImage", "WellMeta"]
 
@@ -29,7 +32,7 @@ class WellMeta(ome_zarr_models.common.well_types.WellMeta):
     Metadata for a single well.
     """
 
-    images: Annotated[list[WellImage], AfterValidator(unique_items_validator)] = Field(
+    images: Annotated[list[WellImage], AfterValidator(unique_items_validator)] = Field(  # type: ignore[assignment]
         ..., description="Images within a well"
     )
     version: Literal["0.4"] | None = Field(

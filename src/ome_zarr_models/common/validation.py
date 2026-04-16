@@ -1,12 +1,11 @@
 # Need to import `annotations` for the pydantic_zarr TypeAlias strings to work
 from __future__ import annotations
 
-import re
 from typing import TYPE_CHECKING, Literal, TypeVar, overload
 
 import zarr
 import zarr.errors
-from pydantic import AfterValidator, StringConstraints
+from pydantic import StringConstraints
 from pydantic_zarr.v2 import AnyArraySpec as AnyArraySpecv2
 from pydantic_zarr.v2 import AnyGroupSpec as AnyGroupSpecv2
 from pydantic_zarr.v2 import ArraySpec as ArraySpecv2
