@@ -1,4 +1,5 @@
 import re
+from asyncio import gather
 
 import pytest
 import zarr
@@ -11,7 +12,8 @@ from ome_zarr_models.v05.image import Image, ImageAttrs
 from ome_zarr_models.v05.labels import LabelsAttrs
 from ome_zarr_models.v05.multiscales import Dataset, Multiscale
 from tests.v05.conftest import json_to_dict, json_to_zarr_group
-
+from pydantic_zarr.v3 import ArraySpec
+import numpy as np
 
 def make_valid_image_group(store: Store) -> zarr.Group:
     zarr_group = json_to_zarr_group(json_fname="image_example.json", store=store)
@@ -249,3 +251,35 @@ def test_image_with_labels_mismatch_multiscales(store: Store) -> None:
         ),
     ):
         Image.from_zarr(zarr_group)
+
+@pytest.mark.asyncio
+async def test_to_zarr(store: Store) -> None:
+    """
+    Check that to_zarr() serialises correctly to a store.
+    """
+    image = Image.new(
+        array_specs=[ArraySpec.from_array(np.zeros((10, 10)), dimension_names=["x", "y"])],
+        paths=["0"],
+        axes=[
+            Axis(name='x', type="space", unit='micrometer'),
+            Axis(name='y', type="space", unit='micrometer'),
+        ],
+        name='name',
+        multiscale_type="local mean",
+        metadata={
+            "description": "Downscaled using local mean in 2x2x2 blocks.",
+            "method": "skimage.measure.block_reduce",
+            "version": "0.24.0",
+            "kwargs": {"block_size": 2, "func": "np.mean"},
+        },
+        scales=[(2, 2)],
+        translations=[
+            (
+                (1, 1)
+            )
+        ],
+    )
+    assert image.members == {'0': ArraySpec(zarr_format=3, node_type='array', attributes={}, shape=(10, 10), data_type='float64', chunk_grid={'name': 'regular', 'configuration': {'chunk_shape': (10, 10)}}, chunk_key_encoding={'name': 'default', 'configuration': {'separator': '/'}}, fill_value='NaN', codecs=({'name': 'bytes'},), storage_transformers=(), dimension_names=('x', 'y'))}
+    image.to_zarr(store=store, path="/")
+    assert '0' in zarr.open_group(store)
+    assert isinstance(zarr.open_array(store, path="0"),zarr.Array)
