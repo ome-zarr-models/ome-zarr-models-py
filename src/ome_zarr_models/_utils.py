@@ -246,15 +246,12 @@ class TransformGraphNode:
     path: str | None
 
     @classmethod
-    def from_identifier(cls, identifier: str | CoordinateSystemIdentifier) -> Self:
+    def from_identifier(cls, identifier: CoordinateSystemIdentifier) -> Self:
         from ome_zarr_models._v06.coordinate_transforms import (
             CoordinateSystemIdentifier,
         )
 
-        if isinstance(identifier, CoordinateSystemIdentifier):
-            return cls(name=identifier.name, path=identifier.path)
-        else:
-            return cls(name=identifier, path=None)
+        return cls(name=identifier.name, path=identifier.path)
 
 
 class TransformGraph:
