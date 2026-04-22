@@ -1,6 +1,6 @@
 from zarr.abc.store import Store
 
-from ome_zarr_models._v06.coordinate_transforms import Axis, CoordinateSystem, Scale
+from ome_zarr_models._v06.coordinate_transforms import Axis, CoordinateSystem, Scale, CoordinateSystemIdentifier
 from ome_zarr_models._v06.image_label import ImageLabel, ImageLabelAttrs
 from ome_zarr_models._v06.image_label_types import Color, Label, Source
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
@@ -56,70 +56,70 @@ def test_image_label(store: Store) -> None:
                 coordinateSystems=(
                     CoordinateSystem(
                         name="coord_sys0",
-                        axes=[
+                        axes=(
                             Axis(name="t", type="time", unit="millisecond"),
                             Axis(name="c", type="channel", unit=None),
                             Axis(name="z", type="space", unit="micrometer"),
                             Axis(name="y", type="space", unit="micrometer"),
                             Axis(name="x", type="space", unit="micrometer"),
-                        ],
+                        ),
                     ),
                     CoordinateSystem(
                         name="coord_sys1",
-                        axes=[
+                        axes=(
                             Axis(name="t", type="time", unit="millisecond"),
                             Axis(name="c", type="channel", unit=None),
                             Axis(name="z", type="space", unit="micrometer"),
                             Axis(name="y", type="space", unit="micrometer"),
                             Axis(name="x", type="space", unit="micrometer"),
-                        ],
+                        ),
                     ),
                 ),
                 datasets=(
                     Dataset(
                         path="0",
-                        coordinateTransformations=[
+                        coordinateTransformations=(
                             Scale(
                                 type="scale",
-                                input="0",
-                                output="coord_sys0",
+                                input=CoordinateSystemIdentifier(path="0"),
+                                output=CoordinateSystemIdentifier(name="coord_sys0"),
                                 name=None,
-                                scale=[1.0, 1.0, 0.5, 0.5, 0.5],
-                            )
-                        ],
+                                scale=(1.0, 1.0, 0.5, 0.5, 0.5),
+                            ),
+                        ),
                     ),
                     Dataset(
                         path="1",
-                        coordinateTransformations=[
+                        coordinateTransformations=(
                             Scale(
                                 type="scale",
-                                input="1",
-                                output="coord_sys0",
+                                input=CoordinateSystemIdentifier(path="1"),
+                                output=CoordinateSystemIdentifier(name="coord_sys0"),
                                 name=None,
-                                scale=[1.0, 1.0, 1.0, 1.0, 1.0],
-                            )
-                        ],
+                                scale=(1.0, 1.0, 1.0, 1.0, 1.0),
+                            ),
+                        ),
                     ),
                     Dataset(
                         path="2",
-                        coordinateTransformations=[
+                        coordinateTransformations=(
                             Scale(
                                 type="scale",
-                                input="2",
-                                output="coord_sys0",
+                                input=CoordinateSystemIdentifier(path="2"),
+                                output=CoordinateSystemIdentifier(name="coord_sys0"),
                                 name=None,
-                                scale=[1.0, 1.0, 2.0, 2.0, 2.0],
-                            )
-                        ],
+                                scale=(1.0, 1.0, 2.0, 2.0, 2.0),
+                            ),
+                        ),
                     ),
                 ),
                 coordinateTransformations=(
                     Scale(
                         type="scale",
-                        input="coord_sys0",
-                        output="coord_sys1",
+                        input=CoordinateSystemIdentifier(name="coord_sys0"),
+                        output=CoordinateSystemIdentifier(name="coord_sys1"),
                         name=None,
-                        scale=[0.1, 1.0, 1.0, 1.0, 1.0],
+                        scale=(0.1, 1.0, 1.0, 1.0, 1.0),
                     ),
                 ),
                 metadata={
