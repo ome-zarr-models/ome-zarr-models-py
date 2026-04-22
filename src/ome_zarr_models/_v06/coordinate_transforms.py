@@ -710,10 +710,17 @@ class Bijection(Transform):
             ) from e
 
 
-class ByDimensionTransform(BaseAttrs):
-    transformation: "AnyTransform" = Field(..., description="Transformation.")
-    input_axes: tuple[int, ...] = Field(..., description="Input axis indices.")
-    output_axes: tuple[int, ...] = Field(..., description="Output axis indices.")
+class ByDimensionTransformation(BaseAttrs):
+    """
+    A transformation item within a byDimension coordinate transformation.
+
+    Per RFC-5, each transformation within a byDimension must specify which
+    axes it operates on via input_axes and output_axes.
+    """
+
+    transformation: "AnyTransform" = Field(..., description="The coordinate transformation.")
+    input_axes: tuple[int, ...] = Field(..., description="Input axes indices.")
+    output_axes: tuple[int, ...] = Field(..., description="Output axes indices.")
 
 
 class ByDimension(Transform):
@@ -722,7 +729,7 @@ class ByDimension(Transform):
     """
 
     type: Literal["byDimension"] = "byDimension"
-    transformations: tuple[ByDimensionTransform, ...] = Field(
+    transformations: tuple[ByDimensionTransformation, ...] = Field(
         ..., description="Transformations."
     )
 
@@ -754,3 +761,6 @@ AnyTransform = Annotated[
     | ByDimension,
     Field(discriminator="type"),
 ]
+
+# Rebuild models to resolve forward references
+ByDimensionTransformation.model_rebuild()
