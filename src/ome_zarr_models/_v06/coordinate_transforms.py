@@ -616,8 +616,8 @@ class Displacements(Transform):
 
     type: Literal["displacements"] = "displacements"
     path: str = Field(..., description="Path to the Zarr array displacement field.")
-    interpolation: str = Field(
-        ..., description="Interpolation method to be used when applying the transform."
+    interpolation: str | None = Field(
+        default=None, description="Interpolation method to be used when applying the transform (default: 'linear')."
     )
 
     @property
@@ -648,8 +648,8 @@ class Coordinates(Transform):
     path: str = Field(
         ..., description="Path to the Zarr array containing the coordinate mapping."
     )
-    interpolation: str = Field(
-        ...,
+    interpolation: str | None = Field(
+        default=None,
         description="Interpolation scheme that should be used when applying"
         " the transform.",
     )
