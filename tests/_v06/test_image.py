@@ -390,7 +390,7 @@ def test_transform_graph() -> None:
                 path=None,
             )
         },
-        TransformGraphNode(name="0", path=None): {
+        TransformGraphNode(name=None, path="0"): {
             TransformGraphNode(name="coord_sys0", path=None): Scale(
                 type="scale",
                 input=CoordinateSystemIdentifier(path="0"),
@@ -400,7 +400,7 @@ def test_transform_graph() -> None:
                 path=None,
             )
         },
-        TransformGraphNode(name="1", path=None): {
+        TransformGraphNode(name=None, path="1"): {
             TransformGraphNode(name="coord_sys0", path=None): Scale(
                 type="scale",
                 input=CoordinateSystemIdentifier(path="1"),
@@ -410,7 +410,7 @@ def test_transform_graph() -> None:
                 path=None,
             )
         },
-        TransformGraphNode(name="2", path=None): {
+        TransformGraphNode(name=None, path="2"): {
             TransformGraphNode(name="coord_sys0", path=None): Scale(
                 type="scale",
                 input=CoordinateSystemIdentifier(path="2"),
