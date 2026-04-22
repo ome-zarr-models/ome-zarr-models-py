@@ -4,10 +4,8 @@ Private utilities.
 
 from __future__ import annotations
 
-import heapq
 from collections import Counter, defaultdict
 from dataclasses import MISSING, dataclass, fields, is_dataclass
-from functools import total_ordering
 from typing import TYPE_CHECKING, Any, Self, TypeVar
 
 import pydantic
@@ -245,7 +243,7 @@ GRAPHVIZ_ATTRS = {"fontname": "open-sans"}
 @dataclass(frozen=True)
 class TransformGraphNode:
     name: str
-    path: str | None = None
+    path: str | None
 
     @classmethod
     def from_identifier(cls, identifier: str | CoordinateSystemIdentifier) -> Self:
@@ -256,17 +254,13 @@ class TransformGraphNode:
         if isinstance(identifier, CoordinateSystemIdentifier):
             return cls(name=identifier.name, path=identifier.path)
         else:
-            return cls(name=identifier)
+            return cls(name=identifier, path=None)
 
 
 class TransformGraph:
     """
     A graph representing coordinate transforms.
     """
-
-    # This implementation is a modified version of the astropy implementation
-    # See the LICENCE_ASTROPY file next to this one for a copy of the full
-    # astropy licence.
 
     def __init__(self) -> None:
         # Mapping from input coordinate system to a dict of {output_system: transform}
@@ -278,25 +272,18 @@ class TransformGraph:
         # Mapping from path to child transform graphs
         # If this graph is a child image already, this dictionary stays empty.
         self._child_graphs: dict[str, TransformGraph] = {}
-        # Cache of paths between systems
-        self._shortestpaths: dict[
-            TransformGraphNode,
-            dict[TransformGraphNode, list[TransformGraphNode] | None],
-        ] = {}
 
     def add_system(self, system: CoordinateSystem) -> None:
         """
         Add a named coordinate system to the graph.
         """
         self._systems[system.name] = system
-        self._shortestpaths = {}
 
     def add_subgraph(self, path: str, graph: TransformGraph) -> None:
         """
         Add a subgraph to this graph.
         """
         self._child_graphs[path] = graph
-        self._shortestpaths = {}
 
     def add_transform(self, transform: Transform) -> None:
         """
@@ -307,121 +294,6 @@ class TransformGraph:
         input_ = TransformGraphNode.from_identifier(transform.input)
         output_ = TransformGraphNode.from_identifier(transform.output)
         self._graph[input_][output_] = transform
-        self._shortestpaths = {}
-
-    def find_shortest_path(
-        self, from_node: TransformGraphNode, to_node: TransformGraphNode
-    ) -> list[TransformGraphNode] | None:
-        """
-        Computes the shortest distance along the transform graph from
-        one system to another.
-
-        Parameters
-        ----------
-        from_node : TransformGraphNode
-            The coordinate frame class to start from.
-        to_node : TransformGraphNode
-            The coordinate frame class to transform into.
-
-        Returns
-        -------
-        path : list of class or None
-            The path from `from_node` to `to_node` as an in-order sequence
-            of TransformGraphNodes.  This list includes *both* ``from_node`` and
-            `to_node`. Is `None` if there is no possible path.
-        """
-        # Copied from astropy with minor variations, under a BSD-3 licence.
-        # See the LICENCE_ASTROPY file next to this one for a copy of the full licence.
-        inf = float("inf")
-
-        # special-case the 0 or 1-path
-        if to_node is from_node:
-            # Means there's no transform necessary to go from it to itself.
-            return [to_node]
-
-        # otherwise, need to construct the path:
-        if from_node in self._shortestpaths:
-            # already have a cached result
-            return self._shortestpaths[from_node].get(to_node)
-
-        # use Dijkstra's algorithm to find shortest path in all other cases
-
-        # We store nodes as `dict` keys because differently from `list` uniqueness is
-        # guaranteed and differently from `set` insertion order is preserved.
-        nodes: dict[TransformGraphNode, TransformGraphNode | None] = {}
-        for node, node_graph in self._graph.items():
-            nodes[node] = None
-            nodes |= dict.fromkeys(node_graph)
-
-        if from_node not in nodes or to_node not in nodes:
-            # from_node or to_node are isolated or not registered, so there's
-            # certainly no way to get from one to the other
-            return None
-
-        edge_weights = {}
-        # construct another graph that is a dict of dicts of priorities
-        # (used as edge weights in Dijkstra's algorithm)
-        for a, graph in self._graph.items():
-            edge_weights[a] = dict.fromkeys(graph, 1.0)
-
-        # count is needed because in py 3.x, tie-breaking fails on the nodes.
-        # this way, insertion order is preserved if the weights are the same
-        @total_ordering
-        @dataclass(frozen=False)
-        class QItem:
-            distance: float
-            count: int
-            node: TransformGraphNode
-            path: list[TransformGraphNode]
-
-            def __lt__(self, other: QItem) -> bool:
-                return (self.distance, self.count) < (other.distance, other.count)
-
-        q = [QItem(distance=0, count=-1, node=from_node, path=[])]
-        q.extend(
-            QItem(distance=inf, count=i, node=n, path=[])
-            for i, n in enumerate(nodes)
-            if n is not from_node
-        )
-
-        # this dict will store the distance to node from from_node and the path
-        result: dict[TransformGraphNode, list[TransformGraphNode] | None] = {}
-
-        # definitely starts as a valid heap because of the insert line; from the
-        # node to itself is always the shortest distance
-        while q:
-            qitem = heapq.heappop(q)
-
-            if qitem.distance == inf:
-                # everything left is unreachable from from_node, just copy them to
-                # the results and jump out of the loop
-                result[qitem.node] = None
-                for qitem_ in q:
-                    result[qitem_.node] = None
-                break
-            result[qitem.node] = qitem.path
-            qitem.path.append(qitem.node)
-            if qitem.node not in edge_weights:
-                # Not possible to transform from this system
-                continue
-            for n2 in edge_weights[qitem.node]:
-                if n2 not in result:  # already visited
-                    # find where n2 is in the heap
-                    for q_elem in q:
-                        if q_elem.node == n2:
-                            if (
-                                newd := qitem.distance + edge_weights[qitem.node][n2]
-                            ) < q_elem.distance:
-                                q_elem.distance = newd
-                                q_elem.path = qitem.path.copy()
-                                heapq.heapify(q)
-                            break
-                    else:
-                        raise ValueError("n2 not in heap - this should be impossible!")
-
-        # cache for later use
-        self._shortestpaths[from_node] = result
-        return result[to_node]
 
     @property
     def _path_system_names(self) -> set[str]:
@@ -453,7 +325,7 @@ class TransformGraph:
         graph_gv = graphviz.Digraph()
         # Add main graph
         with graph_gv.subgraph(name="cluster_") as subgraph_gv:
-            self._add_nodes_edges(self, subgraph_gv, path=None)
+            self._add_nodes_edges(self, subgraph_gv, path="")
             if len(self._child_graphs) > 0:
                 subgraph_gv.attr(label="Scene", **GRAPHVIZ_ATTRS)
 
@@ -468,11 +340,8 @@ class TransformGraph:
         for input_sys in self._graph:
             for output_sys in self._graph[input_sys]:
                 # Don't add internal transforms
-                if (input_sys.path, output_sys.path) == (None, None):
+                if (input_sys.path, output_sys.path) == ("", ""):
                     continue
-                print(input_sys.name, output_sys.name)
-                print(input_sys.path, output_sys.path)
-                print()
                 graph_gv.edge(
                     self._node_key(input_sys.path, input_sys.name),
                     self._node_key(output_sys.path, output_sys.name),
@@ -511,7 +380,7 @@ class TransformGraph:
         for input_sys in graph._graph:
             for output_sys in graph._graph[input_sys]:
                 # Only add transforms internal to this group
-                if (input_sys.path, output_sys.path) != (None, None):
+                if (input_sys.path, output_sys.path) != ("", ""):
                     continue
                 graphviz_graph.edge(
                     cls._node_key(path, input_sys.name),

@@ -616,6 +616,9 @@ class Displacements(Transform):
 
     type: Literal["displacements"] = "displacements"
     path: str = Field(..., description="Path to the Zarr array displacement field.")
+    interpolation: str = Field(
+        ..., description="Interpolation method to be used when applying the transform."
+    )
 
     @property
     def has_inverse(self) -> bool:
@@ -644,6 +647,11 @@ class Coordinates(Transform):
     type: Literal["coordinates"] = "coordinates"
     path: str = Field(
         ..., description="Path to the Zarr array containing the coordinate mapping."
+    )
+    interpolation: str = Field(
+        ...,
+        description="Interpolation scheme that should be used when applying"
+        " the transform.",
     )
 
     @property
@@ -702,19 +710,13 @@ class Bijection(Transform):
             ) from e
 
 
-class ByDimensionTransform(BaseAttrs):
-    transformation: "AnyTransform" = Field(..., description="Transformation.")
-    input_axes: tuple[int, ...] = Field(..., description="Input axis indices.")
-    output_axes: tuple[int, ...] = Field(..., description="Output axis indices.")
-
-
 class ByDimension(Transform):
     """
     A transform that operates on a subset of dimensions.
     """
 
     type: Literal["byDimension"] = "byDimension"
-    transformations: tuple[ByDimensionTransform, ...] = Field(
+    transformations: tuple["AnyTransform", ...] = Field(
         ..., description="Transformations."
     )
 
