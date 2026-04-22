@@ -14,6 +14,7 @@ from ome_zarr_models._v06.coordinate_transforms import (
     Sequence,
     Transform,
     Translation,
+    CoordinateSystemIdentifier
 )
 
 
@@ -63,10 +64,10 @@ def test_no_parameters(transform_cls: type[Transform]) -> None:
 def test_inverse(transform: Transform, inverse_expected: Transform) -> None:
     # Manually set coordinate systems to check they're correctly swapped in inverse
     transform = transform.model_copy(
-        update={"input": "input_system", "output": "output_system"}
+        update={"input": CoordinateSystemIdentifier(name="input_system"), "output": CoordinateSystemIdentifier(name="output_system")}
     )
     inverse_expect = inverse_expected.model_copy(
-        update={"input": "output_system", "output": "input_system"}
+        update={"input": CoordinateSystemIdentifier(name="output_system"), "output": CoordinateSystemIdentifier(name="input_system")}
     )
     assert transform.get_inverse() == inverse_expect
 
