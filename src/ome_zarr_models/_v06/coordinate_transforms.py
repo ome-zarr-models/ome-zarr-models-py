@@ -70,14 +70,14 @@ class CoordinateSystemIdentifier(BaseAttrs):
     relative to the current Zarr group.
     """
 
-    name: str = Field(..., description="Coordinate system name.")
+    name: str | None = Field(
+        default=None,
+        description="Coordinate system name."
+        )
     path: str | None = Field(
         default=None,
-        description="Path to Zarr group where the coordinate system is defined.",
+        description="Path to Zarr group.",
     )
-
-
-TCoordSysIdentifier = CoordinateSystemIdentifier | str | None
 
 
 class Transform(BaseAttrs, ABC):
@@ -95,10 +95,10 @@ class Transform(BaseAttrs, ABC):
     """
 
     type: str = Field(..., description="Unique identifier for type of transform.")
-    input: TCoordSysIdentifier = Field(
+    input: CoordinateSystemIdentifier | None= Field(
         default=None, description="Input coordinate system identifier."
     )
-    output: TCoordSysIdentifier = Field(
+    output: CoordinateSystemIdentifier | None= Field(
         default=None, description="Output coordinate system identifier."
     )
     name: str | None = Field(
@@ -378,8 +378,8 @@ class Affine(Transform):
         cls,
         matrix: typing.Sequence[typing.Sequence[float]],
         vector: typing.Sequence[float],
-        input: TCoordSysIdentifier = None,
-        output: TCoordSysIdentifier = None,
+        input: CoordinateSystemIdentifier = None,
+        output: CoordinateSystemIdentifier = None,
         name: str | None = None,
     ) -> Self:
         return cls(
