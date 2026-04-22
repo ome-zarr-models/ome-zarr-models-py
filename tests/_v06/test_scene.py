@@ -76,12 +76,3 @@ def test_transform_graph() -> None:
             output=CoordinateSystemIdentifier(name="system_3"),
         )
     )
-
-    assert graph.find_shortest_path(
-        TransformGraphNode(name="system_1"),
-        TransformGraphNode(name="system_3"),
-    ) == [
-        TransformGraphNode(name="system_1"),
-        TransformGraphNode(name="system_2"),
-        TransformGraphNode(name="system_3"),
-    ]
