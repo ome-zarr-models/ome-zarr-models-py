@@ -77,8 +77,8 @@ class Multiscale(BaseAttrs):
 
     def _to_v06(
         self,
-        intrinsic_system_name: str,
-        top_level_system: CoordinateSystemV06 | None = None,
+        intrinsic_system_name: str = "intrinsic",
+        additional_coordinate_system: CoordinateSystemV06 | None = None,
     ) -> MultiscaleV06:
         """
         Convert a OME-Zarr 0.5 multiscales to OME-Zarr 0.6.
@@ -89,35 +89,39 @@ class Multiscale(BaseAttrs):
             OME-Zarr 0.5 multiscales
         intrinsic_system_name :
             Name to give the intrinsic coordinate system in the new multiscales.
-        top_level_system :
+        additional_coordinate_system :
             The coordinate system that the top-level coordinate transform in the
             multiscales transforms into. If the top-level transform is present, must be
             given. Otherwise, will not be used.
         """
         from ome_zarr_models._v06.multiscales import (
             Multiscale as MultiscaleV06,
+            Dataset as DatasetV06,
             _v05_transform_to_v06,
         )
         from ome_zarr_models._v06.coordinate_transforms import (
             CoordinateSystem,
+            CoordinateSystemIdentifier,
             Axis,
         )
 
-        new_ms = MultiscaleV06(
-            datasets=tuple(
-                Dataset(
+        new_datasets = []
+        for ds in self.datasets:
+            transforms = _v05_transform_to_v06(ds.coordinateTransformations).model_copy(
+                update={
+                    "input": CoordinateSystemIdentifier(path=ds.path),
+                    "output": CoordinateSystemIdentifier(name=intrinsic_system_name),
+                }
+            )
+            new_datasets.append(
+                DatasetV06(
                     path=ds.path,
-                    coordinateTransformations=(
-                        _v05_transform_to_v06(ds.coordinateTransformations).model_copy(
-                            update={
-                                "input": ds.path,
-                                "output": intrinsic_system_name,
-                            }
-                        ),
-                    ),
+                    coordinateTransformations=(transforms,),
                 )
-                for ds in self.datasets
-            ),
+            )
+
+        new_ms = MultiscaleV06(
+            datasets=tuple(new_datasets),
             coordinateSystems=(
                 CoordinateSystem(
                     name=intrinsic_system_name,
@@ -132,11 +136,20 @@ class Multiscale(BaseAttrs):
             type=self.type,
         )
         if self.coordinateTransformations is not None:
-            if top_level_system is None:
+            if additional_coordinate_system is None:
                 raise ValueError(
-                    "top_level_system must be provided because a top-level "
+                    "additional_coordinate_system must be provided because a top-level "
                     "coordinate transform is present in the input multiscales."
                 )
+            if isinstance(additional_coordinate_system, str):
+                additional_coordinate_system = CoordinateSystem(
+                    name=additional_coordinate_system,
+                    axes=tuple(
+                        Axis(name=ax.name, type=ax.type, unit=ax.unit)
+                        for ax in self.axes
+                    ),
+                )
+
             new_ms = new_ms.model_copy(
                 update={
                     "coordinateTransformations": (
@@ -144,12 +157,12 @@ class Multiscale(BaseAttrs):
                             self.coordinateTransformations
                         ).model_copy(
                             update={
-                                "input": intrinsic_system_name,
-                                "output": top_level_system.name,
+                                "input": CoordinateSystemIdentifier(name=intrinsic_system_name),
+                                "output": CoordinateSystemIdentifier(name=additional_coordinate_system.name),
                             }
                         ),
                     ),
-                    "coordinateSystems": (*new_ms.coordinateSystems, top_level_system),
+                    "coordinateSystems": (*new_ms.coordinateSystems, additional_coordinate_system),
                 }
             )
         return new_ms
