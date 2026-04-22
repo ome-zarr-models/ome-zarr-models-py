@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Self
-
+from typing import TYPE_CHECKING, Annotated, Self, Literal, Sequence
+import warnings
 from pydantic import (
     Field,
     JsonValue,
@@ -15,6 +15,7 @@ from ome_zarr_models._v06.coordinate_transforms import (
     AnyTransform,
     Axis,
     CoordinateSystem,
+    CoordinateSystemIdentifier,
     Identity,
     Scale,
     Sequence,
@@ -66,7 +67,10 @@ class Multiscale(BaseAttrs):
         -----
         This is the last entry in the `coordinateSystems` attribute.
         """
-        return self.coordinateSystems[-1]
+        output_cs = self.datasets[0].coordinateTransformations[0].output.name
+        return next(
+            cs for cs in self.coordinateSystems if cs.name == output_cs
+        )
 
     @classmethod
     def from_v05(
@@ -274,36 +278,57 @@ class Multiscale(BaseAttrs):
     @model_validator(mode="after")
     def check_cs_input_output(self) -> Self:
         """
-        Check input and output for each coordinate system.
+        Check input and output for each coordinate transformation.
+        This is for transformations under multiscales > coordinateTransformations,
+        not the multiscale transformations under multiscales > datasets > coordinateTransformations
 
-        The input and output must either be a path relative to the current file in the
-        zarr store or must be a name that is present in the list of coordinate systems.
+        The input and output must either of:
+        - a name that is present in the list of coordinate systems.
+        - a downpointing path relative to the current file in the zarr store.
         """
-        # TODO: this test is only for coordinate transformations that are not part of a
-        #  dataset. A second test for datasets should be added.
         if self.coordinateTransformations is None:
             return self
         cs_names = {cs.name for cs in self.coordinateSystems}
 
         # check input
         for transformation in self.coordinateTransformations:
+
+            if not hasattr(transformation.input, "name"):
+                raise ValueError(
+                    "Input for coordinate transformations must provide a coordinate system name"
+                )
+            
+            if not hasattr(transformation.output, "name"):
+                raise ValueError(
+                    "Output for coordinate transformations must provide a coordinate system name"
+                )
             # TODO: add support for the input coordinate system being equal to the path
             #  of the array data. See more:
             # https://imagesc.zulipchat.com/#narrow/channel/469152-ome-zarr-models-py/topic/validating.20paths
-            if transformation.input not in cs_names:
+            if transformation.input.name not in cs_names:
                 raise ValueError(
                     "Invalid input in coordinate transformation "
-                    f"'{transformation.name}': "
-                    f"{transformation.input}. Must be one of {cs_names}."
+                    f"'{transformation.input}': "
+                    f"{transformation.input.name}. Must be one of {cs_names}."
                 )
-
-        # check output
-        for transformation in self.coordinateTransformations:
-            if transformation.output not in cs_names:
+            
+            # if output path is None, then the cs name must be among the coordinate systems defined in the multiscale
+            if not transformation.output.path and transformation.output.name not in cs_names:
                 raise ValueError(
-                    "Invalid output in coordinate transformation: "
-                    f"{transformation.output}. Must be one of {cs_names}."
+                    "Invalid output in coordinate transformation "
+                    f"'{transformation.output}': "
+                    f"{transformation.output.name}. Must be one of {cs_names}."
                 )
+            
+            # TODO: if output has path attribute, also check that the path is a multiscales group
+            # that has a coordinate system with the specified name in transformation.output.name.
+            if transformation.output.path:
+                if transformation.output.path.startswith(".."):
+                    raise ValueError(
+                        "Output paths in coordinate transformations must be downpointing. "
+                        f"Got '{transformation.output.path}'"
+                    )
+
         return self
 
     @field_validator("coordinateSystems", mode="after")
@@ -360,12 +385,14 @@ class Dataset(BaseAttrs):
         transform: transforms.Scale | transforms.Sequence
         if translation is None:
             transform = transforms.Scale(
-                scale=tuple(scale), input=path, output=coord_sys_output_name
+                scale=tuple(scale),
+                input=CoordinateSystemIdentifier(path=path), 
+                output=CoordinateSystemIdentifier(name=coord_sys_output_name)
             )
         else:
             transform = transforms.Sequence(
-                input=path,
-                output=coord_sys_output_name,
+                input=CoordinateSystemIdentifier(path=path),
+                output=CoordinateSystemIdentifier(name=coord_sys_output_name),
                 transformations=(
                     transforms.Scale(scale=tuple(scale)),
                     transforms.Translation(translation=tuple(translation)),
@@ -378,11 +405,37 @@ class Dataset(BaseAttrs):
 
     @model_validator(mode="after")
     def check_cs_input(self) -> Self:
+        """
+        Check the input of all multiscale transformations
+        """
         for transformation in self.coordinateTransformations:
-            if transformation.input != self.path:
+
+            # check that path field of input exists
+            if not hasattr(transformation.input, "path"):
+                raise ValueError(
+                    "Path field for transformation input must be set"
+                )
+
+            # check that path field of input matches the dataset path
+            if transformation.input.path != self.path:
                 raise ValueError(
                     "Input for a dataset transform must be the dataset array path: "
-                    f"'{self.path}'. Got '{transformation.input}' instead."
+                    f"'{self.path}'. Got '{transformation.input.path}' instead."
+                )
+            
+        return self
+    
+    @model_validator(mode="after")
+    def check_cs_output(self) -> Self:
+        """
+        Check the output of all multiscale transformations
+        """
+        for transformation in self.coordinateTransformations:
+
+            # check that output is a name (and not a path)
+            if not hasattr(transformation.output, "name"):
+                raise ValueError(
+                    "Output of dataset transforms must be a coordinate system name"
                 )
         return self
 
