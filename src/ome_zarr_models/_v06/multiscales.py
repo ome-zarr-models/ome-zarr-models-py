@@ -63,20 +63,6 @@ class Multiscale(BaseAttrs):
         return self.intrinsic_coordinate_system.ndim
 
     @property
-    def default_coordinate_system(self) -> CoordinateSystem:
-        """
-        The default coordinate system for this multiscales.
-
-        Any references to this multiscales in coordinate transformations will resolve
-        to this coordinate system.
-
-        Notes
-        -----
-        This is the first entry in the `coordinateSystems` attribute.
-        """
-        return self.coordinateSystems[0]
-
-    @property
     def intrinsic_coordinate_system(self) -> CoordinateSystem:
         """
         Physical coordinate system.
