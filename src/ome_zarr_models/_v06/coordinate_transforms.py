@@ -616,6 +616,9 @@ class Displacements(Transform):
 
     type: Literal["displacements"] = "displacements"
     path: str = Field(..., description="Path to the Zarr array displacement field.")
+    interpolation: str | None = Field(
+        default=None, description="Interpolation method to be used when applying the transform (default: 'linear')."
+    )
 
     @property
     def has_inverse(self) -> bool:
@@ -644,6 +647,11 @@ class Coordinates(Transform):
     type: Literal["coordinates"] = "coordinates"
     path: str = Field(
         ..., description="Path to the Zarr array containing the coordinate mapping."
+    )
+    interpolation: str | None = Field(
+        default=None,
+        description="Interpolation scheme that should be used when applying"
+        " the transform.",
     )
 
     @property
