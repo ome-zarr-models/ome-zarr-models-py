@@ -90,14 +90,22 @@ def test_ensure_scale_translation() -> None:
             coordinateTransformations=(
                 Translation(
                     translation=[1.0, 1.0],
-                    input=CoordinateSystemIdentifier(path="0"),
-                    output=CoordinateSystemIdentifier(name="intermediate"),  # can be anything, this case is not
+                    input=CoordinateSystemIdentifier(
+                        path="0"
+                        ),
+                    output=CoordinateSystemIdentifier(
+                        name="intermediate"
+                        ),  # can be anything, this case is not
                     # valid anyway
                 ),
                 Translation(
                     translation=[1.0, 1.0],
-                    input=CoordinateSystemIdentifier(name="intermediate"),
-                    output=CoordinateSystemIdentifier(name=COORDINATE_SYSTEM_NAME_FOR_TESTS),
+                    input=CoordinateSystemIdentifier(
+                        name="intermediate"
+                        ),
+                    output=CoordinateSystemIdentifier(
+                        name=COORDINATE_SYSTEM_NAME_FOR_TESTS
+                        ),
                 ),
             )
         )

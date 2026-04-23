@@ -58,8 +58,12 @@ def test_load_container() -> None:
                                     "coordinateTransformations": (
                                         {
                                             "type": "scale",
-                                            "input": {"name": None, "path": "0"},
-                                            "output": {"name": "physical", "path": None},
+                                            "input": {
+                                                "name": None, "path": "0"
+                                                },
+                                            "output": {
+                                                "name": "physical", "path": None
+                                                },
                                             "name": "tile_0 to physical",
                                             "scale": (1.0, 1.0),
                                             "path": None,

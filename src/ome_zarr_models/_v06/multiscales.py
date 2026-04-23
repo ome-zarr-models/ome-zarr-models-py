@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Self, Literal, Sequence
+from typing import TYPE_CHECKING, Annotated, Self
 import warnings
 from pydantic import (
     Field,
@@ -102,7 +102,9 @@ class Multiscale(BaseAttrs):
                         _v05_transform_to_v06(ds.coordinateTransformations).model_copy(
                             update={
                                 "input": CoordinateSystemIdentifier(path=ds.path),
-                                "output": CoordinateSystemIdentifier(name=intrinsic_system_name),
+                                "output": CoordinateSystemIdentifier(
+                                    name=intrinsic_system_name
+                                    ),
                             }
                         ),
                     ),
@@ -135,8 +137,12 @@ class Multiscale(BaseAttrs):
                             multiscale_v05.coordinateTransformations
                         ).model_copy(
                             update={
-                                "input": CoordinateSystemIdentifier(name=intrinsic_system_name),
-                                "output": CoordinateSystemIdentifier(name=top_level_system.name),
+                                "input": CoordinateSystemIdentifier(
+                                    name=intrinsic_system_name
+                                    ),
+                                "output": CoordinateSystemIdentifier(
+                                    name=top_level_system.name
+                                    ),
                             }
                         ),
                     ),
@@ -281,7 +287,8 @@ class Multiscale(BaseAttrs):
         """
         Check input and output for each coordinate transformation.
         This is for transformations under multiscales > coordinateTransformations,
-        not the multiscale transformations under multiscales > datasets > coordinateTransformations
+        not the multiscale transformations under
+        multiscales > datasets > coordinateTransformations
 
         The input and output must either of:
         - a name that is present in the list of coordinate systems.
@@ -296,12 +303,14 @@ class Multiscale(BaseAttrs):
 
             if not hasattr(transformation.input, "name"):
                 raise ValueError(
-                    "Input for coordinate transformations must provide a coordinate system name"
+                    "Input for coordinate transformations must provide"
+                    " a coordinate system name"
                 )
             
             if not hasattr(transformation.output, "name"):
                 raise ValueError(
-                    "Output for coordinate transformations must provide a coordinate system name"
+                    "Output for coordinate transformations must provide"
+                    " a coordinate system name"
                 )
             # TODO: add support for the input coordinate system being equal to the path
             #  of the array data. See more:
@@ -313,21 +322,24 @@ class Multiscale(BaseAttrs):
                     f"{transformation.input.name}. Must be one of {cs_names}."
                 )
             
-            # if output path is None, then the cs name must be among the coordinate systems defined in the multiscale
-            if not transformation.output.path and transformation.output.name not in cs_names:
+            # if output path is None, then the cs name must be
+            # among the coordinate systems defined in the multiscale
+            output = transformation.output
+            if not output.path and output.name not in cs_names:
                 raise ValueError(
                     "Invalid output in coordinate transformation "
-                    f"'{transformation.output}': "
-                    f"{transformation.output.name}. Must be one of {cs_names}."
+                    f"'{output}': "
+                    f"{output.name}. Must be one of {cs_names}."
                 )
             
-            # TODO: if output has path attribute, also check that the path is a multiscales group
-            # that has a coordinate system with the specified name in transformation.output.name.
-            if transformation.output.path:
-                if transformation.output.path.startswith(".."):
+            # TODO: if output has path attribute, also check that
+            # the path is a multiscales group that hasa coordinate system
+            # with the specified name in transformation.output.name.
+            if output.path:
+                if output.path.startswith(".."):
                     raise ValueError(
-                        "Output paths in coordinate transformations must be downpointing. "
-                        f"Got '{transformation.output.path}'"
+                        "Output paths in coordinate transformations "
+                        f"must be downpointing. Got '{output.path}'."
                     )
 
         return self
@@ -341,7 +353,9 @@ class Multiscale(BaseAttrs):
         try:
             unique_items_validator(sys_names)
         except ValueError as e:
-            raise ValueError(f"Duplicate coordinate system names: {sys_names}") from e
+            raise ValueError(
+                f"Duplicate coordinate system names: {sys_names}"
+                ) from e
         return systems
 
 
