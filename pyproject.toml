@@ -7,8 +7,8 @@ requires-python = ">=3.11"
 dependencies = [
     "numpy",
     "pydantic >= 2.11.5, <2.13",
-    "pydantic-zarr >= 0.10.0; python_version >= '3.14'",
     "pydantic-zarr >= 0.8.2",
+    "pydantic-zarr >= 0.10.0; python_version >= '3.14'",
     "zarr>= 3.1.1",
 ]
 maintainers = [{ name = "David Stansby" }]
