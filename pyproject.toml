@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.11, <3.14"
 dependencies = [
     "numpy",
-    "pydantic >= 2.11.5",
+    "pydantic >= 2.11.5, <2.13",
     "pydantic-zarr >= 0.8.2",
     "zarr>= 3.1.1",
 ]

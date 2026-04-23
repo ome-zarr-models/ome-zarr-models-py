@@ -6,6 +6,8 @@ from __future__ import annotations
 
 from collections import Counter, defaultdict
 from dataclasses import MISSING, dataclass, fields, is_dataclass
+import heapq
+from functools import total_ordering
 from typing import TYPE_CHECKING, Any, Self, TypeVar
 
 import pydantic
