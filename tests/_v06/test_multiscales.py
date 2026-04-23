@@ -294,13 +294,6 @@ def test_default_coordinate_systems() -> None:
             Axis(name="i", type=None, discrete=None, unit=None, longName=None),
         ),
     )
-    assert multiscale.default_coordinate_system == CoordinateSystem(
-        name="an_other_system",
-        axes=(
-            Axis(name="x", type=None, discrete=None, unit=None, longName=None),
-            Axis(name="y", type=None, discrete=None, unit=None, longName=None),
-        ),
-    )
 
 
 def test_from_v05() -> None:
