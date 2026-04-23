@@ -17,6 +17,9 @@ jobs:
     strategy:
       matrix:
         python-version:
+          # Test on 3.13 and 3.14 separately, as they have different
+          # pydantic requirements
+          - "3.13"
           - "3.14"
 
     steps:
