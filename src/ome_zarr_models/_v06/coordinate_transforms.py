@@ -710,7 +710,7 @@ class Bijection(Transform):
             ) from e
 
 
-class ByDimensionTransformation(BaseAttrs):
+class ByDimensionTransform(BaseAttrs):
     """
     A transformation item within a byDimension coordinate transformation.
 
@@ -729,7 +729,7 @@ class ByDimension(Transform):
     """
 
     type: Literal["byDimension"] = "byDimension"
-    transformations: tuple[ByDimensionTransformation, ...] = Field(
+    transformations: tuple[ByDimensionTransform, ...] = Field(
         ..., description="Transformations."
     )
 
@@ -763,4 +763,4 @@ AnyTransform = Annotated[
 ]
 
 # Rebuild models to resolve forward references
-ByDimensionTransformation.model_rebuild()
+ByDimensionTransform.model_rebuild()
