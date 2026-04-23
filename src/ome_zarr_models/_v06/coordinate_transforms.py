@@ -714,8 +714,8 @@ class ByDimensionTransform(BaseAttrs):
     """
     A transformation item within a byDimension coordinate transformation.
 
-    Per RFC-5, each transformation within a byDimension must specify which
-    axes it operates on via input_axes and output_axes.
+    As well as the actual transform, this specifies which
+    axes it operates on via the input_axes and output_axes fields.
     """
 
     transformation: "AnyTransform" = Field(..., description="The coordinate transformation.")
