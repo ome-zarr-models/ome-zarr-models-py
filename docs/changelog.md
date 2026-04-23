@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8
+
+- Add support for Python 3.14.
+
 ## 1.7
 
 - Require `pydantic` < 2.13, due to new issues in model construction that are not yet resolved.
