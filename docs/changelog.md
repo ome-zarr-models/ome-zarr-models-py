@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.7
+
+- Require `pydantic` < 2.13, due to new issues in model construction that are not yet resolved.
+- Correctly allow `colors` metadata to be not set or `null` inside image-label metadata.
+
 ## 1.6
 
 Require Python < 3.14. Due to issues with Python 3.14 and `pydantic`, `ome-zarr-models` is not yet compatible with Python 3.14.
