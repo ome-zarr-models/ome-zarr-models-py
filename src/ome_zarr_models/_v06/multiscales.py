@@ -65,7 +65,8 @@ class Multiscale(BaseAttrs):
 
         Notes
         -----
-        This is the last entry in the `coordinateSystems` attribute.
+        This is the `coordinateSystems` instance which is used output
+        of all multiscale transformations defined in `datasets`.
         """
         output_cs = self.datasets[0].coordinateTransformations[0].output.name
         return next(
