@@ -617,7 +617,7 @@ class Displacements(Transform):
     type: Literal["displacements"] = "displacements"
     path: str = Field(..., description="Path to the Zarr array displacement field.")
     interpolation: str | None = Field(
-        default=None, description="Interpolation method to be used when applying the transform (default: 'linear')."
+        default=None, description="Interpolation method to be used after applying the transform."
     )
 
     @property
