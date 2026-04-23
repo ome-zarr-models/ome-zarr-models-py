@@ -718,7 +718,9 @@ class ByDimensionTransform(BaseAttrs):
     axes it operates on via the input_axes and output_axes fields.
     """
 
-    transformation: "AnyTransform" = Field(..., description="The coordinate transformation.")
+    transformation: "AnyTransform" = Field(
+        ..., description="The coordinate transformation."
+    )
     input_axes: tuple[int, ...] = Field(..., description="Input axes indices.")
     output_axes: tuple[int, ...] = Field(..., description="Output axes indices.")
 
