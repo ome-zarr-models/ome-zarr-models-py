@@ -132,14 +132,15 @@ def test_ensure_scale_translation() -> None:
         _ = _gen_multiscale(
             coordinateTransformations=(
                 Sequence(
-                    transformations=[
+                    transformations=(
                         Scale(scale=[1.0, 1.0], input=None, output=None),
-                    input=CoordinateSystemIdentifier(path="0"),
-                    output=CoordinateSystemIdentifier(name=COORDINATE_SYSTEM_NAME_FOR_TESTS),
                         Translation(
                             translation=[1.0, 1.0, 2.0], input=None, output=None
                         ),
-                    ],
+                    ),
+
+                    input=CoordinateSystemIdentifier(path="0"),
+                    output=CoordinateSystemIdentifier(name=COORDINATE_SYSTEM_NAME_FOR_TESTS),
                 ),
             )
         )
@@ -317,13 +318,8 @@ def test_from_v05() -> None:
         name="my_multiscale",
         type="my_type",
     )
-    assert Multiscale.from_v05(
-        ms,
-        intrinsic_system_name="intrinsic",
-        top_level_system=CoordinateSystem(
-            name="top_level", axes=(Axis(name="x"), Axis(name="y"))
-        ),
-    ) == Multiscale(
+
+    ms_target = Multiscale(
         coordinateSystems=(
             CoordinateSystem(
                 name="intrinsic",
@@ -358,7 +354,7 @@ def test_from_v05() -> None:
                 coordinateTransformations=(
                     Sequence(
                         type="sequence",
-                        input=CoordinateSystemIdentifier(path="1"),
+                        input=CoordinateSystemIdentifier(path="0"),
                         output=CoordinateSystemIdentifier(name="intrinsic"),
                         name=None,
                         transformations=(
@@ -398,6 +394,14 @@ def test_from_v05() -> None:
         type="my_type",
     )
 
+    assert Multiscale.from_v05(
+        ms,
+        intrinsic_system_name="intrinsic",
+        top_level_system=CoordinateSystem(
+            name="top_level", axes=(Axis(name="x"), Axis(name="y"))
+        ),
+    ) == ms_target
+
 
 def test_unique_system_names() -> None:
     with pytest.raises(
@@ -435,3 +439,7 @@ def test_unique_system_names() -> None:
                 ),
             ),
         )
+
+
+if __name__ == "__main__":
+    test_from_v05()

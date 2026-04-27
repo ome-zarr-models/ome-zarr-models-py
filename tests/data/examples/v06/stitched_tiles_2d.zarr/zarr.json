@@ -3,12 +3,12 @@
   "node_type": "group",
   "attributes": {
     "ome": {
-      "version": "0.6",
+      "version": "0.6.dev4",
       "scene": {
         "coordinateTransformations": [
           {
             "type": "translation",
-            "output": "world",
+            "output": {"name": "world"},
             "input": {
               "path": "tile_0",
               "name": "physical"
@@ -18,7 +18,7 @@
           },
           {
             "type": "translation",
-            "output": "world",
+            "output": {"name": "world"},
             "input": {
               "path": "tile_1",
               "name": "physical"

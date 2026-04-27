@@ -244,7 +244,7 @@ GRAPHVIZ_ATTRS = {"fontname": "open-sans"}
 
 @dataclass(frozen=True)
 class TransformGraphNode:
-    name: str
+    name: str | None
     path: str | None = None
 
     @classmethod

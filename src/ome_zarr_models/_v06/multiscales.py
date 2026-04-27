@@ -101,8 +101,8 @@ class Multiscale(BaseAttrs):
                     coordinateTransformations=(
                         _v05_transform_to_v06(ds.coordinateTransformations).model_copy(
                             update={
-                                "input": ds.path,
-                                "output": intrinsic_system_name,
+                                "input": CoordinateSystemIdentifier(path=ds.path),
+                                "output": CoordinateSystemIdentifier(name=intrinsic_system_name),
                             }
                         ),
                     ),
@@ -135,8 +135,8 @@ class Multiscale(BaseAttrs):
                             multiscale_v05.coordinateTransformations
                         ).model_copy(
                             update={
-                                "input": intrinsic_system_name,
-                                "output": top_level_system.name,
+                                "input": CoordinateSystemIdentifier(name=intrinsic_system_name),
+                                "output": CoordinateSystemIdentifier(name=top_level_system.name),
                             }
                         ),
                     ),
