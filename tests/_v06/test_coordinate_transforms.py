@@ -6,6 +6,7 @@ from pydantic import ValidationError
 from ome_zarr_models._v06.coordinate_transforms import (
     Affine,
     Bijection,
+    CoordinateSystemIdentifier,
     Identity,
     MapAxis,
     NoAffineError,
@@ -14,7 +15,6 @@ from ome_zarr_models._v06.coordinate_transforms import (
     Sequence,
     Transform,
     Translation,
-    CoordinateSystemIdentifier
 )
 
 
@@ -66,13 +66,13 @@ def test_inverse(transform: Transform, inverse_expected: Transform) -> None:
     transform = transform.model_copy(
         update={
             "input": CoordinateSystemIdentifier(name="input_system"),
-            "output": CoordinateSystemIdentifier(name="output_system")
-            }
+            "output": CoordinateSystemIdentifier(name="output_system"),
+        }
     )
     inverse_expect = inverse_expected.model_copy(
         update={
             "input": CoordinateSystemIdentifier(name="output_system"),
-            "output": CoordinateSystemIdentifier(name="input_system")
+            "output": CoordinateSystemIdentifier(name="input_system"),
         }
     )
     assert transform.get_inverse() == inverse_expect

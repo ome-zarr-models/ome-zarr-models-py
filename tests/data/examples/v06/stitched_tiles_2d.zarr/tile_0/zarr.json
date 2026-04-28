@@ -32,8 +32,8 @@
               "coordinateTransformations": [
                 {
                   "type": "scale",
-                  "output": {"name": "physical"},
-                  "input": {"path": "0"},
+                  "output": { "name": "physical" },
+                  "input": { "path": "0" },
                   "name": "tile_0 to physical",
                   "scale": [1, 1]
                 }

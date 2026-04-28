@@ -57,7 +57,9 @@ def test_ensure_scale_translation() -> None:
             Scale(
                 scale=[1.0, 1.0],
                 input=CoordinateSystemIdentifier(path="0"),
-                output=CoordinateSystemIdentifier(name=COORDINATE_SYSTEM_NAME_FOR_TESTS),
+                output=CoordinateSystemIdentifier(
+                    name=COORDINATE_SYSTEM_NAME_FOR_TESTS
+                ),
             ),
         )
     )
@@ -75,7 +77,9 @@ def test_ensure_scale_translation() -> None:
                 Translation(
                     translation=[1.0, 1.0],
                     input=CoordinateSystemIdentifier(path="0"),
-                    output=CoordinateSystemIdentifier(name=COORDINATE_SYSTEM_NAME_FOR_TESTS),
+                    output=CoordinateSystemIdentifier(
+                        name=COORDINATE_SYSTEM_NAME_FOR_TESTS
+                    ),
                 ),
             )
         )
@@ -90,22 +94,18 @@ def test_ensure_scale_translation() -> None:
             coordinateTransformations=(
                 Translation(
                     translation=[1.0, 1.0],
-                    input=CoordinateSystemIdentifier(
-                        path="0"
-                        ),
+                    input=CoordinateSystemIdentifier(path="0"),
                     output=CoordinateSystemIdentifier(
                         name="intermediate"
-                        ),  # can be anything, this case is not
+                    ),  # can be anything, this case is not
                     # valid anyway
                 ),
                 Translation(
                     translation=[1.0, 1.0],
-                    input=CoordinateSystemIdentifier(
-                        name="intermediate"
-                        ),
+                    input=CoordinateSystemIdentifier(name="intermediate"),
                     output=CoordinateSystemIdentifier(
                         name=COORDINATE_SYSTEM_NAME_FOR_TESTS
-                        ),
+                    ),
                 ),
             )
         )
@@ -127,7 +127,9 @@ def test_ensure_scale_translation() -> None:
                     ),
                 ),
                 input=CoordinateSystemIdentifier(path="0"),
-                output=CoordinateSystemIdentifier(name=COORDINATE_SYSTEM_NAME_FOR_TESTS),
+                output=CoordinateSystemIdentifier(
+                    name=COORDINATE_SYSTEM_NAME_FOR_TESTS
+                ),
             ),
         )
     )
@@ -146,9 +148,10 @@ def test_ensure_scale_translation() -> None:
                             translation=[1.0, 1.0, 2.0], input=None, output=None
                         ),
                     ),
-
                     input=CoordinateSystemIdentifier(path="0"),
-                    output=CoordinateSystemIdentifier(name=COORDINATE_SYSTEM_NAME_FOR_TESTS),
+                    output=CoordinateSystemIdentifier(
+                        name=COORDINATE_SYSTEM_NAME_FOR_TESTS
+                    ),
                 ),
             )
         )
@@ -402,13 +405,16 @@ def test_from_v05() -> None:
         type="my_type",
     )
 
-    assert Multiscale.from_v05(
-        ms,
-        intrinsic_system_name="intrinsic",
-        top_level_system=CoordinateSystem(
-            name="top_level", axes=(Axis(name="x"), Axis(name="y"))
-        ),
-    ) == ms_target
+    assert (
+        Multiscale.from_v05(
+            ms,
+            intrinsic_system_name="intrinsic",
+            top_level_system=CoordinateSystem(
+                name="top_level", axes=(Axis(name="x"), Axis(name="y"))
+            ),
+        )
+        == ms_target
+    )
 
 
 def test_unique_system_names() -> None:

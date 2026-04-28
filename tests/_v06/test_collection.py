@@ -58,12 +58,11 @@ def test_load_container() -> None:
                                     "coordinateTransformations": (
                                         {
                                             "type": "scale",
-                                            "input": {
-                                                "name": None, "path": "0"
-                                                },
+                                            "input": {"name": None, "path": "0"},
                                             "output": {
-                                                "name": "physical", "path": None
-                                                },
+                                                "name": "physical",
+                                                "path": None,
+                                            },
                                             "name": "tile_0 to physical",
                                             "scale": (1.0, 1.0),
                                             "path": None,
@@ -143,7 +142,10 @@ def test_load_container() -> None:
                                         {
                                             "type": "scale",
                                             "input": {"name": None, "path": "0"},
-                                            "output": {"name": "physical", "path": None},
+                                            "output": {
+                                                "name": "physical",
+                                                "path": None,
+                                            },
                                             "name": "tile_1 to physical",
                                             "scale": (1.0, 1.0),
                                             "path": None,
@@ -338,11 +340,16 @@ def test_scene_new() -> None:
     assert len(scene.ome_attributes.scene.coordinateTransformations) == 2
     coord_transform_0 = scene.ome_attributes.scene.coordinateTransformations[0]
     assert isinstance(coord_transform_0, Translation)
+    assert coord_transform_0 is not None
+    assert coord_transform_0.input is not None
+    assert coord_transform_0.output is not None
     assert coord_transform_0.input.name == "image_a"
     assert coord_transform_0.output.name == "world"
     assert coord_transform_0.translation == (0, 0)
     coord_transform_1 = scene.ome_attributes.scene.coordinateTransformations[1]
     assert isinstance(coord_transform_1, Translation)
+    assert coord_transform_1.input is not None
+    assert coord_transform_1.output is not None
     assert coord_transform_1.input.name == "image_b"
     assert coord_transform_1.output.name == "world"
     assert coord_transform_1.translation == (0, 256)

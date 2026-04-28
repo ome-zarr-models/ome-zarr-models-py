@@ -292,7 +292,9 @@ def test_image_new() -> None:
                             Sequence(
                                 type="sequence",
                                 input=CoordinateSystemIdentifier(path="0"),
-                                output=CoordinateSystemIdentifier(name="my_image_coords"),
+                                output=CoordinateSystemIdentifier(
+                                    name="my_image_coords"
+                                ),
                                 name=None,
                                 transformations=(
                                     Scale(
@@ -321,7 +323,9 @@ def test_image_new() -> None:
                             Sequence(
                                 type="sequence",
                                 input=CoordinateSystemIdentifier(path="1"),
-                                output=CoordinateSystemIdentifier(name="my_image_coords"),
+                                output=CoordinateSystemIdentifier(
+                                    name="my_image_coords"
+                                ),
                                 name=None,
                                 transformations=(
                                     Scale(
