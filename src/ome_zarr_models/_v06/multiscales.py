@@ -432,8 +432,13 @@ class Dataset(BaseAttrs):
         """
         for transformation in self.coordinateTransformations:
             # check that path field of input exists
-            if not hasattr(transformation.input, "path"):
-                raise ValueError("Path field for transformation input must be set")
+            if transformation.input is None:
+                raise ValueError("Transformations in datasets must have an input.")
+            
+            if transformation.input.path is None:
+                raise ValueError(
+                    "Input for dataset transforms must have a path field."
+                )
 
             # check that path field of input matches the dataset path
             input_cs = transformation.input
@@ -452,9 +457,14 @@ class Dataset(BaseAttrs):
         """
         for transformation in self.coordinateTransformations:
             # check that output is a name (and not a path)
-            if not hasattr(transformation.output, "name"):
+            if transformation.output is None:
                 raise ValueError(
-                    "Output of dataset transforms must be a coordinate system name"
+                    "Transformations in datasets must have an output."
+                )
+            
+            if transformation.output.name is None:
+                raise ValueError(
+                    "Output name for dataset transforms must be set."
                 )
         return self
 
