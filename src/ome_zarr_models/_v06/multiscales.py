@@ -331,38 +331,34 @@ class Multiscale(BaseAttrs):
 
             # The input CS must be defined in the same multiscales
             # Check that it exists in the list of coordinate systems
-            input_cs = transformation.input
-            if input_cs is not None and input_cs.name not in cs_names:
+            if transformation.input.name not in cs_names:
                 raise ValueError(
                     "Invalid input in coordinate transformation "
                     f"'{transformation.name}': "
-                    f"{input_cs.name}. Must be one of {cs_names}."
+                    f"{transformation.input.name}. Must be one of {cs_names}."
                 )
 
             # if output path is None, then the cs name must be
             # among the coordinate systems defined in the multiscale
             # If output path is not None, then the coordinate system is
             # defined elsewhere.
-            output_cs = transformation.output
-            if (
-                output_cs is not None
-                and not output_cs.path
-                and output_cs.name not in cs_names
+            if (not transformation.output.path
+                and transformation.output.name not in cs_names
             ):
                 raise ValueError(
                     "Invalid output in coordinate transformation "
-                    f"'{transformation.name}': "
-                    f"{output_cs.name}. Must be one of {cs_names} or the path field must be set."
+                    f"'{transformation.name}': {transformation.output.name}"
+                    f". Must be one of {cs_names} or the path field must be set."
                 )
 
             # TODO: if output has path attribute, also check that
             # the path is a multiscales group that hasa coordinate system
             # with the specified name in transformation.output.name.
-            if output_cs is not None and output_cs.path is not None:
-                if output_cs.path.contains(".."):
+            if transformation.output.path is not None:
+                if ".." in transformation.output.path:
                     raise ValueError(
                         "Output paths in coordinate transformations "
-                        f"must be downpointing. Got '{output_cs.path}'."
+                        f"must be downpointing. Got '{transformation.output.path}'."
                     )
 
         return self
