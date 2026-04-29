@@ -328,9 +328,9 @@ class Multiscale(BaseAttrs):
                     "Output for coordinate transformations must provide"
                     " a coordinate system name"
                 )
-            # TODO: add support for the input coordinate system being equal to the path
-            #  of the array data. See more:
-            # https://imagesc.zulipchat.com/#narrow/channel/469152-ome-zarr-models-py/topic/validating.20paths
+
+            # The input CS must be defined in the same multiscales
+            # Check that it exists in the list of coordinate systems
             input_cs = transformation.input
             if input_cs is not None and input_cs.name not in cs_names:
                 raise ValueError(
