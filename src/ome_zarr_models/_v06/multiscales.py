@@ -321,7 +321,7 @@ class Multiscale(BaseAttrs):
             if input_cs is not None and input_cs.name not in cs_names:
                 raise ValueError(
                     "Invalid input in coordinate transformation "
-                    f"'{input_cs}': "
+                    f"'{transformation.name}': "
                     f"{input_cs.name}. Must be one of {cs_names}."
                 )
 
@@ -337,15 +337,15 @@ class Multiscale(BaseAttrs):
             ):
                 raise ValueError(
                     "Invalid output in coordinate transformation "
-                    f"'{output_cs}': "
-                    f"{output_cs.name}. Must be one of {cs_names}."
+                    f"'{transformation.name}': "
+                    f"{output_cs.name}. Must be one of {cs_names} or the path field must be set."
                 )
 
             # TODO: if output has path attribute, also check that
             # the path is a multiscales group that hasa coordinate system
             # with the specified name in transformation.output.name.
-            if output_cs is not None and output_cs.path:
-                if output_cs.path.startswith(".."):
+            if output_cs is not None and output_cs.path is not None:
+                if output_cs.path.contains(".."):
                     raise ValueError(
                         "Output paths in coordinate transformations "
                         f"must be downpointing. Got '{output_cs.path}'."

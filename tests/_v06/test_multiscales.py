@@ -455,5 +455,3 @@ def test_unique_system_names() -> None:
         )
 
 
-if __name__ == "__main__":
-    test_from_v05()
