@@ -82,9 +82,7 @@ class CoordinateSystemIdentifier(BaseAttrs):
         Ensures that at least one of name or path is given.
         """
         if self.name is None and self.path is None:
-            raise ValueError(
-                "At least one of 'name' or 'path' must be set."
-                )
+            raise ValueError("At least one of 'name' or 'path' must be set.")
         return self
 
 

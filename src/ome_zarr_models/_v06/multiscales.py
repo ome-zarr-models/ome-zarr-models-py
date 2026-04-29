@@ -72,7 +72,8 @@ class Multiscale(BaseAttrs):
         if output is None:
             raise ValueError(
                 "Output coordinate system in "
-                f"{self.datasets[0].coordinateTransformations[0]} not found. ")
+                f"{self.datasets[0].coordinateTransformations[0]} not found. "
+            )
         return next(cs for cs in self.coordinateSystems if cs.name == output.name)
 
     @classmethod
@@ -306,7 +307,6 @@ class Multiscale(BaseAttrs):
         # check: additional coordinate transformations must have `name` set
         # in both input AND output
         for transformation in self.coordinateTransformations:
-
             # first check that both exist
             if transformation.input is None:
                 raise ValueError(
@@ -316,7 +316,7 @@ class Multiscale(BaseAttrs):
                 raise ValueError(
                     "Transformations in coordinateTransformations must have an output."
                 )
-            
+
             if not hasattr(transformation.input, "name"):
                 raise ValueError(
                     "Input for coordinate transformations must provide"
@@ -342,7 +342,8 @@ class Multiscale(BaseAttrs):
             # among the coordinate systems defined in the multiscale
             # If output path is not None, then the coordinate system is
             # defined elsewhere.
-            if (not transformation.output.path
+            if (
+                not transformation.output.path
                 and transformation.output.name not in cs_names
             ):
                 raise ValueError(
@@ -444,11 +445,9 @@ class Dataset(BaseAttrs):
             # check that path field of input exists
             if transformation.input is None:
                 raise ValueError("Transformations in datasets must have an input.")
-            
+
             if transformation.input.path is None:
-                raise ValueError(
-                    "Input for dataset transforms must have a path field."
-                )
+                raise ValueError("Input for dataset transforms must have a path field.")
 
             # check that path field of input matches the dataset path
             if transformation.input.path != self.path:
@@ -467,14 +466,10 @@ class Dataset(BaseAttrs):
         for transformation in self.coordinateTransformations:
             # check that output is a name (and not a path)
             if transformation.output is None:
-                raise ValueError(
-                    "Transformations in datasets must have an output."
-                )
-            
+                raise ValueError("Transformations in datasets must have an output.")
+
             if transformation.output.name is None:
-                raise ValueError(
-                    "Output name for dataset transforms must be set."
-                )
+                raise ValueError("Output name for dataset transforms must be set.")
         return self
 
     @field_validator("coordinateTransformations", mode="after")
