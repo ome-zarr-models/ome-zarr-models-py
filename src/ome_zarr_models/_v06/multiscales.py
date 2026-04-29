@@ -70,7 +70,9 @@ class Multiscale(BaseAttrs):
         """
         output = self.datasets[0].coordinateTransformations[0].output
         if output is None:
-            raise ValueError("Output coordinate system is required")
+            raise ValueError(
+                "Output coordinate system in "
+                f"{self.datasets[0].coordinateTransformations[0]} not found. ")
         return next(cs for cs in self.coordinateSystems if cs.name == output.name)
 
     @classmethod
@@ -301,8 +303,20 @@ class Multiscale(BaseAttrs):
             return self
         cs_names = {cs.name for cs in self.coordinateSystems}
 
-        # check input
+        # check: additional coordinate transformations must have `name` set
+        # in both input AND output
         for transformation in self.coordinateTransformations:
+
+            # first check that both exist
+            if transformation.input is None:
+                raise ValueError(
+                    "Transformations in coordinateTransformations must have an input."
+                )
+            if transformation.output is None:
+                raise ValueError(
+                    "Transformations in coordinateTransformations must have an output."
+                )
+            
             if not hasattr(transformation.input, "name"):
                 raise ValueError(
                     "Input for coordinate transformations must provide"
