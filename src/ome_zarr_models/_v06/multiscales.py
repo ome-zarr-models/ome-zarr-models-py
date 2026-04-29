@@ -451,11 +451,10 @@ class Dataset(BaseAttrs):
                 )
 
             # check that path field of input matches the dataset path
-            input_cs = transformation.input
-            if input_cs is not None and input_cs.path != self.path:
+            if transformation.input.path != self.path:
                 raise ValueError(
                     "Input for a dataset transform must be the dataset array path: "
-                    f"'{self.path}'. Got '{input_cs.path}' instead."
+                    f"'{self.path}'. Got '{transformation.input.path}' instead."
                 )
 
         return self
