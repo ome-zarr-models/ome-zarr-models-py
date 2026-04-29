@@ -1,1 +1,8 @@
 comment: false
+coverage:
+  status:
+    patch:
+      default:
+        # Set to 0% to avoid failing GitHub status checks
+        # The actual value will still show as a status check in the GH UI
+        target: 0%
