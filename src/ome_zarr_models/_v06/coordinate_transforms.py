@@ -76,6 +76,17 @@ class CoordinateSystemIdentifier(BaseAttrs):
         description="Path to Zarr group.",
     )
 
+    @model_validator(mode="after")
+    def _ensure_either_name_or_path(self: Self) -> Self:
+        """
+        Ensures that at least one of name or path is given.
+        """
+        if self.name is None and self.path is None:
+            raise ValueError(
+                "At least one of 'name' or 'path' must be set."
+                )
+        return self
+
 
 class Transform(BaseAttrs, ABC):
     """
