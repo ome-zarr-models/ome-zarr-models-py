@@ -68,7 +68,9 @@ class Multiscale(BaseAttrs):
     name: JsonValue | None = None
     type: JsonValue = None
 
-    def to_version(self, version: Literal["0.4", "0.6"]) -> MultiscaleV04 | MultiscaleV06:
+    def to_version(
+            self, version: Literal["0.4", "0.6"]
+            ) -> MultiscaleV04 | MultiscaleV06:
         """
         Convert this Multiscale metadata to the specified version.
 
@@ -167,7 +169,9 @@ class Multiscale(BaseAttrs):
 
         if self.coordinateTransformations is not None:
             additional_cs = CoordinateSystem(name="output", axes=default_cs.axes)
-            transforms = _v05_transform_to_v06(self.coordinateTransformations).model_copy(
+            transforms = _v05_transform_to_v06(
+                self.coordinateTransformations
+                ).model_copy(
                     update={
                         "input": CoordinateSystemIdentifier(name=intrinsic_system_name),
                         "output": CoordinateSystemIdentifier(name="output"),

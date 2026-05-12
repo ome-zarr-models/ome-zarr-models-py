@@ -211,7 +211,7 @@ class Image(BaseGroupv06[ImageAttrs]):
         new_attributes = ImageAttrs(
             version="0.6",
             multiscales=[
-                Multiscale.from_v05(ms, intrinsic_system_name=intrinsic_system_name)
+                ms._to_v06(intrinsic_system_name=intrinsic_system_name)
                 for ms in image_v05.ome_attributes.multiscales
             ],
         )

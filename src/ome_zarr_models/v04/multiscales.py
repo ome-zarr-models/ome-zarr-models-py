@@ -58,7 +58,9 @@ class Multiscale(BaseAttrs):
     type: JsonValue = None
     version: Literal["0.4"] | None = None
 
-    def to_version(self, version: Literal["0.5", "0.6"]) -> MultiscaleV05 | MultiscaleV06:
+    def to_version(
+            self, version: Literal["0.5", "0.6"]
+            ) -> MultiscaleV05 | MultiscaleV06:
         """
         Convert this Multiscale metadata to the specified version.
 
