@@ -168,7 +168,11 @@ class Multiscale(BaseAttrs):
         )
 
         if self.coordinateTransformations is not None:
-            additional_cs = CoordinateSystem(name="output", axes=default_cs.axes)
+            additional_cs = CoordinateSystem(
+                name="output",
+                axes=tuple(
+                    Axis(name=ax.name, type=ax.type) for ax in self.axes)
+            )
             transforms = _v05_transform_to_v06(
                 self.coordinateTransformations
                 ).model_copy(
@@ -180,7 +184,7 @@ class Multiscale(BaseAttrs):
 
             new_ms = new_ms.model_copy(
                 update={
-                    "coordinateTransformations": transforms,
+                    "coordinateTransformations": (transforms,),
                     "coordinateSystems": (*new_ms.coordinateSystems, additional_cs),
                 }
             )

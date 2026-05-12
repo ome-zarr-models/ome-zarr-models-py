@@ -354,8 +354,8 @@ def test_from_v05() -> None:
             CoordinateSystem(
                 name="output",
                 axes=(
-                    Axis(name="x", type=None, discrete=None, unit=None, longName=None),
-                    Axis(name="y", type=None, discrete=None, unit=None, longName=None),
+                    Axis(name="x", type="space", discrete=None, unit=None, longName=None),
+                    Axis(name="y", type="space", discrete=None, unit=None, longName=None),
                 ),
             ),
         ),
