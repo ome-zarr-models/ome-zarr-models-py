@@ -333,7 +333,7 @@ def test_from_v05() -> None:
     ms_target = Multiscale(
         coordinateSystems=(
             CoordinateSystem(
-                name="intrinsic",
+                name="physical",
                 axes=(
                     Axis(
                         name="x",
@@ -352,7 +352,7 @@ def test_from_v05() -> None:
                 ),
             ),
             CoordinateSystem(
-                name="top_level",
+                name="output",
                 axes=(
                     Axis(name="x", type=None, discrete=None, unit=None, longName=None),
                     Axis(name="y", type=None, discrete=None, unit=None, longName=None),
@@ -366,7 +366,7 @@ def test_from_v05() -> None:
                     Sequence(
                         type="sequence",
                         input=CoordinateSystemIdentifier(path="0"),
-                        output=CoordinateSystemIdentifier(name="intrinsic"),
+                        output=CoordinateSystemIdentifier(name="physical"),
                         name=None,
                         transformations=(
                             Scale(
@@ -393,8 +393,8 @@ def test_from_v05() -> None:
         coordinateTransformations=(
             Scale(
                 type="scale",
-                input=CoordinateSystemIdentifier(name="intrinsic"),
-                output=CoordinateSystemIdentifier(name="top_level"),
+                input=CoordinateSystemIdentifier(name="physical"),
+                output=CoordinateSystemIdentifier(name="output"),
                 name=None,
                 scale=(6.0, 3.0),
                 path=None,
@@ -405,16 +405,7 @@ def test_from_v05() -> None:
         type="my_type",
     )
 
-    assert (
-        Multiscale.from_v05(
-            ms,
-            intrinsic_system_name="intrinsic",
-            top_level_system=CoordinateSystem(
-                name="top_level", axes=(Axis(name="x"), Axis(name="y"))
-            ),
-        )
-        == ms_target
-    )
+    assert ms.to_version("0.6") == ms_target
 
 
 def test_unique_system_names() -> None:
