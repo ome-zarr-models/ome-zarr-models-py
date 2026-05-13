@@ -317,13 +317,13 @@ class Multiscale(BaseAttrs):
                     "Transformations in coordinateTransformations must have an output."
                 )
 
-            if not hasattr(transformation.input, "name"):
+            if transformation.input.name is None:
                 raise ValueError(
                     "Input for coordinate transformations must provide"
                     " a coordinate system name"
                 )
 
-            if not hasattr(transformation.output, "name"):
+            if transformation.output.name is None:
                 raise ValueError(
                     "Output for coordinate transformations must provide"
                     " a coordinate system name"
