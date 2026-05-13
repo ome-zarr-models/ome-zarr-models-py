@@ -107,7 +107,6 @@ def test_input_output_coordinate_system_valid_for_transformation() -> None:
             coordinate_systems=csystems, coordinate_transformations=invalid_output
         )
 
-    print(csystems)
     wrap_coordinate_transformations_and_systems_into_multiscale(
         coordinate_systems=csystems, coordinate_transformations=working_transformation
     )
