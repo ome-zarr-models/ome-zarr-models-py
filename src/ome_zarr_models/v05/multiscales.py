@@ -34,7 +34,11 @@ from ome_zarr_models.v05.axes import Axes
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
-
+    from ome_zarr_models._v06.multiscales import Multiscale as MultiscaleV06
+    from ome_zarr_models._v06.coordinate_transforms import (
+        Scale as ScaleV06,
+        Sequence as SequenceV06,
+    )
     from ome_zarr_models.v04.multiscales import Multiscale as MultiscaleV04
 
 
@@ -56,17 +60,89 @@ class Multiscale(BaseAttrs):
     name: JsonValue | None = None
     type: JsonValue = None
 
-    def to_version(self, version: Literal["0.4"]) -> MultiscaleV04:
+    def to_version(
+            self, version: Literal["0.4", "0.6"]
+            ) -> MultiscaleV04 | MultiscaleV06:
         """
         Convert this Multiscale metadata to the specified version.
 
         Currently supported conversions are
         - 0.5 -> 0.4
+        - 0.5 -> 0.6
         """
         if version == "0.4":
             return self._to_v04()
+        elif version == "0.6":
+            return self._to_v06()
         else:
             raise ValueError(f"Unsupported version conversion: 0.5 -> {version}")
+
+    def _to_v06(self) -> MultiscaleV06:
+        from ome_zarr_models._v06.multiscales import (
+            Dataset as DatasetV06,
+            Multiscale as MultiscaleV06,
+        )
+        from ome_zarr_models._v06.coordinate_transforms import (
+            Axis,
+            CoordinateSystem,
+            CoordinateSystemIdentifier
+        )
+        ms_v06 = MultiscaleV06(
+            datasets=tuple(
+                DatasetV06(
+                    path=ds.path,
+                    coordinateTransformations=(
+                        _v05_transform_to_v06(ds.coordinateTransformations).model_copy(
+                            update={
+                                "input": CoordinateSystemIdentifier(path=ds.path),
+                                "output": CoordinateSystemIdentifier(name="physical"),
+                            }
+                        ),
+                    ),
+                )
+                for ds in self.datasets
+            ),
+            coordinateSystems=(
+                CoordinateSystem(
+                    name="physical",
+                    axes=tuple(
+                        Axis(name=ax.name, type=ax.type, unit=ax.unit)
+                        for ax in self.axes
+                    ),
+                ),
+            ),
+            metadata=self.metadata,
+            name=self.name,
+            type=self.type,
+        )
+        if self.coordinateTransformations is not None:
+            output_cs = CoordinateSystem(
+                name="output",
+                axes=tuple(
+                    Axis(name=ax.name, type=ax.type, unit=None)
+                    for ax in self.axes
+                ),
+            )
+
+            ms_v06 = ms_v06.model_copy(
+                update={
+                    "coordinateTransformations": (
+                        _v05_transform_to_v06(
+                            self.coordinateTransformations
+                        ).model_copy(
+                            update={
+                                "input": CoordinateSystemIdentifier(name="physical"),
+                                "output": CoordinateSystemIdentifier(name="output"),
+                            }
+                        ),
+                    ),
+                    "coordinateSystems": (
+                        *ms_v06.coordinateSystems,
+                        output_cs,
+                    ),
+                }
+            )
+        return ms_v06
 
     def _to_v04(self) -> MultiscaleV04:
         from ome_zarr_models.v04.axes import Axis as AxisV04
@@ -338,3 +414,32 @@ class Dataset(BaseAttrs):
             )
             raise ValueError(msg)
         return transforms
+
+
+def _v05_transform_to_v06(transform: ValidTransform) -> ScaleV06 | SequenceV06:
+    from ome_zarr_models.common.coordinate_transformations import (
+        VectorScale,
+        VectorTranslation,
+    )
+    from ome_zarr_models._v06.coordinate_transforms import (
+        Scale as ScaleV06,
+        Translation as TranslationV06,
+        Sequence as SequenceV06,
+    )
+
+    # Scale (always present)
+    if isinstance(transform[0], VectorScale):
+        scale = ScaleV06(scale=tuple(transform[0].scale))
+    else:
+        scale = ScaleV06(path=transform[0].path)
+
+    if len(transform) == 1:
+        return scale
+
+    else:
+        # Translate
+        if isinstance(transform[1], VectorTranslation):
+            translate = TranslationV06(translation=tuple(transform[1].translation))
+        else:
+            translate = TranslationV06(path=transform[1].translation)
+        return SequenceV06(transformations=(scale, translate))

@@ -333,7 +333,7 @@ def test_from_v05() -> None:
     ms_target = Multiscale(
         coordinateSystems=(
             CoordinateSystem(
-                name="intrinsic",
+                name="physical",
                 axes=(
                     Axis(
                         name="x",
@@ -352,7 +352,7 @@ def test_from_v05() -> None:
                 ),
             ),
             CoordinateSystem(
-                name="top_level",
+                name="output",
                 axes=(
                     Axis(
                         name="x", type="space", discrete=None, unit=None, longName=None
@@ -370,7 +370,7 @@ def test_from_v05() -> None:
                     Sequence(
                         type="sequence",
                         input=CoordinateSystemIdentifier(name=None, path="0"),
-                        output=CoordinateSystemIdentifier(name="intrinsic", path=None),
+                        output=CoordinateSystemIdentifier(name="physical", path=None),
                         name=None,
                         transformations=(
                             Scale(
@@ -397,8 +397,8 @@ def test_from_v05() -> None:
         coordinateTransformations=(
             Scale(
                 type="scale",
-                input=CoordinateSystemIdentifier(name="intrinsic", path=None),
-                output=CoordinateSystemIdentifier(name="top_level", path=None),
+                input=CoordinateSystemIdentifier(name="physical", path=None),
+                output=CoordinateSystemIdentifier(name="output", path=None),
                 name=None,
                 scale=(6.0, 3.0),
                 path=None,
@@ -409,17 +409,7 @@ def test_from_v05() -> None:
         type="my_type",
     )
 
-    assert (
-        Multiscale.from_v05(
-            ms,
-            intrinsic_system_name="intrinsic",
-            top_level_system=CoordinateSystem(
-                name="top_level",
-                axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
-            ),
-        )
-        == ms_target
-    )
+    assert ms._to_v06() == ms_target
 
 
 def test_unique_system_names() -> None:
@@ -458,3 +448,7 @@ def test_unique_system_names() -> None:
                 ),
             ),
         )
+
+
+if __name__ == "__main__":
+    test_from_v05()
