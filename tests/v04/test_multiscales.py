@@ -570,7 +570,7 @@ def test_conversion_v04_to_v05(default_multiscale: Multiscale) -> None:
         version=None,
     )
     # test conversion to v05
-    multi_v05 = default_multiscale.to_version("0.5")
+    multi_v05 = default_multiscale._to_v05()
     assert multi_v05 == MultiscaleV05(
         axes=(
             AxisV05(name="c", type="channel", unit=None),
