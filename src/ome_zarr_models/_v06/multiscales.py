@@ -220,6 +220,8 @@ class Multiscale(BaseAttrs):
             (transform,) = dataset.coordinateTransformations
             if isinstance(transform, Scale):
                 scale_transforms.append(transform)
+            elif isinstance(transform, Identity):
+                pass
             else:
                 if not isinstance(transform, Sequence):
                     raise ValueError(
