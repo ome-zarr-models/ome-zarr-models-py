@@ -35,8 +35,8 @@ from ome_zarr_models.v04.axes import Axes
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from ome_zarr_models.v05.multiscales import Multiscale as MultiscaleV05
     from ome_zarr_models._v06.multiscales import Multiscale as MultiscaleV06
+    from ome_zarr_models.v05.multiscales import Multiscale as MultiscaleV05
 
 
 __all__ = ["Dataset", "Multiscale"]
@@ -59,8 +59,8 @@ class Multiscale(BaseAttrs):
     version: Literal["0.4"] | None = None
 
     def to_version(
-            self, version: Literal["0.5", "0.6"]
-            ) -> MultiscaleV05 | MultiscaleV06:
+        self, version: Literal["0.5", "0.6"]
+    ) -> MultiscaleV05 | MultiscaleV06:
         """
         Convert this Multiscale metadata to the specified version.
 
@@ -70,7 +70,7 @@ class Multiscale(BaseAttrs):
         """
         if version == "0.5":
             return self._to_v05()
-    
+
         elif version == "0.6":
             return self._to_v05()._to_v06()
         else:

@@ -356,10 +356,10 @@ def test_from_v05() -> None:
                 axes=(
                     Axis(
                         name="x", type="space", discrete=None, unit=None, longName=None
-                        ),
+                    ),
                     Axis(
                         name="y", type="space", discrete=None, unit=None, longName=None
-                        ),
+                    ),
                 ),
             ),
         ),

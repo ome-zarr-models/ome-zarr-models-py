@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Self
+from typing import Annotated, Self
 
 from pydantic import (
     Field,
@@ -13,7 +13,6 @@ from pydantic import (
 import ome_zarr_models._v06.coordinate_transforms as transforms
 from ome_zarr_models._v06.coordinate_transforms import (
     AnyTransform,
-    Axis,
     CoordinateSystem,
     CoordinateSystemIdentifier,
     Identity,
@@ -23,12 +22,6 @@ from ome_zarr_models._v06.coordinate_transforms import (
 )
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.validation import unique_items_validator
-
-if TYPE_CHECKING:
-    from ome_zarr_models.v05.multiscales import Multiscale as Multiscalev05
-    from ome_zarr_models.v05.multiscales import (  # type: ignore[attr-defined]
-        ValidTransform as ValidTransformv05,
-    )
 
 __all__ = ["Dataset", "Multiscale"]
 

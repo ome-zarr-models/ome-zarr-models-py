@@ -24,11 +24,6 @@ from ome_zarr_models.common.coordinate_transformations import (
     _build_transforms,
     _ndim,
 )
-
-from ome_zarr_models.v05.multiscales import (  # type: ignore[attr-defined]
-    ValidTransform as ValidTransformv05,
-)
-
 from ome_zarr_models.common.validation import (
     check_length,
     check_ordered_scales,
@@ -36,18 +31,21 @@ from ome_zarr_models.common.validation import (
 )
 from ome_zarr_models.exceptions import ValidationWarning
 from ome_zarr_models.v05.axes import Axes
+from ome_zarr_models.v05.multiscales import (  # type: ignore[attr-defined]
+    ValidTransform as ValidTransformv05,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from ome_zarr_models.v04.multiscales import Multiscale as MultiscaleV04
-    from ome_zarr_models._v06.multiscales import Multiscale as MultiscaleV06
     from ome_zarr_models._v06.coordinate_transforms import (
         Scale as ScaleV06,
-        Translation as TranslationV06,
+    )
+    from ome_zarr_models._v06.coordinate_transforms import (
         Sequence as SequenceV06,
     )
-
+    from ome_zarr_models._v06.multiscales import Multiscale as MultiscaleV06
+    from ome_zarr_models.v04.multiscales import Multiscale as MultiscaleV04
 
 
 __all__ = ["Dataset", "Multiscale"]
@@ -69,8 +67,8 @@ class Multiscale(BaseAttrs):
     type: JsonValue = None
 
     def to_version(
-            self, version: Literal["0.4", "0.6"]
-            ) -> MultiscaleV04 | MultiscaleV06:
+        self, version: Literal["0.4", "0.6"]
+    ) -> MultiscaleV04 | MultiscaleV06:
         """
         Convert this Multiscale metadata to the specified version.
 
@@ -126,31 +124,29 @@ class Multiscale(BaseAttrs):
             given. Otherwise, will not be used.
         """
         from ome_zarr_models._v06.coordinate_transforms import (
+            Axis,
             CoordinateSystem,
             CoordinateSystemIdentifier,
-            Axis
         )
-        from ome_zarr_models._v06.multiscales import (
-            Multiscale as MultiscaleV06,
-            Dataset
-        )
+        from ome_zarr_models._v06.multiscales import Dataset
+        from ome_zarr_models._v06.multiscales import Multiscale as MultiscaleV06
 
         datasets = tuple(
-                Dataset(
-                    path=ds.path,
-                    coordinateTransformations=(
-                        _v05_transform_to_v06(ds.coordinateTransformations).model_copy(
-                            update={
-                                "input": CoordinateSystemIdentifier(path=ds.path),
-                                "output": CoordinateSystemIdentifier(
-                                    name=intrinsic_system_name
-                                ),
-                            }
-                        ),
+            Dataset(
+                path=ds.path,
+                coordinateTransformations=(
+                    _v05_transform_to_v06(ds.coordinateTransformations).model_copy(
+                        update={
+                            "input": CoordinateSystemIdentifier(path=ds.path),
+                            "output": CoordinateSystemIdentifier(
+                                name=intrinsic_system_name
+                            ),
+                        }
                     ),
-                )
-                for ds in self.datasets
+                ),
             )
+            for ds in self.datasets
+        )
 
         default_cs = CoordinateSystem(
             name=intrinsic_system_name,
@@ -170,17 +166,16 @@ class Multiscale(BaseAttrs):
         if self.coordinateTransformations is not None:
             additional_cs = CoordinateSystem(
                 name="output",
-                axes=tuple(
-                    Axis(name=ax.name, type=ax.type) for ax in self.axes)
+                axes=tuple(Axis(name=ax.name, type=ax.type) for ax in self.axes),
             )
             transforms = _v05_transform_to_v06(
                 self.coordinateTransformations
-                ).model_copy(
-                    update={
-                        "input": CoordinateSystemIdentifier(name=intrinsic_system_name),
-                        "output": CoordinateSystemIdentifier(name="output"),
-                    }
-                )
+            ).model_copy(
+                update={
+                    "input": CoordinateSystemIdentifier(name=intrinsic_system_name),
+                    "output": CoordinateSystemIdentifier(name="output"),
+                }
+            )
 
             new_ms = new_ms.model_copy(
                 update={
@@ -444,8 +439,12 @@ class Dataset(BaseAttrs):
 def _v05_transform_to_v06(transform: ValidTransformv05) -> ScaleV06 | SequenceV06:
     from ome_zarr_models._v06.coordinate_transforms import (
         Scale as ScaleV06,
-        Translation as TranslationV06,
+    )
+    from ome_zarr_models._v06.coordinate_transforms import (
         Sequence as SequenceV06,
+    )
+    from ome_zarr_models._v06.coordinate_transforms import (
+        Translation as TranslationV06,
     )
 
     # Scale (always present)
