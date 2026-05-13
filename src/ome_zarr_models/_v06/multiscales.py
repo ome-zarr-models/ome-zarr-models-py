@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from logging import warning
 import typing
 from collections import Counter
-from typing import Annotated, Self
+from typing import Annotated, Self, Literal, TYPE_CHECKING
 
 from pydantic import (
     Field,
@@ -24,6 +25,10 @@ from ome_zarr_models._v06.coordinate_transforms import (
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.validation import check_length, unique_items_validator
 
+if TYPE_CHECKING:
+    from ome_zarr_models.v05.multiscales import Multiscale as Multiscalev05
+    from ome_zarr_models.v04.multiscales import Multiscale as Multiscalev04
+
 __all__ = ["Dataset", "Multiscale"]
 
 
@@ -38,6 +43,87 @@ class Multiscale(BaseAttrs):
     metadata: JsonValue = None
     name: JsonValue | None = None
     type: JsonValue = None
+
+    def to_version(
+            self, version: Literal["0.4", "0.5"]
+            ) -> Multiscalev05 | Multiscalev04:
+        if version == "0.5":
+            return self._to_v05()
+        elif version == "0.4":
+            return self._to_v05()._to_v04()
+        else:
+            raise ValueError(f"Unsupported version: {version}")
+
+    def _to_v05(self) -> Multiscalev05:
+        from ome_zarr_models.v05.multiscales import (
+            Multiscale as Multiscalev05,
+            Dataset as Datasetv05,
+        )
+        from ome_zarr_models.v05.coordinate_transformations import (
+            VectorScale,
+            VectorTranslation
+        )
+        from ome_zarr_models.v05.axes import Axis as Axisv05
+        from ome_zarr_models.v05.multiscales import Dataset as Datasetv05
+
+        intrinsic_cs = self.intrinsic_coordinate_system
+        axes = tuple([
+            Axisv05(name=axis.name, type=axis.type, unit=axis.unit)
+            for axis in intrinsic_cs.axes
+            ])
+        
+        datasets = []
+        for ds in self.datasets:
+            transforms = []
+            for tf in ds.coordinateTransformations:
+                if isinstance(tf, Scale):
+                    transforms.append(
+                        VectorScale(
+                            type="scale",
+                            scale=list(tf.scale)
+                        )
+                    )
+                elif isinstance(tf, Sequence):
+                    for sub_tf in tf.transformations:
+                        if isinstance(sub_tf, Scale):
+                            transforms.append(
+                                VectorScale(
+                                    type="scale",
+                                    scale=list(sub_tf.scale)
+                                )
+                            )
+                        elif isinstance(sub_tf, Translation):
+                            transforms.append(
+                                VectorTranslation(
+                                    type="translation",
+                                    translation=sub_tf.translation
+                                )
+                            )
+                        else:
+                            raise ValueError(f"Unsupported transform type: {type(sub_tf)}")
+                        
+            datasets.append(
+                Datasetv05(
+                    path=ds.path,
+                    coordinateTransformations=tuple(transforms)
+                )
+            )
+
+        if self.coordinateTransformations is not None:
+            warning.warn(
+                msg="Coordinate transformations defined in coordinateTransformations "
+                "can currently not be converted to v0.5, " 
+                "as they are not supported in this version."
+            )
+
+        new_ms = Multiscalev05(
+            name=self.name,
+            type=self.type,
+            metadata=self.metadata,
+            axes=axes,
+            datasets=tuple(datasets)
+        )
+        return new_ms
 
     @property
     def ndim(self) -> int:
