@@ -1,6 +1,11 @@
 from zarr.abc.store import Store
 
-from ome_zarr_models._v06.coordinate_transforms import Axis, CoordinateSystem, Scale
+from ome_zarr_models._v06.coordinate_transforms import (
+    Axis,
+    CoordinateSystem,
+    CoordinateSystemIdentifier,
+    Scale,
+)
 from ome_zarr_models._v06.image_label import ImageLabel, ImageLabelAttrs
 from ome_zarr_models._v06.image_label_types import Color, Label, Source
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
@@ -89,8 +94,8 @@ def test_image_label(store: Store) -> None:
                         coordinateTransformations=[
                             Scale(
                                 type="scale",
-                                input="0",
-                                output="coord_sys0",
+                                input=CoordinateSystemIdentifier(path="0"),
+                                output=CoordinateSystemIdentifier(name="coord_sys0"),
                                 name=None,
                                 scale=[1.0, 1.0, 0.5, 0.5, 0.5],
                             )
@@ -101,8 +106,8 @@ def test_image_label(store: Store) -> None:
                         coordinateTransformations=[
                             Scale(
                                 type="scale",
-                                input="1",
-                                output="coord_sys0",
+                                input=CoordinateSystemIdentifier(path="1"),
+                                output=CoordinateSystemIdentifier(name="coord_sys0"),
                                 name=None,
                                 scale=[1.0, 1.0, 1.0, 1.0, 1.0],
                             )
@@ -113,8 +118,8 @@ def test_image_label(store: Store) -> None:
                         coordinateTransformations=[
                             Scale(
                                 type="scale",
-                                input="2",
-                                output="coord_sys0",
+                                input=CoordinateSystemIdentifier(path="2"),
+                                output=CoordinateSystemIdentifier(name="coord_sys0"),
                                 name=None,
                                 scale=[1.0, 1.0, 2.0, 2.0, 2.0],
                             )
@@ -124,8 +129,8 @@ def test_image_label(store: Store) -> None:
                 coordinateTransformations=(
                     Scale(
                         type="scale",
-                        input="coord_sys0",
-                        output="coord_sys1",
+                        input=CoordinateSystemIdentifier(name="coord_sys0"),
+                        output=CoordinateSystemIdentifier(name="coord_sys1"),
                         name=None,
                         scale=[0.1, 1.0, 1.0, 1.0, 1.0],
                     ),

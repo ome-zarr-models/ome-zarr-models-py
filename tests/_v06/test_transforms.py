@@ -3,6 +3,7 @@ import pytest
 from ome_zarr_models._v06.coordinate_transforms import (
     Axis,
     CoordinateSystem,
+    CoordinateSystemIdentifier,
     Identity,
     Scale,
     Transform,
@@ -22,8 +23,8 @@ def _gen_dataset(
         coordinateTransformations=(
             Scale(
                 scale=scale_factors,
-                input=f"{path}",
-                output=output_coordinate_system,
+                input=CoordinateSystemIdentifier(path=f"{path}"),
+                output=CoordinateSystemIdentifier(name=output_coordinate_system),
             ),
         ),
     )
@@ -77,9 +78,24 @@ def test_input_output_coordinate_system_valid_for_transformation() -> None:
     cs_names = ["in", "out", "other"]
     axes = [Axis(name=i) for i in axis_names]
     csystems = tuple([CoordinateSystem(name=i, axes=axes) for i in cs_names])
-    invalid_input = (Identity(input="not_working", output="out"),)
-    invalid_output = (Identity(input="in", output="not_working"),)
-    working_transformation = (Identity(input="in", output="out"),)
+    invalid_input = (
+        Identity(
+            input=CoordinateSystemIdentifier(name="not_working"),
+            output=CoordinateSystemIdentifier(name="out"),
+        ),
+    )
+    invalid_output = (
+        Identity(
+            input=CoordinateSystemIdentifier(name="in"),
+            output=CoordinateSystemIdentifier(name="not_working"),
+        ),
+    )
+    working_transformation = (
+        Identity(
+            input=CoordinateSystemIdentifier(name="in"),
+            output=CoordinateSystemIdentifier(name="out"),
+        ),
+    )
 
     with pytest.raises(ValueError, match="Invalid input in coordinate transformation"):
         wrap_coordinate_transformations_and_systems_into_multiscale(
@@ -102,18 +118,22 @@ def test_coordinate_system_input_output_dimensionality() -> None:
     assert ct.input is None and ct.output is None
 
     # both input and output are defined (valid)
-    ct = Identity(input="a", output="b")
-    assert ct.input == "a" and ct.output == "b"
+    ct = Identity(
+        input=CoordinateSystemIdentifier(name="a"),
+        output=CoordinateSystemIdentifier(name="b"),
+    )
+    assert ct.input is not None and ct.output is not None
+    assert ct.input.name == "a" and ct.output.name == "b"
 
     with pytest.raises(
         ValueError,
         match="Either both input and output must be defined or both must be omitted",
     ):
-        Identity(input="a", output=None)
+        Identity(input=CoordinateSystemIdentifier(name="a"), output=None)
 
     # only output is defined (invalid)
     with pytest.raises(
         ValueError,
         match="Either both input and output must be defined or both must be omitted",
     ):
-        Identity(input=None, output="b")
+        Identity(input=None, output=CoordinateSystemIdentifier(name="b"))

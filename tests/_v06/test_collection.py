@@ -28,7 +28,7 @@ def test_load_container() -> None:
             node_type="group",
             attributes={
                 "ome": {
-                    "version": "0.6.dev1",
+                    "version": "0.6.dev4",
                     "multiscales": [
                         {
                             "coordinateSystems": (
@@ -58,8 +58,11 @@ def test_load_container() -> None:
                                     "coordinateTransformations": (
                                         {
                                             "type": "scale",
-                                            "input": "0",
-                                            "output": "physical",
+                                            "input": {"name": None, "path": "0"},
+                                            "output": {
+                                                "name": "physical",
+                                                "path": None,
+                                            },
                                             "name": "tile_0 to physical",
                                             "scale": (1.0, 1.0),
                                             "path": None,
@@ -108,7 +111,7 @@ def test_load_container() -> None:
             node_type="group",
             attributes={
                 "ome": {
-                    "version": "0.6.dev1",
+                    "version": "0.6.dev4",
                     "multiscales": [
                         {
                             "coordinateSystems": (
@@ -138,8 +141,11 @@ def test_load_container() -> None:
                                     "coordinateTransformations": (
                                         {
                                             "type": "scale",
-                                            "input": "0",
-                                            "output": "physical",
+                                            "input": {"name": None, "path": "0"},
+                                            "output": {
+                                                "name": "physical",
+                                                "path": None,
+                                            },
                                             "name": "tile_1 to physical",
                                             "scale": (1.0, 1.0),
                                             "path": None,
@@ -185,13 +191,13 @@ def test_load_container() -> None:
         ),
     }
     assert container.ome_attributes == BaseSceneAttrs(
-        version="0.6",
+        version="0.6.dev4",
         scene=SceneAttrs(
             coordinateTransformations=(
                 Translation(
                     type="translation",
                     input=CoordinateSystemIdentifier(name="physical", path="tile_0"),
-                    output="world",
+                    output=CoordinateSystemIdentifier(name="world"),
                     name="tile_0_mm to world",
                     translation=(0.0, 0.0),
                     path=None,
@@ -199,7 +205,7 @@ def test_load_container() -> None:
                 Translation(
                     type="translation",
                     input=CoordinateSystemIdentifier(name="physical", path="tile_1"),
-                    output="world",
+                    output=CoordinateSystemIdentifier(name="world"),
                     name="tile_1_mm to world",
                     translation=(0.0, 348.0),
                     path=None,
@@ -289,13 +295,13 @@ def test_scene_new() -> None:
     # Create scene with coordinate transformations
     transform_a_world = Translation(
         translation=(0, 0),
-        input="image_a",
-        output="world",
+        input=CoordinateSystemIdentifier(name="image_a"),
+        output=CoordinateSystemIdentifier(name="world"),
     )
     transform_b_world = Translation(
         translation=(0, 256),
-        input="image_b",
-        output="world",
+        input=CoordinateSystemIdentifier(name="image_b"),
+        output=CoordinateSystemIdentifier(name="world"),
     )
 
     scene = Scene.new(
@@ -334,13 +340,18 @@ def test_scene_new() -> None:
     assert len(scene.ome_attributes.scene.coordinateTransformations) == 2
     coord_transform_0 = scene.ome_attributes.scene.coordinateTransformations[0]
     assert isinstance(coord_transform_0, Translation)
-    assert coord_transform_0.input == "image_a"
-    assert coord_transform_0.output == "world"
+    assert coord_transform_0 is not None
+    assert coord_transform_0.input is not None
+    assert coord_transform_0.output is not None
+    assert coord_transform_0.input.name == "image_a"
+    assert coord_transform_0.output.name == "world"
     assert coord_transform_0.translation == (0, 0)
     coord_transform_1 = scene.ome_attributes.scene.coordinateTransformations[1]
     assert isinstance(coord_transform_1, Translation)
-    assert coord_transform_1.input == "image_b"
-    assert coord_transform_1.output == "world"
+    assert coord_transform_1.input is not None
+    assert coord_transform_1.output is not None
+    assert coord_transform_1.input.name == "image_b"
+    assert coord_transform_1.output.name == "world"
     assert coord_transform_1.translation == (0, 256)
 
     # Verify coordinate systems

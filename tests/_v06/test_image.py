@@ -7,6 +7,7 @@ from ome_zarr_models._utils import TransformGraphNode
 from ome_zarr_models._v06.coordinate_transforms import (
     Axis,
     CoordinateSystem,
+    CoordinateSystemIdentifier,
     Scale,
     Sequence,
     Translation,
@@ -130,8 +131,8 @@ def test_image(store: Store) -> None:
                         coordinateTransformations=(
                             Scale(
                                 type="scale",
-                                input="0",
-                                output="coord_sys0",
+                                input=CoordinateSystemIdentifier(path="0"),
+                                output=CoordinateSystemIdentifier(name="coord_sys0"),
                                 name=None,
                                 scale=(1.0, 1.0, 0.5, 0.5, 0.5),
                                 path=None,
@@ -143,8 +144,8 @@ def test_image(store: Store) -> None:
                         coordinateTransformations=(
                             Scale(
                                 type="scale",
-                                input="1",
-                                output="coord_sys0",
+                                input=CoordinateSystemIdentifier(path="1"),
+                                output=CoordinateSystemIdentifier(name="coord_sys0"),
                                 name=None,
                                 scale=(1.0, 1.0, 1.0, 1.0, 1.0),
                                 path=None,
@@ -156,8 +157,8 @@ def test_image(store: Store) -> None:
                         coordinateTransformations=(
                             Scale(
                                 type="scale",
-                                input="2",
-                                output="coord_sys0",
+                                input=CoordinateSystemIdentifier(path="2"),
+                                output=CoordinateSystemIdentifier(name="coord_sys0"),
                                 name=None,
                                 scale=(1.0, 1.0, 2.0, 2.0, 2.0),
                                 path=None,
@@ -168,8 +169,8 @@ def test_image(store: Store) -> None:
                 coordinateTransformations=(
                     Scale(
                         type="scale",
-                        input="coord_sys0",
-                        output="coord_sys1",
+                        input=CoordinateSystemIdentifier(name="coord_sys0"),
+                        output=CoordinateSystemIdentifier(name="coord_sys1"),
                         name=None,
                         scale=(0.1, 1.0, 1.0, 1.0, 1.0),
                         path=None,
@@ -290,8 +291,10 @@ def test_image_new() -> None:
                         coordinateTransformations=(
                             Sequence(
                                 type="sequence",
-                                input="0",
-                                output="my_image_coords",
+                                input=CoordinateSystemIdentifier(path="0"),
+                                output=CoordinateSystemIdentifier(
+                                    name="my_image_coords"
+                                ),
                                 name=None,
                                 transformations=(
                                     Scale(
@@ -319,8 +322,10 @@ def test_image_new() -> None:
                         coordinateTransformations=(
                             Sequence(
                                 type="sequence",
-                                input="1",
-                                output="my_image_coords",
+                                input=CoordinateSystemIdentifier(path="1"),
+                                output=CoordinateSystemIdentifier(
+                                    name="my_image_coords"
+                                ),
                                 name=None,
                                 transformations=(
                                     Scale(
@@ -382,38 +387,38 @@ def test_transform_graph() -> None:
         TransformGraphNode(name="coord_sys0", path=None): {
             TransformGraphNode(name="coord_sys1", path=None): Scale(
                 type="scale",
-                input="coord_sys0",
-                output="coord_sys1",
+                input=CoordinateSystemIdentifier(name="coord_sys0"),
+                output=CoordinateSystemIdentifier(name="coord_sys1"),
                 name=None,
                 scale=(0.1, 1.0, 1.0, 1.0, 1.0),
                 path=None,
             )
         },
-        TransformGraphNode(name="0", path=None): {
+        TransformGraphNode(name=None, path="0"): {
             TransformGraphNode(name="coord_sys0", path=None): Scale(
                 type="scale",
-                input="0",
-                output="coord_sys0",
+                input=CoordinateSystemIdentifier(path="0"),
+                output=CoordinateSystemIdentifier(name="coord_sys0"),
                 name=None,
                 scale=(1.0, 1.0, 0.5, 0.5, 0.5),
                 path=None,
             )
         },
-        TransformGraphNode(name="1", path=None): {
+        TransformGraphNode(name=None, path="1"): {
             TransformGraphNode(name="coord_sys0", path=None): Scale(
                 type="scale",
-                input="1",
-                output="coord_sys0",
+                input=CoordinateSystemIdentifier(path="1"),
+                output=CoordinateSystemIdentifier(name="coord_sys0"),
                 name=None,
                 scale=(1.0, 1.0, 1.0, 1.0, 1.0),
                 path=None,
             )
         },
-        TransformGraphNode(name="2", path=None): {
+        TransformGraphNode(name=None, path="2"): {
             TransformGraphNode(name="coord_sys0", path=None): Scale(
                 type="scale",
-                input="2",
-                output="coord_sys0",
+                input=CoordinateSystemIdentifier(path="2"),
+                output=CoordinateSystemIdentifier(name="coord_sys0"),
                 name=None,
                 scale=(1.0, 1.0, 2.0, 2.0, 2.0),
                 path=None,

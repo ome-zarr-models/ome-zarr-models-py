@@ -244,7 +244,7 @@ GRAPHVIZ_ATTRS = {"fontname": "open-sans"}
 
 @dataclass(frozen=True)
 class TransformGraphNode:
-    name: str
+    name: str | None
     path: str | None = None
 
     @classmethod
@@ -436,7 +436,9 @@ class TransformGraph:
                 systems.add(sys_out)
 
         # Filter out any systems that point to another path
-        system_names = {sys.name for sys in systems if sys.path is None}
+        system_names = {
+            sys.name for sys in systems if sys.path is None and sys.name is not None
+        }
         # Filter out named coordinate systems
         return system_names - set(self._systems.keys())
 
@@ -469,6 +471,8 @@ class TransformGraph:
             for output_sys in self._graph[input_sys]:
                 # Don't add internal transforms
                 if (input_sys.path, output_sys.path) == (None, None):
+                    continue
+                if input_sys.name is None or output_sys.name is None:
                     continue
                 print(input_sys.name, output_sys.name)
                 print(input_sys.path, output_sys.path)
@@ -512,6 +516,8 @@ class TransformGraph:
             for output_sys in graph._graph[input_sys]:
                 # Only add transforms internal to this group
                 if (input_sys.path, output_sys.path) != (None, None):
+                    continue
+                if input_sys.name is None or output_sys.name is None:
                     continue
                 graphviz_graph.edge(
                     cls._node_key(path, input_sys.name),

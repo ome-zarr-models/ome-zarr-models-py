@@ -6,6 +6,7 @@ from pydantic import ValidationError
 from ome_zarr_models._v06.coordinate_transforms import (
     Axis,
     CoordinateSystem,
+    CoordinateSystemIdentifier,
     Scale,
     Sequence,
     Transform,
@@ -55,8 +56,10 @@ def test_ensure_scale_translation() -> None:
         coordinateTransformations=(
             Scale(
                 scale=[1.0, 1.0],
-                input="0",
-                output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
+                input=CoordinateSystemIdentifier(path="0"),
+                output=CoordinateSystemIdentifier(
+                    name=COORDINATE_SYSTEM_NAME_FOR_TESTS
+                ),
             ),
         )
     )
@@ -73,8 +76,10 @@ def test_ensure_scale_translation() -> None:
             coordinateTransformations=(
                 Translation(
                     translation=[1.0, 1.0],
-                    input="0",
-                    output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
+                    input=CoordinateSystemIdentifier(path="0"),
+                    output=CoordinateSystemIdentifier(
+                        name=COORDINATE_SYSTEM_NAME_FOR_TESTS
+                    ),
                 ),
             )
         )
@@ -89,14 +94,18 @@ def test_ensure_scale_translation() -> None:
             coordinateTransformations=(
                 Translation(
                     translation=[1.0, 1.0],
-                    input="0",
-                    output="intermediate",  # can be anything, this case is not
+                    input=CoordinateSystemIdentifier(path="0"),
+                    output=CoordinateSystemIdentifier(
+                        name="intermediate"
+                    ),  # can be anything, this case is not
                     # valid anyway
                 ),
                 Translation(
                     translation=[1.0, 1.0],
-                    input="intermediate",
-                    output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
+                    input=CoordinateSystemIdentifier(name="intermediate"),
+                    output=CoordinateSystemIdentifier(
+                        name=COORDINATE_SYSTEM_NAME_FOR_TESTS
+                    ),
                 ),
             )
         )
@@ -117,8 +126,10 @@ def test_ensure_scale_translation() -> None:
                         output=None,
                     ),
                 ),
-                input="0",
-                output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
+                input=CoordinateSystemIdentifier(path="0"),
+                output=CoordinateSystemIdentifier(
+                    name=COORDINATE_SYSTEM_NAME_FOR_TESTS
+                ),
             ),
         )
     )
@@ -131,14 +142,16 @@ def test_ensure_scale_translation() -> None:
         _ = _gen_multiscale(
             coordinateTransformations=(
                 Sequence(
-                    input="0",
-                    output=COORDINATE_SYSTEM_NAME_FOR_TESTS,
-                    transformations=[
+                    transformations=(
                         Scale(scale=[1.0, 1.0], input=None, output=None),
                         Translation(
                             translation=[1.0, 1.0, 2.0], input=None, output=None
                         ),
-                    ],
+                    ),
+                    input=CoordinateSystemIdentifier(path="0"),
+                    output=CoordinateSystemIdentifier(
+                        name=COORDINATE_SYSTEM_NAME_FOR_TESTS
+                    ),
                 ),
             )
         )
@@ -172,8 +185,8 @@ def test_invalid_dimensionalities() -> None:
                     coordinateTransformations=(
                         Scale(
                             scale=[1.0, 1.0, 1.0],
-                            input="0",
-                            output="out",
+                            input=CoordinateSystemIdentifier(path="0"),
+                            output=CoordinateSystemIdentifier(name="out"),
                         ),
                     ),
                 ),
@@ -193,8 +206,8 @@ def test_invalid_dimensionalities() -> None:
                                     output=None,
                                 ),
                             ),
-                            input="1",
-                            output="out",
+                            input=CoordinateSystemIdentifier(path="1"),
+                            output=CoordinateSystemIdentifier(name="out"),
                         ),
                     ),
                 ),
@@ -225,8 +238,8 @@ def test_ensure_ordered_scales() -> None:
                     coordinateTransformations=(
                         Scale(
                             scale=[2.0, 2.0],
-                            input="0",
-                            output="out",
+                            input=CoordinateSystemIdentifier(path="0"),
+                            output=CoordinateSystemIdentifier(name="out"),
                         ),
                     ),
                 ),
@@ -246,8 +259,8 @@ def test_ensure_ordered_scales() -> None:
                                     output=None,
                                 ),
                             ),
-                            input="1",
-                            output="out",
+                            input=CoordinateSystemIdentifier(path="1"),
+                            output=CoordinateSystemIdentifier(name="out"),
                         ),
                     ),
                 ),
@@ -279,9 +292,9 @@ def test_default_coordinate_systems() -> None:
                 path="0",
                 coordinateTransformations=(
                     Scale(
-                        scale=[2.0, 2.0],
-                        input="0",
-                        output="out",
+                        scale=(2.0, 2.0),
+                        input=CoordinateSystemIdentifier(path="0"),
+                        output=CoordinateSystemIdentifier(name="physical"),
                     ),
                 ),
             ),
@@ -316,13 +329,8 @@ def test_from_v05() -> None:
         name="my_multiscale",
         type="my_type",
     )
-    assert Multiscale.from_v05(
-        ms,
-        intrinsic_system_name="intrinsic",
-        top_level_system=CoordinateSystem(
-            name="top_level", axes=(Axis(name="x"), Axis(name="y"))
-        ),
-    ) == Multiscale(
+
+    ms_target = Multiscale(
         coordinateSystems=(
             CoordinateSystem(
                 name="intrinsic",
@@ -357,8 +365,8 @@ def test_from_v05() -> None:
                 coordinateTransformations=(
                     Sequence(
                         type="sequence",
-                        input="0",
-                        output="intrinsic",
+                        input=CoordinateSystemIdentifier(path="0"),
+                        output=CoordinateSystemIdentifier(name="intrinsic"),
                         name=None,
                         transformations=(
                             Scale(
@@ -385,8 +393,8 @@ def test_from_v05() -> None:
         coordinateTransformations=(
             Scale(
                 type="scale",
-                input="intrinsic",
-                output="top_level",
+                input=CoordinateSystemIdentifier(name="intrinsic"),
+                output=CoordinateSystemIdentifier(name="top_level"),
                 name=None,
                 scale=(6.0, 3.0),
                 path=None,
@@ -395,6 +403,17 @@ def test_from_v05() -> None:
         metadata={"key": "value"},
         name="my_multiscale",
         type="my_type",
+    )
+
+    assert (
+        Multiscale.from_v05(
+            ms,
+            intrinsic_system_name="intrinsic",
+            top_level_system=CoordinateSystem(
+                name="top_level", axes=(Axis(name="x"), Axis(name="y"))
+            ),
+        )
+        == ms_target
     )
 
 
@@ -427,8 +446,8 @@ def test_unique_system_names() -> None:
                     coordinateTransformations=(
                         Scale(
                             scale=(2.0, 2.0),
-                            input="0",
-                            output="out",
+                            input=CoordinateSystemIdentifier(path="0"),
+                            output=CoordinateSystemIdentifier(name="out"),
                         ),
                     ),
                 ),
