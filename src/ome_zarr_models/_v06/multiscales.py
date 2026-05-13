@@ -221,6 +221,8 @@ class Multiscale(BaseAttrs):
             if isinstance(transform, Scale):
                 scale_transforms.append(transform)
             elif isinstance(transform, Identity):
+                # TODO: is there some way we can compare this to other scales or
+                #  identities?
                 pass
             else:
                 if not isinstance(transform, Sequence):
