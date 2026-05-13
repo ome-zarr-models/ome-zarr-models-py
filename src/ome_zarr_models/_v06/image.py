@@ -210,10 +210,7 @@ class Image(BaseGroupv06[ImageAttrs]):
         new_members = image_v05.members
         new_attributes = ImageAttrs(
             version="0.6",
-            multiscales=[
-                ms._to_v06()
-                for ms in image_v05.ome_attributes.multiscales
-            ],
+            multiscales=[ms._to_v06() for ms in image_v05.ome_attributes.multiscales],
         )
         return cls(members=new_members, attributes=BaseZarrAttrs(ome=new_attributes))
 

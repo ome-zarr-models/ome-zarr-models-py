@@ -34,11 +34,14 @@ from ome_zarr_models.v05.axes import Axes
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
-    from ome_zarr_models._v06.multiscales import Multiscale as MultiscaleV06
+
     from ome_zarr_models._v06.coordinate_transforms import (
         Scale as ScaleV06,
+    )
+    from ome_zarr_models._v06.coordinate_transforms import (
         Sequence as SequenceV06,
     )
+    from ome_zarr_models._v06.multiscales import Multiscale as MultiscaleV06
     from ome_zarr_models.v04.multiscales import Multiscale as MultiscaleV04
 
 
@@ -61,8 +64,8 @@ class Multiscale(BaseAttrs):
     type: JsonValue = None
 
     def to_version(
-            self, version: Literal["0.4", "0.6"]
-            ) -> MultiscaleV04 | MultiscaleV06:
+        self, version: Literal["0.4", "0.6"]
+    ) -> MultiscaleV04 | MultiscaleV06:
         """
         Convert this Multiscale metadata to the specified version.
 
@@ -78,15 +81,18 @@ class Multiscale(BaseAttrs):
             raise ValueError(f"Unsupported version conversion: 0.5 -> {version}")
 
     def _to_v06(self) -> MultiscaleV06:
-        from ome_zarr_models._v06.multiscales import (
-            Dataset as DatasetV06,
-            Multiscale as MultiscaleV06,
-        )
         from ome_zarr_models._v06.coordinate_transforms import (
             Axis,
             CoordinateSystem,
-            CoordinateSystemIdentifier
+            CoordinateSystemIdentifier,
         )
+        from ome_zarr_models._v06.multiscales import (
+            Dataset as DatasetV06,
+        )
+        from ome_zarr_models._v06.multiscales import (
+            Multiscale as MultiscaleV06,
+        )
+
         ms_v06 = MultiscaleV06(
             datasets=tuple(
                 DatasetV06(
@@ -119,8 +125,7 @@ class Multiscale(BaseAttrs):
             output_cs = CoordinateSystem(
                 name="output",
                 axes=tuple(
-                    Axis(name=ax.name, type=ax.type, unit=None)
-                    for ax in self.axes
+                    Axis(name=ax.name, type=ax.type, unit=None) for ax in self.axes
                 ),
             )
 
@@ -417,14 +422,18 @@ class Dataset(BaseAttrs):
 
 
 def _v05_transform_to_v06(transform: ValidTransform) -> ScaleV06 | SequenceV06:
+    from ome_zarr_models._v06.coordinate_transforms import (
+        Scale as ScaleV06,
+    )
+    from ome_zarr_models._v06.coordinate_transforms import (
+        Sequence as SequenceV06,
+    )
+    from ome_zarr_models._v06.coordinate_transforms import (
+        Translation as TranslationV06,
+    )
     from ome_zarr_models.common.coordinate_transformations import (
         VectorScale,
         VectorTranslation,
-    )
-    from ome_zarr_models._v06.coordinate_transforms import (
-        Scale as ScaleV06,
-        Translation as TranslationV06,
-        Sequence as SequenceV06,
     )
 
     # Scale (always present)

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing
 from collections import Counter
-from typing import TYPE_CHECKING, Annotated, Self
+from typing import Annotated, Self
 
 from pydantic import (
     Field,
@@ -14,7 +14,6 @@ from pydantic import (
 import ome_zarr_models._v06.coordinate_transforms as transforms
 from ome_zarr_models._v06.coordinate_transforms import (
     AnyTransform,
-    Axis,
     CoordinateSystem,
     CoordinateSystemIdentifier,
     Identity,
