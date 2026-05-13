@@ -369,8 +369,8 @@ def test_from_v05() -> None:
                 coordinateTransformations=(
                     Sequence(
                         type="sequence",
-                        input=CoordinateSystemIdentifier(path="0"),
-                        output=CoordinateSystemIdentifier(name="intrinsic"),
+                        input=CoordinateSystemIdentifier(name=None, path="0"),
+                        output=CoordinateSystemIdentifier(name="intrinsic", path=None),
                         name=None,
                         transformations=(
                             Scale(
@@ -397,8 +397,8 @@ def test_from_v05() -> None:
         coordinateTransformations=(
             Scale(
                 type="scale",
-                input=CoordinateSystemIdentifier(name="intrinsic"),
-                output=CoordinateSystemIdentifier(name="top_level"),
+                input=CoordinateSystemIdentifier(name="intrinsic", path=None),
+                output=CoordinateSystemIdentifier(name="top_level", path=None),
                 name=None,
                 scale=(6.0, 3.0),
                 path=None,
@@ -414,7 +414,8 @@ def test_from_v05() -> None:
             ms,
             intrinsic_system_name="intrinsic",
             top_level_system=CoordinateSystem(
-                name="top_level", axes=(Axis(name="x"), Axis(name="y"))
+                name="top_level",
+                axes=(Axis(name="x", type="space"), Axis(name="y", type="space")),
             ),
         )
         == ms_target
