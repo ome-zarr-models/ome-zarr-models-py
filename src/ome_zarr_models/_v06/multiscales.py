@@ -72,7 +72,10 @@ class Multiscale(BaseAttrs):
                 "Output coordinate system in "
                 f"{self.datasets[0].coordinateTransformations[0]} not found. "
             )
-        return next(cs for cs in self.coordinateSystems if cs.name == output.name)
+        for cs in self.coordinateSystems:
+            if cs.name == output.name:
+                return cs
+        raise ValueError(f"No coordinate systems have the name '{output.name}'")
 
     @classmethod
     def from_v05(
@@ -373,6 +376,7 @@ class Multiscale(BaseAttrs):
         - there is only 1 axis with a type that is not `space`, `time`, or `channel`
         """
         for cs in self.coordinateSystems:
+            print(cs)
             check_length(
                 [ax for ax in cs.axes if ax.type == "space"],
                 valid_lengths=[2, 3],
