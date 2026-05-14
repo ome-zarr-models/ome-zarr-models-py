@@ -87,10 +87,10 @@ class Multiscale(BaseAttrs):
             CoordinateSystemIdentifier,
         )
         from ome_zarr_models._v06.multiscales import (
-            Dataset as DatasetV06,
+            Dataset as DatasetV06
         )
         from ome_zarr_models._v06.multiscales import (
-            Multiscale as MultiscaleV06,
+            Multiscale as MultiscaleV06
         )
 
         ms_v06 = MultiscaleV06(
@@ -423,13 +423,13 @@ class Dataset(BaseAttrs):
 
 def _v05_transform_to_v06(transform: ValidTransform) -> ScaleV06 | SequenceV06:
     from ome_zarr_models._v06.coordinate_transforms import (
-        Scale as ScaleV06,
+        Scale as ScaleV06
     )
     from ome_zarr_models._v06.coordinate_transforms import (
-        Sequence as SequenceV06,
+        Sequence as SequenceV06
     )
     from ome_zarr_models._v06.coordinate_transforms import (
-        Translation as TranslationV06,
+        Translation as TranslationV06
     )
     from ome_zarr_models.common.coordinate_transformations import (
         VectorScale,
