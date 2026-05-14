@@ -81,7 +81,7 @@ class Multiscale(BaseAttrs):
         version
             The version to convert to. Must be one of "0.4" or "0.6".
         default_coordinate_system
-            The name of the default coordinate system to use 
+            The name of the default coordinate system to use
             for the 0.5 -> 0.6 conversion. Defaults to "physical".
         output_coordinate_system
             The name of the output coordinate system to use
@@ -109,12 +109,8 @@ class Multiscale(BaseAttrs):
             CoordinateSystem,
             CoordinateSystemIdentifier,
         )
-        from ome_zarr_models._v06.multiscales import (
-            Dataset as DatasetV06
-        )
-        from ome_zarr_models._v06.multiscales import (
-            Multiscale as MultiscaleV06
-        )
+        from ome_zarr_models._v06.multiscales import Dataset as DatasetV06
+        from ome_zarr_models._v06.multiscales import Multiscale as MultiscaleV06
 
         ms_v06 = MultiscaleV06(
             datasets=tuple(
@@ -126,7 +122,7 @@ class Multiscale(BaseAttrs):
                                 "input": CoordinateSystemIdentifier(path=ds.path),
                                 "output": CoordinateSystemIdentifier(
                                     name=default_coordinate_system
-                                    ),
+                                ),
                             }
                         ),
                     ),
@@ -162,9 +158,11 @@ class Multiscale(BaseAttrs):
                         ).model_copy(
                             update={
                                 "input": CoordinateSystemIdentifier(
-                                    name=default_coordinate_system),
+                                    name=default_coordinate_system
+                                ),
                                 "output": CoordinateSystemIdentifier(
-                                    name=output_coordinate_system),
+                                    name=output_coordinate_system
+                                ),
                             }
                         ),
                     ),
@@ -449,15 +447,9 @@ class Dataset(BaseAttrs):
 
 
 def _v05_transform_to_v06(transform: ValidTransform) -> ScaleV06 | SequenceV06:
-    from ome_zarr_models._v06.coordinate_transforms import (
-        Scale as ScaleV06
-    )
-    from ome_zarr_models._v06.coordinate_transforms import (
-        Sequence as SequenceV06
-    )
-    from ome_zarr_models._v06.coordinate_transforms import (
-        Translation as TranslationV06
-    )
+    from ome_zarr_models._v06.coordinate_transforms import Scale as ScaleV06
+    from ome_zarr_models._v06.coordinate_transforms import Sequence as SequenceV06
+    from ome_zarr_models._v06.coordinate_transforms import Translation as TranslationV06
     from ome_zarr_models.common.coordinate_transformations import (
         VectorScale,
         VectorTranslation,
