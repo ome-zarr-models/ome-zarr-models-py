@@ -1,5 +1,5 @@
 import typing
-from typing import TYPE_CHECKING, Self
+from typing import Self
 
 # Import needed for pydantic type resolution
 import pydantic_zarr  # noqa: F401
@@ -15,9 +15,6 @@ from ome_zarr_models._v06.coordinate_transforms import (
 )
 from ome_zarr_models._v06.labels import Labels
 from ome_zarr_models._v06.multiscales import Dataset, Multiscale
-
-if TYPE_CHECKING:
-    from ome_zarr_models.v05 import Image as Imagev05
 
 __all__ = ["Image", "ImageAttrs"]
 
@@ -186,33 +183,6 @@ class Image(BaseGroupv06[ImageAttrs]):
                 )
             ),
         )
-
-    @classmethod
-    def from_v05(
-        cls, image_v05: "Imagev05", *, intrinsic_system_name: str = "physical"
-    ) -> Self:
-        """
-        Convert an v05 model to a v06 model.
-
-        Parameters
-        ----------
-        image_v05 :
-            OME-Zarr version 0.5 image model.
-        intrinsic_system_name :
-            Name of the coordinate system that all the image array data transforms into.
-            In OME-Zarr 0.5 this was the coordinate system in physical units used
-            to display the dta.
-
-        Returns
-        -------
-        OME-Zarr version 0.6 image model.
-        """
-        new_members = image_v05.members
-        new_attributes = ImageAttrs(
-            version="0.6",
-            multiscales=[ms._to_v06() for ms in image_v05.ome_attributes.multiscales],
-        )
-        return cls(members=new_members, attributes=BaseZarrAttrs(ome=new_attributes))
 
     @model_validator(mode="after")
     def _check_arrays_compatible(self) -> Self:
