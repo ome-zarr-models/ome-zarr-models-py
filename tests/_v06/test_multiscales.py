@@ -409,7 +409,14 @@ def test_from_v05() -> None:
         type="my_type",
     )
 
-    assert ms._to_v06() == ms_target
+    assert (
+        ms.to_version(
+            "0.6",
+            default_coordinate_system="physical",
+            output_coordinate_system="output",
+        )
+        == ms_target
+    )
 
 
 def test_unique_system_names() -> None:
