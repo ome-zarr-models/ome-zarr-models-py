@@ -18,5 +18,5 @@ zarr_group = zarr.open_group(
 image_group_v05 = ome_zarr_models.v05.Image.from_zarr(zarr_group)
 print(image_group_v05.ome_attributes)
 
-image_group_v06 = ome_zarr_models._v06.Image.from_v05(image_group_v05)
-print(image_group_v06.ome_attributes)
+# image_group_v06 = ome_zarr_models._v06.Image.from_v05(image_group_v05)
+# print(image_group_v06.ome_attributes)
