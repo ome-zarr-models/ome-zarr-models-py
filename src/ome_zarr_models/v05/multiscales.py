@@ -78,7 +78,10 @@ class Multiscale(BaseAttrs):
         pass
 
     def to_version(
-        self, version: Literal["0.4", "0.6"], **kwargs: Any
+        self,
+        version: Literal["0.4", "0.6"],
+        default_coordinate_system: str = "physical",
+        output_coordinate_system: str = "output",
     ) -> MultiscaleV04 | MultiscaleV06:
         """
         Convert this Multiscale metadata to the specified version.
@@ -104,12 +107,8 @@ class Multiscale(BaseAttrs):
             return self._to_v04()
         elif version == "0.6":
             return self._to_v06(
-                default_coordinate_system=kwargs.pop(
-                    "default_coordinate_system", "physical"
-                ),
-                output_coordinate_system=kwargs.pop(
-                    "output_coordinate_system", "output"
-                ),
+                default_coordinate_system=default_coordinate_system,
+                output_coordinate_system=output_coordinate_system,
             )
         else:
             raise ValueError(f"Unsupported version conversion: 0.5 -> {version}")
