@@ -65,7 +65,6 @@ def test_load_container() -> None:
                                             },
                                             "name": "tile_0 to physical",
                                             "scale": (1.0, 1.0),
-                                            "path": None,
                                         },
                                     ),
                                 },
@@ -148,7 +147,6 @@ def test_load_container() -> None:
                                             },
                                             "name": "tile_1 to physical",
                                             "scale": (1.0, 1.0),
-                                            "path": None,
                                         },
                                     ),
                                 },
@@ -200,7 +198,6 @@ def test_load_container() -> None:
                     output=CoordinateSystemIdentifier(name="world"),
                     name="tile_0_mm to world",
                     translation=(0.0, 0.0),
-                    path=None,
                 ),
                 Translation(
                     type="translation",
@@ -208,7 +205,6 @@ def test_load_container() -> None:
                     output=CoordinateSystemIdentifier(name="world"),
                     name="tile_1_mm to world",
                     translation=(0.0, 348.0),
-                    path=None,
                 ),
             ),
             coordinateSystems=(
