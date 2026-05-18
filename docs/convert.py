@@ -18,5 +18,39 @@ zarr_group = zarr.open_group(
 image_group_v05 = ome_zarr_models.v05.Image.from_zarr(zarr_group)
 print(image_group_v05.ome_attributes)
 
-# image_group_v06 = ome_zarr_models._v06.Image.from_v05(image_group_v05)
-# print(image_group_v06.ome_attributes)
+# ## Metadata conversion
+#
+# ome-zarr-models-py offers a convenient way to convert multiscales metadata between differen ome-zarr versions
+# without using the high-level `Image` classes:
+
+from ome_zarr_models.v05.multiscales import Multiscale
+
+multiscale = Multiscale.model_validate(
+    {
+        "axes": [
+            {"name": "z", "type": "space"},
+            {"name": "y", "type": "space"},
+            {"name": "x", "type": "space"},
+        ],
+        "datasets": [  # an image with a single resolution level
+            {
+                "path": "s0",
+                "coordinateTransformations": [
+                    {
+                        "type": "scale",
+                        "scale": [1, 1, 1],
+                    }
+                ],
+            }
+        ],
+        "name": "my_image",
+    }
+)
+
+multiscale_v06 = multiscale.to_version("0.6")
+print(multiscale_v06)
+
+# This version conversion works between all currently supported versions of ome-zarr:
+
+multiscale_v04 = multiscale.to_version("0.4")
+print(multiscale_v04)
