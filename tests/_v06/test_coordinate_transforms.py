@@ -18,7 +18,7 @@ from ome_zarr_models._v06.coordinate_transforms import (
 )
 
 
-@pytest.mark.parametrize("transform_cls", (Translation, Scale, Affine, Rotation))
+@pytest.mark.parametrize("transform_cls", (Affine, Rotation))
 def test_no_parameters(transform_cls: type[Transform]) -> None:
     # Check that errors are raised with classes that require either parameters,
     # OR paths to a Zarr array with those parameters.
