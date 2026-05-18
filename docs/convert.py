@@ -20,12 +20,11 @@ print(image_group_v05.ome_attributes)
 
 # ## Metadata conversion
 #
-# ome-zarr-models-py offers a convenient way to convert multiscales metadata between differen ome-zarr versions
-# without using the high-level `Image` classes:
+# ome-zarr-models-py offers a convenient way to convert multiscales metadata
+# between different ome-zarr versions without using the high-level
+# `Image` classes:
 
-from ome_zarr_models.v05.multiscales import Multiscale
-
-multiscale = Multiscale.model_validate(
+multiscale = ome_zarr_models.v05.multiscales.Multiscale.model_validate(
     {
         "axes": [
             {"name": "z", "type": "space"},
