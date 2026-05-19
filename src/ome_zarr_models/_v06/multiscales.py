@@ -56,6 +56,9 @@ class Multiscale(BaseAttrs):
             raise ValueError(f"Unsupported version: {version}")
 
     def _to_v05(self) -> Multiscalev05:
+        from ome_zarr_models.common.coordinate_transformations import (
+            ValidTransform,
+        )
         from ome_zarr_models.v05.axes import Axis as Axisv05
         from ome_zarr_models.v05.coordinate_transformations import (
             VectorScale,
@@ -99,11 +102,12 @@ class Multiscale(BaseAttrs):
 
             if scale_transform is None:
                 raise ValueError("No scale transform found")
-            
+
+            coord_transforms: ValidTransform
             if translation_transform is not None:
-                coord_transforms: tuple[VectorScale, VectorTranslation] = (scale_transform, translation_transform)
+                coord_transforms = (scale_transform, translation_transform)
             else:
-                coord_transforms = (scale_transform,)  # type: ignore
+                coord_transforms = (scale_transform,)
 
             datasets.append(
                 Datasetv05(path=ds.path, coordinateTransformations=coord_transforms)
@@ -113,7 +117,8 @@ class Multiscale(BaseAttrs):
             warnings.warn(
                 "Coordinate transformations defined in coordinateTransformations "
                 "can currently not be converted to v0.5, "
-                "as they are not supported in this version."
+                "as they are not supported in this version.",
+                stacklevel=2,
             )
 
         new_ms = Multiscalev05(
