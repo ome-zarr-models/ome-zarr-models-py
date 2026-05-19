@@ -134,7 +134,7 @@ def test_image(store: Store) -> None:
                                 input=CoordinateSystemIdentifier(path="0"),
                                 output=CoordinateSystemIdentifier(name="coord_sys0"),
                                 name=None,
-                                scale=(1.0, 1.0, 0.5, 0.5, 0.5)
+                                scale=(1.0, 1.0, 0.5, 0.5, 0.5),
                             ),
                         ),
                     ),
@@ -146,7 +146,7 @@ def test_image(store: Store) -> None:
                                 input=CoordinateSystemIdentifier(path="1"),
                                 output=CoordinateSystemIdentifier(name="coord_sys0"),
                                 name=None,
-                                scale=(1.0, 1.0, 1.0, 1.0, 1.0)
+                                scale=(1.0, 1.0, 1.0, 1.0, 1.0),
                             ),
                         ),
                     ),
@@ -158,7 +158,7 @@ def test_image(store: Store) -> None:
                                 input=CoordinateSystemIdentifier(path="2"),
                                 output=CoordinateSystemIdentifier(name="coord_sys0"),
                                 name=None,
-                                scale=(1.0, 1.0, 2.0, 2.0, 2.0)
+                                scale=(1.0, 1.0, 2.0, 2.0, 2.0),
                             ),
                         ),
                     ),
@@ -169,7 +169,7 @@ def test_image(store: Store) -> None:
                         input=CoordinateSystemIdentifier(name="coord_sys0"),
                         output=CoordinateSystemIdentifier(name="coord_sys1"),
                         name=None,
-                        scale=(0.1, 1.0, 1.0, 1.0, 1.0)
+                        scale=(0.1, 1.0, 1.0, 1.0, 1.0),
                     ),
                 ),
                 metadata={

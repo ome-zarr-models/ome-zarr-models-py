@@ -242,9 +242,7 @@ class Translation(Transform):
     """Translation transformation."""
 
     type: Literal["translation"] = "translation"
-    translation: tuple[float, ...] = Field(
-        description="Translation vector."
-    )
+    translation: tuple[float, ...] = Field(description="Translation vector.")
 
     @property
     def ndim(self) -> int:
@@ -282,9 +280,7 @@ class Scale(Transform):
     """Scale transformation."""
 
     type: Literal["scale"] = "scale"
-    scale: tuple[float, ...] = Field(
-        description="Scale factors for each axis."
-    )
+    scale: tuple[float, ...] = Field(description="Scale factors for each axis.")
 
     @property
     def has_inverse(self) -> bool:
@@ -320,6 +316,7 @@ class Scale(Transform):
             output=self.output,
             name=self.name,
         )
+
 
 class Affine(Transform):
     """Affine transform."""
