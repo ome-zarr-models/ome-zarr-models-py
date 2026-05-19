@@ -470,8 +470,6 @@ def _v05_transform_to_v06(transform: ValidTransform) -> ScaleV06 | SequenceV06:
     # Scale (always present)
     if isinstance(transform[0], VectorScale):
         scale = ScaleV06(scale=tuple(transform[0].scale))
-    else:
-        scale = ScaleV06(path=transform[0].path)
 
     if len(transform) == 1:
         return scale
@@ -480,6 +478,4 @@ def _v05_transform_to_v06(transform: ValidTransform) -> ScaleV06 | SequenceV06:
         # Translate
         if isinstance(transform[1], VectorTranslation):
             translate = TranslationV06(translation=tuple(transform[1].translation))
-        else:
-            translate = TranslationV06(path=transform[1].translation)
         return SequenceV06(transformations=(scale, translate))
