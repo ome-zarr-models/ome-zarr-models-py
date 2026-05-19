@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import typing
+import warnings
 from collections import Counter
 from logging import warning
 from typing import TYPE_CHECKING, Annotated, Literal, Self
@@ -103,8 +104,8 @@ class Multiscale(BaseAttrs):
             )
 
         if self.coordinateTransformations is not None:
-            warning.warn(
-                msg="Coordinate transformations defined in coordinateTransformations "
+            warnings.warn(
+                "Coordinate transformations defined in coordinateTransformations "
                 "can currently not be converted to v0.5, "
                 "as they are not supported in this version."
             )
