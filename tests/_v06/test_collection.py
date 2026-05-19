@@ -65,7 +65,6 @@ def test_load_container() -> None:
                                             },
                                             "name": "tile_0 to physical",
                                             "scale": (1.0, 1.0),
-                                            "path": None,
                                         },
                                     ),
                                 },
@@ -148,7 +147,6 @@ def test_load_container() -> None:
                                             },
                                             "name": "tile_1 to physical",
                                             "scale": (1.0, 1.0),
-                                            "path": None,
                                         },
                                     ),
                                 },
@@ -200,7 +198,6 @@ def test_load_container() -> None:
                     output=CoordinateSystemIdentifier(name="world"),
                     name="tile_0_mm to world",
                     translation=(0.0, 0.0),
-                    path=None,
                 ),
                 Translation(
                     type="translation",
@@ -208,7 +205,6 @@ def test_load_container() -> None:
                     output=CoordinateSystemIdentifier(name="world"),
                     name="tile_1_mm to world",
                     translation=(0.0, 348.0),
-                    path=None,
                 ),
             ),
             coordinateSystems=(
@@ -355,6 +351,7 @@ def test_scene_new() -> None:
     assert coord_transform_1.translation == (0, 256)
 
     # Verify coordinate systems
+    assert scene.ome_attributes.scene.coordinateSystems is not None
     assert len(scene.ome_attributes.scene.coordinateSystems) == 1
     assert scene.ome_attributes.scene.coordinateSystems[0].name == "world"
 

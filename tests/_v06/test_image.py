@@ -135,7 +135,6 @@ def test_image(store: Store) -> None:
                                 output=CoordinateSystemIdentifier(name="coord_sys0"),
                                 name=None,
                                 scale=(1.0, 1.0, 0.5, 0.5, 0.5),
-                                path=None,
                             ),
                         ),
                     ),
@@ -148,7 +147,6 @@ def test_image(store: Store) -> None:
                                 output=CoordinateSystemIdentifier(name="coord_sys0"),
                                 name=None,
                                 scale=(1.0, 1.0, 1.0, 1.0, 1.0),
-                                path=None,
                             ),
                         ),
                     ),
@@ -161,7 +159,6 @@ def test_image(store: Store) -> None:
                                 output=CoordinateSystemIdentifier(name="coord_sys0"),
                                 name=None,
                                 scale=(1.0, 1.0, 2.0, 2.0, 2.0),
-                                path=None,
                             ),
                         ),
                     ),
@@ -173,7 +170,6 @@ def test_image(store: Store) -> None:
                         output=CoordinateSystemIdentifier(name="coord_sys1"),
                         name=None,
                         scale=(0.1, 1.0, 1.0, 1.0, 1.0),
-                        path=None,
                     ),
                 ),
                 metadata={
@@ -303,7 +299,6 @@ def test_image_new() -> None:
                                         output=None,
                                         name=None,
                                         scale=(1.0, 1.0),
-                                        path=None,
                                     ),
                                     Translation(
                                         type="translation",
@@ -311,7 +306,6 @@ def test_image_new() -> None:
                                         output=None,
                                         name=None,
                                         translation=(0.0, 0.0),
-                                        path=None,
                                     ),
                                 ),
                             ),
@@ -334,7 +328,6 @@ def test_image_new() -> None:
                                         output=None,
                                         name=None,
                                         scale=(2.0, 2.0),
-                                        path=None,
                                     ),
                                     Translation(
                                         type="translation",
@@ -342,7 +335,6 @@ def test_image_new() -> None:
                                         output=None,
                                         name=None,
                                         translation=(1.0, 1.0),
-                                        path=None,
                                     ),
                                 ),
                             ),
@@ -391,7 +383,6 @@ def test_transform_graph() -> None:
                 output=CoordinateSystemIdentifier(name="coord_sys1"),
                 name=None,
                 scale=(0.1, 1.0, 1.0, 1.0, 1.0),
-                path=None,
             )
         },
         TransformGraphNode(name=None, path="0"): {
@@ -401,7 +392,6 @@ def test_transform_graph() -> None:
                 output=CoordinateSystemIdentifier(name="coord_sys0"),
                 name=None,
                 scale=(1.0, 1.0, 0.5, 0.5, 0.5),
-                path=None,
             )
         },
         TransformGraphNode(name=None, path="1"): {
@@ -411,7 +401,6 @@ def test_transform_graph() -> None:
                 output=CoordinateSystemIdentifier(name="coord_sys0"),
                 name=None,
                 scale=(1.0, 1.0, 1.0, 1.0, 1.0),
-                path=None,
             )
         },
         TransformGraphNode(name=None, path="2"): {
@@ -421,7 +410,6 @@ def test_transform_graph() -> None:
                 output=CoordinateSystemIdentifier(name="coord_sys0"),
                 name=None,
                 scale=(1.0, 1.0, 2.0, 2.0, 2.0),
-                path=None,
             )
         },
     }

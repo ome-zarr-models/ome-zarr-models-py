@@ -379,7 +379,6 @@ def test_from_v05() -> None:
                                 output=None,
                                 name=None,
                                 scale=(2.0, -4.0),
-                                path=None,
                             ),
                             Translation(
                                 type="translation",
@@ -387,7 +386,6 @@ def test_from_v05() -> None:
                                 output=None,
                                 name=None,
                                 translation=(5.0, 3.0),
-                                path=None,
                             ),
                         ),
                     ),
@@ -401,7 +399,6 @@ def test_from_v05() -> None:
                 output=CoordinateSystemIdentifier(name="output", path=None),
                 name=None,
                 scale=(6.0, 3.0),
-                path=None,
             ),
         ),
         metadata={"key": "value"},

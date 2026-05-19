@@ -242,19 +242,14 @@ class Translation(Transform):
     """Translation transformation."""
 
     type: Literal["translation"] = "translation"
-    translation: tuple[float, ...] | None = Field(
-        default=None, description="Translation vector."
-    )
-    path: str | None = Field(
-        default=None, description="Path to translation vector stored as a Zarr array."
-    )
+    translation: tuple[float, ...] = Field(description="Translation vector.")
 
     @property
     def ndim(self) -> int:
         """
         Number of dimensions.
         """
-        return len(self.translation_vector)
+        return len(self.translation)
 
     @property
     def has_inverse(self) -> bool:
@@ -265,52 +260,27 @@ class Translation(Transform):
             input=self.output,
             output=self.input,
             name=self._inverse_name,
-            translation=tuple([-i for i in self.translation_vector]),
+            translation=tuple([-i for i in self.translation]),
         )
 
-    @property
-    def translation_vector(self) -> tuple[float, ...]:
-        """
-        Translation vector for this transform.
-        """
-        if self.translation is not None:
-            return self.translation
-        elif self.path is not None:
-            raise NotImplementedError(
-                "Loading translation from a Zarr array not yet implemented"
-            )
-        else:
-            raise RuntimeError("Both self.translation and self.path are None")
-
     def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
-        return tuple(p + t for p, t in zip(point, self.translation_vector, strict=True))
+        return tuple(p + t for p, t in zip(point, self.translation, strict=True))
 
     def as_affine(self) -> "Affine":
         return Affine._from_matrix_vector(
             matrix=tuple(tuple(row) for row in np.identity(self.ndim)),
-            vector=self.translation_vector,
+            vector=self.translation,
             input=self.input,
             output=self.output,
             name=self.name,
         )
-
-    @model_validator(mode="after")
-    def check_metadata_set(self) -> Self:
-        if self.translation is None and self.path is None:
-            raise ValueError("One of 'translation' or 'path' must be given")
-        return self
 
 
 class Scale(Transform):
     """Scale transformation."""
 
     type: Literal["scale"] = "scale"
-    scale: tuple[float, ...] | None = Field(
-        default=None, description="Scale factors for each axis."
-    )
-    path: str | None = Field(
-        default=None, description="Path to scale factors stored in a Zarr array."
-    )
+    scale: tuple[float, ...] = Field(description="Scale factors for each axis.")
 
     @property
     def has_inverse(self) -> bool:
@@ -321,36 +291,22 @@ class Scale(Transform):
             input=self.output,
             output=self.input,
             name=self._inverse_name,
-            scale=tuple([1 / i for i in self.scale_vector]),
+            scale=tuple([1 / i for i in self.scale]),
         )
-
-    @property
-    def scale_vector(self) -> tuple[float, ...]:
-        """
-        Scale vector for this transform.
-        """
-        if self.scale is not None:
-            return self.scale
-        elif self.path is not None:
-            raise NotImplementedError(
-                "Loading scale from a Zarr array not yet implemented"
-            )
-        else:
-            raise RuntimeError("Both self.scale and self.path are None")
 
     @property
     def ndim(self) -> int:
         """
         Number of dimensions.
         """
-        return len(self.scale_vector)
+        return len(self.scale)
 
     def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
-        return tuple(p * s for p, s in zip(point, self.scale_vector, strict=True))
+        return tuple(p * s for p, s in zip(point, self.scale, strict=True))
 
     def as_affine(self) -> "Affine":
         matrix = np.identity(self.ndim)
-        for i, scale in enumerate(self.scale_vector):
+        for i, scale in enumerate(self.scale):
             matrix[i, i] = scale
 
         return Affine._from_matrix_vector(
@@ -360,12 +316,6 @@ class Scale(Transform):
             output=self.output,
             name=self.name,
         )
-
-    @model_validator(mode="after")
-    def check_metadata_set(self) -> Self:
-        if self.scale is None and self.path is None:
-            raise ValueError("One of 'scale' or 'path' must be given")
-        return self
 
 
 class Affine(Transform):
