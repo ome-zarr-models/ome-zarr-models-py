@@ -3,7 +3,6 @@ from __future__ import annotations
 import typing
 import warnings
 from collections import Counter
-from logging import warning
 from typing import TYPE_CHECKING, Annotated, Literal, Self
 
 from pydantic import (
@@ -80,14 +79,16 @@ class Multiscale(BaseAttrs):
         for ds in self.datasets:
             scale_transform: VectorScale | None = None
             translation_transform: VectorTranslation | None = None
-            
+
             for tf in ds.coordinateTransformations:
                 if isinstance(tf, Scale):
                     scale_transform = VectorScale(type="scale", scale=list(tf.scale))
                 elif isinstance(tf, Sequence):
                     for sub_tf in tf.transformations:
                         if isinstance(sub_tf, Scale):
-                            scale_transform = VectorScale(type="scale", scale=list(sub_tf.scale))
+                            scale_transform = VectorScale(
+                                type="scale", scale=list(sub_tf.scale)
+                            )
                         elif isinstance(sub_tf, Translation):
                             translation_transform = VectorTranslation(
                                 type="translation", translation=list(sub_tf.translation)
@@ -99,9 +100,12 @@ class Multiscale(BaseAttrs):
 
             if scale_transform is None:
                 raise ValueError("No scale transform found")
-            
+
             if translation_transform is not None:
-                coord_transforms: tuple[VectorScale, VectorTranslation] = (scale_transform, translation_transform)
+                coord_transforms: tuple[VectorScale, VectorTranslation] = (
+                    scale_transform,
+                    translation_transform,
+                )
             else:
                 coord_transforms = (scale_transform,)  # type: ignore
 
