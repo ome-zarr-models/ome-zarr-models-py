@@ -18,7 +18,7 @@ from ome_zarr_models._v06.image import Image
 
 class SceneAttrs(BaseModel):
     coordinateTransformations: tuple[AnyTransform, ...] = Field(default=())
-    coordinateSystems: tuple[CoordinateSystem, ...] = Field(default=())
+    coordinateSystems: tuple[CoordinateSystem, ...] | None = Field(default=None)
 
 
 class BaseSceneAttrs(BaseOMEAttrs):
@@ -132,8 +132,9 @@ class Scene(BaseGroupv06[BaseSceneAttrs]):
         graph = TransformGraph()
 
         # Coordinate systems
-        for system in self.ome_attributes.scene.coordinateSystems:
-            graph.add_system(system)
+        if self.ome_attributes.scene.coordinateSystems is not None:
+            for system in self.ome_attributes.scene.coordinateSystems:
+                graph.add_system(system)
         # Coordinate transforms
         for transform in self.ome_attributes.scene.coordinateTransformations:
             graph.add_transform(transform)
