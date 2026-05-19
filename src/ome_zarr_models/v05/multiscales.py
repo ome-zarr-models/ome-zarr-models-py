@@ -466,8 +466,10 @@ def _v05_transform_to_v06(transform: ValidTransform) -> ScaleV06 | SequenceV06:
         VectorScale,
         VectorTranslation,
     )
-
-    from ome_zarr_models.v05.coordinate_transformations import PathScale, PathTranslation
+    from ome_zarr_models.v05.coordinate_transformations import (
+        PathScale,
+        PathTranslation,
+    )
 
     # Scale (always present)
     if isinstance(transform[0], VectorScale):
