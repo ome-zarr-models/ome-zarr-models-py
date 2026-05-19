@@ -78,29 +78,35 @@ class Multiscale(BaseAttrs):
 
         datasets = []
         for ds in self.datasets:
-            transforms = []
+            scale_transform: VectorScale | None = None
+            translation_transform: VectorTranslation | None = None
+            
             for tf in ds.coordinateTransformations:
                 if isinstance(tf, Scale):
-                    transforms.append(VectorScale(type="scale", scale=list(tf.scale)))
+                    scale_transform = VectorScale(type="scale", scale=list(tf.scale))
                 elif isinstance(tf, Sequence):
                     for sub_tf in tf.transformations:
                         if isinstance(sub_tf, Scale):
-                            transforms.append(
-                                VectorScale(type="scale", scale=list(sub_tf.scale))
-                            )
+                            scale_transform = VectorScale(type="scale", scale=list(sub_tf.scale))
                         elif isinstance(sub_tf, Translation):
-                            transforms.append(
-                                VectorTranslation(
-                                    type="translation", translation=sub_tf.translation
-                                )
+                            translation_transform = VectorTranslation(
+                                type="translation", translation=list(sub_tf.translation)
                             )
                         else:
                             raise ValueError(
                                 f"Unsupported transform type: {type(sub_tf)}"
                             )
 
+            if scale_transform is None:
+                raise ValueError("No scale transform found")
+            
+            if translation_transform is not None:
+                coord_transforms: tuple[VectorScale, VectorTranslation] = (scale_transform, translation_transform)
+            else:
+                coord_transforms = (scale_transform,)  # type: ignore
+
             datasets.append(
-                Datasetv05(path=ds.path, coordinateTransformations=tuple(transforms))
+                Datasetv05(path=ds.path, coordinateTransformations=coord_transforms)
             )
 
         if self.coordinateTransformations is not None:
