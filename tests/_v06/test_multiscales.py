@@ -309,7 +309,7 @@ def test_default_coordinate_systems() -> None:
     )
 
 
-def test_from_v05() -> None:
+def test_from_v05_to_v06() -> None:
     ms = Multiscalev05(
         axes=(
             Axisv05(name="x", type="space", unit="meter"),
@@ -416,6 +416,172 @@ def test_from_v05() -> None:
     )
 
 
+def test_from_v06_to_v05() -> None:
+    """Test conversion from v0.6 to v0.5."""
+    ms = Multiscale(
+        coordinateSystems=(
+            CoordinateSystem(
+                name="physical",
+                axes=(
+                    Axis(
+                        name="x",
+                        type="space",
+                        unit="meter",
+                    ),
+                    Axis(
+                        name="y",
+                        type="space",
+                        unit="meter",
+                    ),
+                ),
+            ),
+        ),
+        datasets=(
+            Dataset(
+                path="0",
+                coordinateTransformations=(
+                    Sequence(
+                        type="sequence",
+                        input=CoordinateSystemIdentifier(path="0"),
+                        output=CoordinateSystemIdentifier(name="physical"),
+                        transformations=(
+                            Scale(
+                                type="scale",
+                                scale=(2.0, -4.0),
+                            ),
+                            Translation(
+                                type="translation",
+                                translation=(5.0, 3.0),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        metadata={"key": "value"},
+        name="my_multiscale",
+        type="my_type",
+    )
+
+    ms_target = Multiscalev05(
+        axes=(
+            Axisv05(name="x", type="space", unit="meter"),
+            Axisv05(name="y", type="space", unit="meter"),
+        ),
+        datasets=(
+            Datasetv05(
+                path="0",
+                coordinateTransformations=(
+                    VectorScale(type="scale", scale=[2.0, -4.0]),
+                    VectorTranslation(type="translation", translation=[5.0, 3.0]),
+                ),
+            ),
+        ),
+        metadata={"key": "value"},
+        name="my_multiscale",
+        type="my_type",
+    )
+
+    assert ms.to_version("0.5") == ms_target
+
+
+def test_to_v05_scale_only() -> None:
+    """Test conversion from v0.6 to v0.5 with scale-only transform."""
+    ms = Multiscale(
+        coordinateSystems=(
+            CoordinateSystem(
+                name="physical",
+                axes=(
+                    Axis(name="x", type="space", unit="micrometer"),
+                    Axis(name="y", type="space", unit="micrometer"),
+                ),
+            ),
+        ),
+        datasets=(
+            Dataset(
+                path="0",
+                coordinateTransformations=(
+                    Scale(
+                        type="scale",
+                        input=CoordinateSystemIdentifier(path="0"),
+                        output=CoordinateSystemIdentifier(name="physical"),
+                        scale=(1.0, 1.0),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    ms_target = Multiscalev05(
+        axes=(
+            Axisv05(name="x", type="space", unit="micrometer"),
+            Axisv05(name="y", type="space", unit="micrometer"),
+        ),
+        datasets=(
+            Datasetv05(
+                path="0",
+                coordinateTransformations=(
+                    VectorScale(type="scale", scale=[1.0, 1.0]),
+                ),
+            ),
+        ),
+    )
+
+    assert ms.to_version("0.5") == ms_target
+
+
+def test_to_v05_warns_on_coord_transforms() -> None:
+    """Test that conversion warns when top-level coordinateTransformations present."""
+    import warnings
+
+    ms = Multiscale(
+        coordinateSystems=(
+            CoordinateSystem(
+                name="physical",
+                axes=(
+                    Axis(name="x", type="space"),
+                    Axis(name="y", type="space"),
+                ),
+            ),
+            CoordinateSystem(
+                name="output",
+                axes=(
+                    Axis(name="x", type="space"),
+                    Axis(name="y", type="space"),
+                ),
+            ),
+        ),
+        datasets=(
+            Dataset(
+                path="0",
+                coordinateTransformations=(
+                    Scale(
+                        type="scale",
+                        input=CoordinateSystemIdentifier(path="0"),
+                        output=CoordinateSystemIdentifier(name="physical"),
+                        scale=(1.0, 1.0),
+                    ),
+                ),
+            ),
+        ),
+        coordinateTransformations=(
+            Scale(
+                type="scale",
+                input=CoordinateSystemIdentifier(name="physical"),
+                output=CoordinateSystemIdentifier(name="output"),
+                scale=(2.0, 2.0),
+            ),
+        ),
+    )
+
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        ms.to_version("0.5")
+        assert len(w) == 1
+        assert "coordinateTransformations" in str(w[0].message)
+        assert "not be converted to v0.5" in str(w[0].message)
+
+
 def test_unique_system_names() -> None:
     with pytest.raises(
         ValidationError,
@@ -452,7 +618,3 @@ def test_unique_system_names() -> None:
                 ),
             ),
         )
-
-
-if __name__ == "__main__":
-    test_from_v05()
