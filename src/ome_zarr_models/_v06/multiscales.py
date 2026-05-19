@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing
 import warnings
 from collections import Counter
-from typing import TYPE_CHECKING, Annotated, Literal, Self
+from typing import TYPE_CHECKING, Annotated, Literal, Self, overload
 
 from pydantic import (
     Field,
@@ -43,6 +43,17 @@ class Multiscale(BaseAttrs):
     metadata: JsonValue = None
     name: JsonValue | None = None
     type: JsonValue = None
+
+    @overload
+    def to_version(self, version: Literal["0.4"]) -> Multiscalev04:
+        pass
+
+    @overload
+    def to_version(
+        self,
+        version: Literal["0.5"],
+    ) -> Multiscalev05:
+        pass
 
     def to_version(
         self, version: Literal["0.4", "0.5"]
