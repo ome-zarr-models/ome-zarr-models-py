@@ -466,12 +466,19 @@ def _v05_transform_to_v06(transform: ValidTransform) -> ScaleV06 | SequenceV06:
         VectorScale,
         VectorTranslation,
     )
+    from ome_zarr_models.v05.coordinate_transformations import (
+        PathScale,
+        PathTranslation,
+    )
 
     # Scale (always present)
     if isinstance(transform[0], VectorScale):
         scale = ScaleV06(scale=tuple(transform[0].scale))
-    else:
-        scale = ScaleV06(path=transform[0].path)
+    elif isinstance(transform[0], PathScale):
+        raise NotImplementedError(
+            "Conversion of PathScale transforms from 0.5 to 0.6 "
+            "is not currently supported."
+        )
 
     if len(transform) == 1:
         return scale
@@ -480,6 +487,9 @@ def _v05_transform_to_v06(transform: ValidTransform) -> ScaleV06 | SequenceV06:
         # Translate
         if isinstance(transform[1], VectorTranslation):
             translate = TranslationV06(translation=tuple(transform[1].translation))
-        else:
-            translate = TranslationV06(path=transform[1].translation)
+        elif isinstance(transform[1], PathTranslation):
+            raise NotImplementedError(
+                "Conversion of PathTranslation transforms from 0.5 to 0.6 "
+                "is not currently supported."
+            )
         return SequenceV06(transformations=(scale, translate))
