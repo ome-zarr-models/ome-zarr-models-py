@@ -351,6 +351,7 @@ def test_scene_new() -> None:
     assert coord_transform_1.translation == (0, 256)
 
     # Verify coordinate systems
+    assert scene.ome_attributes.scene.coordinateSystems is not None
     assert len(scene.ome_attributes.scene.coordinateSystems) == 1
     assert scene.ome_attributes.scene.coordinateSystems[0].name == "world"
 
