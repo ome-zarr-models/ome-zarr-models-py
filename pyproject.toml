@@ -30,13 +30,13 @@ Repository = "https://github.com/ome-zarr-models/ome-zarr-models-py"
 # This group has to be in optional-dependencies (not dependency-groups) for readthedocs
 docs = [
     "mkdocs==1.6.1",
-    "mkdocstrings-python==1.18.2",
-    "mkdocs-material==9.6.21",
-    "mkdocs-jupyter==0.25.1",
-    "matplotlib==3.10.6",
-    "rich==14.1.0",
-    "griffe-fieldz==0.4.0",
-    "fsspec[http]==2025.9.0",
+    "mkdocstrings-python==2.0.3",
+    "mkdocs-material==9.7.6",
+    "mkdocs-jupyter==0.26.3",
+    "matplotlib==3.10.9",
+    "rich==15.0.0",
+    "griffe-fieldz==0.5.0",
+    "fsspec[http]==2026.4.0",
 ]
 
 [project.scripts]
