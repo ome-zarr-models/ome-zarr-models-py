@@ -22,6 +22,9 @@ from ome_zarr_models.v05.multiscales import (
     Dataset as Datasetv05,
 )
 from ome_zarr_models.v05.multiscales import (
+    Extrav06Metadata,
+)
+from ome_zarr_models.v05.multiscales import (
     Multiscale as Multiscalev05,
 )
 
@@ -409,8 +412,9 @@ def test_from_v05() -> None:
     assert (
         ms.to_version(
             "0.6",
-            default_coordinate_system="physical",
-            output_coordinate_system="output",
+            extra_v06_metadata=Extrav06Metadata(
+                coordinate_system_name="physical", final_coordinate_system_name="output"
+            ),
         )
         == ms_target
     )

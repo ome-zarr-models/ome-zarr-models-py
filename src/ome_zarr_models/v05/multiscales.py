@@ -45,10 +45,43 @@ if TYPE_CHECKING:
     from ome_zarr_models.v04.multiscales import Multiscale as MultiscaleV04
 
 
-__all__ = ["Dataset", "Multiscale"]
+__all__ = ["Dataset", "Extrav06Metadata", "Multiscale"]
 
 
 VALID_NDIM = (2, 3, 4, 5)
+
+
+class Extrav06Metadata(BaseModel):
+    """
+    Extra metadata that can optionally be added when conversion from 0.5 to 0.6.
+
+    Warnings
+    --------
+    This is experimental and subject to change.
+    """
+
+    coordinate_system_name: str = Field(
+        default="physical",
+        description="Name to give to the existing default coordinate system taken from "
+        "the 0.5 metadata.",
+    )
+
+    final_coordinate_system_name: str = Field(
+        default="intermediate",
+        description="Name given to the final coordinate system, which is only added "
+        "if the 0.5 metadata contains an additional coordinate transformation.",
+    )
+
+    axes_discrete: list[bool] | None = Field(
+        default=None,
+        description="Whether existing axes taken from the 0.5 metadata are discrete "
+        "or not. Length must match the number of axes in the 0.5 metadata.",
+    )
+    axes_long_names: list[str] | None = Field(
+        default=None,
+        description="Long names to give to axes taken from the 0.5 metadata. "
+        "Length must match the number of axes in the 0.5 metadata.",
+    )
 
 
 class Multiscale(BaseAttrs):
@@ -69,19 +102,15 @@ class Multiscale(BaseAttrs):
 
     @overload
     def to_version(
-        self,
-        version: Literal["0.6"],
-        *,
-        default_coordinate_system: str = "physical",
-        output_coordinate_system: str = "output",
+        self, version: Literal["0.6"], *, extra_v06_metadata: Extrav06Metadata | None
     ) -> MultiscaleV06:
         pass
 
     def to_version(
         self,
         version: Literal["0.4", "0.6"],
-        default_coordinate_system: str = "physical",
-        output_coordinate_system: str = "output",
+        *,
+        extra_v06_metadata: Extrav06Metadata | None = None,
     ) -> MultiscaleV04 | MultiscaleV06:
         """
         Convert this Multiscale metadata to the specified version.
@@ -94,28 +123,24 @@ class Multiscale(BaseAttrs):
         ----------
         version
             The version to convert to. Must be one of "0.4" or "0.6".
-        default_coordinate_system
-            The name of the default coordinate system to use
-            for the 0.5 -> 0.6 conversion. Defaults to "physical".
-        output_coordinate_system
-            The name of the output coordinate system to use
-            for the 0.5 -> 0.6 conversion. Defaults to "output".
-            Only used if `coordinateTransformations` are defined
-            in the 0.5 metadata.
+        extra_v06_metadata
+            Extra metadata to add when converting to version 0.6.
+
+        Warnings
+        --------
+        Converting to 0.6 is experimental and subject to change.
         """
         if version == "0.4":
             return self._to_v04()
         elif version == "0.6":
-            return self._to_v06(
-                default_coordinate_system=default_coordinate_system,
-                output_coordinate_system=output_coordinate_system,
-            )
+            if extra_v06_metadata is None:
+                extra_v06_metadata = Extrav06Metadata()
+            return self._to_v06(extra_v06_metadata=extra_v06_metadata)
         else:
             raise ValueError(f"Unsupported version conversion: 0.5 -> {version}")
 
-    def _to_v06(
-        self, default_coordinate_system: str, output_coordinate_system: str
-    ) -> MultiscaleV06:
+    def _to_v06(self, extra_v06_metadata: Extrav06Metadata) -> MultiscaleV06:
+        # TODO: implement support for handling all the options in extra_v06_metadata
         from ome_zarr_models._v06.coordinate_transforms import (
             Axis,
             CoordinateSystem,
@@ -133,7 +158,7 @@ class Multiscale(BaseAttrs):
                             update={
                                 "input": CoordinateSystemIdentifier(path=ds.path),
                                 "output": CoordinateSystemIdentifier(
-                                    name=default_coordinate_system
+                                    name=extra_v06_metadata.coordinate_system_name
                                 ),
                             }
                         ),
@@ -143,7 +168,7 @@ class Multiscale(BaseAttrs):
             ),
             coordinateSystems=(
                 CoordinateSystem(
-                    name=default_coordinate_system,
+                    name=extra_v06_metadata.coordinate_system_name,
                     axes=tuple(
                         Axis(name=ax.name, type=ax.type, unit=ax.unit)
                         for ax in self.axes
@@ -156,7 +181,7 @@ class Multiscale(BaseAttrs):
         )
         if self.coordinateTransformations is not None:
             output_cs = CoordinateSystem(
-                name=output_coordinate_system,
+                name=extra_v06_metadata.final_coordinate_system_name,
                 axes=tuple(
                     Axis(name=ax.name, type=ax.type, unit=None) for ax in self.axes
                 ),
@@ -170,10 +195,10 @@ class Multiscale(BaseAttrs):
                         ).model_copy(
                             update={
                                 "input": CoordinateSystemIdentifier(
-                                    name=default_coordinate_system
+                                    name=extra_v06_metadata.coordinate_system_name
                                 ),
                                 "output": CoordinateSystemIdentifier(
-                                    name=output_coordinate_system
+                                    name=extra_v06_metadata.final_coordinate_system_name
                                 ),
                             }
                         ),
