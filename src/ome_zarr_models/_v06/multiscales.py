@@ -58,6 +58,18 @@ class Multiscale(BaseAttrs):
     def to_version(
         self, version: Literal["0.4", "0.5"]
     ) -> Multiscalev05 | Multiscalev04:
+        """
+        Convert this Multiscale metadata to the specified version.
+
+        Currently supported conversions are
+        - 0.6 -> 0.5
+        - 0.6 -> 0.4
+
+        Parameters
+        ----------
+        version
+            The version to convert to. Must be one of "0.4" or "0.5".
+        """
         if version == "0.5":
             return self._to_v05()
         elif version == "0.4":
