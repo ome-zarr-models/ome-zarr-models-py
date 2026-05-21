@@ -94,16 +94,15 @@ class LabelBase(BaseAttrs):
         return self
 
     @field_validator("colors", mode="after")
-    def _parse_colors(cls, colors: tuple[Color, ...]) -> tuple[Color, ...]:
+    def _parse_colors(
+        cls, colors: tuple[Color, ...] | None
+    ) -> tuple[Color, ...] | None:
         """
         Check that color label values are unique.
         """
-        # if colors is None:
-        #    msg = (
-        #        "The field `colors` is `None`. `colors` should be a list of "
-        #        "label descriptors."
-        #    )
-        #    warnings.warn(msg, stacklevel=1)
+        if colors is None:
+            return None
+
         dupes = duplicates(x.label_value for x in colors)
         if len(dupes) > 0:
             msg = (

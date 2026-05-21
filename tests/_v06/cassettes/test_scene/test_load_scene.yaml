@@ -1,0 +1,2416 @@
+interactions:
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/.zattrs
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx0000000000000007ebd00-0069b84059-1b418e0f8-default</RequestId><HostId>1b418e0f8-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "220"
+        Content-Type:
+          - application/xml
+        Date:
+          - Mon, 16 Mar 2026 17:39:37 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd00-0069b84059-1b418e0f8-default
+      status:
+        code: 404
+        message: Not Found
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/.zmetadata
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx0000000000000007ebd01-0069b84059-1b418e0f8-default</RequestId><HostId>1b418e0f8-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "220"
+        Content-Type:
+          - application/xml
+        Date:
+          - Mon, 16 Mar 2026 17:39:37 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd01-0069b84059-1b418e0f8-default
+      status:
+        code: 404
+        message: Not Found
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/.zgroup
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx0000000000000007d4d82-0069b84059-1b57d0792-default</RequestId><HostId>1b57d0792-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "220"
+        Content-Type:
+          - application/xml
+        Date:
+          - Mon, 16 Mar 2026 17:39:37 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d82-0069b84059-1b57d0792-default
+      status:
+        code: 404
+        message: Not Found
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"attributes\": {\n    \"ome\": {\n      \"version\": \"0.6.dev3\",\n
+          \     \"scene\": {\n        \"coordinateTransformations\": [\n          {\n
+          \           \"input\": {\"path\": \"4995115_cropped_400_100_400_400_rot10.zarr\",
+          \"name\": \"rotated\"},\n            \"output\": {\"name\": \"translated_x50\"},\n
+          \           \"name\": \"translate_tile_to_stitched_position\",\n            \"type\":
+          \"translation\",\n            \"translation\": [\n              0,\n              0,\n
+          \             30.608878192215265,\n              11.21775638443053\n            ]\n
+          \         },\n          {\n            \"input\": {\"path\": \"4995115_cropped_700_700_400_400_rot45.zarr\",
+          \"name\": \"rotated\"},\n            \"output\": {\"name\": \"translated_x50\"},\n
+          \           \"name\": \"translate_tile_to_stitched_position\",\n            \"type\":
+          \"translation\",\n            \"translation\": [\n              0,\n              0,\n
+          \             91.8266345766458,\n              41.8266345766458\n            ]\n
+          \         },\n          {\n            \"input\": {\"name\": \"translated_x50\"},\n
+          \           \"output\": {\"path\": \"4995115_full.zarr\", \"name\": \"physical\"},\n
+          \           \"name\": \"translate_tile_to_stitched_position\",\n            \"type\":
+          \"translation\",\n            \"translation\": [\n              0,\n              0,\n
+          \             0,\n              50\n            ]\n          }\n        ],\n
+          \       \"coordinateSystems\": [\n          {\n            \"name\": \"translated_x50\",\n
+          \           \"axes\": [\n              {\n                \"name\": \"c\",\n
+          \               \"type\": \"channel\"\n              },\n              {\n
+          \               \"name\": \"z\",\n                \"type\": \"space\",\n                \"unit\":
+          \"micrometer\"\n              },\n              {\n                \"name\":
+          \"y\",\n                \"type\": \"space\",\n                \"unit\": \"micrometer\"\n
+          \             },\n              {\n                \"name\": \"x\",\n                \"type\":
+          \"space\",\n                \"unit\": \"micrometer\"\n              }\n            ]\n
+          \         }\n        ]\n      }\n    }\n  },\n  \"zarr_format\": 3,\n  \"consolidated_metadata\":
+          null,\n  \"node_type\": \"group\"\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "2019"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:37 GMT
+        Etag:
+          - '"4db812557427a8f7c51829334c71a3b9"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:48:40 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d83-0069b84059-1b57d0792-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_400_100_400_400_rot10.zarr/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"attributes\": {\n    \"ome\": {\n      \"version\": \"0.6.dev3\",\n
+          \     \"multiscales\": [\n        {\n          \"datasets\": [\n            {\n
+          \             \"path\": \"s0\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.10202959397405088,\n                        0.10202959397405088\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.0,\n                        0.0\n
+          \                     ]\n                    }\n                  ],\n                  \"input\":
+          \"s0\",\n                  \"output\": \"physical\"\n                }\n              ]\n
+          \           },\n            {\n              \"path\": \"s1\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.20405918794810177,\n                        0.20405918794810177\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.05101479698702544,\n
+          \                       0.05101479698702544\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s1\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s2\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.40811837589620353,\n                        0.40811837589620353\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.15304439096107633,\n
+          \                       0.15304439096107633\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s2\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s3\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.8162367517924071,\n                        0.8162367517924071\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.3571035789091781,\n
+          \                       0.3571035789091781\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s3\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s4\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       1.6324735035848141,\n                        1.6324735035848141\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.7652219548053816,\n
+          \                       0.7652219548053816\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s4\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            }\n          ],\n
+          \         \"name\": \"/\",\n          \"coordinateSystems\": [\n            {\n
+          \             \"name\": \"physical\",\n              \"axes\": [\n                {\n
+          \                 \"name\": \"c\",\n                  \"type\": \"channel\"\n
+          \               },\n                {\n                  \"name\": \"z\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               },\n                {\n                  \"name\": \"y\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               },\n                {\n                  \"name\": \"x\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               }\n              ]\n            },\n            {\n              \"name\":
+          \"rotated\",\n              \"axes\": [\n                {\n                  \"name\":
+          \"c\",\n                  \"type\": \"channel\"\n                },\n                {\n
+          \                 \"name\": \"z\",\n                  \"type\": \"space\",\n
+          \                 \"unit\": \"micrometer\"\n                },\n                {\n
+          \                 \"name\": \"y\",\n                  \"type\": \"space\",\n
+          \                 \"unit\": \"micrometer\"\n                },\n                {\n
+          \                 \"name\": \"x\",\n                  \"type\": \"space\",\n
+          \                 \"unit\": \"micrometer\"\n                }\n              ]\n
+          \           }\n          ],\n          \"coordinateTransformations\": [\n
+          \           {\n              \"type\": \"sequence\",\n              \"output\":
+          \"rotated\",\n              \"transformations\": [\n                {\n                  \"name\":
+          \"translate_centre_to_origin\",\n                  \"type\": \"translation\",\n
+          \                 \"translation\": [\n                    0,\n                    0,\n
+          \                   -20.405918794810177,\n                    -20.405918794810177\n
+          \                 ]\n                },\n                {\n                  \"name\":
+          \"rotate_around_centre\",\n                  \"type\": \"rotation\",\n                  \"rotation\":
+          [\n                    [\n                      1.0,\n                      0.0,\n
+          \                     0.0,\n                      0.0\n                    ],\n
+          \                   [\n                      0.0,\n                      1.0,\n
+          \                     0.0,\n                      0.0\n                    ],\n
+          \                   [\n                      0.0,\n                      0.0,\n
+          \                     0.984807753012208,\n                      0.17364817766693033\n
+          \                   ],\n                    [\n                      0.0,\n
+          \                     0.0,\n                      -0.17364817766693033,\n
+          \                     0.984807753012208\n                    ]\n                  ]\n
+          \               }\n              ],\n              \"input\": \"physical\"\n
+          \           }\n          ]\n        }\n      ],\n      \"omero\": {\n        \"channels\":
+          [\n          {\n            \"label\": \"Actin\",\n            \"color\":
+          \"FF0000\",\n            \"inverted\": false,\n            \"family\": \"linear\",\n
+          \           \"coefficient\": 1.0,\n            \"window\": {\n              \"min\":
+          37.0,\n              \"max\": 65535.0,\n              \"start\": 52.0,\n              \"end\":
+          31890.0\n            },\n            \"active\": true\n          },\n          {\n
+          \           \"label\": \"Cell\",\n            \"color\": \"FFFFFF\",\n            \"inverted\":
+          false,\n            \"family\": \"linear\",\n            \"coefficient\":
+          1.0,\n            \"window\": {\n              \"min\": 4283.0,\n              \"max\":
+          65535.0,\n              \"start\": 4283.0,\n              \"end\": 65535.0\n
+          \           },\n            \"active\": false\n          },\n          {\n
+          \           \"label\": \"Microtubules\",\n            \"color\": \"00FF00\",\n
+          \           \"inverted\": false,\n            \"family\": \"linear\",\n            \"coefficient\":
+          1.0,\n            \"window\": {\n              \"min\": 6.0,\n              \"max\":
+          31674.0,\n              \"start\": 15.0,\n              \"end\": 10391.0\n
+          \           },\n            \"active\": true\n          }\n        ],\n        \"rdefs\":
+          {\n          \"model\": \"color\",\n          \"defaultZ\": 0,\n          \"defaultT\":
+          0\n        }\n      }\n    }\n  },\n  \"zarr_format\": 3,\n  \"consolidated_metadata\":
+          null,\n  \"node_type\": \"group\"\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "8814"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:37 GMT
+        Etag:
+          - '"861196bb0603fccfe44c593df15f6575"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:20 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd02-0069b84059-1b418e0f8-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_400_100_400_400_rot10.zarr/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"attributes\": {\n    \"ome\": {\n      \"version\": \"0.6.dev3\",\n
+          \     \"multiscales\": [\n        {\n          \"datasets\": [\n            {\n
+          \             \"path\": \"s0\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.10202959397405088,\n                        0.10202959397405088\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.0,\n                        0.0\n
+          \                     ]\n                    }\n                  ],\n                  \"input\":
+          \"s0\",\n                  \"output\": \"physical\"\n                }\n              ]\n
+          \           },\n            {\n              \"path\": \"s1\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.20405918794810177,\n                        0.20405918794810177\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.05101479698702544,\n
+          \                       0.05101479698702544\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s1\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s2\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.40811837589620353,\n                        0.40811837589620353\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.15304439096107633,\n
+          \                       0.15304439096107633\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s2\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s3\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.8162367517924071,\n                        0.8162367517924071\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.3571035789091781,\n
+          \                       0.3571035789091781\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s3\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s4\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       1.6324735035848141,\n                        1.6324735035848141\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.7652219548053816,\n
+          \                       0.7652219548053816\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s4\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            }\n          ],\n
+          \         \"name\": \"/\",\n          \"coordinateSystems\": [\n            {\n
+          \             \"name\": \"physical\",\n              \"axes\": [\n                {\n
+          \                 \"name\": \"c\",\n                  \"type\": \"channel\"\n
+          \               },\n                {\n                  \"name\": \"z\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               },\n                {\n                  \"name\": \"y\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               },\n                {\n                  \"name\": \"x\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               }\n              ]\n            },\n            {\n              \"name\":
+          \"rotated\",\n              \"axes\": [\n                {\n                  \"name\":
+          \"c\",\n                  \"type\": \"channel\"\n                },\n                {\n
+          \                 \"name\": \"z\",\n                  \"type\": \"space\",\n
+          \                 \"unit\": \"micrometer\"\n                },\n                {\n
+          \                 \"name\": \"y\",\n                  \"type\": \"space\",\n
+          \                 \"unit\": \"micrometer\"\n                },\n                {\n
+          \                 \"name\": \"x\",\n                  \"type\": \"space\",\n
+          \                 \"unit\": \"micrometer\"\n                }\n              ]\n
+          \           }\n          ],\n          \"coordinateTransformations\": [\n
+          \           {\n              \"type\": \"sequence\",\n              \"output\":
+          \"rotated\",\n              \"transformations\": [\n                {\n                  \"name\":
+          \"translate_centre_to_origin\",\n                  \"type\": \"translation\",\n
+          \                 \"translation\": [\n                    0,\n                    0,\n
+          \                   -20.405918794810177,\n                    -20.405918794810177\n
+          \                 ]\n                },\n                {\n                  \"name\":
+          \"rotate_around_centre\",\n                  \"type\": \"rotation\",\n                  \"rotation\":
+          [\n                    [\n                      1.0,\n                      0.0,\n
+          \                     0.0,\n                      0.0\n                    ],\n
+          \                   [\n                      0.0,\n                      1.0,\n
+          \                     0.0,\n                      0.0\n                    ],\n
+          \                   [\n                      0.0,\n                      0.0,\n
+          \                     0.984807753012208,\n                      0.17364817766693033\n
+          \                   ],\n                    [\n                      0.0,\n
+          \                     0.0,\n                      -0.17364817766693033,\n
+          \                     0.984807753012208\n                    ]\n                  ]\n
+          \               }\n              ],\n              \"input\": \"physical\"\n
+          \           }\n          ]\n        }\n      ],\n      \"omero\": {\n        \"channels\":
+          [\n          {\n            \"label\": \"Actin\",\n            \"color\":
+          \"FF0000\",\n            \"inverted\": false,\n            \"family\": \"linear\",\n
+          \           \"coefficient\": 1.0,\n            \"window\": {\n              \"min\":
+          37.0,\n              \"max\": 65535.0,\n              \"start\": 52.0,\n              \"end\":
+          31890.0\n            },\n            \"active\": true\n          },\n          {\n
+          \           \"label\": \"Cell\",\n            \"color\": \"FFFFFF\",\n            \"inverted\":
+          false,\n            \"family\": \"linear\",\n            \"coefficient\":
+          1.0,\n            \"window\": {\n              \"min\": 4283.0,\n              \"max\":
+          65535.0,\n              \"start\": 4283.0,\n              \"end\": 65535.0\n
+          \           },\n            \"active\": false\n          },\n          {\n
+          \           \"label\": \"Microtubules\",\n            \"color\": \"00FF00\",\n
+          \           \"inverted\": false,\n            \"family\": \"linear\",\n            \"coefficient\":
+          1.0,\n            \"window\": {\n              \"min\": 6.0,\n              \"max\":
+          31674.0,\n              \"start\": 15.0,\n              \"end\": 10391.0\n
+          \           },\n            \"active\": true\n          }\n        ],\n        \"rdefs\":
+          {\n          \"model\": \"color\",\n          \"defaultZ\": 0,\n          \"defaultT\":
+          0\n        }\n      }\n    }\n  },\n  \"zarr_format\": 3,\n  \"consolidated_metadata\":
+          null,\n  \"node_type\": \"group\"\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "8814"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:37 GMT
+        Etag:
+          - '"861196bb0603fccfe44c593df15f6575"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:20 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd03-0069b84059-1b418e0f8-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_400_100_400_400_rot10.zarr/s0/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    3,\n    12,\n    400,\n    400\n  ],\n  \"data_type\":
+          \"uint16\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        1,\n        6,\n        200,\n        200\n
+          \     ]\n    }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n
+          \   \"configuration\": {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\":
+          0,\n  \"codecs\": [\n    {\n      \"name\": \"bytes\",\n      \"configuration\":
+          {\n        \"endian\": \"little\"\n      }\n    },\n    {\n      \"name\":
+          \"zstd\",\n      \"configuration\": {\n        \"level\": 0,\n        \"checksum\":
+          false\n      }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\":
+          [\n    \"c\",\n    \"z\",\n    \"y\",\n    \"x\"\n  ],\n  \"zarr_format\":
+          3,\n  \"node_type\": \"array\",\n  \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "740"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:37 GMT
+        Etag:
+          - '"57a48ee882501b44503c18e2cf53415c"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:18 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d84-0069b84059-1b57d0792-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_400_100_400_400_rot10.zarr/s1/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    3,\n    12,\n    200,\n    200\n  ],\n  \"data_type\":
+          \"uint16\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        2,\n        6,\n        100,\n        200\n
+          \     ]\n    }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n
+          \   \"configuration\": {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\":
+          0,\n  \"codecs\": [\n    {\n      \"name\": \"bytes\",\n      \"configuration\":
+          {\n        \"endian\": \"little\"\n      }\n    },\n    {\n      \"name\":
+          \"zstd\",\n      \"configuration\": {\n        \"level\": 0,\n        \"checksum\":
+          false\n      }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\":
+          [\n    \"c\",\n    \"z\",\n    \"y\",\n    \"x\"\n  ],\n  \"zarr_format\":
+          3,\n  \"node_type\": \"array\",\n  \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "740"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:37 GMT
+        Etag:
+          - '"8f4f6ab967cc8ca710002f0d5160edcb"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:19 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d85-0069b84059-1b57d0792-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_400_100_400_400_rot10.zarr/s2/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    3,\n    12,\n    100,\n    100\n  ],\n  \"data_type\":
+          \"uint16\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        2,\n        6,\n        100,\n        100\n
+          \     ]\n    }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n
+          \   \"configuration\": {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\":
+          0,\n  \"codecs\": [\n    {\n      \"name\": \"bytes\",\n      \"configuration\":
+          {\n        \"endian\": \"little\"\n      }\n    },\n    {\n      \"name\":
+          \"zstd\",\n      \"configuration\": {\n        \"level\": 0,\n        \"checksum\":
+          false\n      }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\":
+          [\n    \"c\",\n    \"z\",\n    \"y\",\n    \"x\"\n  ],\n  \"zarr_format\":
+          3,\n  \"node_type\": \"array\",\n  \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "740"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:37 GMT
+        Etag:
+          - '"dca9fc3c20d0a47e751a8a5aa03d4dcc"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:19 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd04-0069b84059-1b418e0f8-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_400_100_400_400_rot10.zarr/s3/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    3,\n    12,\n    50,\n    50\n  ],\n  \"data_type\":
+          \"uint16\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        3,\n        12,\n        50,\n        50\n
+          \     ]\n    }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n
+          \   \"configuration\": {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\":
+          0,\n  \"codecs\": [\n    {\n      \"name\": \"bytes\",\n      \"configuration\":
+          {\n        \"endian\": \"little\"\n      }\n    },\n    {\n      \"name\":
+          \"zstd\",\n      \"configuration\": {\n        \"level\": 0,\n        \"checksum\":
+          false\n      }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\":
+          [\n    \"c\",\n    \"z\",\n    \"y\",\n    \"x\"\n  ],\n  \"zarr_format\":
+          3,\n  \"node_type\": \"array\",\n  \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "737"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:37 GMT
+        Etag:
+          - '"9d1b30a29e71a91d9da6de3714077c2d"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:19 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd05-0069b84059-1b418e0f8-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_400_100_400_400_rot10.zarr/s4/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    3,\n    12,\n    25,\n    25\n  ],\n  \"data_type\":
+          \"uint16\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        3,\n        12,\n        25,\n        25\n
+          \     ]\n    }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n
+          \   \"configuration\": {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\":
+          0,\n  \"codecs\": [\n    {\n      \"name\": \"bytes\",\n      \"configuration\":
+          {\n        \"endian\": \"little\"\n      }\n    },\n    {\n      \"name\":
+          \"zstd\",\n      \"configuration\": {\n        \"level\": 0,\n        \"checksum\":
+          false\n      }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\":
+          [\n    \"c\",\n    \"z\",\n    \"y\",\n    \"x\"\n  ],\n  \"zarr_format\":
+          3,\n  \"node_type\": \"array\",\n  \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "737"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:37 GMT
+        Etag:
+          - '"cc6e954348949bef806a337a9f157d2e"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:20 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d86-0069b84059-1b57d0792-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_400_100_400_400_rot10.zarr/labels/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"attributes\": {\n    \"ome\": {\n      \"labels\": [\n        \"channel_0\"\n
+          \     ],\n      \"version\": \"0.6.dev3\"\n    }\n  },\n  \"zarr_format\":
+          3,\n  \"consolidated_metadata\": null,\n  \"node_type\": \"group\"\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "196"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:37 GMT
+        Etag:
+          - '"1aca791965ab8e38a700ac8946911973"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:15 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d87-0069b84059-1b57d0792-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_400_100_400_400_rot10.zarr/labels/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"attributes\": {\n    \"ome\": {\n      \"labels\": [\n        \"channel_0\"\n
+          \     ],\n      \"version\": \"0.6.dev3\"\n    }\n  },\n  \"zarr_format\":
+          3,\n  \"consolidated_metadata\": null,\n  \"node_type\": \"group\"\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "196"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:37 GMT
+        Etag:
+          - '"1aca791965ab8e38a700ac8946911973"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:15 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd06-0069b84059-1b418e0f8-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_400_100_400_400_rot10.zarr/labels/channel_0/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"attributes\": {\n    \"ome\": {\n      \"version\": \"0.6.dev3\",\n
+          \     \"multiscales\": [\n        {\n          \"datasets\": [\n            {\n
+          \             \"path\": \"s0\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        0.5920416817598223,\n                        0.10202959397405088,\n
+          \                       0.10202959397405088\n                      ]\n                    },\n
+          \                   {\n                      \"type\": \"translation\",\n
+          \                     \"translation\": [\n                        0.0,\n                        0.0,\n
+          \                       0.0\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s0\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s1\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        0.5920416817598223,\n                        0.20405918794810177,\n
+          \                       0.20405918794810177\n                      ]\n                    },\n
+          \                   {\n                      \"type\": \"translation\",\n
+          \                     \"translation\": [\n                        0.0,\n                        0.05101479698702544,\n
+          \                       0.05101479698702544\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s1\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s2\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        0.5920416817598223,\n                        0.40811837589620353,\n
+          \                       0.40811837589620353\n                      ]\n                    },\n
+          \                   {\n                      \"type\": \"translation\",\n
+          \                     \"translation\": [\n                        0.0,\n                        0.15304439096107633,\n
+          \                       0.15304439096107633\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s2\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s3\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        0.5920416817598223,\n                        0.8162367517924071,\n
+          \                       0.8162367517924071\n                      ]\n                    },\n
+          \                   {\n                      \"type\": \"translation\",\n
+          \                     \"translation\": [\n                        0.0,\n                        0.3571035789091781,\n
+          \                       0.3571035789091781\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s3\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s4\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        0.5920416817598223,\n                        1.6324735035848141,\n
+          \                       1.6324735035848141\n                      ]\n                    },\n
+          \                   {\n                      \"type\": \"translation\",\n
+          \                     \"translation\": [\n                        0.0,\n                        0.7652219548053816,\n
+          \                       0.7652219548053816\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s4\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            }\n          ],\n
+          \         \"name\": \"/labels/channel_0\",\n          \"coordinateSystems\":
+          [\n            {\n              \"name\": \"physical\",\n              \"axes\":
+          [\n                {\n                  \"name\": \"z\",\n                  \"type\":
+          \"space\",\n                  \"unit\": \"micrometer\"\n                },\n
+          \               {\n                  \"name\": \"y\",\n                  \"type\":
+          \"space\",\n                  \"unit\": \"micrometer\"\n                },\n
+          \               {\n                  \"name\": \"x\",\n                  \"type\":
+          \"space\",\n                  \"unit\": \"micrometer\"\n                }\n
+          \             ]\n            },\n            {\n              \"name\": \"rotated\",\n
+          \             \"axes\": [\n                {\n                  \"name\":
+          \"z\",\n                  \"type\": \"space\",\n                  \"unit\":
+          \"micrometer\"\n                },\n                {\n                  \"name\":
+          \"y\",\n                  \"type\": \"space\",\n                  \"unit\":
+          \"micrometer\"\n                },\n                {\n                  \"name\":
+          \"x\",\n                  \"type\": \"space\",\n                  \"unit\":
+          \"micrometer\"\n                }\n              ]\n            }\n          ],\n
+          \         \"coordinateTransformations\": [\n            {\n              \"type\":
+          \"sequence\",\n              \"output\": \"rotated\",\n              \"transformations\":
+          [\n                {\n                  \"name\": \"translate_centre_to_origin\",\n
+          \                 \"type\": \"translation\",\n                  \"translation\":
+          [\n                    0,\n                    -20.405918794810177,\n                    -20.405918794810177\n
+          \                 ]\n                },\n                {\n                  \"name\":
+          \"rotate_around_centre\",\n                  \"type\": \"rotation\",\n                  \"rotation\":
+          [\n                    [\n                      1.0,\n                      0.0,\n
+          \                     0.0\n                    ],\n                    [\n
+          \                     0.0,\n                      0.984807753012208,\n                      0.17364817766693033\n
+          \                   ],\n                    [\n                      0.0,\n
+          \                     -0.17364817766693033,\n                      0.984807753012208\n
+          \                   ]\n                  ]\n                }\n              ],\n
+          \             \"input\": \"physical\"\n            }\n          ]\n        }\n
+          \     ],\n      \"image-label\": {\n        \"colors\": [\n          {\n            \"label-value\":
+          1,\n            \"rgba\": [\n              255,\n              255,\n              255,\n
+          \             255\n            ]\n          }\n        ]\n      }\n    }\n
+          \ },\n  \"zarr_format\": 3,\n  \"consolidated_metadata\": null,\n  \"node_type\":
+          \"group\"\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "7043"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:37 GMT
+        Etag:
+          - '"c15a87653bd78ff99f9acd406cb7a59d"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:15 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd07-0069b84059-1b418e0f8-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_400_100_400_400_rot10.zarr/labels/channel_0/s0/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    12,\n    400,\n    400\n  ],\n  \"data_type\":
+          \"uint8\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        6,\n        200,\n        200\n      ]\n
+          \   }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n    \"configuration\":
+          {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\": 0,\n  \"codecs\":
+          [\n    {\n      \"name\": \"bytes\"\n    },\n    {\n      \"name\": \"zstd\",\n
+          \     \"configuration\": {\n        \"level\": 0,\n        \"checksum\": false\n
+          \     }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\": [\n    \"z\",\n
+          \   \"y\",\n    \"x\"\n  ],\n  \"zarr_format\": 3,\n  \"node_type\": \"array\",\n
+          \ \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "651"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:37 GMT
+        Etag:
+          - '"264bcd9f61f5aa22147d32dcf807f51e"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:14 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d88-0069b84059-1b57d0792-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_400_100_400_400_rot10.zarr/labels/channel_0/s1/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    12,\n    200,\n    200\n  ],\n  \"data_type\":
+          \"uint8\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        6,\n        200,\n        200\n      ]\n
+          \   }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n    \"configuration\":
+          {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\": 0,\n  \"codecs\":
+          [\n    {\n      \"name\": \"bytes\"\n    },\n    {\n      \"name\": \"zstd\",\n
+          \     \"configuration\": {\n        \"level\": 0,\n        \"checksum\": false\n
+          \     }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\": [\n    \"z\",\n
+          \   \"y\",\n    \"x\"\n  ],\n  \"zarr_format\": 3,\n  \"node_type\": \"array\",\n
+          \ \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "651"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:37 GMT
+        Etag:
+          - '"70cd5588af7f324d7220b0cdfca336ad"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:15 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d89-0069b84059-1b57d0792-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_400_100_400_400_rot10.zarr/labels/channel_0/s2/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    12,\n    100,\n    100\n  ],\n  \"data_type\":
+          \"uint8\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        12,\n        100,\n        100\n      ]\n
+          \   }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n    \"configuration\":
+          {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\": 0,\n  \"codecs\":
+          [\n    {\n      \"name\": \"bytes\"\n    },\n    {\n      \"name\": \"zstd\",\n
+          \     \"configuration\": {\n        \"level\": 0,\n        \"checksum\": false\n
+          \     }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\": [\n    \"z\",\n
+          \   \"y\",\n    \"x\"\n  ],\n  \"zarr_format\": 3,\n  \"node_type\": \"array\",\n
+          \ \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "652"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:38 GMT
+        Etag:
+          - '"948499e39cc7e855612fae4e1c3c1315"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:14 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd08-0069b84059-1b418e0f8-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_400_100_400_400_rot10.zarr/labels/channel_0/s3/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    12,\n    50,\n    50\n  ],\n  \"data_type\":
+          \"uint8\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        12,\n        50,\n        50\n      ]\n
+          \   }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n    \"configuration\":
+          {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\": 0,\n  \"codecs\":
+          [\n    {\n      \"name\": \"bytes\"\n    },\n    {\n      \"name\": \"zstd\",\n
+          \     \"configuration\": {\n        \"level\": 0,\n        \"checksum\": false\n
+          \     }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\": [\n    \"z\",\n
+          \   \"y\",\n    \"x\"\n  ],\n  \"zarr_format\": 3,\n  \"node_type\": \"array\",\n
+          \ \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "648"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:38 GMT
+        Etag:
+          - '"b7aa1cb53e16d89c6249cbd810380524"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:15 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd09-0069b8405a-1b418e0f8-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_400_100_400_400_rot10.zarr/labels/channel_0/s4/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    12,\n    25,\n    25\n  ],\n  \"data_type\":
+          \"uint8\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        12,\n        25,\n        25\n      ]\n
+          \   }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n    \"configuration\":
+          {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\": 0,\n  \"codecs\":
+          [\n    {\n      \"name\": \"bytes\"\n    },\n    {\n      \"name\": \"zstd\",\n
+          \     \"configuration\": {\n        \"level\": 0,\n        \"checksum\": false\n
+          \     }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\": [\n    \"z\",\n
+          \   \"y\",\n    \"x\"\n  ],\n  \"zarr_format\": 3,\n  \"node_type\": \"array\",\n
+          \ \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "648"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:38 GMT
+        Etag:
+          - '"6c06487da6ec70748ebe467bee70435f"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:15 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d8a-0069b8405a-1b57d0792-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_400_100_400_400_rot10.zarr/labels/channel_0/labels/zarr.json
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx0000000000000007d4d8b-0069b8405a-1b57d0792-default</RequestId><HostId>1b57d0792-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "220"
+        Content-Type:
+          - application/xml
+        Date:
+          - Mon, 16 Mar 2026 17:39:38 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d8b-0069b8405a-1b57d0792-default
+      status:
+        code: 404
+        message: Not Found
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_700_700_400_400_rot45.zarr/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"attributes\": {\n    \"ome\": {\n      \"version\": \"0.6.dev3\",\n
+          \     \"multiscales\": [\n        {\n          \"datasets\": [\n            {\n
+          \             \"path\": \"s0\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.10202959397405088,\n                        0.10202959397405088\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.0,\n                        0.0\n
+          \                     ]\n                    }\n                  ],\n                  \"input\":
+          \"s0\",\n                  \"output\": \"physical\"\n                }\n              ]\n
+          \           },\n            {\n              \"path\": \"s1\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.20405918794810177,\n                        0.20405918794810177\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.05101479698702544,\n
+          \                       0.05101479698702544\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s1\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s2\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.40811837589620353,\n                        0.40811837589620353\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.15304439096107633,\n
+          \                       0.15304439096107633\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s2\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s3\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.8162367517924071,\n                        0.8162367517924071\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.3571035789091781,\n
+          \                       0.3571035789091781\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s3\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s4\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       1.6324735035848141,\n                        1.6324735035848141\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.7652219548053816,\n
+          \                       0.7652219548053816\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s4\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            }\n          ],\n
+          \         \"name\": \"/\",\n          \"coordinateSystems\": [\n            {\n
+          \             \"name\": \"physical\",\n              \"axes\": [\n                {\n
+          \                 \"name\": \"c\",\n                  \"type\": \"channel\"\n
+          \               },\n                {\n                  \"name\": \"z\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               },\n                {\n                  \"name\": \"y\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               },\n                {\n                  \"name\": \"x\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               }\n              ]\n            },\n            {\n              \"name\":
+          \"rotated\",\n              \"axes\": [\n                {\n                  \"name\":
+          \"c\",\n                  \"type\": \"channel\"\n                },\n                {\n
+          \                 \"name\": \"z\",\n                  \"type\": \"space\",\n
+          \                 \"unit\": \"micrometer\"\n                },\n                {\n
+          \                 \"name\": \"y\",\n                  \"type\": \"space\",\n
+          \                 \"unit\": \"micrometer\"\n                },\n                {\n
+          \                 \"name\": \"x\",\n                  \"type\": \"space\",\n
+          \                 \"unit\": \"micrometer\"\n                }\n              ]\n
+          \           }\n          ],\n          \"coordinateTransformations\": [\n
+          \           {\n              \"type\": \"sequence\",\n              \"output\":
+          \"rotated\",\n              \"transformations\": [\n                {\n                  \"name\":
+          \"translate_centre_to_origin\",\n                  \"type\": \"translation\",\n
+          \                 \"translation\": [\n                    0,\n                    0,\n
+          \                   -20.405918794810177,\n                    -20.405918794810177\n
+          \                 ]\n                },\n                {\n                  \"name\":
+          \"rotate_around_centre\",\n                  \"type\": \"rotation\",\n                  \"rotation\":
+          [\n                    [\n                      1.0,\n                      0.0,\n
+          \                     0.0,\n                      0.0\n                    ],\n
+          \                   [\n                      0.0,\n                      1.0,\n
+          \                     0.0,\n                      0.0\n                    ],\n
+          \                   [\n                      0.0,\n                      0.0,\n
+          \                     0.7071067811865476,\n                      0.7071067811865475\n
+          \                   ],\n                    [\n                      0.0,\n
+          \                     0.0,\n                      -0.7071067811865475,\n                      0.7071067811865476\n
+          \                   ]\n                  ]\n                }\n              ],\n
+          \             \"input\": \"physical\"\n            }\n          ]\n        }\n
+          \     ],\n      \"omero\": {\n        \"channels\": [\n          {\n            \"label\":
+          \"Actin\",\n            \"color\": \"FF0000\",\n            \"inverted\":
+          false,\n            \"family\": \"linear\",\n            \"coefficient\":
+          1.0,\n            \"window\": {\n              \"min\": 37.0,\n              \"max\":
+          65535.0,\n              \"start\": 52.0,\n              \"end\": 31890.0\n
+          \           },\n            \"active\": true\n          },\n          {\n
+          \           \"label\": \"Cell\",\n            \"color\": \"FFFFFF\",\n            \"inverted\":
+          false,\n            \"family\": \"linear\",\n            \"coefficient\":
+          1.0,\n            \"window\": {\n              \"min\": 4283.0,\n              \"max\":
+          65535.0,\n              \"start\": 4283.0,\n              \"end\": 65535.0\n
+          \           },\n            \"active\": false\n          },\n          {\n
+          \           \"label\": \"Microtubules\",\n            \"color\": \"00FF00\",\n
+          \           \"inverted\": false,\n            \"family\": \"linear\",\n            \"coefficient\":
+          1.0,\n            \"window\": {\n              \"min\": 6.0,\n              \"max\":
+          31674.0,\n              \"start\": 15.0,\n              \"end\": 10391.0\n
+          \           },\n            \"active\": true\n          }\n        ],\n        \"rdefs\":
+          {\n          \"model\": \"color\",\n          \"defaultZ\": 0,\n          \"defaultT\":
+          0\n        }\n      }\n    }\n  },\n  \"zarr_format\": 3,\n  \"consolidated_metadata\":
+          null,\n  \"node_type\": \"group\"\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "8814"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:38 GMT
+        Etag:
+          - '"d11a5b95c67543a63214989b80a054f4"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:25 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd0a-0069b8405a-1b418e0f8-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_700_700_400_400_rot45.zarr/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"attributes\": {\n    \"ome\": {\n      \"version\": \"0.6.dev3\",\n
+          \     \"multiscales\": [\n        {\n          \"datasets\": [\n            {\n
+          \             \"path\": \"s0\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.10202959397405088,\n                        0.10202959397405088\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.0,\n                        0.0\n
+          \                     ]\n                    }\n                  ],\n                  \"input\":
+          \"s0\",\n                  \"output\": \"physical\"\n                }\n              ]\n
+          \           },\n            {\n              \"path\": \"s1\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.20405918794810177,\n                        0.20405918794810177\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.05101479698702544,\n
+          \                       0.05101479698702544\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s1\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s2\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.40811837589620353,\n                        0.40811837589620353\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.15304439096107633,\n
+          \                       0.15304439096107633\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s2\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s3\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.8162367517924071,\n                        0.8162367517924071\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.3571035789091781,\n
+          \                       0.3571035789091781\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s3\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s4\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       1.6324735035848141,\n                        1.6324735035848141\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.7652219548053816,\n
+          \                       0.7652219548053816\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s4\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            }\n          ],\n
+          \         \"name\": \"/\",\n          \"coordinateSystems\": [\n            {\n
+          \             \"name\": \"physical\",\n              \"axes\": [\n                {\n
+          \                 \"name\": \"c\",\n                  \"type\": \"channel\"\n
+          \               },\n                {\n                  \"name\": \"z\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               },\n                {\n                  \"name\": \"y\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               },\n                {\n                  \"name\": \"x\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               }\n              ]\n            },\n            {\n              \"name\":
+          \"rotated\",\n              \"axes\": [\n                {\n                  \"name\":
+          \"c\",\n                  \"type\": \"channel\"\n                },\n                {\n
+          \                 \"name\": \"z\",\n                  \"type\": \"space\",\n
+          \                 \"unit\": \"micrometer\"\n                },\n                {\n
+          \                 \"name\": \"y\",\n                  \"type\": \"space\",\n
+          \                 \"unit\": \"micrometer\"\n                },\n                {\n
+          \                 \"name\": \"x\",\n                  \"type\": \"space\",\n
+          \                 \"unit\": \"micrometer\"\n                }\n              ]\n
+          \           }\n          ],\n          \"coordinateTransformations\": [\n
+          \           {\n              \"type\": \"sequence\",\n              \"output\":
+          \"rotated\",\n              \"transformations\": [\n                {\n                  \"name\":
+          \"translate_centre_to_origin\",\n                  \"type\": \"translation\",\n
+          \                 \"translation\": [\n                    0,\n                    0,\n
+          \                   -20.405918794810177,\n                    -20.405918794810177\n
+          \                 ]\n                },\n                {\n                  \"name\":
+          \"rotate_around_centre\",\n                  \"type\": \"rotation\",\n                  \"rotation\":
+          [\n                    [\n                      1.0,\n                      0.0,\n
+          \                     0.0,\n                      0.0\n                    ],\n
+          \                   [\n                      0.0,\n                      1.0,\n
+          \                     0.0,\n                      0.0\n                    ],\n
+          \                   [\n                      0.0,\n                      0.0,\n
+          \                     0.7071067811865476,\n                      0.7071067811865475\n
+          \                   ],\n                    [\n                      0.0,\n
+          \                     0.0,\n                      -0.7071067811865475,\n                      0.7071067811865476\n
+          \                   ]\n                  ]\n                }\n              ],\n
+          \             \"input\": \"physical\"\n            }\n          ]\n        }\n
+          \     ],\n      \"omero\": {\n        \"channels\": [\n          {\n            \"label\":
+          \"Actin\",\n            \"color\": \"FF0000\",\n            \"inverted\":
+          false,\n            \"family\": \"linear\",\n            \"coefficient\":
+          1.0,\n            \"window\": {\n              \"min\": 37.0,\n              \"max\":
+          65535.0,\n              \"start\": 52.0,\n              \"end\": 31890.0\n
+          \           },\n            \"active\": true\n          },\n          {\n
+          \           \"label\": \"Cell\",\n            \"color\": \"FFFFFF\",\n            \"inverted\":
+          false,\n            \"family\": \"linear\",\n            \"coefficient\":
+          1.0,\n            \"window\": {\n              \"min\": 4283.0,\n              \"max\":
+          65535.0,\n              \"start\": 4283.0,\n              \"end\": 65535.0\n
+          \           },\n            \"active\": false\n          },\n          {\n
+          \           \"label\": \"Microtubules\",\n            \"color\": \"00FF00\",\n
+          \           \"inverted\": false,\n            \"family\": \"linear\",\n            \"coefficient\":
+          1.0,\n            \"window\": {\n              \"min\": 6.0,\n              \"max\":
+          31674.0,\n              \"start\": 15.0,\n              \"end\": 10391.0\n
+          \           },\n            \"active\": true\n          }\n        ],\n        \"rdefs\":
+          {\n          \"model\": \"color\",\n          \"defaultZ\": 0,\n          \"defaultT\":
+          0\n        }\n      }\n    }\n  },\n  \"zarr_format\": 3,\n  \"consolidated_metadata\":
+          null,\n  \"node_type\": \"group\"\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "8814"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:38 GMT
+        Etag:
+          - '"d11a5b95c67543a63214989b80a054f4"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:25 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd0b-0069b8405a-1b418e0f8-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_700_700_400_400_rot45.zarr/s0/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    3,\n    12,\n    400,\n    400\n  ],\n  \"data_type\":
+          \"uint16\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        1,\n        6,\n        200,\n        200\n
+          \     ]\n    }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n
+          \   \"configuration\": {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\":
+          0,\n  \"codecs\": [\n    {\n      \"name\": \"bytes\",\n      \"configuration\":
+          {\n        \"endian\": \"little\"\n      }\n    },\n    {\n      \"name\":
+          \"zstd\",\n      \"configuration\": {\n        \"level\": 0,\n        \"checksum\":
+          false\n      }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\":
+          [\n    \"c\",\n    \"z\",\n    \"y\",\n    \"x\"\n  ],\n  \"zarr_format\":
+          3,\n  \"node_type\": \"array\",\n  \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "740"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:38 GMT
+        Etag:
+          - '"57a48ee882501b44503c18e2cf53415c"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:23 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d8c-0069b8405a-1b57d0792-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_700_700_400_400_rot45.zarr/s1/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    3,\n    12,\n    200,\n    200\n  ],\n  \"data_type\":
+          \"uint16\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        2,\n        6,\n        100,\n        200\n
+          \     ]\n    }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n
+          \   \"configuration\": {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\":
+          0,\n  \"codecs\": [\n    {\n      \"name\": \"bytes\",\n      \"configuration\":
+          {\n        \"endian\": \"little\"\n      }\n    },\n    {\n      \"name\":
+          \"zstd\",\n      \"configuration\": {\n        \"level\": 0,\n        \"checksum\":
+          false\n      }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\":
+          [\n    \"c\",\n    \"z\",\n    \"y\",\n    \"x\"\n  ],\n  \"zarr_format\":
+          3,\n  \"node_type\": \"array\",\n  \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "740"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:39 GMT
+        Etag:
+          - '"8f4f6ab967cc8ca710002f0d5160edcb"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:24 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d8d-0069b8405b-1b57d0792-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_700_700_400_400_rot45.zarr/s2/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    3,\n    12,\n    100,\n    100\n  ],\n  \"data_type\":
+          \"uint16\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        2,\n        6,\n        100,\n        100\n
+          \     ]\n    }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n
+          \   \"configuration\": {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\":
+          0,\n  \"codecs\": [\n    {\n      \"name\": \"bytes\",\n      \"configuration\":
+          {\n        \"endian\": \"little\"\n      }\n    },\n    {\n      \"name\":
+          \"zstd\",\n      \"configuration\": {\n        \"level\": 0,\n        \"checksum\":
+          false\n      }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\":
+          [\n    \"c\",\n    \"z\",\n    \"y\",\n    \"x\"\n  ],\n  \"zarr_format\":
+          3,\n  \"node_type\": \"array\",\n  \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "740"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:39 GMT
+        Etag:
+          - '"dca9fc3c20d0a47e751a8a5aa03d4dcc"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:25 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd0c-0069b8405b-1b418e0f8-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_700_700_400_400_rot45.zarr/s3/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    3,\n    12,\n    50,\n    50\n  ],\n  \"data_type\":
+          \"uint16\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        3,\n        12,\n        50,\n        50\n
+          \     ]\n    }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n
+          \   \"configuration\": {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\":
+          0,\n  \"codecs\": [\n    {\n      \"name\": \"bytes\",\n      \"configuration\":
+          {\n        \"endian\": \"little\"\n      }\n    },\n    {\n      \"name\":
+          \"zstd\",\n      \"configuration\": {\n        \"level\": 0,\n        \"checksum\":
+          false\n      }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\":
+          [\n    \"c\",\n    \"z\",\n    \"y\",\n    \"x\"\n  ],\n  \"zarr_format\":
+          3,\n  \"node_type\": \"array\",\n  \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "737"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:39 GMT
+        Etag:
+          - '"9d1b30a29e71a91d9da6de3714077c2d"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:25 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd0d-0069b8405b-1b418e0f8-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_700_700_400_400_rot45.zarr/s4/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    3,\n    12,\n    25,\n    25\n  ],\n  \"data_type\":
+          \"uint16\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        3,\n        12,\n        25,\n        25\n
+          \     ]\n    }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n
+          \   \"configuration\": {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\":
+          0,\n  \"codecs\": [\n    {\n      \"name\": \"bytes\",\n      \"configuration\":
+          {\n        \"endian\": \"little\"\n      }\n    },\n    {\n      \"name\":
+          \"zstd\",\n      \"configuration\": {\n        \"level\": 0,\n        \"checksum\":
+          false\n      }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\":
+          [\n    \"c\",\n    \"z\",\n    \"y\",\n    \"x\"\n  ],\n  \"zarr_format\":
+          3,\n  \"node_type\": \"array\",\n  \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "737"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:39 GMT
+        Etag:
+          - '"cc6e954348949bef806a337a9f157d2e"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:25 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d8e-0069b8405b-1b57d0792-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_700_700_400_400_rot45.zarr/labels/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"attributes\": {\n    \"ome\": {\n      \"labels\": [\n        \"channel_0\"\n
+          \     ],\n      \"version\": \"0.6.dev3\"\n    }\n  },\n  \"zarr_format\":
+          3,\n  \"consolidated_metadata\": null,\n  \"node_type\": \"group\"\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "196"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:39 GMT
+        Etag:
+          - '"1aca791965ab8e38a700ac8946911973"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:20 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d8f-0069b8405b-1b57d0792-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_700_700_400_400_rot45.zarr/labels/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"attributes\": {\n    \"ome\": {\n      \"labels\": [\n        \"channel_0\"\n
+          \     ],\n      \"version\": \"0.6.dev3\"\n    }\n  },\n  \"zarr_format\":
+          3,\n  \"consolidated_metadata\": null,\n  \"node_type\": \"group\"\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "196"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:39 GMT
+        Etag:
+          - '"1aca791965ab8e38a700ac8946911973"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:20 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd0e-0069b8405b-1b418e0f8-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_700_700_400_400_rot45.zarr/labels/channel_0/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"attributes\": {\n    \"ome\": {\n      \"version\": \"0.6.dev3\",\n
+          \     \"multiscales\": [\n        {\n          \"datasets\": [\n            {\n
+          \             \"path\": \"s0\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        0.5920416817598223,\n                        0.10202959397405088,\n
+          \                       0.10202959397405088\n                      ]\n                    },\n
+          \                   {\n                      \"type\": \"translation\",\n
+          \                     \"translation\": [\n                        0.0,\n                        0.0,\n
+          \                       0.0\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s0\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s1\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        0.5920416817598223,\n                        0.20405918794810177,\n
+          \                       0.20405918794810177\n                      ]\n                    },\n
+          \                   {\n                      \"type\": \"translation\",\n
+          \                     \"translation\": [\n                        0.0,\n                        0.05101479698702544,\n
+          \                       0.05101479698702544\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s1\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s2\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        0.5920416817598223,\n                        0.40811837589620353,\n
+          \                       0.40811837589620353\n                      ]\n                    },\n
+          \                   {\n                      \"type\": \"translation\",\n
+          \                     \"translation\": [\n                        0.0,\n                        0.15304439096107633,\n
+          \                       0.15304439096107633\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s2\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s3\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        0.5920416817598223,\n                        0.8162367517924071,\n
+          \                       0.8162367517924071\n                      ]\n                    },\n
+          \                   {\n                      \"type\": \"translation\",\n
+          \                     \"translation\": [\n                        0.0,\n                        0.3571035789091781,\n
+          \                       0.3571035789091781\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s3\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s4\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        0.5920416817598223,\n                        1.6324735035848141,\n
+          \                       1.6324735035848141\n                      ]\n                    },\n
+          \                   {\n                      \"type\": \"translation\",\n
+          \                     \"translation\": [\n                        0.0,\n                        0.7652219548053816,\n
+          \                       0.7652219548053816\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s4\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            }\n          ],\n
+          \         \"name\": \"/labels/channel_0\",\n          \"coordinateSystems\":
+          [\n            {\n              \"name\": \"physical\",\n              \"axes\":
+          [\n                {\n                  \"name\": \"z\",\n                  \"type\":
+          \"space\",\n                  \"unit\": \"micrometer\"\n                },\n
+          \               {\n                  \"name\": \"y\",\n                  \"type\":
+          \"space\",\n                  \"unit\": \"micrometer\"\n                },\n
+          \               {\n                  \"name\": \"x\",\n                  \"type\":
+          \"space\",\n                  \"unit\": \"micrometer\"\n                }\n
+          \             ]\n            },\n            {\n              \"name\": \"rotated\",\n
+          \             \"axes\": [\n                {\n                  \"name\":
+          \"z\",\n                  \"type\": \"space\",\n                  \"unit\":
+          \"micrometer\"\n                },\n                {\n                  \"name\":
+          \"y\",\n                  \"type\": \"space\",\n                  \"unit\":
+          \"micrometer\"\n                },\n                {\n                  \"name\":
+          \"x\",\n                  \"type\": \"space\",\n                  \"unit\":
+          \"micrometer\"\n                }\n              ]\n            }\n          ],\n
+          \         \"coordinateTransformations\": [\n            {\n              \"type\":
+          \"sequence\",\n              \"output\": \"rotated\",\n              \"transformations\":
+          [\n                {\n                  \"name\": \"translate_centre_to_origin\",\n
+          \                 \"type\": \"translation\",\n                  \"translation\":
+          [\n                    0,\n                    -20.405918794810177,\n                    -20.405918794810177\n
+          \                 ]\n                },\n                {\n                  \"name\":
+          \"rotate_around_centre\",\n                  \"type\": \"rotation\",\n                  \"rotation\":
+          [\n                    [\n                      1.0,\n                      0.0,\n
+          \                     0.0\n                    ],\n                    [\n
+          \                     0.0,\n                      0.7071067811865476,\n                      0.7071067811865475\n
+          \                   ],\n                    [\n                      0.0,\n
+          \                     -0.7071067811865475,\n                      0.7071067811865476\n
+          \                   ]\n                  ]\n                }\n              ],\n
+          \             \"input\": \"physical\"\n            }\n          ]\n        }\n
+          \     ],\n      \"image-label\": {\n        \"colors\": [\n          {\n            \"label-value\":
+          1,\n            \"rgba\": [\n              255,\n              255,\n              255,\n
+          \             255\n            ]\n          }\n        ]\n      }\n    }\n
+          \ },\n  \"zarr_format\": 3,\n  \"consolidated_metadata\": null,\n  \"node_type\":
+          \"group\"\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "7043"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:39 GMT
+        Etag:
+          - '"dc58acc4b164d0d5e589942173051829"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:20 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd0f-0069b8405b-1b418e0f8-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_700_700_400_400_rot45.zarr/labels/channel_0/s0/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    12,\n    400,\n    400\n  ],\n  \"data_type\":
+          \"uint8\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        6,\n        200,\n        200\n      ]\n
+          \   }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n    \"configuration\":
+          {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\": 0,\n  \"codecs\":
+          [\n    {\n      \"name\": \"bytes\"\n    },\n    {\n      \"name\": \"zstd\",\n
+          \     \"configuration\": {\n        \"level\": 0,\n        \"checksum\": false\n
+          \     }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\": [\n    \"z\",\n
+          \   \"y\",\n    \"x\"\n  ],\n  \"zarr_format\": 3,\n  \"node_type\": \"array\",\n
+          \ \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "651"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:40 GMT
+        Etag:
+          - '"264bcd9f61f5aa22147d32dcf807f51e"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:20 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d90-0069b8405b-1b57d0792-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_700_700_400_400_rot45.zarr/labels/channel_0/s1/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    12,\n    200,\n    200\n  ],\n  \"data_type\":
+          \"uint8\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        6,\n        200,\n        200\n      ]\n
+          \   }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n    \"configuration\":
+          {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\": 0,\n  \"codecs\":
+          [\n    {\n      \"name\": \"bytes\"\n    },\n    {\n      \"name\": \"zstd\",\n
+          \     \"configuration\": {\n        \"level\": 0,\n        \"checksum\": false\n
+          \     }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\": [\n    \"z\",\n
+          \   \"y\",\n    \"x\"\n  ],\n  \"zarr_format\": 3,\n  \"node_type\": \"array\",\n
+          \ \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "651"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:40 GMT
+        Etag:
+          - '"70cd5588af7f324d7220b0cdfca336ad"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:20 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d91-0069b8405c-1b57d0792-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_700_700_400_400_rot45.zarr/labels/channel_0/s2/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    12,\n    100,\n    100\n  ],\n  \"data_type\":
+          \"uint8\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        12,\n        100,\n        100\n      ]\n
+          \   }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n    \"configuration\":
+          {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\": 0,\n  \"codecs\":
+          [\n    {\n      \"name\": \"bytes\"\n    },\n    {\n      \"name\": \"zstd\",\n
+          \     \"configuration\": {\n        \"level\": 0,\n        \"checksum\": false\n
+          \     }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\": [\n    \"z\",\n
+          \   \"y\",\n    \"x\"\n  ],\n  \"zarr_format\": 3,\n  \"node_type\": \"array\",\n
+          \ \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "652"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:40 GMT
+        Etag:
+          - '"948499e39cc7e855612fae4e1c3c1315"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:20 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd10-0069b8405c-1b418e0f8-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_700_700_400_400_rot45.zarr/labels/channel_0/s3/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    12,\n    50,\n    50\n  ],\n  \"data_type\":
+          \"uint8\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        12,\n        50,\n        50\n      ]\n
+          \   }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n    \"configuration\":
+          {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\": 0,\n  \"codecs\":
+          [\n    {\n      \"name\": \"bytes\"\n    },\n    {\n      \"name\": \"zstd\",\n
+          \     \"configuration\": {\n        \"level\": 0,\n        \"checksum\": false\n
+          \     }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\": [\n    \"z\",\n
+          \   \"y\",\n    \"x\"\n  ],\n  \"zarr_format\": 3,\n  \"node_type\": \"array\",\n
+          \ \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "648"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:40 GMT
+        Etag:
+          - '"b7aa1cb53e16d89c6249cbd810380524"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:20 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd11-0069b8405c-1b418e0f8-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_700_700_400_400_rot45.zarr/labels/channel_0/s4/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    12,\n    25,\n    25\n  ],\n  \"data_type\":
+          \"uint8\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        12,\n        25,\n        25\n      ]\n
+          \   }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n    \"configuration\":
+          {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\": 0,\n  \"codecs\":
+          [\n    {\n      \"name\": \"bytes\"\n    },\n    {\n      \"name\": \"zstd\",\n
+          \     \"configuration\": {\n        \"level\": 0,\n        \"checksum\": false\n
+          \     }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\": [\n    \"z\",\n
+          \   \"y\",\n    \"x\"\n  ],\n  \"zarr_format\": 3,\n  \"node_type\": \"array\",\n
+          \ \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "648"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:40 GMT
+        Etag:
+          - '"6c06487da6ec70748ebe467bee70435f"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:47:20 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d92-0069b8405c-1b57d0792-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_cropped_700_700_400_400_rot45.zarr/labels/channel_0/labels/zarr.json
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx0000000000000007d4d93-0069b8405c-1b57d0792-default</RequestId><HostId>1b57d0792-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "220"
+        Content-Type:
+          - application/xml
+        Date:
+          - Mon, 16 Mar 2026 17:39:40 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d93-0069b8405c-1b57d0792-default
+      status:
+        code: 404
+        message: Not Found
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_full.zarr/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"attributes\": {\n    \"ome\": {\n      \"version\": \"0.6.dev3\",\n
+          \     \"multiscales\": [\n        {\n          \"datasets\": [\n            {\n
+          \             \"path\": \"s0\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.10202959397405088,\n                        0.10202959397405088\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.0,\n                        0.0\n
+          \                     ]\n                    }\n                  ],\n                  \"input\":
+          \"s0\",\n                  \"output\": \"physical\"\n                }\n              ]\n
+          \           },\n            {\n              \"path\": \"s1\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.20405918794810177,\n                        0.20405918794810177\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.05101479698702544,\n
+          \                       0.05101479698702544\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s1\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s2\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.40811837589620353,\n                        0.40811837589620353\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.15304439096107633,\n
+          \                       0.15304439096107633\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s2\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s3\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.8162367517924071,\n                        0.8162367517924071\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.3571035789091781,\n
+          \                       0.3571035789091781\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s3\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s4\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       1.6324735035848141,\n                        1.6324735035848141\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.7652219548053816,\n
+          \                       0.7652219548053816\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s4\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            }\n          ],\n
+          \         \"name\": \"/\",\n          \"coordinateSystems\": [\n            {\n
+          \             \"name\": \"physical\",\n              \"axes\": [\n                {\n
+          \                 \"name\": \"c\",\n                  \"type\": \"channel\"\n
+          \               },\n                {\n                  \"name\": \"z\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               },\n                {\n                  \"name\": \"y\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               },\n                {\n                  \"name\": \"x\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               }\n              ]\n            },\n            {\n              \"name\":
+          \"full_scene_rotated_10\",\n              \"axes\": [\n                {\n
+          \                 \"name\": \"c\",\n                  \"type\": \"channel\"\n
+          \               },\n                {\n                  \"name\": \"z\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               },\n                {\n                  \"name\": \"y\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               },\n                {\n                  \"name\": \"x\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               }\n              ]\n            }\n          ],\n          \"coordinateTransformations\":
+          [\n            {\n              \"name\": \"rotate_10_around_centre\",\n              \"type\":
+          \"rotation\",\n              \"rotation\": [\n                [\n                  1.0,\n
+          \                 0.0,\n                  0.0,\n                  0.0\n                ],\n
+          \               [\n                  0.0,\n                  1.0,\n                  0.0,\n
+          \                 0.0\n                ],\n                [\n                  0.0,\n
+          \                 0.0,\n                  0.984807753012208,\n                  0.17364817766693033\n
+          \               ],\n                [\n                  0.0,\n                  0.0,\n
+          \                 -0.17364817766693033,\n                  0.984807753012208\n
+          \               ]\n              ],\n              \"input\": \"physical\",\n
+          \             \"output\": \"full_scene_rotated_10\"\n            }\n          ]\n
+          \       }\n      ],\n      \"omero\": {\n        \"channels\": [\n          {\n
+          \           \"label\": \"Actin\",\n            \"color\": \"FF0000\",\n            \"inverted\":
+          false,\n            \"family\": \"linear\",\n            \"coefficient\":
+          1.0,\n            \"window\": {\n              \"min\": 37.0,\n              \"max\":
+          65535.0,\n              \"start\": 52.0,\n              \"end\": 31890.0\n
+          \           },\n            \"active\": true\n          },\n          {\n
+          \           \"label\": \"Cell\",\n            \"color\": \"FFFFFF\",\n            \"inverted\":
+          false,\n            \"family\": \"linear\",\n            \"coefficient\":
+          1.0,\n            \"window\": {\n              \"min\": 4283.0,\n              \"max\":
+          65535.0,\n              \"start\": 4283.0,\n              \"end\": 65535.0\n
+          \           },\n            \"active\": false\n          },\n          {\n
+          \           \"label\": \"Microtubules\",\n            \"color\": \"00FF00\",\n
+          \           \"inverted\": false,\n            \"family\": \"linear\",\n            \"coefficient\":
+          1.0,\n            \"window\": {\n              \"min\": 6.0,\n              \"max\":
+          31674.0,\n              \"start\": 15.0,\n              \"end\": 10391.0\n
+          \           },\n            \"active\": true\n          }\n        ],\n        \"rdefs\":
+          {\n          \"model\": \"color\",\n          \"defaultZ\": 0,\n          \"defaultT\":
+          0\n        }\n      }\n    }\n  },\n  \"zarr_format\": 3,\n  \"consolidated_metadata\":
+          null,\n  \"node_type\": \"group\"\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "8296"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:41 GMT
+        Etag:
+          - '"638b22d4450b04c4e7d939ec33ccde35"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:48:40 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd12-0069b8405c-1b418e0f8-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_full.zarr/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"attributes\": {\n    \"ome\": {\n      \"version\": \"0.6.dev3\",\n
+          \     \"multiscales\": [\n        {\n          \"datasets\": [\n            {\n
+          \             \"path\": \"s0\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.10202959397405088,\n                        0.10202959397405088\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.0,\n                        0.0\n
+          \                     ]\n                    }\n                  ],\n                  \"input\":
+          \"s0\",\n                  \"output\": \"physical\"\n                }\n              ]\n
+          \           },\n            {\n              \"path\": \"s1\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.20405918794810177,\n                        0.20405918794810177\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.05101479698702544,\n
+          \                       0.05101479698702544\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s1\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s2\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.40811837589620353,\n                        0.40811837589620353\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.15304439096107633,\n
+          \                       0.15304439096107633\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s2\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s3\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       0.8162367517924071,\n                        0.8162367517924071\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.3571035789091781,\n
+          \                       0.3571035789091781\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s3\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            },\n            {\n
+          \             \"path\": \"s4\",\n              \"coordinateTransformations\":
+          [\n                {\n                  \"type\": \"sequence\",\n                  \"transformations\":
+          [\n                    {\n                      \"type\": \"scale\",\n                      \"scale\":
+          [\n                        1.0,\n                        0.5920416817598223,\n
+          \                       1.6324735035848141,\n                        1.6324735035848141\n
+          \                     ]\n                    },\n                    {\n                      \"type\":
+          \"translation\",\n                      \"translation\": [\n                        0.0,\n
+          \                       0.0,\n                        0.7652219548053816,\n
+          \                       0.7652219548053816\n                      ]\n                    }\n
+          \                 ],\n                  \"input\": \"s4\",\n                  \"output\":
+          \"physical\"\n                }\n              ]\n            }\n          ],\n
+          \         \"name\": \"/\",\n          \"coordinateSystems\": [\n            {\n
+          \             \"name\": \"physical\",\n              \"axes\": [\n                {\n
+          \                 \"name\": \"c\",\n                  \"type\": \"channel\"\n
+          \               },\n                {\n                  \"name\": \"z\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               },\n                {\n                  \"name\": \"y\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               },\n                {\n                  \"name\": \"x\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               }\n              ]\n            },\n            {\n              \"name\":
+          \"full_scene_rotated_10\",\n              \"axes\": [\n                {\n
+          \                 \"name\": \"c\",\n                  \"type\": \"channel\"\n
+          \               },\n                {\n                  \"name\": \"z\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               },\n                {\n                  \"name\": \"y\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               },\n                {\n                  \"name\": \"x\",\n
+          \                 \"type\": \"space\",\n                  \"unit\": \"micrometer\"\n
+          \               }\n              ]\n            }\n          ],\n          \"coordinateTransformations\":
+          [\n            {\n              \"name\": \"rotate_10_around_centre\",\n              \"type\":
+          \"rotation\",\n              \"rotation\": [\n                [\n                  1.0,\n
+          \                 0.0,\n                  0.0,\n                  0.0\n                ],\n
+          \               [\n                  0.0,\n                  1.0,\n                  0.0,\n
+          \                 0.0\n                ],\n                [\n                  0.0,\n
+          \                 0.0,\n                  0.984807753012208,\n                  0.17364817766693033\n
+          \               ],\n                [\n                  0.0,\n                  0.0,\n
+          \                 -0.17364817766693033,\n                  0.984807753012208\n
+          \               ]\n              ],\n              \"input\": \"physical\",\n
+          \             \"output\": \"full_scene_rotated_10\"\n            }\n          ]\n
+          \       }\n      ],\n      \"omero\": {\n        \"channels\": [\n          {\n
+          \           \"label\": \"Actin\",\n            \"color\": \"FF0000\",\n            \"inverted\":
+          false,\n            \"family\": \"linear\",\n            \"coefficient\":
+          1.0,\n            \"window\": {\n              \"min\": 37.0,\n              \"max\":
+          65535.0,\n              \"start\": 52.0,\n              \"end\": 31890.0\n
+          \           },\n            \"active\": true\n          },\n          {\n
+          \           \"label\": \"Cell\",\n            \"color\": \"FFFFFF\",\n            \"inverted\":
+          false,\n            \"family\": \"linear\",\n            \"coefficient\":
+          1.0,\n            \"window\": {\n              \"min\": 4283.0,\n              \"max\":
+          65535.0,\n              \"start\": 4283.0,\n              \"end\": 65535.0\n
+          \           },\n            \"active\": false\n          },\n          {\n
+          \           \"label\": \"Microtubules\",\n            \"color\": \"00FF00\",\n
+          \           \"inverted\": false,\n            \"family\": \"linear\",\n            \"coefficient\":
+          1.0,\n            \"window\": {\n              \"min\": 6.0,\n              \"max\":
+          31674.0,\n              \"start\": 15.0,\n              \"end\": 10391.0\n
+          \           },\n            \"active\": true\n          }\n        ],\n        \"rdefs\":
+          {\n          \"model\": \"color\",\n          \"defaultZ\": 0,\n          \"defaultT\":
+          0\n        }\n      }\n    }\n  },\n  \"zarr_format\": 3,\n  \"consolidated_metadata\":
+          null,\n  \"node_type\": \"group\"\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "8296"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:41 GMT
+        Etag:
+          - '"638b22d4450b04c4e7d939ec33ccde35"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:48:40 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd13-0069b8405d-1b418e0f8-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_full.zarr/s0/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    3,\n    12,\n    1488,\n    1488\n  ],\n  \"data_type\":
+          \"uint16\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        1,\n        1,\n        1024,\n        1024\n
+          \     ]\n    }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n
+          \   \"configuration\": {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\":
+          0,\n  \"codecs\": [\n    {\n      \"name\": \"bytes\",\n      \"configuration\":
+          {\n        \"endian\": \"little\"\n      }\n    },\n    {\n      \"name\":
+          \"zstd\",\n      \"configuration\": {\n        \"level\": 0,\n        \"checksum\":
+          false\n      }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\":
+          [\n    \"c\",\n    \"z\",\n    \"y\",\n    \"x\"\n  ],\n  \"zarr_format\":
+          3,\n  \"node_type\": \"array\",\n  \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "744"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:41 GMT
+        Etag:
+          - '"163014e1fa6391827e2dc195a3a45dae"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:48:18 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d94-0069b8405d-1b57d0792-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_full.zarr/s1/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    3,\n    12,\n    744,\n    744\n  ],\n  \"data_type\":
+          \"uint16\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        1,\n        1,\n        744,\n        744\n
+          \     ]\n    }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n
+          \   \"configuration\": {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\":
+          0,\n  \"codecs\": [\n    {\n      \"name\": \"bytes\",\n      \"configuration\":
+          {\n        \"endian\": \"little\"\n      }\n    },\n    {\n      \"name\":
+          \"zstd\",\n      \"configuration\": {\n        \"level\": 0,\n        \"checksum\":
+          false\n      }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\":
+          [\n    \"c\",\n    \"z\",\n    \"y\",\n    \"x\"\n  ],\n  \"zarr_format\":
+          3,\n  \"node_type\": \"array\",\n  \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "740"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:41 GMT
+        Etag:
+          - '"e9f0e35f845fcce2da4b3b31bb8c5027"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:48:33 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d95-0069b8405d-1b57d0792-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_full.zarr/s2/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    3,\n    12,\n    372,\n    372\n  ],\n  \"data_type\":
+          \"uint16\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        1,\n        1,\n        372,\n        372\n
+          \     ]\n    }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n
+          \   \"configuration\": {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\":
+          0,\n  \"codecs\": [\n    {\n      \"name\": \"bytes\",\n      \"configuration\":
+          {\n        \"endian\": \"little\"\n      }\n    },\n    {\n      \"name\":
+          \"zstd\",\n      \"configuration\": {\n        \"level\": 0,\n        \"checksum\":
+          false\n      }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\":
+          [\n    \"c\",\n    \"z\",\n    \"y\",\n    \"x\"\n  ],\n  \"zarr_format\":
+          3,\n  \"node_type\": \"array\",\n  \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "740"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:41 GMT
+        Etag:
+          - '"38d9d203ce9ee86835bc89ba6a906a34"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:48:37 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd14-0069b8405d-1b418e0f8-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_full.zarr/s3/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    3,\n    12,\n    186,\n    186\n  ],\n  \"data_type\":
+          \"uint16\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        1,\n        1,\n        186,\n        186\n
+          \     ]\n    }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n
+          \   \"configuration\": {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\":
+          0,\n  \"codecs\": [\n    {\n      \"name\": \"bytes\",\n      \"configuration\":
+          {\n        \"endian\": \"little\"\n      }\n    },\n    {\n      \"name\":
+          \"zstd\",\n      \"configuration\": {\n        \"level\": 0,\n        \"checksum\":
+          false\n      }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\":
+          [\n    \"c\",\n    \"z\",\n    \"y\",\n    \"x\"\n  ],\n  \"zarr_format\":
+          3,\n  \"node_type\": \"array\",\n  \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "740"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:41 GMT
+        Etag:
+          - '"12212e958098a0bad594165a9e6642bc"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:48:39 GMT
+        x-amz-request-id:
+          - tx0000000000000007ebd15-0069b8405d-1b418e0f8-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_full.zarr/s4/zarr.json
+    response:
+      body:
+        string:
+          "{\n  \"shape\": [\n    3,\n    12,\n    93,\n    93\n  ],\n  \"data_type\":
+          \"uint16\",\n  \"chunk_grid\": {\n    \"name\": \"regular\",\n    \"configuration\":
+          {\n      \"chunk_shape\": [\n        1,\n        1,\n        93,\n        93\n
+          \     ]\n    }\n  },\n  \"chunk_key_encoding\": {\n    \"name\": \"default\",\n
+          \   \"configuration\": {\n      \"separator\": \"/\"\n    }\n  },\n  \"fill_value\":
+          0,\n  \"codecs\": [\n    {\n      \"name\": \"bytes\",\n      \"configuration\":
+          {\n        \"endian\": \"little\"\n      }\n    },\n    {\n      \"name\":
+          \"zstd\",\n      \"configuration\": {\n        \"level\": 0,\n        \"checksum\":
+          false\n      }\n    }\n  ],\n  \"attributes\": {},\n  \"dimension_names\":
+          [\n    \"c\",\n    \"z\",\n    \"y\",\n    \"x\"\n  ],\n  \"zarr_format\":
+          3,\n  \"node_type\": \"array\",\n  \"storage_transformers\": []\n}"
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "736"
+        Content-Type:
+          - application/json
+        Date:
+          - Mon, 16 Mar 2026 17:39:41 GMT
+        Etag:
+          - '"d69f87980f86779161d4862d5238a165"'
+        Last-Modified:
+          - Fri, 20 Feb 2026 15:48:40 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d96-0069b8405d-1b57d0792-default
+        x-rgw-object-type:
+          - Normal
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/4995115_full.zarr/labels/zarr.json
+    response:
+      body:
+        string: <?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><BucketName>idr</BucketName><RequestId>tx0000000000000007d4d97-0069b8405d-1b57d0792-default</RequestId><HostId>1b57d0792-default-default</HostId></Error>
+      headers:
+        Accept-Ranges:
+          - bytes
+        Connection:
+          - Keep-Alive
+        Content-Length:
+          - "220"
+        Content-Type:
+          - application/xml
+        Date:
+          - Mon, 16 Mar 2026 17:39:41 GMT
+        x-amz-request-id:
+          - tx0000000000000007d4d97-0069b8405d-1b57d0792-default
+      status:
+        code: 404
+        message: Not Found
+version: 1
