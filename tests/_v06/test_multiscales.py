@@ -415,6 +415,7 @@ def test_from_v05() -> None:
         == ms_target
     )
 
+
 def test_from_v06_to_v05() -> None:
     """Test conversion from v0.6 to v0.5."""
     ms = Multiscale(

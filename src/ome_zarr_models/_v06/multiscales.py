@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing
 import warnings
 from collections import Counter
-from typing import Annotated, Self, overload, Literal, TYPE_CHECKING
+from typing import TYPE_CHECKING, Annotated, Literal, Self, overload
 
 from pydantic import (
     Field,
