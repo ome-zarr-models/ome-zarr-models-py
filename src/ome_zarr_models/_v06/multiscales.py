@@ -127,7 +127,8 @@ class Multiscale(BaseAttrs):
 
         if self.coordinateTransformations is not None:
             warnings.warn(
-                "Coordinate transformations defined in multiscales > coordinateTransformations "
+                "Coordinate transformations defined in "
+                "multiscales > coordinateTransformations "
                 "can currently not be converted to v0.5, "
                 "as they are not supported in this version.",
                 stacklevel=2,
