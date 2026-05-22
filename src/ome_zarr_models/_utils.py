@@ -471,9 +471,6 @@ class TransformGraph:
                     continue
                 if input_sys.name is None or output_sys.name is None:
                     continue
-                print(input_sys.name, output_sys.name)
-                print(input_sys.path, output_sys.path)
-                print()
                 graph_gv.edge(
                     self._node_key(input_sys.path, input_sys.name),
                     self._node_key(output_sys.path, output_sys.name),
