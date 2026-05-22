@@ -5,7 +5,7 @@ import pytest
 from zarr.abc.store import Store
 
 from ome_zarr_models.v06.labels import Labels, LabelsAttrs
-from tests._v06.conftest import json_to_zarr_group
+from tests.v06.conftest import json_to_zarr_group
 
 
 def test_labels(store: Store) -> None:

@@ -9,7 +9,7 @@ from ome_zarr_models.v06.coordinate_transforms import (
 from ome_zarr_models.v06.image_label import ImageLabel, ImageLabelAttrs
 from ome_zarr_models.v06.image_label_types import Color, Label, Source
 from ome_zarr_models.v06.multiscales import Dataset, Multiscale
-from tests._v06.conftest import json_to_zarr_group
+from tests.v06.conftest import json_to_zarr_group
 
 
 def test_null_colors() -> None:
