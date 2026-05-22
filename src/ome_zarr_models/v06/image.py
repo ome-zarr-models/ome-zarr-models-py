@@ -54,8 +54,10 @@ class ImageAttrs(BaseOMEAttrs):
             if multiscales.coordinateTransformations is not None:
                 for transform in multiscales.coordinateTransformations:
                     graph.add_transform(transform)
-            # Coordinate transforms in datasets
             for dataset in multiscales.datasets:
+                # Array paths
+                graph.add_array(dataset.path)
+                # Coordinate transforms in datasets
                 for transform in dataset.coordinateTransformations:
                     graph.add_transform(transform)
 
