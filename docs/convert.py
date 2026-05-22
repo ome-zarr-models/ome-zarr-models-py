@@ -8,8 +8,8 @@
 import zarr.storage
 from rich import print
 
-import ome_zarr_models._v06
 import ome_zarr_models.v05
+import ome_zarr_models.v06
 
 zarr_group = zarr.open_group(
     "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr",

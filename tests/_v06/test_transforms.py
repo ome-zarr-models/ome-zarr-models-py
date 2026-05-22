@@ -1,6 +1,6 @@
 import pytest
 
-from ome_zarr_models._v06.coordinate_transforms import (
+from ome_zarr_models.v06.coordinate_transforms import (
     Axis,
     CoordinateSystem,
     CoordinateSystemIdentifier,
@@ -8,7 +8,7 @@ from ome_zarr_models._v06.coordinate_transforms import (
     Scale,
     Transform,
 )
-from ome_zarr_models._v06.multiscales import Dataset, Multiscale
+from ome_zarr_models.v06.multiscales import Dataset, Multiscale
 
 COORDINATE_SYSTEM_NAME_FOR_TESTS = "coordinate_system_name_reserved_for_tests"
 

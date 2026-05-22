@@ -8,7 +8,7 @@ import pytest
 from pydantic import ValidationError
 from zarr.abc.store import Store
 
-from ome_zarr_models._v06.image import Image
+from ome_zarr_models.v06.image import Image
 from tests._v06.conftest import json_to_zarr_group
 
 

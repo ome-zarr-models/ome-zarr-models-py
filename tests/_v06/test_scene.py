@@ -2,8 +2,8 @@ import pytest
 
 from ome_zarr_models import open_ome_zarr
 from ome_zarr_models._utils import TransformGraph, TransformGraphNode
-from ome_zarr_models._v06 import Scene
-from ome_zarr_models._v06.coordinate_transforms import (
+from ome_zarr_models.v06 import Scene
+from ome_zarr_models.v06.coordinate_transforms import (
     CoordinateSystemIdentifier,
     Translation,
 )

@@ -1,14 +1,14 @@
 from zarr.abc.store import Store
 
-from ome_zarr_models._v06.coordinate_transforms import (
+from ome_zarr_models.v06.coordinate_transforms import (
     Axis,
     CoordinateSystem,
     CoordinateSystemIdentifier,
     Scale,
 )
-from ome_zarr_models._v06.image_label import ImageLabel, ImageLabelAttrs
-from ome_zarr_models._v06.image_label_types import Color, Label, Source
-from ome_zarr_models._v06.multiscales import Dataset, Multiscale
+from ome_zarr_models.v06.image_label import ImageLabel, ImageLabelAttrs
+from ome_zarr_models.v06.image_label_types import Color, Label, Source
+from ome_zarr_models.v06.multiscales import Dataset, Multiscale
 from tests._v06.conftest import json_to_zarr_group
 
 

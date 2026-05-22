@@ -28,14 +28,14 @@ if TYPE_CHECKING:
     import zarr
     from zarr.abc.store import Store
 
-    from ome_zarr_models._v06.base import BaseGroupv06
-    from ome_zarr_models._v06.coordinate_transforms import (
+    from ome_zarr_models.v04.base import BaseGroupv04
+    from ome_zarr_models.v05.base import BaseGroupv05
+    from ome_zarr_models.v06.base import BaseGroupv06
+    from ome_zarr_models.v06.coordinate_transforms import (
         CoordinateSystem,
         CoordinateSystemIdentifier,
         Transform,
     )
-    from ome_zarr_models.v04.base import BaseGroupv04
-    from ome_zarr_models.v05.base import BaseGroupv05
 
 
 TBaseGroupv2 = TypeVar("TBaseGroupv2", bound="BaseGroupv04[Any]")
@@ -249,7 +249,7 @@ class TransformGraphNode:
 
     @classmethod
     def from_identifier(cls, identifier: str | CoordinateSystemIdentifier) -> Self:
-        from ome_zarr_models._v06.coordinate_transforms import (
+        from ome_zarr_models.v06.coordinate_transforms import (
             CoordinateSystemIdentifier,
         )
 

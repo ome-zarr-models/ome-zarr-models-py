@@ -12,8 +12,10 @@ from pydantic import (
     model_validator,
 )
 
-import ome_zarr_models._v06.coordinate_transforms as transforms
-from ome_zarr_models._v06.coordinate_transforms import (
+import ome_zarr_models.v06.coordinate_transforms as transforms
+from ome_zarr_models.base import BaseAttrs
+from ome_zarr_models.common.validation import check_length, unique_items_validator
+from ome_zarr_models.v06.coordinate_transforms import (
     AnyTransform,
     CoordinateSystem,
     CoordinateSystemIdentifier,
@@ -22,8 +24,6 @@ from ome_zarr_models._v06.coordinate_transforms import (
     Sequence,
     Translation,
 )
-from ome_zarr_models.base import BaseAttrs
-from ome_zarr_models.common.validation import check_length, unique_items_validator
 
 if TYPE_CHECKING:
     from ome_zarr_models.v04.multiscales import Multiscale as Multiscalev04

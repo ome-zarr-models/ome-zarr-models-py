@@ -1,7 +1,7 @@
 from zarr.abc.store import Store
 
-from ome_zarr_models._v06.well import Well, WellAttrs
-from ome_zarr_models._v06.well_types import WellImage, WellMeta
+from ome_zarr_models.v06.well import Well, WellAttrs
+from ome_zarr_models.v06.well_types import WellImage, WellMeta
 from tests._v06.conftest import json_to_zarr_group
 
 
