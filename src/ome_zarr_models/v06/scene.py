@@ -17,11 +17,19 @@ from ome_zarr_models.v06.image import Image
 
 
 class SceneAttrs(BaseModel):
+    """
+    Metadata for OME-Zarr scene groups.
+    """
+
     coordinateTransformations: tuple[AnyTransform, ...] = Field(default=())
     coordinateSystems: tuple[CoordinateSystem, ...] | None = Field(default=None)
 
 
 class BaseSceneAttrs(BaseOMEAttrs):
+    """
+    Base metadata for OME-Zarr scene groups.
+    """
+
     scene: SceneAttrs
 
     def get_group_paths(self) -> dict[str, type[Image]]:  # type: ignore[override]
