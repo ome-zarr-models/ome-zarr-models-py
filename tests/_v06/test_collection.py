@@ -3,14 +3,14 @@ from pathlib import Path
 import zarr
 from pydantic_zarr.v3 import AnyArraySpec, ArraySpec, GroupSpec, NamedConfig
 
-from ome_zarr_models._v06.coordinate_transforms import (
+from ome_zarr_models.v06.coordinate_transforms import (
     Axis,
     CoordinateSystem,
     CoordinateSystemIdentifier,
     Translation,
 )
-from ome_zarr_models._v06.image import Image
-from ome_zarr_models._v06.scene import BaseSceneAttrs, Scene, SceneAttrs
+from ome_zarr_models.v06.image import Image
+from ome_zarr_models.v06.scene import BaseSceneAttrs, Scene, SceneAttrs
 
 
 def test_load_container() -> None:

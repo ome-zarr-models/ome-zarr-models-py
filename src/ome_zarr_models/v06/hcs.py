@@ -8,10 +8,10 @@ from pydantic import model_validator
 from pydantic_zarr.v3 import GroupSpec
 
 from ome_zarr_models._utils import _from_zarr_v3
-from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs
-from ome_zarr_models._v06.plate import Plate
-from ome_zarr_models._v06.well import Well
 from ome_zarr_models.common.well import WellGroupNotFoundError
+from ome_zarr_models.v06.base import BaseGroupv06, BaseOMEAttrs
+from ome_zarr_models.v06.plate import Plate
+from ome_zarr_models.v06.well import Well
 
 if TYPE_CHECKING:
     from pydantic_zarr.v3 import AnyGroupSpec

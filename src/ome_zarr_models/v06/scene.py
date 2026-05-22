@@ -7,21 +7,29 @@ from pydantic import BaseModel, Field
 from pydantic_zarr.v3 import GroupSpec
 
 from ome_zarr_models._utils import TransformGraph, _from_zarr_v3
-from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs, BaseZarrAttrs
-from ome_zarr_models._v06.coordinate_transforms import (
+from ome_zarr_models.v06.base import BaseGroupv06, BaseOMEAttrs, BaseZarrAttrs
+from ome_zarr_models.v06.coordinate_transforms import (
     AnyTransform,
     CoordinateSystem,
     CoordinateSystemIdentifier,
 )
-from ome_zarr_models._v06.image import Image
+from ome_zarr_models.v06.image import Image
 
 
 class SceneAttrs(BaseModel):
+    """
+    Metadata for OME-Zarr scene groups.
+    """
+
     coordinateTransformations: tuple[AnyTransform, ...] = Field(default=())
     coordinateSystems: tuple[CoordinateSystem, ...] | None = Field(default=None)
 
 
 class BaseSceneAttrs(BaseOMEAttrs):
+    """
+    Base metadata for OME-Zarr scene groups.
+    """
+
     scene: SceneAttrs
 
     def get_group_paths(self) -> dict[str, type[Image]]:  # type: ignore[override]

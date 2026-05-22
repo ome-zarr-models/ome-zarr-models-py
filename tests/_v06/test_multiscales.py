@@ -3,16 +3,6 @@ import re
 import pytest
 from pydantic import ValidationError
 
-from ome_zarr_models._v06.coordinate_transforms import (
-    Axis,
-    CoordinateSystem,
-    CoordinateSystemIdentifier,
-    Scale,
-    Sequence,
-    Transform,
-    Translation,
-)
-from ome_zarr_models._v06.multiscales import Dataset, Multiscale
 from ome_zarr_models.common.coordinate_transformations import (
     VectorScale,
     VectorTranslation,
@@ -24,6 +14,16 @@ from ome_zarr_models.v05.multiscales import (
 from ome_zarr_models.v05.multiscales import (
     Multiscale as Multiscalev05,
 )
+from ome_zarr_models.v06.coordinate_transforms import (
+    Axis,
+    CoordinateSystem,
+    CoordinateSystemIdentifier,
+    Scale,
+    Sequence,
+    Transform,
+    Translation,
+)
+from ome_zarr_models.v06.multiscales import Dataset, Multiscale
 
 COORDINATE_SYSTEM_NAME_FOR_TESTS = "coordinate_system_name_reserved_for_tests"
 

@@ -7,9 +7,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Literal
 
 from ome_zarr_models import __version__, open_ome_zarr
-from ome_zarr_models._v06.image import Image
-from ome_zarr_models._v06.scene import Scene
 from ome_zarr_models.exceptions import ValidationWarning
+from ome_zarr_models.v06.image import Image
+from ome_zarr_models.v06.scene import Scene
 
 if TYPE_CHECKING:
     from os import PathLike

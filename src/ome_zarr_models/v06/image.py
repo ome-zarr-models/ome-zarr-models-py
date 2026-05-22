@@ -8,13 +8,13 @@ from pydantic import Field, JsonValue, model_validator
 from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
 from ome_zarr_models._utils import TransformGraph, _from_zarr_v3
-from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs, BaseZarrAttrs
-from ome_zarr_models._v06.coordinate_transforms import (
+from ome_zarr_models.v06.base import BaseGroupv06, BaseOMEAttrs, BaseZarrAttrs
+from ome_zarr_models.v06.coordinate_transforms import (
     AnyTransform,
     CoordinateSystem,
 )
-from ome_zarr_models._v06.labels import Labels
-from ome_zarr_models._v06.multiscales import Dataset, Multiscale
+from ome_zarr_models.v06.labels import Labels
+from ome_zarr_models.v06.multiscales import Dataset, Multiscale
 
 __all__ = ["Image", "ImageAttrs"]
 

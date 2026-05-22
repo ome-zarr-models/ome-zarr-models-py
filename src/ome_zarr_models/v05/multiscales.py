@@ -35,14 +35,14 @@ from ome_zarr_models.v05.axes import Axes
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from ome_zarr_models._v06.coordinate_transforms import (
+    from ome_zarr_models.v04.multiscales import Multiscale as MultiscaleV04
+    from ome_zarr_models.v06.coordinate_transforms import (
         Scale as ScaleV06,
     )
-    from ome_zarr_models._v06.coordinate_transforms import (
+    from ome_zarr_models.v06.coordinate_transforms import (
         Sequence as SequenceV06,
     )
-    from ome_zarr_models._v06.multiscales import Multiscale as MultiscaleV06
-    from ome_zarr_models.v04.multiscales import Multiscale as MultiscaleV04
+    from ome_zarr_models.v06.multiscales import Multiscale as MultiscaleV06
 
 
 __all__ = ["Dataset", "Multiscale"]
@@ -116,13 +116,13 @@ class Multiscale(BaseAttrs):
     def _to_v06(
         self, default_coordinate_system: str, output_coordinate_system: str
     ) -> MultiscaleV06:
-        from ome_zarr_models._v06.coordinate_transforms import (
+        from ome_zarr_models.v06.coordinate_transforms import (
             Axis,
             CoordinateSystem,
             CoordinateSystemIdentifier,
         )
-        from ome_zarr_models._v06.multiscales import Dataset as DatasetV06
-        from ome_zarr_models._v06.multiscales import Multiscale as MultiscaleV06
+        from ome_zarr_models.v06.multiscales import Dataset as DatasetV06
+        from ome_zarr_models.v06.multiscales import Multiscale as MultiscaleV06
 
         ms_v06 = MultiscaleV06(
             datasets=tuple(
@@ -459,9 +459,6 @@ class Dataset(BaseAttrs):
 
 
 def _v05_transform_to_v06(transform: ValidTransform) -> ScaleV06 | SequenceV06:
-    from ome_zarr_models._v06.coordinate_transforms import Scale as ScaleV06
-    from ome_zarr_models._v06.coordinate_transforms import Sequence as SequenceV06
-    from ome_zarr_models._v06.coordinate_transforms import Translation as TranslationV06
     from ome_zarr_models.common.coordinate_transformations import (
         VectorScale,
         VectorTranslation,
@@ -470,6 +467,9 @@ def _v05_transform_to_v06(transform: ValidTransform) -> ScaleV06 | SequenceV06:
         PathScale,
         PathTranslation,
     )
+    from ome_zarr_models.v06.coordinate_transforms import Scale as ScaleV06
+    from ome_zarr_models.v06.coordinate_transforms import Sequence as SequenceV06
+    from ome_zarr_models.v06.coordinate_transforms import Translation as TranslationV06
 
     # Scale (always present)
     if isinstance(transform[0], VectorScale):

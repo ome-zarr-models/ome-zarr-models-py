@@ -5,9 +5,9 @@ import zarr
 from pydantic import Field, JsonValue
 
 from ome_zarr_models._utils import check_group_path  # type: ignore[attr-defined]
-from ome_zarr_models._v06.base import BaseGroupv06, BaseOMEAttrs
-from ome_zarr_models._v06.image import Image
-from ome_zarr_models._v06.plate import Plate
+from ome_zarr_models.v06.base import BaseGroupv06, BaseOMEAttrs
+from ome_zarr_models.v06.image import Image
+from ome_zarr_models.v06.plate import Plate
 
 
 class BioFormats2RawAttrs(BaseOMEAttrs):

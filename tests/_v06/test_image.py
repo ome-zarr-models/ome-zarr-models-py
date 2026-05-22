@@ -4,7 +4,7 @@ from zarr.abc.store import Store
 from zarr.storage import MemoryStore
 
 from ome_zarr_models._utils import TransformGraphNode
-from ome_zarr_models._v06.coordinate_transforms import (
+from ome_zarr_models.v06.coordinate_transforms import (
     Axis,
     CoordinateSystem,
     CoordinateSystemIdentifier,
@@ -12,8 +12,8 @@ from ome_zarr_models._v06.coordinate_transforms import (
     Sequence,
     Translation,
 )
-from ome_zarr_models._v06.image import Image, ImageAttrs
-from ome_zarr_models._v06.multiscales import Dataset, Multiscale
+from ome_zarr_models.v06.image import Image, ImageAttrs
+from ome_zarr_models.v06.multiscales import Dataset, Multiscale
 
 from .conftest import json_to_zarr_group
 

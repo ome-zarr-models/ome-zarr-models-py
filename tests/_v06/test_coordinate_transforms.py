@@ -3,7 +3,7 @@ import re
 import pytest
 from pydantic import ValidationError
 
-from ome_zarr_models._v06.coordinate_transforms import (
+from ome_zarr_models.v06.coordinate_transforms import (
     Affine,
     Bijection,
     CoordinateSystemIdentifier,

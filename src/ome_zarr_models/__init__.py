@@ -4,12 +4,6 @@ from typing import TYPE_CHECKING, Any, Literal
 import zarr
 import zarr.storage
 
-import ome_zarr_models._v06.hcs
-import ome_zarr_models._v06.image
-import ome_zarr_models._v06.image_label
-import ome_zarr_models._v06.labels
-import ome_zarr_models._v06.scene
-import ome_zarr_models._v06.well
 import ome_zarr_models.v04.bioformats2raw
 import ome_zarr_models.v04.hcs
 import ome_zarr_models.v04.image
@@ -21,10 +15,16 @@ import ome_zarr_models.v05.image
 import ome_zarr_models.v05.image_label
 import ome_zarr_models.v05.labels
 import ome_zarr_models.v05.well
-from ome_zarr_models._v06.base import BaseGroupv06
+import ome_zarr_models.v06.hcs
+import ome_zarr_models.v06.image
+import ome_zarr_models.v06.image_label
+import ome_zarr_models.v06.labels
+import ome_zarr_models.v06.scene
+import ome_zarr_models.v06.well
 from ome_zarr_models.base import BaseGroup
 from ome_zarr_models.v04.base import BaseGroupv04
 from ome_zarr_models.v05.base import BaseGroupv05
+from ome_zarr_models.v06.base import BaseGroupv06
 
 try:
     __version__ = version("ome_zarr_models")
@@ -63,7 +63,7 @@ _V05_groups: list[type[BaseGroupv05[Any]]] = [
 ]
 
 _V06_groups: list[type[BaseGroupv06[Any]]] = [
-    ome_zarr_models._v06.hcs.HCS,
+    ome_zarr_models.v06.hcs.HCS,
     # ImageLabel does not appear here, as it is impossible to tell the
     # difference between an ImageLabel and Image group from the metadata
     #
@@ -72,10 +72,10 @@ _V06_groups: list[type[BaseGroupv06[Any]]] = [
     #
     # See https://github.com/ome/ngff/issues/339 for more information
     # and discussion on this change from OME-Zarr 0.4
-    ome_zarr_models._v06.image.Image,
-    ome_zarr_models._v06.labels.Labels,
-    ome_zarr_models._v06.well.Well,
-    ome_zarr_models._v06.scene.Scene,
+    ome_zarr_models.v06.image.Image,
+    ome_zarr_models.v06.labels.Labels,
+    ome_zarr_models.v06.well.Well,
+    ome_zarr_models.v06.scene.Scene,
 ]
 
 _ome_zarr_zarr_map: dict[str, Literal[2, 3]] = {"0.4": 2, "0.5": 3, "0.6": 3}
@@ -164,11 +164,11 @@ def open_ome_zarr(
             raise
 
     elif (
-        isinstance(grp, ome_zarr_models._v06.image.Image)
+        isinstance(grp, ome_zarr_models.v06.image.Image)
         and "image-label" in grp.ome_attributes.model_dump()
     ):
         try:
-            return ome_zarr_models._v06.image_label.ImageLabel(
+            return ome_zarr_models.v06.image_label.ImageLabel(
                 attributes=grp.attributes.model_dump(), members=grp.members
             )
         except Exception:

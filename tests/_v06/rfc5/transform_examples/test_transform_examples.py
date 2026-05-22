@@ -4,8 +4,8 @@ import pytest
 import zarr
 import zarr.errors
 
-from ome_zarr_models._v06.image import Image
-from ome_zarr_models._v06.scene import Scene
+from ome_zarr_models.v06.image import Image
+from ome_zarr_models.v06.scene import Scene
 
 TEST_DATA_PATH = Path(__file__).parent / "ngff-rfc5-coordinate-transformation-examples"
 
