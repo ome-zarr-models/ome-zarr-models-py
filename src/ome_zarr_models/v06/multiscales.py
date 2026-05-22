@@ -407,7 +407,6 @@ class Multiscale(BaseAttrs):
         - there is only 1 axis with a type that is not `space`, `time`, or `channel`
         """
         for cs in self.coordinateSystems:
-            print(cs)
             check_length(
                 [ax for ax in cs.axes if ax.type == "space"],
                 valid_lengths=[2, 3],
