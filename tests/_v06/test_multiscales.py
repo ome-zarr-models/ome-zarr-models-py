@@ -416,6 +416,75 @@ def test_from_v05() -> None:
     )
 
 
+def test_from_v06_to_v05() -> None:
+    """Test conversion from v0.6 to v0.5."""
+    ms = Multiscale(
+        coordinateSystems=(
+            CoordinateSystem(
+                name="physical",
+                axes=(
+                    Axis(
+                        name="x",
+                        type="space",
+                        unit="meter",
+                    ),
+                    Axis(
+                        name="y",
+                        type="space",
+                        unit="meter",
+                    ),
+                ),
+            ),
+        ),
+        datasets=(
+            Dataset(
+                path="0",
+                coordinateTransformations=(
+                    Sequence(
+                        type="sequence",
+                        input=CoordinateSystemIdentifier(path="0"),
+                        output=CoordinateSystemIdentifier(name="physical"),
+                        transformations=(
+                            Scale(
+                                type="scale",
+                                scale=(2.0, -4.0),
+                            ),
+                            Translation(
+                                type="translation",
+                                translation=(5.0, 3.0),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        metadata={"key": "value"},
+        name="my_multiscale",
+        type="my_type",
+    )
+
+    ms_target = Multiscalev05(
+        axes=(
+            Axisv05(name="x", type="space", unit="meter"),
+            Axisv05(name="y", type="space", unit="meter"),
+        ),
+        datasets=(
+            Datasetv05(
+                path="0",
+                coordinateTransformations=(
+                    VectorScale(type="scale", scale=[2.0, -4.0]),
+                    VectorTranslation(type="translation", translation=[5.0, 3.0]),
+                ),
+            ),
+        ),
+        metadata={"key": "value"},
+        name="my_multiscale",
+        type="my_type",
+    )
+
+    assert ms.to_version("0.5") == ms_target
+
+
 def test_unique_system_names() -> None:
     with pytest.raises(
         ValidationError,
@@ -452,7 +521,3 @@ def test_unique_system_names() -> None:
                 ),
             ),
         )
-
-
-if __name__ == "__main__":
-    test_from_v05()
