@@ -1,15 +1,25 @@
 {
   "ome": {
-    "version": "0.6",
+    "version": "0.6.dev4",
     "image-label": {
       "colors": [
         {
           "label-value": 0,
-          "rgba": [0, 0, 128, 128]
+          "rgba": [
+            0,
+            0,
+            128,
+            128
+          ]
         },
         {
           "label-value": 1,
-          "rgba": [0, 128, 0, 128]
+          "rgba": [
+            0,
+            128,
+            0,
+            128
+          ]
         }
       ],
       "properties": [
@@ -99,9 +109,19 @@
             "coordinateTransformations": [
               {
                 "type": "scale",
-                "scale": [1.0, 1.0, 0.5, 0.5, 0.5],
-                "input": { "path": "0" },
-                "output": { "name": "coord_sys0" }
+                "scale": [
+                  1.0,
+                  1.0,
+                  0.5,
+                  0.5,
+                  0.5
+                ],
+                "input": {
+                  "path": "0"
+                },
+                "output": {
+                  "name": "coord_sys0"
+                }
               }
             ]
           },
@@ -110,9 +130,19 @@
             "coordinateTransformations": [
               {
                 "type": "scale",
-                "scale": [1.0, 1.0, 1.0, 1.0, 1.0],
-                "input": { "path": "1" },
-                "output": { "name": "coord_sys0" }
+                "scale": [
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0
+                ],
+                "input": {
+                  "path": "1"
+                },
+                "output": {
+                  "name": "coord_sys0"
+                }
               }
             ]
           },
@@ -121,9 +151,19 @@
             "coordinateTransformations": [
               {
                 "type": "scale",
-                "scale": [1.0, 1.0, 2.0, 2.0, 2.0],
-                "input": { "path": "2" },
-                "output": { "name": "coord_sys0" }
+                "scale": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  2.0,
+                  2.0
+                ],
+                "input": {
+                  "path": "2"
+                },
+                "output": {
+                  "name": "coord_sys0"
+                }
               }
             ]
           }
@@ -131,9 +171,19 @@
         "coordinateTransformations": [
           {
             "type": "scale",
-            "scale": [0.1, 1.0, 1.0, 1.0, 1.0],
-            "input": { "name": "coord_sys0" },
-            "output": { "name": "coord_sys1" }
+            "scale": [
+              0.1,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "input": {
+              "name": "coord_sys0"
+            },
+            "output": {
+              "name": "coord_sys1"
+            }
           }
         ],
         "metadata": {

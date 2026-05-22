@@ -1,8 +1,8 @@
 {
   "ome": {
-    "version": "0.6",
+    "version": "0.6.dev4",
     "plate": {
-      "version": "0.6",
+      "version": "0.6.dev4",
       "acquisitions": [
         {
           "id": 1,

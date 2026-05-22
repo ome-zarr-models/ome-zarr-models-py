@@ -9,7 +9,7 @@ def test_well(store: Store) -> None:
     zarr_group = json_to_zarr_group(json_fname="well_example.json", store=store)
     ome_group = Well.from_zarr(zarr_group)
     assert ome_group.attributes.ome == WellAttrs(
-        version="0.6",
+        version="0.6.dev4",
         well=WellMeta(
             images=[
                 WellImage(path="0", acquisition=1),
@@ -17,7 +17,7 @@ def test_well(store: Store) -> None:
                 WellImage(path="2", acquisition=2),
                 WellImage(path="3", acquisition=2),
             ],
-            version="0.6",
+            version="0.6.dev4",
         ),
     )
 
@@ -30,7 +30,7 @@ def test_get_paths() -> None:
             WellImage(path="2", acquisition=2),
             WellImage(path="3", acquisition=2),
         ],
-        version="0.6",
+        version="0.6.dev4",
     )
 
     assert well.get_acquisition_paths() == {1: ["0", "1"], 2: ["2", "3"]}
