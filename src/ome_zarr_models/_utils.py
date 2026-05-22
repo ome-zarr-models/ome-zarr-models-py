@@ -244,19 +244,16 @@ GRAPHVIZ_ATTRS = {"fontname": "open-sans"}
 
 @dataclass(frozen=True)
 class TransformGraphNode:
+    """
+    A single node in a transform graph.
+    """
+
     name: str | None
     path: str | None = None
 
     @classmethod
-    def from_identifier(cls, identifier: str | CoordinateSystemIdentifier) -> Self:
-        from ome_zarr_models.v06.coordinate_transforms import (
-            CoordinateSystemIdentifier,
-        )
-
-        if isinstance(identifier, CoordinateSystemIdentifier):
-            return cls(name=identifier.name, path=identifier.path)
-        else:
-            return cls(name=identifier)
+    def from_identifier(cls, identifier: CoordinateSystemIdentifier) -> Self:
+        return cls(name=identifier.name, path=identifier.path)
 
 
 class TransformGraph:
