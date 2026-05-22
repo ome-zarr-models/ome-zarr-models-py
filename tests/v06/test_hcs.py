@@ -2,7 +2,7 @@ from zarr.abc.store import Store
 
 from ome_zarr_models.v06.hcs import HCS, HCSAttrs
 from ome_zarr_models.v06.plate import Acquisition, Column, Plate, Row, WellInPlate
-from tests._v06.conftest import json_to_zarr_group
+from tests.v06.conftest import json_to_zarr_group
 
 
 def test_hcs(store: Store) -> None:
