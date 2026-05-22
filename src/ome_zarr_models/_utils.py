@@ -244,19 +244,16 @@ GRAPHVIZ_ATTRS = {"fontname": "open-sans"}
 
 @dataclass(frozen=True)
 class TransformGraphNode:
+    """
+    A single node in a transform graph.
+    """
+
     name: str | None
     path: str | None = None
 
     @classmethod
-    def from_identifier(cls, identifier: str | CoordinateSystemIdentifier) -> Self:
-        from ome_zarr_models.v06.coordinate_transforms import (
-            CoordinateSystemIdentifier,
-        )
-
-        if isinstance(identifier, CoordinateSystemIdentifier):
-            return cls(name=identifier.name, path=identifier.path)
-        else:
-            return cls(name=identifier)
+    def from_identifier(cls, identifier: CoordinateSystemIdentifier) -> Self:
+        return cls(name=identifier.name, path=identifier.path)
 
 
 class TransformGraph:
@@ -275,6 +272,8 @@ class TransformGraph:
         )
         # Mapping from system name to coordinate system
         self._systems: dict[str, CoordinateSystem] = {}
+        # Paths to arrays in this graph
+        self._array_paths: set[str] = set()
         # Mapping from path to child transform graphs
         # If this graph is a child image already, this dictionary stays empty.
         self._child_graphs: dict[str, TransformGraph] = {}
@@ -283,6 +282,15 @@ class TransformGraph:
             TransformGraphNode,
             dict[TransformGraphNode, list[TransformGraphNode] | None],
         ] = {}
+
+    def add_array(self, array_path: str) -> None:
+        """
+        Add an array to the graph.
+        """
+        self._array_paths.add(array_path)
+
+    def is_external_path(self, path: str | None) -> bool:
+        return path is not None and path not in self._array_paths
 
     def add_system(self, system: CoordinateSystem) -> None:
         """
@@ -423,25 +431,6 @@ class TransformGraph:
         self._shortestpaths[from_node] = result
         return result[to_node]
 
-    @property
-    def _path_system_names(self) -> set[str]:
-        """
-        Any coordinate systems referred to in the input/output of transforms,
-        but not present in the named coordinate systems list.
-        """
-        systems = set()
-        for sys_in in self._graph:
-            systems.add(sys_in)
-            for sys_out in self._graph[sys_in]:
-                systems.add(sys_out)
-
-        # Filter out any systems that point to another path
-        system_names = {
-            sys.name for sys in systems if sys.path is None and sys.name is not None
-        }
-        # Filter out named coordinate systems
-        return system_names - set(self._systems.keys())
-
     def to_graphviz(self) -> graphviz.Digraph:
         """
         Convert to a graphviz graph.
@@ -455,7 +444,7 @@ class TransformGraph:
         graph_gv = graphviz.Digraph()
         # Add main graph
         with graph_gv.subgraph(name="cluster_") as subgraph_gv:
-            self._add_nodes_edges(self, subgraph_gv, path=None)
+            self._add_nodes_edges(self, subgraph_gv, graph_path=None)
             if len(self._child_graphs) > 0:
                 subgraph_gv.attr(label="Scene", **GRAPHVIZ_ATTRS)
 
@@ -463,50 +452,68 @@ class TransformGraph:
         for child_path in self._child_graphs:
             with graph_gv.subgraph(name=f"cluster_{child_path}") as subgraph_gv:
                 subgraph = self._child_graphs[child_path]
-                self._add_nodes_edges(subgraph, subgraph_gv, path=child_path)
+                self._add_nodes_edges(subgraph, subgraph_gv, graph_path=child_path)
                 subgraph_gv.attr(label=child_path, **GRAPHVIZ_ATTRS)
 
         # Add transforms that go between different subgraphs
         for input_sys in self._graph:
             for output_sys in self._graph[input_sys]:
                 # Don't add internal transforms
-                if (input_sys.path, output_sys.path) == (None, None):
-                    continue
-                if input_sys.name is None or output_sys.name is None:
-                    continue
-                print(input_sys.name, output_sys.name)
-                print(input_sys.path, output_sys.path)
-                print()
-                graph_gv.edge(
-                    self._node_key(input_sys.path, input_sys.name),
-                    self._node_key(output_sys.path, output_sys.name),
-                    label=self._graph[input_sys][output_sys]._short_name,
-                    **GRAPHVIZ_ATTRS,
-                )
+                if self.is_external_path(input_sys.path) or self.is_external_path(
+                    output_sys.path
+                ):
+                    # These transforms can't point to/from arrays, so we know that the
+                    # input/output paths must point to other graphs
+                    graph_gv.edge(
+                        self._node_key(
+                            graph_path=input_sys.path,
+                            system_name=input_sys.name,
+                            array_path=None,
+                        ),
+                        self._node_key(
+                            graph_path=output_sys.path,
+                            system_name=output_sys.name,
+                            array_path=None,
+                        ),
+                        label=self._graph[input_sys][output_sys]._short_name,
+                        **GRAPHVIZ_ATTRS,
+                    )
 
         return graph_gv
 
     @classmethod
     def _add_nodes_edges(
-        cls, graph: TransformGraph, graphviz_graph: graphviz.Digraph, path: str | None
+        cls,
+        graph: TransformGraph,
+        graphviz_graph: graphviz.Digraph,
+        graph_path: str | None,
     ) -> None:
         """
         Add nodes and edges to a graphviz graph.
+
+        Parameters
+        ----------
+        graph_path
+            Local path of this whole transform graph.
         """
         # Add named systems as nodes
         for system_name in graph._systems:
             graphviz_graph.node(
-                cls._node_key(path, system_name),
+                cls._node_key(
+                    graph_path=graph_path, array_path=None, system_name=system_name
+                ),
                 label=system_name,
                 style="filled",
                 fillcolor="#fdbb84",
                 **GRAPHVIZ_ATTRS,
             )
-        # Add path systems as nodes
-        for system_name in graph._path_system_names:
+        # Add arrays as nodes
+        for array_path in graph._array_paths:
             graphviz_graph.node(
-                cls._node_key(path, system_name),
-                label=system_name,
+                cls._node_key(
+                    graph_path=graph_path, array_path=array_path, system_name=None
+                ),
+                label=array_path,
                 style="filled",
                 **GRAPHVIZ_ATTRS,
             )
@@ -514,21 +521,31 @@ class TransformGraph:
         # Add transforms as edges
         for input_sys in graph._graph:
             for output_sys in graph._graph[input_sys]:
-                # Only add transforms internal to this group
-                if (input_sys.path, output_sys.path) != (None, None):
-                    continue
-                if input_sys.name is None or output_sys.name is None:
+                if graph.is_external_path(input_sys.path) or graph.is_external_path(
+                    output_sys.path
+                ):
+                    # Don't add edges to between graphs
                     continue
                 graphviz_graph.edge(
-                    cls._node_key(path, input_sys.name),
-                    cls._node_key(path, output_sys.name),
+                    cls._node_key(
+                        graph_path=graph_path,
+                        array_path=input_sys.path,
+                        system_name=input_sys.name,
+                    ),
+                    cls._node_key(
+                        graph_path=graph_path,
+                        array_path=output_sys.path,
+                        system_name=output_sys.name,
+                    ),
                     label=graph._graph[input_sys][output_sys]._short_name,
                     **GRAPHVIZ_ATTRS,
                 )
 
     @staticmethod
-    def _node_key(path: str | None, system_name: str) -> str:
+    def _node_key(
+        *, graph_path: str | None, array_path: str | None, system_name: str | None
+    ) -> str:
         """
         Unique key for nodes in graphviz graphs.
         """
-        return str(hash((path, system_name)))
+        return str(hash((graph_path, array_path, system_name)))
