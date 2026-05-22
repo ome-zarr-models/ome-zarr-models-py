@@ -39,8 +39,12 @@ specification.
 ## Development version
 
 This is the latest in-progress development version of the OME-Zarr specification.
-**Warning**: only to be used for experimentation and evaluating the work-in-progress specification.
-The development version of OME-Zarr and implementation in `ome-zarr-models` may change without notice.
+
+!!! warning
+
+    The implementation of OME-Zarr 0.6 is not final, and subject to change.
+    It is provided so users can test and evaluate ome-zarr-models and the specification before it becomes final.
+    Please report issues and provide feedback!
 
 | OME-Zarr group objects                                 | Metadata attributes                                                             | Creation helper                                      |
 | ------------------------------------------------------ | ------------------------------------------------------------------------------- | ---------------------------------------------------- |
