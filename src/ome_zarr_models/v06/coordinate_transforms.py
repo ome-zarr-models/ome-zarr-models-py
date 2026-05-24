@@ -1,12 +1,15 @@
 import typing
 from abc import ABC, abstractmethod
-from typing import Annotated, Literal, Self, TypeVar
+from typing import TYPE_CHECKING, Annotated, Literal, Self, TypeVar
 
 import numpy as np
 from pydantic import Field, JsonValue, field_validator, model_validator
 
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.validation import unique_items_validator
+
+if TYPE_CHECKING:
+    from ome_zarr_models.v05.axes import Axis as Axisv05
 
 
 class NoAffineError(RuntimeError):
@@ -37,6 +40,11 @@ class Axis(BaseAttrs):
     # Unit probably intended to be str, but the spec doesn't explicitly specify
     unit: str | JsonValue | None = Field(default=None, description="Axis units.")
     longName: str | None = Field(default=None, description="Longer name for axis..")
+
+    def _to_v05(self) -> "Axisv05":
+        from ome_zarr_models.v05.axes import Axis as Axisv05
+
+        return Axisv05(name=self.name, type=self.type, unit=self.unit)
 
 
 class CoordinateSystem(BaseAttrs):

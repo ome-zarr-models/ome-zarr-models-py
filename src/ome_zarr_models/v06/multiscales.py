@@ -27,6 +27,7 @@ from ome_zarr_models.v06.coordinate_transforms import (
 
 if TYPE_CHECKING:
     from ome_zarr_models.v04.multiscales import Multiscale as Multiscalev04
+    from ome_zarr_models.v05.multiscales import Dataset as Datasetv05
     from ome_zarr_models.v05.multiscales import Multiscale as Multiscalev05
 
 __all__ = ["Dataset", "Multiscale"]
@@ -78,64 +79,10 @@ class Multiscale(BaseAttrs):
             raise ValueError(f"Unsupported version: {version}")
 
     def _to_v05(self) -> Multiscalev05:
-        from ome_zarr_models.common.coordinate_transformations import (
-            ValidTransform,
-        )
-        from ome_zarr_models.v05.axes import Axis as Axisv05
-        from ome_zarr_models.v05.coordinate_transformations import (
-            VectorScale,
-            VectorTranslation,
-        )
-        from ome_zarr_models.v05.multiscales import (
-            Dataset as Datasetv05,
-        )
-        from ome_zarr_models.v05.multiscales import (
-            Multiscale as Multiscalev05,
-        )
+        from ome_zarr_models.v05.multiscales import Multiscale as Multiscalev05
 
-        intrinsic_cs = self.intrinsic_coordinate_system
-        axes = tuple(
-            [
-                Axisv05(name=axis.name, type=axis.type, unit=axis.unit)
-                for axis in intrinsic_cs.axes
-            ]
-        )
-
-        datasets = []
-        for ds in self.datasets:
-            scale_transform: VectorScale | None = None
-            translation_transform: VectorTranslation | None = None
-
-            for tf in ds.coordinateTransformations:
-                if isinstance(tf, Scale):
-                    scale_transform = VectorScale(type="scale", scale=list(tf.scale))
-                elif isinstance(tf, Sequence):
-                    for sub_tf in tf.transformations:
-                        if isinstance(sub_tf, Scale):
-                            scale_transform = VectorScale(
-                                type="scale", scale=list(sub_tf.scale)
-                            )
-                        elif isinstance(sub_tf, Translation):
-                            translation_transform = VectorTranslation(
-                                type="translation", translation=list(sub_tf.translation)
-                            )
-                        else:
-                            raise ValueError(
-                                f"Unsupported transform type: {type(sub_tf)}"
-                            )
-
-            if scale_transform is None:
-                raise ValueError("No scale transform found")
-
-            coord_transforms: ValidTransform
-            if translation_transform is not None:
-                coord_transforms = (scale_transform, translation_transform)
-            else:
-                coord_transforms = (scale_transform,)
-
-            datasets.append(
-                Datasetv05(path=ds.path, coordinateTransformations=coord_transforms)
-            )
+        axes = [axis._to_v05() for axis in self.intrinsic_coordinate_system.axes]
+        datasets = [ds._to_v05() for ds in self.datasets]
 
         if self.coordinateTransformations is not None:
             warnings.warn(
@@ -150,7 +97,7 @@ class Multiscale(BaseAttrs):
             name=self.name,
             type=self.type,
             metadata=self.metadata,
-            axes=axes,
+            axes=tuple(axes),
             datasets=tuple(datasets),
         )
         return new_ms
@@ -574,3 +521,41 @@ class Dataset(BaseAttrs):
                 f"Got {scale.ndim} and {translation.ndim}."
             )
         return transforms
+
+    def _to_v05(self) -> Datasetv05:
+        from ome_zarr_models.common.coordinate_transformations import ValidTransform
+        from ome_zarr_models.v05.coordinate_transformations import (
+            VectorScale,
+            VectorTranslation,
+        )
+        from ome_zarr_models.v05.multiscales import Dataset as Datasetv05
+
+        scale_transform: VectorScale | None = None
+        translation_transform: VectorTranslation | None = None
+
+        for tf in self.coordinateTransformations:
+            if isinstance(tf, Scale):
+                scale_transform = VectorScale(type="scale", scale=list(tf.scale))
+            elif isinstance(tf, Sequence):
+                for sub_tf in tf.transformations:
+                    if isinstance(sub_tf, Scale):
+                        scale_transform = VectorScale(
+                            type="scale", scale=list(sub_tf.scale)
+                        )
+                    elif isinstance(sub_tf, Translation):
+                        translation_transform = VectorTranslation(
+                            type="translation", translation=list(sub_tf.translation)
+                        )
+                    else:
+                        raise ValueError(f"Unsupported transform type: {type(sub_tf)}")
+
+        if scale_transform is None:
+            raise ValueError("No scale transform found")
+
+        coord_transforms: ValidTransform
+        if translation_transform is not None:
+            coord_transforms = (scale_transform, translation_transform)
+        else:
+            coord_transforms = (scale_transform,)
+
+        return Datasetv05(path=self.path, coordinateTransformations=coord_transforms)
