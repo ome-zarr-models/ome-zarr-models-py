@@ -20,7 +20,7 @@ image_attributes_v05 = image_group_v05.ome_attributes
 print(image_attributes_v05)
 
 image_attributes_v06 = image_attributes_v05.to_version(
-    "0.6", default_coordinate_system="intrinsic"
+    "0.6", default_cs_name="intrinsic"
 )
 print(image_attributes_v06)
 

@@ -252,7 +252,7 @@ def test_image_with_labels_mismatch_multiscales(store: Store) -> None:
         Image.from_zarr(zarr_group)
 
 
-def test_image_convert_v06():
+def test_image_convert_v06() -> None:
     from ome_zarr_models.v06.coordinate_transforms import (
         Axis as AxisV06,
     )
@@ -413,7 +413,9 @@ def test_image_convert_v06():
                     ),
                 ),
                 metadata={
-                    "description": "the fields in metadata depend on the downscaling implementation. Here, the parameters passed to the skimage function are given",
+                    "description": "the fields in metadata depend on the downscaling"
+                    " implementation. Here, the parameters passed to the "
+                    "skimage function are given",
                     "method": "skimage.transform.pyramid_gaussian",
                     "version": "0.16.1",
                     "args": "[true]",

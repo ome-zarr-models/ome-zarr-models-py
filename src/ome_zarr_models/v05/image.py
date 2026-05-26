@@ -46,8 +46,8 @@ class ImageAttrs(BaseOMEAttrs):
         self,
         version: Literal["0.6"],
         *,
-        default_coordinate_system: str = "physical",
-        output_coordinate_system: str = "output",
+        default_cs_name: str = "physical",
+        output_cs_name: str = "output",
     ) -> "ImageAttrsV06":
         """
         Convert these Image Attributes metadata to the specified version.
@@ -59,10 +59,10 @@ class ImageAttrs(BaseOMEAttrs):
         ----------
         version
             The version to convert to. Must be "0.6".
-        default_coordinate_system
+        default_cs_name
             The name of the default coordinate system to use
             for the 0.5 -> 0.6 conversion. Defaults to "physical".
-        output_coordinate_system
+        output_cs_name
             The name of the output coordinate system to use
             for the 0.5 -> 0.6 conversion. Defaults to "output".
             Only used if `coordinateTransformations` are defined
@@ -76,14 +76,17 @@ class ImageAttrs(BaseOMEAttrs):
         manually after the conversion.
         """
         if version == "0.6":
-            return self._to_v06()
+            return self._to_v06(
+                output_cs_name=output_cs_name, default_cs_name=default_cs_name
+            )
 
         raise ValueError(f"Unsupported version conversion: 0.5 -> {version}")
 
     def _to_v06(
         self,
-        default_coordinate_system: str = "physical",
-        output_coordinate_system: str = "output",
+        *,
+        default_cs_name: str = "physical",
+        output_cs_name: str = "output",
     ) -> "ImageAttrsV06":
         from ome_zarr_models.v06.image import ImageAttrs as ImageAttrsV06
 
@@ -92,8 +95,8 @@ class ImageAttrs(BaseOMEAttrs):
             multiscales=[
                 m.to_version(
                     "0.6",
-                    default_coordinate_system=default_coordinate_system,
-                    output_coordinate_system=output_coordinate_system,
+                    default_cs_name=default_cs_name,
+                    output_cs_name=output_cs_name,
                 )
                 for m in self.multiscales
             ],
