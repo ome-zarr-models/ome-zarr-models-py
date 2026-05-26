@@ -1,6 +1,6 @@
 {
   "ome": {
-    "version": "0.6",
+    "version": "0.6.dev4",
     "bioformats2raw.layout": 3,
     "plate": {
       "columns": [

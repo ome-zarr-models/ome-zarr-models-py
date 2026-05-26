@@ -107,7 +107,7 @@ class Scene(BaseGroupv06[BaseSceneAttrs]):
                         coordinateTransformations=tuple(coord_transforms),
                         coordinateSystems=tuple(coord_systems),
                     ),
-                    version="0.6",
+                    version="0.6.dev4",
                 )
             ),
         )

@@ -25,7 +25,7 @@ def test_labels(store: Store) -> None:
 
     ome_group = Labels.from_zarr(zarr_group)
     assert ome_group.attributes.ome == LabelsAttrs(
-        labels=["cell_space_segmentation"], version="0.6"
+        labels=["cell_space_segmentation"], version="0.6.dev4"
     )
 
 

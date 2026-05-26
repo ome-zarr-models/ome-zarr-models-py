@@ -42,7 +42,7 @@ def test_image_label(store: Store) -> None:
     )
     ome_group = ImageLabel.from_zarr(zarr_group)
     assert ome_group.attributes.ome == ImageLabelAttrs(
-        version="0.6",
+        version="0.6.dev4",
         image_label=Label(
             colors=(
                 Color(label_value=0, rgba=(0, 0, 128, 128)),

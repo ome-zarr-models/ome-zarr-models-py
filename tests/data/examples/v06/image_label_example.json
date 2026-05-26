@@ -1,6 +1,6 @@
 {
   "ome": {
-    "version": "0.6",
+    "version": "0.6.dev4",
     "image-label": {
       "colors": [
         {
@@ -100,8 +100,12 @@
               {
                 "type": "scale",
                 "scale": [1.0, 1.0, 0.5, 0.5, 0.5],
-                "input": { "path": "0" },
-                "output": { "name": "coord_sys0" }
+                "input": {
+                  "path": "0"
+                },
+                "output": {
+                  "name": "coord_sys0"
+                }
               }
             ]
           },
@@ -111,8 +115,12 @@
               {
                 "type": "scale",
                 "scale": [1.0, 1.0, 1.0, 1.0, 1.0],
-                "input": { "path": "1" },
-                "output": { "name": "coord_sys0" }
+                "input": {
+                  "path": "1"
+                },
+                "output": {
+                  "name": "coord_sys0"
+                }
               }
             ]
           },
@@ -122,8 +130,12 @@
               {
                 "type": "scale",
                 "scale": [1.0, 1.0, 2.0, 2.0, 2.0],
-                "input": { "path": "2" },
-                "output": { "name": "coord_sys0" }
+                "input": {
+                  "path": "2"
+                },
+                "output": {
+                  "name": "coord_sys0"
+                }
               }
             ]
           }
@@ -132,8 +144,12 @@
           {
             "type": "scale",
             "scale": [0.1, 1.0, 1.0, 1.0, 1.0],
-            "input": { "name": "coord_sys0" },
-            "output": { "name": "coord_sys1" }
+            "input": {
+              "name": "coord_sys0"
+            },
+            "output": {
+              "name": "coord_sys1"
+            }
           }
         ],
         "metadata": {
