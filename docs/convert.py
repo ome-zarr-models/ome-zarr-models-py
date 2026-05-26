@@ -28,7 +28,7 @@ multiscale = ome_zarr_models.v05.multiscales.Multiscale.model_validate(
     {
         "axes": [
             {"name": "z", "type": "space"},
-            {"name": "y", "type": "space"},https://app.gather.town/app/nq1oQrNJ1UIQ5t01/imagesc-island
+            {"name": "y", "type": "space"},
             {"name": "x", "type": "space"},
         ],
         "datasets": [  # an image with a single resolution level
@@ -49,6 +49,11 @@ multiscale = ome_zarr_models.v05.multiscales.Multiscale.model_validate(
 multiscale_v06 = multiscale.to_version("0.6")
 print(multiscale_v06)
 
+# This version conversion works between all currently supported versions of ome-zarr:
+
+multiscale_v04 = multiscale.to_version("0.4")
+print(multiscale_v04)
+
 # The 0.6 specification provides some new fields over the 0.5 version,
 # such as the `coordinateSystems` field,
 # which provides named coordinate system references.
@@ -57,22 +62,9 @@ print(multiscale_v06)
 # (i.e., the `name` of the default coordinate system is set to "physical").
 # However, these fields can manually be filled or edited after conversion if desired:
 
-coordinate_system = multiscale_v06.coordinateSystems[0]
-print(coordinate_system)
+metadata = multiscale_v06.model_dump()
+metadata["coordinateSystems"][0]["axes"][0]["longName"] = "OpticalAxis"
 
-# Now we can edit the coordinate system name:
+# And we can update the multiscale metadata model with the edits:
 
-edited_coordinate_system = coordinate_system.model_copy(
-  update={"name": "my_coordinate_system"})
-print(edited_coordinate_system)
-
-# And we can update the multiscale metadata with the edited coordinate system:
-
-edited_multiscale_v06 = multiscale_v06.model_copy(
-    update={"coordinateSystems": [edited_coordinate_system]}
-)
-
-# This version conversion works between all currently supported versions of ome-zarr:
-
-multiscale_v04 = multiscale.to_version("0.4")
-print(multiscale_v04)
+edited_multiscale_v06 = ome_zarr_models.v06.multiscales.Multiscale.model_validate(metadata)
