@@ -10,7 +10,7 @@ import zarr
 from IPython.display import SVG, display
 from rich import print
 
-from ome_zarr_models._v06 import Scene
+from ome_zarr_models.v06 import Scene
 
 scene = Scene.from_zarr(
     zarr.open_group(
