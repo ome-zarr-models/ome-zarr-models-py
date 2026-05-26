@@ -57,7 +57,7 @@ print(multiscale_v04)
 # The 0.6 specification provides some new fields over the 0.5 version,
 # such as the `coordinateSystems` field,
 # which provides named coordinate system references.
-# 
+#
 # In the process of conversion, these new fields are provided with default values
 # (i.e., the `name` of the default coordinate system is set to "physical").
 # However, these fields can manually be filled or edited after conversion if desired:
@@ -67,4 +67,6 @@ metadata["coordinateSystems"][0]["axes"][0]["longName"] = "OpticalAxis"
 
 # And we can update the multiscale metadata model with the edits:
 
-edited_multiscale_v06 = ome_zarr_models.v06.multiscales.Multiscale.model_validate(metadata)
+edited_multiscale_v06 = ome_zarr_models.v06.multiscales.Multiscale.model_validate(
+    metadata
+)
