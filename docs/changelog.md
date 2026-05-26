@@ -9,7 +9,7 @@ Version 1.8 of `ome-zarr-models` introduces beta support for reading, validating
 Note that this version is still under active development and may change in the future.
 
 The usual classes can be found in the API reference in the sidebar.
-[A guide to converting OME-Zarr 0.5 images to 0.6](convert.md) is also available.
+[A guide to converting OME-Zarr 0.5 images to 0.6](convert.py) is also available.
 
 ### Other fixes/improvements
 
