@@ -45,11 +45,10 @@ image_v06 = ome_zarr_models.v06.Image(
 # (i.e., the `name` of the default coordinate system is set to "physical").
 # However, these fields can manually be filled or edited after conversion if desired:
 
-metadata = multiscale_v06.model_dump()
-metadata["coordinateSystems"][0]["axes"][0]["longName"] = "OpticalAxis"
-
-# And we can update the multiscale metadata model with the edits:
-
-edited_multiscale_v06 = ome_zarr_models.v06.multiscales.Multiscale.model_validate(
-    metadata
+image_metadata_v06 = image_v06.ome_attributes.model_dump()
+image_metadata_v06["multiscales"][0]["coordinateSystems"][0]["axes"][0]["longName"] = (
+    "OpticalAxis"
+)
+image_attributes_v06 = ome_zarr_models.v06.image.ImageAttrs.model_validate(
+    image_metadata_v06
 )
