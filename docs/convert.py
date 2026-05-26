@@ -1,15 +1,17 @@
 # This page explains how to convert metadata from one OME-Zarr version to another.
 #
-# ## 0.5 to 0.6
-#
-# The main addition to OME-Zarr in version 0.6 is coordinate systems for images.
-
 
 import zarr.storage
 from rich import print
 
 import ome_zarr_models.v05
 import ome_zarr_models.v06
+
+# ## 0.5 to 0.6
+#
+# The main addition to OME-Zarr in version 0.6 is coordinate systems for images.
+# This example shows how to convert OME-Zarr 0.5 image metadata to OME-Zarr 0.6.
+
 
 zarr_group = zarr.open_group(
     "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr",
@@ -23,6 +25,15 @@ image_attributes_v06 = image_attributes_v05.to_version(
     "0.6", default_cs_name="intrinsic"
 )
 print(image_attributes_v06)
+
+# With the new metadata, we can create a full Image model.
+# This Image can then be saved using the `to_zarr()` method.
+# Because it does not contain any array data or metadata, the
+# array data will need to be manually copied from the old 0.5
+# group to the new 0.6 group.
+
+image_v06 = ome_zarr_models.v06.Image(ome=image_attributes_v06)
+# image_v06.to_zarr(...)
 
 # The 0.6 specification provides some new fields over the 0.5 version,
 # such as the `coordinateSystems` field,
