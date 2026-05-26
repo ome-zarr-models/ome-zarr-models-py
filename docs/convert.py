@@ -28,7 +28,7 @@ multiscale = ome_zarr_models.v05.multiscales.Multiscale.model_validate(
     {
         "axes": [
             {"name": "z", "type": "space"},
-            {"name": "y", "type": "space"},
+            {"name": "y", "type": "space"},https://app.gather.town/app/nq1oQrNJ1UIQ5t01/imagesc-island
             {"name": "x", "type": "space"},
         ],
         "datasets": [  # an image with a single resolution level
@@ -49,7 +49,8 @@ multiscale = ome_zarr_models.v05.multiscales.Multiscale.model_validate(
 multiscale_v06 = multiscale.to_version("0.6")
 print(multiscale_v06)
 
-# The 0.6 specification provides some new fields over the 0.5 version, such as the `coordinateSystems` field,
+# The 0.6 specification provides some new fields over the 0.5 version,
+# such as the `coordinateSystems` field,
 # which provides named coordinate system references.
 # 
 # In the process of conversion, these new fields are provided with default values
