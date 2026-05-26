@@ -2,7 +2,7 @@
 #
 # ## 0.5 to 0.6
 #
-# The main addition to OME-Zarr in version 0.6 is coordinate systems.
+# The main addition to OME-Zarr in version 0.6 is coordinate systems for images.
 
 
 import zarr.storage
@@ -16,43 +16,13 @@ zarr_group = zarr.open_group(
     mode="r",
 )
 image_group_v05 = ome_zarr_models.v05.Image.from_zarr(zarr_group)
-print(image_group_v05.ome_attributes)
+image_attributes_v05 = image_group_v05.ome_attributes
+print(image_attributes_v05)
 
-# ## Metadata conversion
-#
-# ome-zarr-models-py offers a convenient way to convert multiscales metadata
-# between different ome-zarr versions without using the high-level
-# `Image` classes:
-
-multiscale = ome_zarr_models.v05.multiscales.Multiscale.model_validate(
-    {
-        "axes": [
-            {"name": "z", "type": "space"},
-            {"name": "y", "type": "space"},
-            {"name": "x", "type": "space"},
-        ],
-        "datasets": [  # an image with a single resolution level
-            {
-                "path": "s0",
-                "coordinateTransformations": [
-                    {
-                        "type": "scale",
-                        "scale": [1, 1, 1],
-                    }
-                ],
-            }
-        ],
-        "name": "my_image",
-    }
+image_attributes_v06 = image_attributes_v05.to_version(
+    "0.6", default_coordinate_system="intrinsic"
 )
-
-multiscale_v06 = multiscale.to_version("0.6")
-print(multiscale_v06)
-
-# This version conversion works between all currently supported versions of ome-zarr:
-
-multiscale_v04 = multiscale.to_version("0.4")
-print(multiscale_v04)
+print(image_attributes_v06)
 
 # The 0.6 specification provides some new fields over the 0.5 version,
 # such as the `coordinateSystems` field,

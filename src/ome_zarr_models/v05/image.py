@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import Self
+from typing import TYPE_CHECKING, Literal, Self
 
 # Import needed for pydantic type resolution
 import pydantic_zarr  # noqa: F401
@@ -14,6 +14,9 @@ from ome_zarr_models.v05.axes import Axis
 from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs, BaseZarrAttrs
 from ome_zarr_models.v05.labels import Labels
 from ome_zarr_models.v05.multiscales import Dataset, Multiscale
+
+if TYPE_CHECKING:
+    from ome_zarr_models.v06.image import ImageAttrs as ImageAttrsV06
 
 __all__ = ["Image", "ImageAttrs"]
 
@@ -38,6 +41,63 @@ class ImageAttrs(BaseOMEAttrs):
 
     def get_optional_group_paths(self) -> dict[str, type[Labels]]:  # type: ignore[override]
         return {"labels": Labels}
+
+    def to_version(
+        self,
+        version: Literal["0.6"],
+        *,
+        default_coordinate_system: str = "physical",
+        output_coordinate_system: str = "output",
+    ) -> "ImageAttrsV06":
+        """
+        Convert these Image Attributes metadata to the specified version.
+
+        Currently supported conversions are
+        - 0.5 -> 0.6
+
+        Parameters
+        ----------
+        version
+            The version to convert to. Must be "0.6".
+        default_coordinate_system
+            The name of the default coordinate system to use
+            for the 0.5 -> 0.6 conversion. Defaults to "physical".
+        output_coordinate_system
+            The name of the output coordinate system to use
+            for the 0.5 -> 0.6 conversion. Defaults to "output".
+            Only used if `coordinateTransformations` are defined
+            in the 0.5 metadata.
+
+
+        Notes
+        -----
+        If there is more than one multiscale, the same default coordinate system names
+        are applied to each multiscale. If you need them to be different, edit them
+        manually after the conversion.
+        """
+        if version == "0.6":
+            return self._to_v06()
+
+        raise ValueError(f"Unsupported version conversion: 0.5 -> {version}")
+
+    def _to_v06(
+        self,
+        default_coordinate_system: str = "physical",
+        output_coordinate_system: str = "output",
+    ) -> "ImageAttrsV06":
+        from ome_zarr_models.v06.image import ImageAttrs as ImageAttrsV06
+
+        return ImageAttrsV06(
+            version="0.6.dev4",
+            multiscales=[
+                m.to_version(
+                    "0.6",
+                    default_coordinate_system=default_coordinate_system,
+                    output_coordinate_system=output_coordinate_system,
+                )
+                for m in self.multiscales
+            ],
+        )
 
 
 class Image(BaseGroupv05[ImageAttrs]):
