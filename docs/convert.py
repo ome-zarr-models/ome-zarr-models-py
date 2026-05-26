@@ -32,7 +32,7 @@ print(image_attributes_v06)
 # array data will need to be manually copied from the old 0.5
 # group to the new 0.6 group.
 
-image_v06 = ome_zarr_models.v06.Image(ome=image_attributes_v06)
+image_v06 = ome_zarr_models.v06.Image(attributes={"ome": image_attributes_v06})
 # image_v06.to_zarr(...)
 
 # The 0.6 specification provides some new fields over the 0.5 version,
