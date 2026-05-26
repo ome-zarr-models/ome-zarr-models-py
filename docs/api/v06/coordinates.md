@@ -39,6 +39,10 @@
     options:
         show_root_heading: true
 
+::: ome_zarr_models.v06.coordinate_transforms.ByDimensionTransform
+    options:
+        show_root_heading: true
+
 ::: ome_zarr_models.v06.coordinate_transforms.Coordinates
 options:
 show_root_heading: true
@@ -64,6 +68,10 @@ show_root_heading: true
         show_root_heading: true
 
 ::: ome_zarr_models.v06.coordinate_transforms.Translation
+    options:
+        show_root_heading: true
+
+::: ome_zarr_models.v06.coordinate_transforms.AnyTransform
     options:
         show_root_heading: true
 
