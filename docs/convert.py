@@ -11,7 +11,8 @@ import ome_zarr_models.v06
 #
 # The main addition to OME-Zarr in version 0.6 is coordinate systems for images.
 # This example shows how to convert OME-Zarr 0.5 image metadata to OME-Zarr 0.6.
-
+#
+# To start we'll open a OME-Zarr 0.5 image, and extract the OME-Zarr image metadata.
 
 zarr_group = zarr.open_group(
     "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.5/idr0066/ExpD_chicken_embryo_MIP.ome.zarr",
@@ -20,6 +21,9 @@ zarr_group = zarr.open_group(
 image_group_v05 = ome_zarr_models.v05.Image.from_zarr(zarr_group)
 image_attributes_v05 = image_group_v05.ome_attributes
 print(image_attributes_v05)
+
+
+# Next we'll convert this metadata to version 0.6.
 
 image_attributes_v06 = image_attributes_v05.to_version(
     "0.6", default_cs_name="intrinsic"
@@ -43,7 +47,9 @@ image_v06 = ome_zarr_models.v06.Image(
 #
 # In the process of conversion, these new fields are provided with default values
 # (i.e., the `name` of the default coordinate system is set to "physical").
-# However, these fields can manually be filled or edited after conversion if desired:
+# However, these fields can manually be filled or edited after conversion if desired.
+# The easiest way to do this is convert the model to a dictionary, edit it,
+# and then read it in again to a model (which will validate the new metadata)
 
 image_metadata_v06 = image_v06.ome_attributes.model_dump()
 image_metadata_v06["multiscales"][0]["coordinateSystems"][0]["axes"][0]["longName"] = (
