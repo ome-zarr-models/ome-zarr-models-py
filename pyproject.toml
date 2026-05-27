@@ -62,6 +62,7 @@ test = [
     "pytest-cov==7.0.0",
     "pytest-recording==0.13.4",
     "graphviz==0.21",
+    "pytest-doctestplus>=1.7.1",
 ]
 
 [tool.uv]
@@ -78,27 +79,27 @@ line-length = 88
 [tool.ruff.lint]
 pydocstyle = { convention = "numpy" }
 select = [
-    "E", # style errors
-    "W", # style warnings
-    "F", # flakes
-    "D", # pydocstyle
-    "I", # isort
-    "UP", # pyupgrade
-    "C4", # flake8-comprehensions
-    "B", # flake8-bugbear
+    "E",    # style errors
+    "W",    # style warnings
+    "F",    # flakes
+    "D",    # pydocstyle
+    "I",    # isort
+    "UP",   # pyupgrade
+    "C4",   # flake8-comprehensions
+    "B",    # flake8-bugbear
     "A001", # flake8-builtins
-    "RUF", # ruff-specific rules
-    "TC", # flake8-type-checking
-    "TID", # flake8-tidy-imports
+    "RUF",  # ruff-specific rules
+    "TC",   # flake8-type-checking
+    "TID",  # flake8-tidy-imports
 ]
 ignore = [
-    "D401", # First line should be in imperative mood (remove to opt in)
-    "D200", # One line docstring should fit on one line.
-    "D205", # 1 blank line required between summary line and description
-    "D400", # First line should end with a period
-    "D100", # Missing docstring in public module
-    "D102", # Missing docstring in public method
-    "D104", # Missing docstring in public package
+    "D401",  # First line should be in imperative mood (remove to opt in)
+    "D200",  # One line docstring should fit on one line.
+    "D205",  # 1 blank line required between summary line and description
+    "D400",  # First line should end with a period
+    "D100",  # Missing docstring in public module
+    "D102",  # Missing docstring in public method
+    "D104",  # Missing docstring in public package
     "TC001", # Move application import `...` into a type-checking block. This messes with nested pydantic models
 
 ]
@@ -119,8 +120,10 @@ plugins = ['pydantic.mypy']
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 
 [tool.pytest.ini_options]
+doctest_plus = 'enabled'
 minversion = "8"
-testpaths = ["tests"]
+# Include src/ for doctests
+testpaths = ["tests", "src"]
 log_cli_level = "INFO"
 xfail_strict = true
 addopts = [

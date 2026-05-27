@@ -45,7 +45,7 @@ def test_example_plate_json(store: Store) -> None:
             WellInPlate(path="B/2", rowIndex=1, columnIndex=1),
             WellInPlate(path="B/3", rowIndex=1, columnIndex=2),
         ],
-        version="0.6",
+        version="0.6.dev4",
     )
 
 
@@ -95,7 +95,7 @@ def test_example_plate_json_2(store: Store) -> None:
             WellInPlate(path="C/5", rowIndex=2, columnIndex=4),
             WellInPlate(path="D/7", rowIndex=3, columnIndex=6),
         ],
-        version="0.6",
+        version="0.6.dev4",
     )
 
 

@@ -40,9 +40,9 @@ def test_hcs(store: Store) -> None:
                 WellInPlate(path="B/2", rowIndex=1, columnIndex=1),
                 WellInPlate(path="B/3", rowIndex=1, columnIndex=2),
             ],
-            version="0.6",
+            version="0.6.dev4",
         ),
-        version="0.6",
+        version="0.6.dev4",
     )
     well_groups = list(ome_group.well_groups)
     assert len(well_groups) == 0

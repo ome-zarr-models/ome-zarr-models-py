@@ -35,6 +35,7 @@ from ome_zarr_models.v04.axes import Axes
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
+    from ome_zarr_models.v05.multiscales import Dataset as DatasetV05
     from ome_zarr_models.v05.multiscales import Multiscale as MultiscaleV05
 
 
@@ -70,25 +71,11 @@ class Multiscale(BaseAttrs):
             raise ValueError(f"Unsupported version conversion: 0.4 -> {version}")
 
     def _to_v05(self) -> MultiscaleV05:
-        from ome_zarr_models.v05.axes import Axis as AxisV05
-        from ome_zarr_models.v05.multiscales import (
-            Dataset as DatasetV05,
-        )
-        from ome_zarr_models.v05.multiscales import (
-            Multiscale as MultiscaleV05,
-        )
+        from ome_zarr_models.v05.multiscales import Multiscale as MultiscaleV05
 
         return MultiscaleV05(
-            axes=tuple(
-                [AxisV05(name=a.name, type=a.type, unit=a.unit) for a in self.axes]
-            ),
-            datasets=tuple(
-                DatasetV05(
-                    path=d.path,
-                    coordinateTransformations=d.coordinateTransformations,
-                )
-                for d in self.datasets
-            ),
+            axes=tuple([a._to_v05() for a in self.axes]),
+            datasets=tuple([d._to_v05() for d in self.datasets]),
             coordinateTransformations=self.coordinateTransformations,
             metadata=self.metadata,
             name=self.name,
@@ -343,3 +330,11 @@ class Dataset(BaseAttrs):
             )
             raise ValueError(msg)
         return transforms
+
+    def _to_v05(self) -> DatasetV05:
+        from ome_zarr_models.v05.multiscales import Dataset as DatasetV05
+
+        return DatasetV05(
+            path=self.path,
+            coordinateTransformations=self.coordinateTransformations,
+        )
