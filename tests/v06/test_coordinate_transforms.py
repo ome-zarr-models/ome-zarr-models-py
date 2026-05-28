@@ -6,6 +6,8 @@ from pydantic import ValidationError
 from ome_zarr_models.v06.coordinate_transforms import (
     Affine,
     Bijection,
+    ByDimension,
+    ByDimensionTransform,
     CoordinateSystemIdentifier,
     Identity,
     MapAxis,
@@ -99,6 +101,23 @@ def test_inverse(transform: Transform, inverse_expected: Transform) -> None:
             ),
             (0, 1.5, 6),
         ),
+        (
+            ByDimension(
+                transformations=(
+                    ByDimensionTransform(
+                        transformation=Scale(scale=(4,)),
+                        input_axes=(2,),
+                        output_axes=(1,),
+                    ),
+                    ByDimensionTransform(
+                        transformation=Translation(translation=(0.1, 0.3)),
+                        input_axes=(1, 0),
+                        output_axes=(0, 2),
+                    ),
+                )
+            ),
+            (1.1, 8.0, 0.3),
+        ),
     ),
 )
 def test_transform_point(
@@ -117,6 +136,23 @@ def test_transform_point(
         (Identity(), (0, 1, 2)),
         (Translation(translation=(3.2, 10.2, 7.5)), (-3.2, -9.2, -5.5)),
         (Scale(scale=(1, 0.5, 2)), (0, 2, 1)),
+        (
+            ByDimension(
+                transformations=(
+                    ByDimensionTransform(
+                        transformation=Scale(scale=(4,)),
+                        input_axes=(2,),
+                        output_axes=(1,),
+                    ),
+                    ByDimensionTransform(
+                        transformation=Translation(translation=(0.1, 0.3)),
+                        input_axes=(1, 0),
+                        output_axes=(0, 2),
+                    ),
+                )
+            ),
+            (1.7, -0.1, 1 / 4),
+        ),
     ),
 )
 def test_inverse_transform_point(
