@@ -313,6 +313,11 @@ class Translation(Transform):
         )
 
     def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
+        if len(point) != len(self.translation):
+            raise ValueError(
+                f"Length of point ({len(point)}) does not match "
+                f"length of translation vector ({len(self.translation)})"
+            )
         return tuple(p + t for p, t in zip(point, self.translation, strict=True))
 
     def as_affine(self) -> Affine:
@@ -735,6 +740,17 @@ class ByDimensionTransform(BaseAttrs):
     input_axes: tuple[int, ...] = Field(..., description="Input axes indices.")
     output_axes: tuple[int, ...] = Field(..., description="Output axes indices.")
 
+    @property
+    def has_inverse(self) -> bool:
+        return self.transformation.has_inverse
+
+    def get_inverse(self) -> ByDimensionTransform:
+        return ByDimensionTransform(
+            transformation=self.transformation.get_inverse(),
+            input_axes=self.output_axes,
+            output_axes=self.input_axes,
+        )
+
 
 class ByDimension(Transform):
     """
@@ -748,15 +764,29 @@ class ByDimension(Transform):
 
     @property
     def has_inverse(self) -> bool:
-        return False
+        return all(t.has_inverse for t in self.transformations)
 
     def get_inverse(self) -> ByDimension:
-        raise NotImplementedError
+        if not self.has_inverse:
+            raise RuntimeError("Not all transformations have an inverse")
+        return ByDimension(
+            transformations=tuple(t.get_inverse() for t in self.transformations)
+        )
 
     def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
-        raise NotImplementedError
+        point_in = list(point)
+        point_out = point_in.copy()
+        for t in self.transformations:
+            coord_in = tuple(point_in[i] for i in t.input_axes)
+            coord_out = t.transformation.transform_point(coord_in)
+            for coord, i in zip(coord_out, t.output_axes, strict=True):
+                point_out[i] = coord
+
+        return tuple(point_out)
 
     def as_affine(self) -> Affine:
+        # TODO: if all the transforms have affines, it should be possible to
+        #  implement this
         raise NoAffineError
 
 
