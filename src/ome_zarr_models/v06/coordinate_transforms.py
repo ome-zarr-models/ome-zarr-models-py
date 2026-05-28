@@ -804,6 +804,3 @@ AnyTransform = Annotated[
     | ByDimension,
     Field(discriminator="type"),
 ]
-
-# Rebuild models to resolve forward references
-ByDimensionTransform.model_rebuild()
