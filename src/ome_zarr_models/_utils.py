@@ -267,9 +267,10 @@ class TransformGraph:
 
     def __init__(self) -> None:
         # Mapping from input coordinate system to a dict of {output_system: transform}
-        self._graph: dict[TransformGraphNode, dict[TransformGraphNode, Transform]] = (
-            defaultdict(dict)
-        )
+        TGraph = dict[TransformGraphNode, dict[TransformGraphNode, "Transform"]]
+        self._graph: TGraph = defaultdict(dict)
+        # Mapping of inverse transforms, where they exist
+        self._inverse_graph: TGraph = defaultdict(dict)
         # Mapping from system name to coordinate system
         self._systems: dict[str, CoordinateSystem] = {}
         # Paths to arrays in this graph
@@ -315,6 +316,8 @@ class TransformGraph:
         input_ = TransformGraphNode.from_identifier(transform.input)
         output_ = TransformGraphNode.from_identifier(transform.output)
         self._graph[input_][output_] = transform
+        if transform.has_inverse:
+            self._inverse_graph[output_][input_] = transform.get_inverse()
         self._shortestpaths = {}
 
     def find_shortest_path(
@@ -347,30 +350,38 @@ class TransformGraph:
             # Means there's no transform necessary to go from it to itself.
             return [to_node]
 
-        # otherwise, need to construct the path:
+        # already have a cached result
         if from_node in self._shortestpaths:
-            # already have a cached result
             return self._shortestpaths[from_node].get(to_node)
 
         # use Dijkstra's algorithm to find shortest path in all other cases
 
+        # First make a version of the internal graph that includes inverse links
+
         # We store nodes as `dict` keys because differently from `list` uniqueness is
         # guaranteed and differently from `set` insertion order is preserved.
-        nodes: dict[TransformGraphNode, TransformGraphNode | None] = {}
+        # The values in this dict are never used and just set to None
+        nodes: dict[TransformGraphNode, None] = {}
         for node, node_graph in self._graph.items():
             nodes[node] = None
-            nodes |= dict.fromkeys(node_graph)
+            nodes.update(dict.fromkeys(node_graph))
 
         if from_node not in nodes or to_node not in nodes:
             # from_node or to_node are isolated or not registered, so there's
             # certainly no way to get from one to the other
             return None
 
-        edge_weights = {}
         # construct another graph that is a dict of dicts of priorities
         # (used as edge weights in Dijkstra's algorithm)
-        for a, graph in self._graph.items():
-            edge_weights[a] = dict.fromkeys(graph, 1.0)
+        edge_weights: dict[TransformGraphNode, dict[TransformGraphNode, float]]
+        edge_weights = defaultdict(dict)
+
+        for node, graph in self._graph.items():
+            for node2 in graph:
+                edge_weights[node][node2] = 1
+        for node, graph in self._inverse_graph.items():
+            for node2 in graph:
+                edge_weights[node][node2] = 1
 
         # count is needed because in py 3.x, tie-breaking fails on the nodes.
         # this way, insertion order is preserved if the weights are the same
@@ -387,9 +398,9 @@ class TransformGraph:
 
         q = [QItem(distance=0, count=-1, node=from_node, path=[])]
         q.extend(
-            QItem(distance=inf, count=i, node=n, path=[])
-            for i, n in enumerate(nodes)
-            if n is not from_node
+            QItem(distance=inf, count=i, node=node, path=[])
+            for i, node in enumerate(nodes)
+            if node is not from_node
         )
 
         # this dict will store the distance to node from from_node and the path
