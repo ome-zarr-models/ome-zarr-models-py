@@ -87,3 +87,13 @@ def test_transform_graph() -> None:
         TransformGraphNode(name="system_2"),
         TransformGraphNode(name="system_3"),
     ]
+
+    # Check finding path when inverse exists
+    assert graph.find_shortest_path(
+        TransformGraphNode(name="system_3"),
+        TransformGraphNode(name="system_1"),
+    ) == [
+        TransformGraphNode(name="system_3"),
+        TransformGraphNode(name="system_2"),
+        TransformGraphNode(name="system_1"),
+    ]
