@@ -5,7 +5,9 @@ Private utilities.
 from __future__ import annotations
 
 import heapq
+import itertools
 from collections import Counter, defaultdict
+from copy import deepcopy
 from dataclasses import MISSING, dataclass, fields, is_dataclass
 from functools import total_ordering
 from typing import TYPE_CHECKING, Any, Self, TypeVar
@@ -32,6 +34,7 @@ if TYPE_CHECKING:
     from ome_zarr_models.v05.base import BaseGroupv05
     from ome_zarr_models.v06.base import BaseGroupv06
     from ome_zarr_models.v06.coordinate_transforms import (
+        AnyTransform,
         CoordinateSystem,
         CoordinateSystemIdentifier,
         Transform,
@@ -242,6 +245,12 @@ def dataclass_to_pydantic(dataclass_type: type) -> type[pydantic.BaseModel]:
 GRAPHVIZ_ATTRS = {"fontname": "open-sans"}
 
 
+class NoPathError(RuntimeError):
+    """
+    Error raised when no path is found in the coordinate graph.
+    """
+
+
 @dataclass(frozen=True)
 class TransformGraphNode:
     """
@@ -256,6 +265,9 @@ class TransformGraphNode:
         return cls(name=identifier.name, path=identifier.path)
 
 
+_TGraph = dict[TransformGraphNode, dict[TransformGraphNode, "AnyTransform"]]
+
+
 class TransformGraph:
     """
     A graph representing coordinate transforms.
@@ -267,10 +279,10 @@ class TransformGraph:
 
     def __init__(self) -> None:
         # Mapping from input coordinate system to a dict of {output_system: transform}
-        TGraph = dict[TransformGraphNode, dict[TransformGraphNode, "Transform"]]
-        self._graph: TGraph = defaultdict(dict)
+
+        self._graph: _TGraph = defaultdict(dict)
         # Mapping of inverse transforms, where they exist
-        self._inverse_graph: TGraph = defaultdict(dict)
+        self._inverse_graph: _TGraph = defaultdict(dict)
         # Mapping from system name to coordinate system
         self._systems: dict[str, CoordinateSystem] = {}
         # Paths to arrays in this graph
@@ -283,6 +295,16 @@ class TransformGraph:
             TransformGraphNode,
             dict[TransformGraphNode, list[TransformGraphNode] | None],
         ] = {}
+
+    @property
+    def _full_graph(self) -> _TGraph:
+        """
+        Forward and inverse graphs merged.
+        """
+        full_graph = deepcopy(self._graph)
+        for key in self._inverse_graph:
+            full_graph[key].update(deepcopy(self._inverse_graph[key]))
+        return full_graph
 
     def add_array(self, array_path: str) -> None:
         """
@@ -307,7 +329,7 @@ class TransformGraph:
         self._child_graphs[path] = graph
         self._shortestpaths = {}
 
-    def add_transform(self, transform: Transform) -> None:
+    def add_transform(self, transform: AnyTransform) -> None:
         """
         Add a transform to the graph.
         """
@@ -330,9 +352,9 @@ class TransformGraph:
         Parameters
         ----------
         from_node : TransformGraphNode
-            The coordinate frame class to start from.
+            The coordinate system to start from.
         to_node : TransformGraphNode
-            The coordinate frame class to transform into.
+            The coordinate system to transform into.
 
         Returns
         -------
@@ -441,6 +463,48 @@ class TransformGraph:
         # cache for later use
         self._shortestpaths[from_node] = result
         return result[to_node]
+
+    def get_transform(
+        self, *, from_sys: TransformGraphNode, to_sys: TransformGraphNode
+    ) -> Transform:
+        """
+        Compute transform between one system and another.
+
+        Parameters
+        ----------
+        from_sys :
+            The coordinate system to transform from.
+        to_sys :
+            The coordinate system to transform into.
+
+        Returns
+        -------
+        transform :
+            Transform between `from_sys` and `to_sys`.
+
+        Raises
+        ------
+        NoPathError
+            If a path can't be found between `from_sys` and `to_sys`.
+        """
+        from ome_zarr_models.v06.coordinate_transforms import (
+            CoordinateSystemIdentifier,
+            Sequence,
+        )
+
+        path = self.find_shortest_path(from_sys, to_sys)
+        if path is None:
+            raise NoPathError(f"No path found between {from_sys} and {to_sys}")
+
+        transforms = []
+        for start_node, end_node in itertools.pairwise(path):
+            transforms.append(self._full_graph[start_node][end_node])
+
+        return Sequence(
+            input=CoordinateSystemIdentifier(name=from_sys.name, path=from_sys.path),
+            output=CoordinateSystemIdentifier(name=to_sys.name, path=to_sys.path),
+            transformations=tuple(transforms),
+        )
 
     def to_graphviz(self) -> graphviz.Digraph:
         """
