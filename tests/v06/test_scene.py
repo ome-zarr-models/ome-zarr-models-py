@@ -5,6 +5,7 @@ from ome_zarr_models._utils import TransformGraph, TransformGraphNode
 from ome_zarr_models.v06 import Scene
 from ome_zarr_models.v06.coordinate_transforms import (
     CoordinateSystemIdentifier,
+    Sequence,
     Translation,
 )
 
@@ -97,3 +98,23 @@ def test_transform_graph() -> None:
         TransformGraphNode(name="system_2"),
         TransformGraphNode(name="system_1"),
     ]
+
+    assert graph.get_transform(
+        from_sys=TransformGraphNode(name="system_1"),
+        to_sys=TransformGraphNode(name="system_3"),
+    ) == Sequence(
+        input=CoordinateSystemIdentifier(name="system_1", path=None),
+        output=CoordinateSystemIdentifier(name="system_3", path=None),
+        transformations=(
+            Translation(
+                input=CoordinateSystemIdentifier(name="system_1", path=None),
+                output=CoordinateSystemIdentifier(name="system_2", path=None),
+                translation=(1.0, 2.0, 3.0),
+            ),
+            Translation(
+                input=CoordinateSystemIdentifier(name="system_2", path=None),
+                output=CoordinateSystemIdentifier(name="system_3", path=None),
+                translation=(30.0, 20.0, 10.0),
+            ),
+        ),
+    )
