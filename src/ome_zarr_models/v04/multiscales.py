@@ -93,8 +93,8 @@ class Multiscale(BaseAttrs):
             return self._to_v05().to_version(
                 "0.6",
                 default_coordinate_system=default_coordinate_system,
-                output_coordinate_system=output_coordinate_system
-                )
+                output_coordinate_system=output_coordinate_system,
+            )
         else:
             raise ValueError(f"Unsupported version conversion: 0.4 -> {version}")
 
