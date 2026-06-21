@@ -14,7 +14,6 @@ from ome_zarr_models.v06 import Scene
 
 scene = Scene.from_zarr(
     zarr.open_group(
-        "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/test-data/v0.6.dev3/idr0050/4995115_output_to_ms.zarr/",
         mode="r",
     )
 )
