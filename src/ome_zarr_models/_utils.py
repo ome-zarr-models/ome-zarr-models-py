@@ -5,7 +5,9 @@ Private utilities.
 from __future__ import annotations
 
 import heapq
+import itertools
 from collections import Counter, defaultdict
+from copy import deepcopy
 from dataclasses import MISSING, dataclass, fields, is_dataclass
 from functools import total_ordering
 from typing import TYPE_CHECKING, Any, Self, TypeVar
@@ -32,6 +34,7 @@ if TYPE_CHECKING:
     from ome_zarr_models.v05.base import BaseGroupv05
     from ome_zarr_models.v06.base import BaseGroupv06
     from ome_zarr_models.v06.coordinate_transforms import (
+        AnyTransform,
         CoordinateSystem,
         CoordinateSystemIdentifier,
         Transform,
@@ -242,6 +245,12 @@ def dataclass_to_pydantic(dataclass_type: type) -> type[pydantic.BaseModel]:
 GRAPHVIZ_ATTRS = {"fontname": "open-sans"}
 
 
+class NoPathError(RuntimeError):
+    """
+    Error raised when no path is found in the coordinate graph.
+    """
+
+
 @dataclass(frozen=True)
 class TransformGraphNode:
     """
@@ -256,6 +265,9 @@ class TransformGraphNode:
         return cls(name=identifier.name, path=identifier.path)
 
 
+_TGraph = dict[TransformGraphNode, dict[TransformGraphNode, "AnyTransform"]]
+
+
 class TransformGraph:
     """
     A graph representing coordinate transforms.
@@ -267,9 +279,10 @@ class TransformGraph:
 
     def __init__(self) -> None:
         # Mapping from input coordinate system to a dict of {output_system: transform}
-        self._graph: dict[TransformGraphNode, dict[TransformGraphNode, Transform]] = (
-            defaultdict(dict)
-        )
+
+        self._graph: _TGraph = defaultdict(dict)
+        # Mapping of inverse transforms, where they exist
+        self._inverse_graph: _TGraph = defaultdict(dict)
         # Mapping from system name to coordinate system
         self._systems: dict[str, CoordinateSystem] = {}
         # Paths to arrays in this graph
@@ -282,6 +295,16 @@ class TransformGraph:
             TransformGraphNode,
             dict[TransformGraphNode, list[TransformGraphNode] | None],
         ] = {}
+
+    @property
+    def _full_graph(self) -> _TGraph:
+        """
+        Forward and inverse graphs merged.
+        """
+        full_graph = deepcopy(self._graph)
+        for key in self._inverse_graph:
+            full_graph[key].update(deepcopy(self._inverse_graph[key]))
+        return full_graph
 
     def add_array(self, array_path: str) -> None:
         """
@@ -306,7 +329,7 @@ class TransformGraph:
         self._child_graphs[path] = graph
         self._shortestpaths = {}
 
-    def add_transform(self, transform: Transform) -> None:
+    def add_transform(self, transform: AnyTransform) -> None:
         """
         Add a transform to the graph.
         """
@@ -315,6 +338,8 @@ class TransformGraph:
         input_ = TransformGraphNode.from_identifier(transform.input)
         output_ = TransformGraphNode.from_identifier(transform.output)
         self._graph[input_][output_] = transform
+        if transform.has_inverse:
+            self._inverse_graph[output_][input_] = transform.get_inverse()
         self._shortestpaths = {}
 
     def find_shortest_path(
@@ -327,9 +352,9 @@ class TransformGraph:
         Parameters
         ----------
         from_node : TransformGraphNode
-            The coordinate frame class to start from.
+            The coordinate system to start from.
         to_node : TransformGraphNode
-            The coordinate frame class to transform into.
+            The coordinate system to transform into.
 
         Returns
         -------
@@ -347,30 +372,38 @@ class TransformGraph:
             # Means there's no transform necessary to go from it to itself.
             return [to_node]
 
-        # otherwise, need to construct the path:
+        # already have a cached result
         if from_node in self._shortestpaths:
-            # already have a cached result
             return self._shortestpaths[from_node].get(to_node)
 
         # use Dijkstra's algorithm to find shortest path in all other cases
 
+        # First make a version of the internal graph that includes inverse links
+
         # We store nodes as `dict` keys because differently from `list` uniqueness is
         # guaranteed and differently from `set` insertion order is preserved.
-        nodes: dict[TransformGraphNode, TransformGraphNode | None] = {}
+        # The values in this dict are never used and just set to None
+        nodes: dict[TransformGraphNode, None] = {}
         for node, node_graph in self._graph.items():
             nodes[node] = None
-            nodes |= dict.fromkeys(node_graph)
+            nodes.update(dict.fromkeys(node_graph))
 
         if from_node not in nodes or to_node not in nodes:
             # from_node or to_node are isolated or not registered, so there's
             # certainly no way to get from one to the other
             return None
 
-        edge_weights = {}
         # construct another graph that is a dict of dicts of priorities
         # (used as edge weights in Dijkstra's algorithm)
-        for a, graph in self._graph.items():
-            edge_weights[a] = dict.fromkeys(graph, 1.0)
+        edge_weights: dict[TransformGraphNode, dict[TransformGraphNode, float]]
+        edge_weights = defaultdict(dict)
+
+        for node, graph in self._graph.items():
+            for node2 in graph:
+                edge_weights[node][node2] = 1
+        for node, graph in self._inverse_graph.items():
+            for node2 in graph:
+                edge_weights[node][node2] = 1
 
         # count is needed because in py 3.x, tie-breaking fails on the nodes.
         # this way, insertion order is preserved if the weights are the same
@@ -387,9 +420,9 @@ class TransformGraph:
 
         q = [QItem(distance=0, count=-1, node=from_node, path=[])]
         q.extend(
-            QItem(distance=inf, count=i, node=n, path=[])
-            for i, n in enumerate(nodes)
-            if n is not from_node
+            QItem(distance=inf, count=i, node=node, path=[])
+            for i, node in enumerate(nodes)
+            if node is not from_node
         )
 
         # this dict will store the distance to node from from_node and the path
@@ -430,6 +463,48 @@ class TransformGraph:
         # cache for later use
         self._shortestpaths[from_node] = result
         return result[to_node]
+
+    def get_transform(
+        self, *, from_sys: TransformGraphNode, to_sys: TransformGraphNode
+    ) -> Transform:
+        """
+        Compute transform between one system and another.
+
+        Parameters
+        ----------
+        from_sys :
+            The coordinate system to transform from.
+        to_sys :
+            The coordinate system to transform into.
+
+        Returns
+        -------
+        transform :
+            Transform between `from_sys` and `to_sys`.
+
+        Raises
+        ------
+        NoPathError
+            If a path can't be found between `from_sys` and `to_sys`.
+        """
+        from ome_zarr_models.v06.coordinate_transforms import (
+            CoordinateSystemIdentifier,
+            Sequence,
+        )
+
+        path = self.find_shortest_path(from_sys, to_sys)
+        if path is None:
+            raise NoPathError(f"No path found between {from_sys} and {to_sys}")
+
+        transforms = []
+        for start_node, end_node in itertools.pairwise(path):
+            transforms.append(self._full_graph[start_node][end_node])
+
+        return Sequence(
+            input=CoordinateSystemIdentifier(name=from_sys.name, path=from_sys.path),
+            output=CoordinateSystemIdentifier(name=to_sys.name, path=to_sys.path),
+            transformations=tuple(transforms),
+        )
 
     def to_graphviz(self) -> graphviz.Digraph:
         """

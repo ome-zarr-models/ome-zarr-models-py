@@ -52,12 +52,17 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 docs = ["ome-zarr-models[docs]"]
-dev = ["mypy==1.18.2", "ruff==0.13.2", "pre-commit==4.3.0", "graphviz==0.21"]
+dev = [
+    "mypy==1.18.2",
+    "ruff==0.13.2",
+    "pre-commit==4.3.0",
+]
 test = [
     "pytest==8.4.2",
     "pytest-cov==7.0.0",
     "pytest-recording==0.13.4",
     "graphviz==0.21",
+    "pytest-doctestplus>=1.7.1",
 ]
 
 [tool.uv]
@@ -112,8 +117,10 @@ plugins = ['pydantic.mypy']
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 
 [tool.pytest.ini_options]
+doctest_plus = 'enabled'
 minversion = "8"
-testpaths = ["tests"]
+# Include src/ for doctests
+testpaths = ["tests", "src"]
 log_cli_level = "INFO"
 xfail_strict = true
 addopts = [

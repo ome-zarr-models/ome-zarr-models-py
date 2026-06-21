@@ -63,6 +63,7 @@ class Multiscale(BaseAttrs):
         Convert this Multiscale metadata to the specified version.
 
         Currently supported conversions are
+
         - 0.6 -> 0.5
         - 0.6 -> 0.4
 
@@ -105,7 +106,7 @@ class Multiscale(BaseAttrs):
     @property
     def ndim(self) -> int:
         """
-        Dimensionality of the data described by this metadata.
+        Dimensionality of the data described by this multiscale metadata.
         """
         return self.intrinsic_coordinate_system.ndim
 
@@ -119,7 +120,7 @@ class Multiscale(BaseAttrs):
 
         Notes
         -----
-        This is the `coordinateSystems` instance which is used output
+        This is the coordinate system which is the output
         of all multiscale transformations defined in `datasets`.
         """
         output = self.datasets[0].coordinateTransformations[0].output
@@ -246,7 +247,7 @@ class Multiscale(BaseAttrs):
         return self
 
     @model_validator(mode="after")
-    def check_cs_input_output(self) -> Self:
+    def _check_cs_input_output(self) -> Self:
         """
         Check input and output for each coordinate transformation.
         This is for transformations under multiscales > coordinateTransformations,
@@ -323,7 +324,7 @@ class Multiscale(BaseAttrs):
 
     @field_validator("coordinateSystems", mode="after")
     @classmethod
-    def check_unique_system_names(
+    def _check_unique_system_names(
         cls, systems: tuple[CoordinateSystem, ...]
     ) -> tuple[CoordinateSystem, ...]:
         sys_names = [sys.name for sys in systems]

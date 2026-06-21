@@ -4,6 +4,7 @@ import pytest
 import zarr
 from pydantic import ValidationError
 from zarr.abc.store import Store
+from zarr.storage import MemoryStore
 
 from ome_zarr_models.v05.axes import Axis
 from ome_zarr_models.v05.coordinate_transformations import VectorScale
@@ -249,3 +250,179 @@ def test_image_with_labels_mismatch_multiscales(store: Store) -> None:
         ),
     ):
         Image.from_zarr(zarr_group)
+
+
+def test_image_convert_v06() -> None:
+    from ome_zarr_models.v06.coordinate_transforms import (
+        Axis as AxisV06,
+    )
+    from ome_zarr_models.v06.coordinate_transforms import (
+        CoordinateSystem,
+        CoordinateSystemIdentifier,
+        Scale,
+    )
+    from ome_zarr_models.v06.image import ImageAttrs as ImageAttrsV06
+    from ome_zarr_models.v06.multiscales import (
+        Dataset as DatasetV06,
+    )
+    from ome_zarr_models.v06.multiscales import (
+        Multiscale as MultiscaleV06,
+    )
+
+    zarr_group = make_valid_image_group(MemoryStore())
+    ome_group = Image.from_zarr(zarr_group)
+
+    attrs_v06 = ome_group.ome_attributes.to_version("0.6")
+    assert attrs_v06 == ImageAttrsV06(
+        version="0.6.dev4",
+        multiscales=[
+            MultiscaleV06(
+                coordinateSystems=(
+                    CoordinateSystem(
+                        name="physical",
+                        axes=(
+                            AxisV06(
+                                name="t",
+                                type="time",
+                                discrete=None,
+                                unit="millisecond",
+                                longName=None,
+                            ),
+                            AxisV06(
+                                name="c",
+                                type="channel",
+                                discrete=None,
+                                unit=None,
+                                longName=None,
+                            ),
+                            AxisV06(
+                                name="z",
+                                type="space",
+                                discrete=None,
+                                unit="micrometer",
+                                longName=None,
+                            ),
+                            AxisV06(
+                                name="y",
+                                type="space",
+                                discrete=None,
+                                unit="micrometer",
+                                longName=None,
+                            ),
+                            AxisV06(
+                                name="x",
+                                type="space",
+                                discrete=None,
+                                unit="micrometer",
+                                longName=None,
+                            ),
+                        ),
+                    ),
+                    CoordinateSystem(
+                        name="output",
+                        axes=(
+                            AxisV06(
+                                name="t",
+                                type="time",
+                                discrete=None,
+                                unit=None,
+                                longName=None,
+                            ),
+                            AxisV06(
+                                name="c",
+                                type="channel",
+                                discrete=None,
+                                unit=None,
+                                longName=None,
+                            ),
+                            AxisV06(
+                                name="z",
+                                type="space",
+                                discrete=None,
+                                unit=None,
+                                longName=None,
+                            ),
+                            AxisV06(
+                                name="y",
+                                type="space",
+                                discrete=None,
+                                unit=None,
+                                longName=None,
+                            ),
+                            AxisV06(
+                                name="x",
+                                type="space",
+                                discrete=None,
+                                unit=None,
+                                longName=None,
+                            ),
+                        ),
+                    ),
+                ),
+                datasets=(
+                    DatasetV06(
+                        path="0",
+                        coordinateTransformations=(
+                            Scale(
+                                type="scale",
+                                input=CoordinateSystemIdentifier(name=None, path="0"),
+                                output=CoordinateSystemIdentifier(
+                                    name="physical", path=None
+                                ),
+                                name=None,
+                                scale=(1.0, 1.0, 0.5, 0.5, 0.5),
+                            ),
+                        ),
+                    ),
+                    DatasetV06(
+                        path="1",
+                        coordinateTransformations=(
+                            Scale(
+                                type="scale",
+                                input=CoordinateSystemIdentifier(name=None, path="1"),
+                                output=CoordinateSystemIdentifier(
+                                    name="physical", path=None
+                                ),
+                                name=None,
+                                scale=(1.0, 1.0, 1.0, 1.0, 1.0),
+                            ),
+                        ),
+                    ),
+                    DatasetV06(
+                        path="2",
+                        coordinateTransformations=(
+                            Scale(
+                                type="scale",
+                                input=CoordinateSystemIdentifier(name=None, path="2"),
+                                output=CoordinateSystemIdentifier(
+                                    name="physical", path=None
+                                ),
+                                name=None,
+                                scale=(1.0, 1.0, 2.0, 2.0, 2.0),
+                            ),
+                        ),
+                    ),
+                ),
+                coordinateTransformations=(
+                    Scale(
+                        type="scale",
+                        input=CoordinateSystemIdentifier(name="physical", path=None),
+                        output=CoordinateSystemIdentifier(name="output", path=None),
+                        name=None,
+                        scale=(0.1, 1.0, 1.0, 1.0, 1.0),
+                    ),
+                ),
+                metadata={
+                    "description": "the fields in metadata depend on the downscaling"
+                    " implementation. Here, the parameters passed to the "
+                    "skimage function are given",
+                    "method": "skimage.transform.pyramid_gaussian",
+                    "version": "0.16.1",
+                    "args": "[true]",
+                    "kwargs": {"multichannel": True},
+                },
+                name="example",
+                type="gaussian",
+            )
+        ],
+    )

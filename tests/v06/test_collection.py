@@ -356,4 +356,4 @@ def test_scene_new() -> None:
     assert scene.ome_attributes.scene.coordinateSystems[0].name == "world"
 
     # Verify version
-    assert scene.ome_attributes.version == "0.6"
+    assert scene.ome_attributes.version == "0.6.dev4"

@@ -409,8 +409,8 @@ def test_from_v05() -> None:
     assert (
         ms.to_version(
             "0.6",
-            default_coordinate_system="physical",
-            output_coordinate_system="output",
+            default_cs_name="physical",
+            output_cs_name="output",
         )
         == ms_target
     )
