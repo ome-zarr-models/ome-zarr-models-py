@@ -12,7 +12,7 @@ from ome_zarr_models.common.validation import unique_items_validator
 
 if TYPE_CHECKING:
     import transformnd
-    import transformnd.transforms  # noqa: TC004
+    import transformnd.transforms
 
     from ome_zarr_models.v05.axes import Axis as Axisv05
 
@@ -587,6 +587,8 @@ class Sequence(Transform):
     transformations: tuple[AnyTransform, ...]
 
     def to_transformnd(self) -> transformnd.TransformSequence:
+        import transformnd
+
         return transformnd.TransformSequence(
             transforms=[t.to_transformnd() for t in self.transformations]
         )

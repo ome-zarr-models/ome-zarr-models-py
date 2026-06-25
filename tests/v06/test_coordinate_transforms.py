@@ -6,6 +6,7 @@ from pydantic import ValidationError
 
 from ome_zarr_models.v06.coordinate_transforms import (
     Affine,
+    AnyTransform,
     Bijection,
     ByDimension,
     ByDimensionTransform,
@@ -252,29 +253,28 @@ def test_no_affine(transform: Transform) -> None:
         transform.as_affine()
 
 
-def test_to_transformnd() -> None:
-    @pytest.mark.parametrize(
-        "transform",
-        [
-            Identity(),
-            MapAxis(mapAxis=(2, 0, 1)),
-            Translation(translation=(-1, 23)),
-            Scale(scale=(-1, 2, 0.5)),
-            Rotation(rotation=(((0, 1), (-1, 0)))),
-            Affine(affine=((1, 0, 0, 2), (0, 1, 0, -5), (0, 0, 1, 0))),
-            (
-                Sequence(
-                    transformations=(
-                        Scale(scale=(0.5, -2)),
-                        Translation(translation=(2, -9)),
-                    )
+@pytest.mark.parametrize(
+    "transform",
+    [
+        Identity(),
+        MapAxis(mapAxis=(2, 0, 1)),
+        Translation(translation=(-1, 23)),
+        Scale(scale=(-1, 2, 0.5)),
+        Rotation(rotation=(((0, 1), (-1, 0)))),
+        Affine(affine=((1, 0, 0, 2), (0, 1, 0, -5), (0, 0, 1, 0))),
+        (
+            Sequence(
+                transformations=(
+                    Scale(scale=(0.5, -2)),
+                    Translation(translation=(2, -9)),
                 )
-            ),
-            (Bijection(forward=Scale(scale=(4,)), inverse=Scale(scale=(1 / 4,)))),
-        ],
-    )
-    def test_inverse(transform: Transform) -> None:
-        assert isinstance(transform.to_transformnd(), transformnd.Transform)
+            )
+        ),
+        (Bijection(forward=Scale(scale=(4,)), inverse=Scale(scale=(1 / 4,)))),
+    ],
+)
+def test_to_transformnd(transform: AnyTransform) -> None:
+    assert isinstance(transform.to_transformnd(), transformnd.Transform)
 
 
 def test_invalid_affine() -> None:
