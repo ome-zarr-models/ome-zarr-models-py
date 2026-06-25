@@ -2,7 +2,19 @@
 
 ## 1.8
 
-- Add support for Python 3.14.
+### Beta support for OME-Zarr 0.6
+
+Version 0.6 of the OME-Zarr specification is currently a nearly-finished work in progress.
+Version 1.8 of `ome-zarr-models` introduces beta support for reading, validating, and writing OME-Zarr 0.6 data.
+Note that this version is still under active development and may change in the future.
+
+The usual classes can be found in the API reference in the sidebar.
+[A guide to converting OME-Zarr 0.5 images to 0.6](convert.py) is also available.
+
+### Other fixes/improvements
+
+- Add explicit support for Python 3.14.
+  This requires `pydantic-zarr >= 0.10.0`, which is specified in the dependencies of `ome-zarr-models`.
 
 ## 1.7
 
