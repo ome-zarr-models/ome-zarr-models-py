@@ -13,6 +13,7 @@ The usual classes can be found in the API reference in the sidebar.
 
 ### Other fixes/improvements
 
+- Drop support for Python 3.11. The new minimum version of Python is 3.12.
 - Add explicit support for Python 3.14.
   This requires `pydantic-zarr >= 0.10.0`, which is specified in the dependencies of `ome-zarr-models`.
 
