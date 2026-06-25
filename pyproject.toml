@@ -51,6 +51,7 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
+    ".gitmodules",
     "codecov.yml",
     "mkdocs.yml",
     ".pre-commit-config.yaml",
