@@ -11,6 +11,9 @@ from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.validation import unique_items_validator
 
 if TYPE_CHECKING:
+    import transformnd
+    import transformnd.transforms  # noqa: TC004
+
     from ome_zarr_models.v05.axes import Axis as Axisv05
 
 
@@ -133,6 +136,12 @@ class Transform(BaseAttrs, ABC):
             raise ValueError(msg)
         return self
 
+    @abstractmethod
+    def to_transformnd(self) -> transformnd.Transform:
+        """
+        Convert to a transformnd transform.
+        """
+
     @property
     @abstractmethod
     def has_inverse(self) -> bool:
@@ -213,6 +222,11 @@ class Identity(Transform):
 
     type: Literal["identity"] = "identity"
 
+    def to_transformnd(self) -> transformnd.transforms.Identity:
+        import transformnd.transforms
+
+        return transformnd.transforms.Identity()
+
     @property
     def has_inverse(self) -> bool:
         return True
@@ -243,6 +257,11 @@ class MapAxis(Transform):
     mapAxis: tuple[int, ...] = Field(
         ..., description="The axes to map axis numbers [0, 1, 2... etc.] to."
     )
+
+    def to_transformnd(self) -> transformnd.transforms.MapAxis:
+        import transformnd.transforms
+
+        return transformnd.transforms.MapAxis(permutation=list(self.mapAxis))
 
     @property
     def ndim(self) -> int:
@@ -293,6 +312,11 @@ class Translation(Transform):
     type: Literal["translation"] = "translation"
     translation: tuple[float, ...] = Field(description="Translation vector.")
 
+    def to_transformnd(self) -> transformnd.transforms.Translate:
+        import transformnd.transforms
+
+        return transformnd.transforms.Translate(translation=self.translation)
+
     @property
     def ndim(self) -> int:
         """
@@ -335,6 +359,11 @@ class Scale(Transform):
 
     type: Literal["scale"] = "scale"
     scale: tuple[float, ...] = Field(description="Scale factors for each axis.")
+
+    def to_transformnd(self) -> transformnd.transforms.Scale:
+        import transformnd.transforms
+
+        return transformnd.transforms.Scale(scale=self.scale)
 
     @property
     def has_inverse(self) -> bool:
@@ -382,6 +411,11 @@ class Affine(Transform):
     path: str | None = Field(
         default=None, description="Path to affine matrix stored as a Zarr array."
     )
+
+    def to_transformnd(self) -> transformnd.transforms.Affine:
+        import transformnd.transforms
+
+        return transformnd.transforms.Affine(matrix=self.affine_matrix)
 
     @classmethod
     def _from_matrix_vector(
@@ -488,6 +522,9 @@ class Rotation(Transform):
         default=None, description="Path to rotation matrix stored as a Zarr array."
     )
 
+    def to_transformnd(self) -> transformnd.transforms.Affine:
+        return self.as_affine().to_transformnd()
+
     @property
     def ndim(self) -> int:
         return len(self.rotation_matrix)
@@ -548,6 +585,11 @@ class Sequence(Transform):
 
     type: Literal["sequence"] = "sequence"
     transformations: tuple[AnyTransform, ...]
+
+    def to_transformnd(self) -> transformnd.TransformSequence:
+        return transformnd.TransformSequence(
+            transforms=[t.to_transformnd() for t in self.transformations]
+        )
 
     @property
     def ndim(self) -> int:
@@ -637,6 +679,11 @@ class Displacements(Transform):
         description="Interpolation method to be used after applying the transform.",
     )
 
+    def to_transformnd(self) -> transformnd.transforms.Displacements:
+        raise NotImplementedError(
+            "Transforming using a displacement field not yet implemented"
+        )
+
     @property
     def has_inverse(self) -> bool:
         return False
@@ -670,6 +717,11 @@ class Coordinates(Transform):
         description="Interpolation method to be used after applying the transform.",
     )
 
+    def to_transformnd(self) -> transformnd.transforms.Coordinates:
+        raise NotImplementedError(
+            "Transforming using a displacement field not yet implemented"
+        )
+
     @property
     def has_inverse(self) -> bool:
         return False
@@ -694,6 +746,13 @@ class Bijection(Transform):
     type: Literal["bijection"] = "bijection"
     forward: AnyTransform = Field(..., description="Forward transform.")
     inverse: AnyTransform = Field(..., description="Inverse transform.")
+
+    def to_transformnd(self) -> transformnd.transforms.Bijection:
+        import transformnd.transforms
+
+        return transformnd.transforms.Bijection(
+            forward=self.forward.to_transformnd(), inverse=self.inverse.to_transformnd()
+        )
 
     @property
     def has_inverse(self) -> bool:
@@ -740,6 +799,15 @@ class ByDimensionTransform(BaseAttrs):
     input_axes: tuple[int, ...] = Field(..., description="Input axes indices.")
     output_axes: tuple[int, ...] = Field(..., description="Output axes indices.")
 
+    def to_transformnd(self) -> transformnd.transforms.SubTransform:
+        import transformnd.transforms
+
+        return transformnd.transforms.SubTransform(
+            transform=self.transformation.to_transformnd(),
+            input_axes=list(self.input_axes),
+            output_axes=list(self.output_axes),
+        )
+
     @property
     def has_inverse(self) -> bool:
         return self.transformation.has_inverse
@@ -761,6 +829,13 @@ class ByDimension(Transform):
     transformations: tuple[ByDimensionTransform, ...] = Field(
         ..., description="Transformations."
     )
+
+    def to_transformnd(self) -> transformnd.transforms.ByDimension:
+        import transformnd.transforms
+
+        return transformnd.transforms.ByDimension(
+            subtransforms=[t.to_transformnd() for t in self.transformations]
+        )
 
     @property
     def has_inverse(self) -> bool:

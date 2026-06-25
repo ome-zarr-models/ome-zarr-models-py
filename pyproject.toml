@@ -27,6 +27,7 @@ Repository = "https://github.com/ome-zarr-models/ome-zarr-models-py"
 # Changelog = ""
 
 [project.optional-dependencies]
+transform = ['transformnd>=0.7.2']
 # This group has to be in optional-dependencies (not dependency-groups) for readthedocs
 docs = [
     "mkdocs==1.6.1",
@@ -66,16 +67,17 @@ exclude = [
 [dependency-groups]
 docs = ["ome-zarr-models[docs]"]
 dev = [
+    "ome-zarr-models[transform]",
     "mypy==1.18.2",
     "ruff==0.13.2",
     "pre-commit==4.3.0",
     "build==1.5.0",
 ]
 test = [
+    "ome-zarr-models[transform]",
     "pytest==8.4.2",
     "pytest-cov==7.0.0",
     "pytest-recording==0.13.4",
-    "graphviz==0.21",
     "pytest-doctestplus>=1.7.1",
 ]
 
