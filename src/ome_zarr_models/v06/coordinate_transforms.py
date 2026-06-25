@@ -415,7 +415,10 @@ class Affine(Transform):
     def to_transformnd(self) -> transformnd.transforms.Affine:
         import transformnd.transforms
 
-        return transformnd.transforms.Affine(matrix=self.affine_matrix)
+        bottom_row = [0] * (self.ndim + 1)
+        bottom_row[-1] = 1
+        matrix = np.vstack([self.affine_matrix, bottom_row])
+        return transformnd.transforms.Affine(matrix=matrix)
 
     @classmethod
     def _from_matrix_vector(
