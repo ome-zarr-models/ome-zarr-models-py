@@ -277,6 +277,15 @@ def test_to_transformnd(transform: AnyTransform) -> None:
     assert isinstance(transform.to_transformnd(), transformnd.Transform)
 
 
+def test_affine_to_transformd() -> None:
+    # Extra test for Affine to make sure the extra row transformnd needs is added correctly
+    t = Affine(affine=((1, 0, 0, 2), (0, 1, 0, -5), (0, 0, 1, 0)))
+    print(t.to_transformnd())
+    assert t.to_transformnd() == transformnd.transforms.Affine(
+        matrix=((1, 0, 0, 2), (0, 1, 0, -5), (0, 0, 1, 0), (0, 0, 0, 1))
+    )
+
+
 def test_invalid_affine() -> None:
     with pytest.raises(
         ValidationError,
