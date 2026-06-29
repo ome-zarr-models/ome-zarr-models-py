@@ -90,6 +90,18 @@ nav:
   - Metadata fixes: fixes.md
   - API reference:
       - api/index.md
+      - v06:
+          - api/v06/groups.md
+          - Metadata classes:
+              - api/v06/hcs.md
+              - api/v06/image.md
+              - api/v06/image-label.md
+              - api/v06/labels.md
+              - api/v06/scene.md
+              - api/v06/well.md
+              - api/v06/coordinates.md
+              - api/v06/bioformats2raw.md
+              - api/v06/other.md
       - v05:
           - api/v05/groups.md
           - Metadata classes:
@@ -115,18 +127,7 @@ nav:
           - Validation: api/common/validation.md
           - Exceptions: api/common/exceptions.md
           - Well: api/common/well.md
-      - Dev:
-          - api/dev/groups.md
-          - Metadata classes:
-              - api/dev/hcs.md
-              - api/dev/image.md
-              - api/dev/image-label.md
-              - api/dev/labels.md
-              - api/dev/scene.md
-              - api/dev/well.md
-              - api/dev/coordinates.md
-              - api/dev/bioformats2raw.md
-              - api/dev/other.md
+
   - Changelog: changelog.md
   - Contributing: contributing.md
 

@@ -2,7 +2,20 @@
 
 ## 1.8
 
-- Add support for Python 3.14.
+### Beta support for OME-Zarr 0.6
+
+Version 0.6 of the OME-Zarr specification is currently a nearly-finished work in progress.
+Version 1.8 of `ome-zarr-models` introduces beta support for reading, validating, and writing OME-Zarr 0.6 data.
+Note that this version is still under active development and may change in the future.
+
+The usual classes can be found in the API reference in the sidebar.
+[A guide to converting OME-Zarr 0.5 images to 0.6](convert.py) is also available.
+
+### Other fixes/improvements
+
+- Drop support for Python 3.11. The new minimum version of Python is 3.12.
+- Add explicit support for Python 3.14.
+  This requires `pydantic-zarr >= 0.10.0`, which is specified in the dependencies of `ome-zarr-models`.
 
 ## 1.7
 
@@ -21,7 +34,7 @@ Require Python < 3.14. Due to issues with Python 3.14 and `pydantic`, `ome-zarr-
 
 - Improved the layout of metadata class API documentation by putting all attributes in a table.
 - Added more descriptions to fields describing image-label metadata.
-- Added documentation for the implementation of the next version of OME-Zarr. See [the development groups API reference](api/dev/groups.md) for more information.
+- Added documentation for the implementation of the next version of OME-Zarr. See [the development groups API reference](api/v06/groups.md) for more information.
 
 ## 1.5
 

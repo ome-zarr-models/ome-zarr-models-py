@@ -6,8 +6,8 @@ from pathlib import Path
 
 import zarr
 
-from ome_zarr_models._v06.image import Image
-from ome_zarr_models._v06.scene import Scene
+from ome_zarr_models.v06.image import Image
+from ome_zarr_models.v06.scene import Scene
 
 EXAMPLE_PATH = (
     Path(__file__).parent.parent

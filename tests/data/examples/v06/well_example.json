@@ -1,6 +1,6 @@
 {
   "ome": {
-    "version": "0.6",
+    "version": "0.6.dev4",
     "well": {
       "images": [
         {
@@ -20,7 +20,7 @@
           "path": "3"
         }
       ],
-      "version": "0.6"
+      "version": "0.6.dev4"
     }
   }
 }

@@ -5,7 +5,9 @@ Private utilities.
 from __future__ import annotations
 
 import heapq
+import itertools
 from collections import Counter, defaultdict
+from copy import deepcopy
 from dataclasses import MISSING, dataclass, fields, is_dataclass
 from functools import total_ordering
 from typing import TYPE_CHECKING, Any, Self, TypeVar
@@ -28,14 +30,15 @@ if TYPE_CHECKING:
     import zarr
     from zarr.abc.store import Store
 
-    from ome_zarr_models._v06.base import BaseGroupv06
-    from ome_zarr_models._v06.coordinate_transforms import (
+    from ome_zarr_models.v04.base import BaseGroupv04
+    from ome_zarr_models.v05.base import BaseGroupv05
+    from ome_zarr_models.v06.base import BaseGroupv06
+    from ome_zarr_models.v06.coordinate_transforms import (
+        AnyTransform,
         CoordinateSystem,
         CoordinateSystemIdentifier,
         Transform,
     )
-    from ome_zarr_models.v04.base import BaseGroupv04
-    from ome_zarr_models.v05.base import BaseGroupv05
 
 
 TBaseGroupv2 = TypeVar("TBaseGroupv2", bound="BaseGroupv04[Any]")
@@ -242,21 +245,27 @@ def dataclass_to_pydantic(dataclass_type: type) -> type[pydantic.BaseModel]:
 GRAPHVIZ_ATTRS = {"fontname": "open-sans"}
 
 
+class NoPathError(RuntimeError):
+    """
+    Error raised when no path is found in the coordinate graph.
+    """
+
+
 @dataclass(frozen=True)
 class TransformGraphNode:
+    """
+    A single node in a transform graph.
+    """
+
     name: str | None
     path: str | None = None
 
     @classmethod
-    def from_identifier(cls, identifier: str | CoordinateSystemIdentifier) -> Self:
-        from ome_zarr_models._v06.coordinate_transforms import (
-            CoordinateSystemIdentifier,
-        )
+    def from_identifier(cls, identifier: CoordinateSystemIdentifier) -> Self:
+        return cls(name=identifier.name, path=identifier.path)
 
-        if isinstance(identifier, CoordinateSystemIdentifier):
-            return cls(name=identifier.name, path=identifier.path)
-        else:
-            return cls(name=identifier)
+
+_TGraph = dict[TransformGraphNode, dict[TransformGraphNode, "AnyTransform"]]
 
 
 class TransformGraph:
@@ -270,11 +279,14 @@ class TransformGraph:
 
     def __init__(self) -> None:
         # Mapping from input coordinate system to a dict of {output_system: transform}
-        self._graph: dict[TransformGraphNode, dict[TransformGraphNode, Transform]] = (
-            defaultdict(dict)
-        )
+
+        self._graph: _TGraph = defaultdict(dict)
+        # Mapping of inverse transforms, where they exist
+        self._inverse_graph: _TGraph = defaultdict(dict)
         # Mapping from system name to coordinate system
         self._systems: dict[str, CoordinateSystem] = {}
+        # Paths to arrays in this graph
+        self._array_paths: set[str] = set()
         # Mapping from path to child transform graphs
         # If this graph is a child image already, this dictionary stays empty.
         self._child_graphs: dict[str, TransformGraph] = {}
@@ -283,6 +295,25 @@ class TransformGraph:
             TransformGraphNode,
             dict[TransformGraphNode, list[TransformGraphNode] | None],
         ] = {}
+
+    @property
+    def _full_graph(self) -> _TGraph:
+        """
+        Forward and inverse graphs merged.
+        """
+        full_graph = deepcopy(self._graph)
+        for key in self._inverse_graph:
+            full_graph[key].update(deepcopy(self._inverse_graph[key]))
+        return full_graph
+
+    def add_array(self, array_path: str) -> None:
+        """
+        Add an array to the graph.
+        """
+        self._array_paths.add(array_path)
+
+    def is_external_path(self, path: str | None) -> bool:
+        return path is not None and path not in self._array_paths
 
     def add_system(self, system: CoordinateSystem) -> None:
         """
@@ -298,7 +329,7 @@ class TransformGraph:
         self._child_graphs[path] = graph
         self._shortestpaths = {}
 
-    def add_transform(self, transform: Transform) -> None:
+    def add_transform(self, transform: AnyTransform) -> None:
         """
         Add a transform to the graph.
         """
@@ -307,6 +338,8 @@ class TransformGraph:
         input_ = TransformGraphNode.from_identifier(transform.input)
         output_ = TransformGraphNode.from_identifier(transform.output)
         self._graph[input_][output_] = transform
+        if transform.has_inverse:
+            self._inverse_graph[output_][input_] = transform.get_inverse()
         self._shortestpaths = {}
 
     def find_shortest_path(
@@ -319,9 +352,9 @@ class TransformGraph:
         Parameters
         ----------
         from_node : TransformGraphNode
-            The coordinate frame class to start from.
+            The coordinate system to start from.
         to_node : TransformGraphNode
-            The coordinate frame class to transform into.
+            The coordinate system to transform into.
 
         Returns
         -------
@@ -339,30 +372,38 @@ class TransformGraph:
             # Means there's no transform necessary to go from it to itself.
             return [to_node]
 
-        # otherwise, need to construct the path:
+        # already have a cached result
         if from_node in self._shortestpaths:
-            # already have a cached result
             return self._shortestpaths[from_node].get(to_node)
 
         # use Dijkstra's algorithm to find shortest path in all other cases
 
+        # First make a version of the internal graph that includes inverse links
+
         # We store nodes as `dict` keys because differently from `list` uniqueness is
         # guaranteed and differently from `set` insertion order is preserved.
-        nodes: dict[TransformGraphNode, TransformGraphNode | None] = {}
+        # The values in this dict are never used and just set to None
+        nodes: dict[TransformGraphNode, None] = {}
         for node, node_graph in self._graph.items():
             nodes[node] = None
-            nodes |= dict.fromkeys(node_graph)
+            nodes.update(dict.fromkeys(node_graph))
 
         if from_node not in nodes or to_node not in nodes:
             # from_node or to_node are isolated or not registered, so there's
             # certainly no way to get from one to the other
             return None
 
-        edge_weights = {}
         # construct another graph that is a dict of dicts of priorities
         # (used as edge weights in Dijkstra's algorithm)
-        for a, graph in self._graph.items():
-            edge_weights[a] = dict.fromkeys(graph, 1.0)
+        edge_weights: dict[TransformGraphNode, dict[TransformGraphNode, float]]
+        edge_weights = defaultdict(dict)
+
+        for node, graph in self._graph.items():
+            for node2 in graph:
+                edge_weights[node][node2] = 1
+        for node, graph in self._inverse_graph.items():
+            for node2 in graph:
+                edge_weights[node][node2] = 1
 
         # count is needed because in py 3.x, tie-breaking fails on the nodes.
         # this way, insertion order is preserved if the weights are the same
@@ -379,9 +420,9 @@ class TransformGraph:
 
         q = [QItem(distance=0, count=-1, node=from_node, path=[])]
         q.extend(
-            QItem(distance=inf, count=i, node=n, path=[])
-            for i, n in enumerate(nodes)
-            if n is not from_node
+            QItem(distance=inf, count=i, node=node, path=[])
+            for i, node in enumerate(nodes)
+            if node is not from_node
         )
 
         # this dict will store the distance to node from from_node and the path
@@ -423,24 +464,47 @@ class TransformGraph:
         self._shortestpaths[from_node] = result
         return result[to_node]
 
-    @property
-    def _path_system_names(self) -> set[str]:
+    def get_transform(
+        self, *, from_sys: TransformGraphNode, to_sys: TransformGraphNode
+    ) -> Transform:
         """
-        Any coordinate systems referred to in the input/output of transforms,
-        but not present in the named coordinate systems list.
-        """
-        systems = set()
-        for sys_in in self._graph:
-            systems.add(sys_in)
-            for sys_out in self._graph[sys_in]:
-                systems.add(sys_out)
+        Compute transform between one system and another.
 
-        # Filter out any systems that point to another path
-        system_names = {
-            sys.name for sys in systems if sys.path is None and sys.name is not None
-        }
-        # Filter out named coordinate systems
-        return system_names - set(self._systems.keys())
+        Parameters
+        ----------
+        from_sys :
+            The coordinate system to transform from.
+        to_sys :
+            The coordinate system to transform into.
+
+        Returns
+        -------
+        transform :
+            Transform between `from_sys` and `to_sys`.
+
+        Raises
+        ------
+        NoPathError
+            If a path can't be found between `from_sys` and `to_sys`.
+        """
+        from ome_zarr_models.v06.coordinate_transforms import (
+            CoordinateSystemIdentifier,
+            Sequence,
+        )
+
+        path = self.find_shortest_path(from_sys, to_sys)
+        if path is None:
+            raise NoPathError(f"No path found between {from_sys} and {to_sys}")
+
+        transforms = []
+        for start_node, end_node in itertools.pairwise(path):
+            transforms.append(self._full_graph[start_node][end_node])
+
+        return Sequence(
+            input=CoordinateSystemIdentifier(name=from_sys.name, path=from_sys.path),
+            output=CoordinateSystemIdentifier(name=to_sys.name, path=to_sys.path),
+            transformations=tuple(transforms),
+        )
 
     def to_graphviz(self) -> graphviz.Digraph:
         """
@@ -455,7 +519,7 @@ class TransformGraph:
         graph_gv = graphviz.Digraph()
         # Add main graph
         with graph_gv.subgraph(name="cluster_") as subgraph_gv:
-            self._add_nodes_edges(self, subgraph_gv, path=None)
+            self._add_nodes_edges(self, subgraph_gv, graph_path=None)
             if len(self._child_graphs) > 0:
                 subgraph_gv.attr(label="Scene", **GRAPHVIZ_ATTRS)
 
@@ -463,50 +527,68 @@ class TransformGraph:
         for child_path in self._child_graphs:
             with graph_gv.subgraph(name=f"cluster_{child_path}") as subgraph_gv:
                 subgraph = self._child_graphs[child_path]
-                self._add_nodes_edges(subgraph, subgraph_gv, path=child_path)
+                self._add_nodes_edges(subgraph, subgraph_gv, graph_path=child_path)
                 subgraph_gv.attr(label=child_path, **GRAPHVIZ_ATTRS)
 
         # Add transforms that go between different subgraphs
         for input_sys in self._graph:
             for output_sys in self._graph[input_sys]:
                 # Don't add internal transforms
-                if (input_sys.path, output_sys.path) == (None, None):
-                    continue
-                if input_sys.name is None or output_sys.name is None:
-                    continue
-                print(input_sys.name, output_sys.name)
-                print(input_sys.path, output_sys.path)
-                print()
-                graph_gv.edge(
-                    self._node_key(input_sys.path, input_sys.name),
-                    self._node_key(output_sys.path, output_sys.name),
-                    label=self._graph[input_sys][output_sys]._short_name,
-                    **GRAPHVIZ_ATTRS,
-                )
+                if self.is_external_path(input_sys.path) or self.is_external_path(
+                    output_sys.path
+                ):
+                    # These transforms can't point to/from arrays, so we know that the
+                    # input/output paths must point to other graphs
+                    graph_gv.edge(
+                        self._node_key(
+                            graph_path=input_sys.path,
+                            system_name=input_sys.name,
+                            array_path=None,
+                        ),
+                        self._node_key(
+                            graph_path=output_sys.path,
+                            system_name=output_sys.name,
+                            array_path=None,
+                        ),
+                        label=self._graph[input_sys][output_sys]._short_name,
+                        **GRAPHVIZ_ATTRS,
+                    )
 
         return graph_gv
 
     @classmethod
     def _add_nodes_edges(
-        cls, graph: TransformGraph, graphviz_graph: graphviz.Digraph, path: str | None
+        cls,
+        graph: TransformGraph,
+        graphviz_graph: graphviz.Digraph,
+        graph_path: str | None,
     ) -> None:
         """
         Add nodes and edges to a graphviz graph.
+
+        Parameters
+        ----------
+        graph_path
+            Local path of this whole transform graph.
         """
         # Add named systems as nodes
         for system_name in graph._systems:
             graphviz_graph.node(
-                cls._node_key(path, system_name),
+                cls._node_key(
+                    graph_path=graph_path, array_path=None, system_name=system_name
+                ),
                 label=system_name,
                 style="filled",
                 fillcolor="#fdbb84",
                 **GRAPHVIZ_ATTRS,
             )
-        # Add path systems as nodes
-        for system_name in graph._path_system_names:
+        # Add arrays as nodes
+        for array_path in graph._array_paths:
             graphviz_graph.node(
-                cls._node_key(path, system_name),
-                label=system_name,
+                cls._node_key(
+                    graph_path=graph_path, array_path=array_path, system_name=None
+                ),
+                label=array_path,
                 style="filled",
                 **GRAPHVIZ_ATTRS,
             )
@@ -514,21 +596,31 @@ class TransformGraph:
         # Add transforms as edges
         for input_sys in graph._graph:
             for output_sys in graph._graph[input_sys]:
-                # Only add transforms internal to this group
-                if (input_sys.path, output_sys.path) != (None, None):
-                    continue
-                if input_sys.name is None or output_sys.name is None:
+                if graph.is_external_path(input_sys.path) or graph.is_external_path(
+                    output_sys.path
+                ):
+                    # Don't add edges to between graphs
                     continue
                 graphviz_graph.edge(
-                    cls._node_key(path, input_sys.name),
-                    cls._node_key(path, output_sys.name),
+                    cls._node_key(
+                        graph_path=graph_path,
+                        array_path=input_sys.path,
+                        system_name=input_sys.name,
+                    ),
+                    cls._node_key(
+                        graph_path=graph_path,
+                        array_path=output_sys.path,
+                        system_name=output_sys.name,
+                    ),
                     label=graph._graph[input_sys][output_sys]._short_name,
                     **GRAPHVIZ_ATTRS,
                 )
 
     @staticmethod
-    def _node_key(path: str | None, system_name: str) -> str:
+    def _node_key(
+        *, graph_path: str | None, array_path: str | None, system_name: str | None
+    ) -> str:
         """
         Unique key for nodes in graphviz graphs.
         """
-        return str(hash((path, system_name)))
+        return str(hash((graph_path, array_path, system_name)))

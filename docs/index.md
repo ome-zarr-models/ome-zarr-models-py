@@ -19,6 +19,8 @@ Each class has
 - easy access to all the OME-Zarr metadata
 - a `.to_zarr()` method to write out metadata to Zarr groups.
 
+Classes for the current in-progress development version are available [here](api/v06/groups.md).
+
 ## Installing
 
 ```sh
