@@ -1,7 +1,6 @@
 # Need to import `annotations` for the pydantic_zarr TypeAlias strings to work
 from __future__ import annotations
 
-import re
 from typing import TYPE_CHECKING, Literal, TypeVar, overload
 
 import zarr
@@ -25,37 +24,30 @@ if TYPE_CHECKING:
 __all__ = [
     "AlphaNumericConstraint",
     "RGBHexConstraint",
+    "WellPathCharsConstraint",
     "check_array_path",
     "unique_items_validator",
     "validate_zarr_node_name",
 ]
 
-AlphaNumericConstraint = StringConstraints(pattern="^[a-zA-Z0-9]*$")
-"""Require a string to only contain letters and numbers"""
+AlphaNumericConstraint = StringConstraints(pattern=r"^[a-zA-Z0-9]*$")
+"""Require a string to only contain letters and numbers."""
 
-
-_WELL_PATH_CHARS = re.compile(r"^[A-Za-z0-9._-]+$")
+WellPathCharsConstraint = StringConstraints(pattern=r"^[A-Za-z0-9._-]+$")
+"""Require a non-empty string of alphanumeric characters and ``.-_``."""
 
 
 def validate_zarr_node_name(value: str) -> str:
     """
-    Validate a well image path per
-    `ngff-spec PR 71 <https://github.com/ome/ngff-spec/pull/71>`_ and the
-    `zarr v3 node naming spec <https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html#node-names>`_.
+    Enforce the structural rules from the
+    `zarr v3 node naming spec <https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html#node-names>`_
+    that cannot be expressed as a regex in pydantic's ``StringConstraints``
+    (which does not allow lookaheads).
 
     Rules:
-    - Must contain only ASCII alphanumeric characters and ``.-_``
-    - Must not be empty
     - Must not be '.' or '..'
     - Must not start with '__'
     """
-    if not value:
-        raise ValueError("Node name must not be empty")
-    if not _WELL_PATH_CHARS.match(value):
-        raise ValueError(
-            f"Invalid node name: {value!r} "
-            "(must contain only alphanumeric characters and '.-_')"
-        )
     if value in (".", ".."):
         raise ValueError(f"Invalid node name: {value!r} (must not be '.' or '..')")
     if value.startswith("__"):

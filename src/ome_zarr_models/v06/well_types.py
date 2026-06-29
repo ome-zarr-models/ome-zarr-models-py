@@ -4,6 +4,7 @@ from pydantic import AfterValidator, Field
 
 from ome_zarr_models.base import BaseAttrs
 from ome_zarr_models.common.validation import (
+    WellPathCharsConstraint,
     unique_items_validator,
     validate_zarr_node_name,
 )
@@ -20,7 +21,9 @@ class WellImage(BaseAttrs):
     ``.-_`` in NGFF 0.6 (see https://github.com/ome/ngff-spec/pull/71).
     """
 
-    path: Annotated[str, AfterValidator(validate_zarr_node_name)]
+    path: Annotated[
+        str, WellPathCharsConstraint, AfterValidator(validate_zarr_node_name)
+    ]
     acquisition: int | None = Field(
         None, description="A unique identifier within the context of the plate"
     )

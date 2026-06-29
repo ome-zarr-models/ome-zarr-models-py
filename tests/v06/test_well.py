@@ -82,7 +82,7 @@ def test_well_image_constraint_fails_double_period() -> None:
 
 
 def test_well_image_constraint_fails_empty() -> None:
-    with pytest.raises(ValueError, match="must not be empty"):
+    with pytest.raises(ValueError, match="String should match pattern"):
         WellMeta(
             images=[
                 WellImage(path="", acquisition=1),
@@ -93,7 +93,7 @@ def test_well_image_constraint_fails_empty() -> None:
 
 @pytest.mark.parametrize("path", ["foo bar", "img:1", "a/b", "im@ge", "🙂"])
 def test_well_image_constraint_fails_disallowed_chars(path: str) -> None:
-    with pytest.raises(ValueError, match="Invalid node name"):
+    with pytest.raises(ValueError, match="String should match pattern"):
         WellMeta(
             images=[
                 WellImage(path=path, acquisition=1),
