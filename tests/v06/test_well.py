@@ -45,7 +45,7 @@ def test_well_image_constraint() -> None:
             WellImage(path="2-1", acquisition=2),
             WellImage(path="3-1", acquisition=2),
         ],
-        version="0.6",
+        version="0.6.dev4",
     )
 
     assert well.get_acquisition_paths() == {1: ["0_1", "1_1"], 2: ["2-1", "3-1"]}
@@ -57,7 +57,7 @@ def test_well_image_constraint_fails_period() -> None:
             images=[
                 WellImage(path=".", acquisition=1),
             ],
-            version="0.6",
+            version="0.6.dev4",
         )
 
 
@@ -67,7 +67,7 @@ def test_well_image_constraint_fails_double_underscore() -> None:
             images=[
                 WellImage(path="__image", acquisition=1),
             ],
-            version="0.6",
+            version="0.6.dev4",
         )
 
 
@@ -77,7 +77,7 @@ def test_well_image_constraint_fails_double_period() -> None:
             images=[
                 WellImage(path="..", acquisition=1),
             ],
-            version="0.6",
+            version="0.6.dev4",
         )
 
 
@@ -87,7 +87,7 @@ def test_well_image_constraint_fails_empty() -> None:
             images=[
                 WellImage(path="", acquisition=1),
             ],
-            version="0.6",
+            version="0.6.dev4",
         )
 
 
@@ -98,5 +98,5 @@ def test_well_image_constraint_fails_disallowed_chars(path: str) -> None:
             images=[
                 WellImage(path=path, acquisition=1),
             ],
-            version="0.6",
+            version="0.6.dev4",
         )
