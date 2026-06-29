@@ -69,3 +69,34 @@ def test_well_image_constraint_fails_double_underscore() -> None:
             ],
             version="0.6",
         )
+
+
+def test_well_image_constraint_fails_double_period() -> None:
+    with pytest.raises(ValueError, match="Invalid node name"):
+        WellMeta(
+            images=[
+                WellImage(path="..", acquisition=1),
+            ],
+            version="0.6",
+        )
+
+
+def test_well_image_constraint_fails_empty() -> None:
+    with pytest.raises(ValueError, match="must not be empty"):
+        WellMeta(
+            images=[
+                WellImage(path="", acquisition=1),
+            ],
+            version="0.6",
+        )
+
+
+@pytest.mark.parametrize("path", ["foo bar", "img:1", "a/b", "im@ge", "🙂"])
+def test_well_image_constraint_fails_disallowed_chars(path: str) -> None:
+    with pytest.raises(ValueError, match="Invalid node name"):
+        WellMeta(
+            images=[
+                WellImage(path=path, acquisition=1),
+            ],
+            version="0.6",
+        )
