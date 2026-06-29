@@ -1,3 +1,4 @@
+import pytest
 from zarr.abc.store import Store
 
 from ome_zarr_models.v04.well import Well, WellAttrs
@@ -45,3 +46,13 @@ def test_get_paths() -> None:
     )
 
     assert well.get_acquisition_paths() == {1: ["0", "1"], 2: ["2", "3"]}
+
+
+def test_well_image_constraint_fails_non_alphanumeric() -> None:
+    with pytest.raises(ValueError, match="String should match pattern"):
+        WellMeta(
+            images=[
+                WellImage(path="0_1", acquisition=1),
+            ],
+            version="0.4",
+        )

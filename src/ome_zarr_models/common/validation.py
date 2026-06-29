@@ -24,12 +24,36 @@ if TYPE_CHECKING:
 __all__ = [
     "AlphaNumericConstraint",
     "RGBHexConstraint",
+    "WellPathCharsConstraint",
     "check_array_path",
     "unique_items_validator",
+    "validate_zarr_node_name",
 ]
 
-AlphaNumericConstraint = StringConstraints(pattern="^[a-zA-Z0-9]*$")
-"""Require a string to only contain letters and numbers"""
+AlphaNumericConstraint = StringConstraints(pattern=r"^[a-zA-Z0-9]*$")
+"""Require a string to only contain letters and numbers."""
+
+WellPathCharsConstraint = StringConstraints(pattern=r"^[A-Za-z0-9._-]+$")
+"""Require a non-empty string of alphanumeric characters and ``.-_``."""
+
+
+def validate_zarr_node_name(value: str) -> str:
+    """
+    Enforce the structural rules from the
+    `zarr v3 node naming spec <https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html#node-names>`_
+    that cannot be expressed as a regex in pydantic's ``StringConstraints``
+    (which does not allow lookaheads).
+
+    Rules:
+    - Must not be '.' or '..'
+    - Must not start with '__'
+    """
+    if value in (".", ".."):
+        raise ValueError(f"Invalid node name: {value!r} (must not be '.' or '..')")
+    if value.startswith("__"):
+        raise ValueError(f"Invalid node name: {value!r} (must not start with '__')")
+    return value
+
 
 RGBHexConstraint = StringConstraints(pattern=r"[0-9a-fA-F]{6}")
 """Require a string to be a valid RGB hex string"""

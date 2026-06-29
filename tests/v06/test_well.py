@@ -1,3 +1,4 @@
+import pytest
 from zarr.abc.store import Store
 
 from ome_zarr_models.v06.well import Well, WellAttrs
@@ -34,3 +35,68 @@ def test_get_paths() -> None:
     )
 
     assert well.get_acquisition_paths() == {1: ["0", "1"], 2: ["2", "3"]}
+
+
+def test_well_image_constraint() -> None:
+    well = WellMeta(
+        images=[
+            WellImage(path="0_1", acquisition=1),
+            WellImage(path="1_1", acquisition=1),
+            WellImage(path="2-1", acquisition=2),
+            WellImage(path="3-1", acquisition=2),
+        ],
+        version="0.6.dev4",
+    )
+
+    assert well.get_acquisition_paths() == {1: ["0_1", "1_1"], 2: ["2-1", "3-1"]}
+
+
+def test_well_image_constraint_fails_period() -> None:
+    with pytest.raises(ValueError, match="Invalid node name"):
+        WellMeta(
+            images=[
+                WellImage(path=".", acquisition=1),
+            ],
+            version="0.6.dev4",
+        )
+
+
+def test_well_image_constraint_fails_double_underscore() -> None:
+    with pytest.raises(ValueError, match="Invalid node name"):
+        WellMeta(
+            images=[
+                WellImage(path="__image", acquisition=1),
+            ],
+            version="0.6.dev4",
+        )
+
+
+def test_well_image_constraint_fails_double_period() -> None:
+    with pytest.raises(ValueError, match="Invalid node name"):
+        WellMeta(
+            images=[
+                WellImage(path="..", acquisition=1),
+            ],
+            version="0.6.dev4",
+        )
+
+
+def test_well_image_constraint_fails_empty() -> None:
+    with pytest.raises(ValueError, match="String should match pattern"):
+        WellMeta(
+            images=[
+                WellImage(path="", acquisition=1),
+            ],
+            version="0.6.dev4",
+        )
+
+
+@pytest.mark.parametrize("path", ["foo bar", "img:1", "a/b", "im@ge", "🙂"])
+def test_well_image_constraint_fails_disallowed_chars(path: str) -> None:
+    with pytest.raises(ValueError, match="String should match pattern"):
+        WellMeta(
+            images=[
+                WellImage(path=path, acquisition=1),
+            ],
+            version="0.6.dev4",
+        )
