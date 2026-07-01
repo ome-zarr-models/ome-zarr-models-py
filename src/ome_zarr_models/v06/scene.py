@@ -6,7 +6,7 @@ import zarr
 from pydantic import BaseModel, Field
 from pydantic_zarr.v3 import GroupSpec
 
-from ome_zarr_models._utils import TransformGraph, _from_zarr_v3
+from ome_zarr_models._utils import _from_zarr_v3
 from ome_zarr_models.v06.base import BaseGroupv06, BaseOMEAttrs, BaseZarrAttrs
 from ome_zarr_models.v06.coordinate_transforms import (
     AnyTransform,
@@ -132,23 +132,3 @@ class Scene(BaseGroupv06[BaseSceneAttrs]):
                 attributes=member.attributes, members=member.members
             )
         return images
-
-    def transform_graph(self) -> TransformGraph:
-        """
-        Create a coordinate transformation graph for this image.
-        """
-        graph = TransformGraph()
-
-        # Coordinate systems
-        if self.ome_attributes.scene.coordinateSystems is not None:
-            for system in self.ome_attributes.scene.coordinateSystems:
-                graph.add_system(system)
-        # Coordinate transforms
-        for transform in self.ome_attributes.scene.coordinateTransformations:
-            graph.add_transform(transform)
-
-        images = self.images
-        for image_path in self.images:
-            graph.add_subgraph(image_path, images[image_path].transform_graph())
-
-        return graph
