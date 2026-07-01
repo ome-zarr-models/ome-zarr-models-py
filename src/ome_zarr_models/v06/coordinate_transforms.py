@@ -789,45 +789,6 @@ class ByDimension(Transform):
         #  implement this
         raise NoAffineError
 
-
-class ProjectAxisOperation(BaseAttrs):
-    """
-    A single insert or remove operation for projectAxis transformation.
-
-    Notes
-    -----
-    Either `insert` or `remove` must be specified, but not both.
-    """
-
-    insert: tuple[int, ...] | None = Field(
-        default=None,
-        description="Positions at which to insert new dimensions (zero-valued).",
-    )
-    remove: tuple[int, ...] | None = Field(
-        default=None,
-        description="Positions of dimensions to remove.",
-    )
-
-    @model_validator(mode="after")
-    def _exactly_one_operation(self) -> Self:
-        """Ensure exactly one of insert or remove is specified."""
-        if (self.insert is None) and (self.remove is None):
-            msg = "Exactly one of 'insert' or 'remove' must be specified."
-            raise ValueError(msg)
-        return self
-
-    @field_validator("remove", mode="after")
-    @classmethod
-    def _ensure_unique_remove_indices(
-        cls, remove: tuple[int, ...] | None
-    ) -> tuple[int, ...] | None:
-        """Ensure remove indices are unique."""
-        if remove is not None and len(remove) != len(set(remove)):
-            msg = "Remove positions must be unique."
-            raise ValueError(msg)
-        return remove
-
-
 class ProjectAxis(Transform):
     """
     ProjectAxis transformation projects coordinates between different dimensionalities.
@@ -837,10 +798,15 @@ class ProjectAxis(Transform):
     """
 
     type: Literal["projectAxis"] = "projectAxis"
-    projectAxis: tuple[ProjectAxisOperation, ...] = Field(
+    createdOutputs: tuple[int, ...] = Field(
         ...,
         min_length=1,
-        description="Array of insert/remove operations to apply to coordinate vector.",
+        description="Array of positions at which to insert new dimensions (zero-valued).",
+    )
+    droppedInputs: tuple[int, ...] = Field(
+        ...,
+        min_length=1,
+        description="Array of positions at which to drop dimensions.",
     )
 
     @property
