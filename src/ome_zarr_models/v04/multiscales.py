@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import warnings
 from collections import Counter
-from typing import TYPE_CHECKING, Any, Literal, Self
+from typing import TYPE_CHECKING, Any, Literal, Self, overload
 
 from pydantic import (
     BaseModel,
@@ -37,6 +37,7 @@ if TYPE_CHECKING:
 
     from ome_zarr_models.v05.multiscales import Dataset as DatasetV05
     from ome_zarr_models.v05.multiscales import Multiscale as MultiscaleV05
+    from ome_zarr_models.v06.multiscales import Multiscale as MultiscaleV06
 
 
 __all__ = ["Dataset", "Multiscale"]
@@ -58,15 +59,41 @@ class Multiscale(BaseAttrs):
     type: JsonValue = None
     version: Literal["0.4"] | None = None
 
+    @overload
     def to_version(self, version: Literal["0.5"]) -> MultiscaleV05:
+        pass
+
+    @overload
+    def to_version(
+        self,
+        version: Literal["0.6"],
+        *,
+        default_coordinate_system: str = "physical",
+        output_coordinate_system: str = "output",
+    ) -> MultiscaleV06:
+        pass
+
+    def to_version(
+        self,
+        version: Literal["0.5", "0.6"],
+        *,
+        default_coordinate_system: str = "physical",
+        output_coordinate_system: str = "output",
+    ) -> MultiscaleV05 | MultiscaleV06:
         """
         Convert this Multiscale metadata to the specified version.
 
         Currently supports conversions:
         - from 0.4 to 0.5
+        - from 0.4 to 0.6
         """
         if version == "0.5":
             return self._to_v05()
+        elif version == "0.6":
+            return self._to_v05()._to_v06(
+                default_cs_name=default_coordinate_system,
+                output_cs_name=output_coordinate_system,
+            )
         else:
             raise ValueError(f"Unsupported version conversion: 0.4 -> {version}")
 

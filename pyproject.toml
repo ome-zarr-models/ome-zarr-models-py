@@ -3,7 +3,7 @@ name = "ome-zarr-models"
 dynamic = ["version"]
 description = "A minimal Python package for reading OME-Zarr (meta)data "
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     "numpy",
     "pydantic >= 2.11.5, <2.13",
@@ -14,7 +14,7 @@ dependencies = [
 maintainers = [{ name = "David Stansby" }]
 license = { file = "LICENSE" }
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
     "Programming Language :: Python",
@@ -49,12 +49,27 @@ source = "vcs"
 requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
+[tool.hatch.build.targets.sdist]
+exclude = [
+    ".gitmodules",
+    "codecov.yml",
+    "mkdocs.yml",
+    ".pre-commit-config.yaml",
+    ".readthedocs.yml",
+    ".cache/*",
+    ".github/*",
+    ".vscode/*",
+    "tests/*",
+    "scripts/*"
+]
+
 [dependency-groups]
 docs = ["ome-zarr-models[docs]"]
 dev = [
     "mypy==1.18.2",
     "ruff==0.13.2",
     "pre-commit==4.3.0",
+    "build==1.5.0",
 ]
 test = [
     "pytest==8.4.2",
