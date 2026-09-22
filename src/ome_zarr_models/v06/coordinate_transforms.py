@@ -444,10 +444,11 @@ class Affine(Transform):
         return [row[-1] for row in self.affine_matrix]
 
     def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
-        if len(point) != len(self.affine_matrix):
+        in_ndim = len(self.affine_matrix[0]) - 1
+        if len(point) != in_ndim:
             raise ValueError(
                 f"Dimensionality of point ({len(point)}) does not match "
-                f"dimensionality of transform ({len(self.affine_matrix)})"
+                f"dimensionality of transform ({in_ndim})"
             )
         return tuple(np.dot(self._matrix, point) + self._translation)
 

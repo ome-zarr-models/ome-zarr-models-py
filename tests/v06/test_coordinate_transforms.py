@@ -261,7 +261,8 @@ def test_invalid_affine() -> None:
 
 
 def test_affine_dimension_mismatch() -> None:
-    t = Affine(affine=((1, 0), (0, 1)))
+    # in 2, out 2
+    t = Affine(affine=((1, 0, 0), (0, 1, 0)))
     with pytest.raises(
         ValueError,
         match=re.escape(
@@ -269,6 +270,12 @@ def test_affine_dimension_mismatch() -> None:
         ),
     ):
         t.transform_point((1,))
+
+
+def test_affine_dimension_mismatch_rectangle() -> None:
+    # in 2, out 3
+    t = Affine(affine=((1, 0, 0), (0, 1, 0), (0, 0, 0)))
+    t.transform_point((1, 1))
 
 
 def test_validate_mapaxis() -> None:
