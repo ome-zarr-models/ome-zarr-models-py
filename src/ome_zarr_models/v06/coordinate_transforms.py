@@ -578,7 +578,7 @@ class Sequence(Transform):
             input=self.output,
             output=self.input,
             name=self._inverse_name,
-            transformations=(t.get_inverse() for t in self.transformations[::-1]),
+            transformations=tuple(t.get_inverse() for t in self.transformations[::-1]),
         )
 
     def transform_point(self, point: typing.Sequence[float]) -> tuple[float, ...]:
