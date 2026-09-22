@@ -732,7 +732,7 @@ class ByDimensionTransform(BaseAttrs):
     A transformation item within a byDimension coordinate transformation.
 
     As well as the actual transform, this specifies which
-    axes it operates on via the input_axes and output_axes fields.
+    axes it operates on via the inputAxes and outputAxes fields.
     """
 
     transformation: AnyTransform = Field(
