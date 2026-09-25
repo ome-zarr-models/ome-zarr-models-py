@@ -1,5 +1,5 @@
 import typing
-from typing import Self
+from typing import Self, Literal
 
 # Import needed for pydantic type resolution
 import pydantic_zarr  # noqa: F401
@@ -13,13 +13,15 @@ from ome_zarr_models.v06.coordinate_transforms import (
     AnyTransform,
     CoordinateSystem,
 )
+
+from ome_zarr_models.common.omero import Omero
 from ome_zarr_models.v06.labels import Labels
 from ome_zarr_models.v06.multiscales import Dataset, Multiscale
 
 __all__ = ["Image", "ImageAttrs"]
 
 
-class ImageAttrs(BaseOMEAttrs):
+class ImageAttrs:
     """
     Metadata for OME-Zarr image groups.
     """
@@ -28,6 +30,13 @@ class ImageAttrs(BaseOMEAttrs):
         ...,
         description="The multiscale datasets for this image",
         min_length=1,
+    )
+    version: Literal["0.6"] = Field(
+        description="The OME-Zarr specification version for this image",
+    )
+    omero: Omero = Field(
+        ...,
+        description="The OMERO metadata for this image",
     )
 
     def get_array_paths(self) -> list[str]:
