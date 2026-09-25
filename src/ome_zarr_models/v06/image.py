@@ -50,7 +50,7 @@ class ImageAttrs:
         return {"labels": Labels}
 
 
-class Image(BaseGroupv06[ImageAttrs]):
+class Image(ImageAttrs):
     """
     An OME-Zarr image dataset.
     """
