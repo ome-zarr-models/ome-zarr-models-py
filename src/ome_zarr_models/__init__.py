@@ -23,8 +23,11 @@ import ome_zarr_models.v06.scene
 import ome_zarr_models.v06.well
 from ome_zarr_models.base import BaseGroup
 from ome_zarr_models.v04.base import BaseGroupv04
+from ome_zarr_models.v04.ome import OMEAttributesv04
 from ome_zarr_models.v05.base import BaseGroupv05
+from ome_zarr_models.v05.ome import OMEAttributesv05
 from ome_zarr_models.v06.base import BaseGroupv06
+from ome_zarr_models.v06.ome import OMEAttributesv06
 
 try:
     __version__ = version("ome_zarr_models")
@@ -186,3 +189,39 @@ def open_ome_zarr(
             )
         )
     return grp
+
+
+# Type alias for all OME attribute versions
+OMEAttributes = OMEAttributesv04 | OMEAttributesv05 | OMEAttributesv06
+
+
+def validate_ome_attributes(ome_metadata: dict[str, Any]) -> OMEAttributes:
+    """Validates OME-Zarr JSON files.
+
+    Parameters
+    ----------
+    ome_metadata: dict[str, Any]
+        The ome JSON object to validate.
+        This is the object in the ome key.
+    """
+    # Get the version
+    version = ome_metadata.get("version")
+    if (version is None) or (version == "0.4"):
+        # v0.4 doesn't require the version field
+        return OMEAttributesv04.model_validate(ome_metadata)
+    elif version == "0.5":
+        return OMEAttributesv05.model_validate(ome_metadata)
+    elif version == "0.6":
+        return OMEAttributesv06.model_validate(ome_metadata)
+    else:
+        raise ValueError(f"Unsupported version '{version}'")
+
+
+def validate_ome_zarr_json(ome_zarr_json: dict[str, Any]) -> OMEAttributes:
+    """Validates OME-Zarr zarr.json documents."""
+    if "ome" in ome_zarr_json:
+        ome_attributes = ome_zarr_json["ome"]
+    else:
+        ome_attributes = ome_zarr_json
+
+    return validate_ome_attributes(ome_attributes)

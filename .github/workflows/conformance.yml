@@ -1,0 +1,60 @@
+name: OME-Zarr conformance
+
+# Run the oztest conformance testing suite
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  parse-attributes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Install uv and Python 3.12
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6.8.0
+        with:
+          python-version: "3.12"
+          # Put the venv's python first on PATH, so the dingus shebang finds it
+          activate-environment: true
+
+      - name: Install ome-zarr-models
+        run: uv pip install .
+
+      # Install oztest and make sure it is added to the path
+      - name: Install oztest
+        run: |
+          uv tool install git+https://github.com/German-BioImaging/oztest@main
+          echo "$(uv tool dir --bin)" >> "$GITHUB_PATH"
+
+      - name: Run oztest parse_attributes
+        run: |
+          chmod +x ./conformance/parse_attributes_dingus.py
+          oztest run parse_attributes \
+            --include-profile core \
+            --format json \
+            --out-file oztest-parse_attributes.json \
+            ./conformance/parse_attributes_dingus.py
+
+      # Write a summary of the results. These are viewable
+      # under the "Summary" tab of the job in GitHub Actions.
+      - name: Write job summary
+        run: >-
+          python conformance/summarize_results.py oztest-parse_attributes.json
+          >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload results
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: oztest-parse_attributes
+          path: oztest-parse_attributes.json
