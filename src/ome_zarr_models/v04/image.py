@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Self
 from pydantic import Field, JsonValue, model_validator
 from pydantic_zarr.v2 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
+import ome_zarr_models._pydantic_zarr_compat as pzc
 from ome_zarr_models._utils import _from_zarr_v2
 from ome_zarr_models.base import BaseAttrsv2
 from ome_zarr_models.common.coordinate_transformations import _build_transforms
@@ -52,7 +53,7 @@ class Image(BaseGroupv04[ImageAttrs]):
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
+    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override, unused-ignore]
         """
         Create an OME-Zarr image model from a `zarr.Group`.
 
@@ -182,7 +183,7 @@ class Image(BaseGroupv04[ImageAttrs]):
                     maybe_arr: AnyArraySpec | AnyGroupSpec = flat_self[
                         "/" + dataset.path.lstrip("/")
                     ]
-                    if isinstance(maybe_arr, GroupSpec):
+                    if pzc.is_group_spec(maybe_arr):
                         msg = f"The node at {dataset.path} is a group, not an array."
                         raise ValueError(msg)
                     arr_ndim = len(maybe_arr.shape)
@@ -216,7 +217,7 @@ class Image(BaseGroupv04[ImageAttrs]):
         RuntimeError
             If the node at "labels" is not a group.
         """
-        if self.members is None or "labels" not in self.members:
+        if self.members is None or "labels" not in self.members:  # type: ignore[redundant-expr, unused-ignore]
             return None
 
         labels_group = self.members["labels"]

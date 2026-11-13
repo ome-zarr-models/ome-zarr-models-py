@@ -30,7 +30,7 @@ class Labels(BaseGroupv04[LabelsAttrs]):
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
+    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override, unused-ignore]
         """
         Create an OME-Zarr labels model from a `zarr.Group`.
 

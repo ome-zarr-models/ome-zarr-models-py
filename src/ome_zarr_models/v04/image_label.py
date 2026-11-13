@@ -30,7 +30,7 @@ class ImageLabel(BaseGroupv04[ImageLabelAttrs]):
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
+    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override, unused-ignore]
         """
         Create an instance of an OME-Zarr image from a `zarr.Group`.
 

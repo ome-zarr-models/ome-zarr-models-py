@@ -13,6 +13,7 @@ import pydantic_zarr.v2
 import pydantic_zarr.v3
 from pydantic import create_model
 
+import ome_zarr_models._pydantic_zarr_compat as pzc
 from ome_zarr_models.base import BaseAttrsv2, BaseAttrsv3
 from ome_zarr_models.common.validation import (
     check_array_path,
@@ -56,8 +57,7 @@ def _from_zarr_v2(
         Attributes class.
     """
     # on unlistable storage backends, the members of this group will be {}
-    group_spec_in: pydantic_zarr.v2.AnyGroupSpec
-    group_spec_in = pydantic_zarr.v2.GroupSpec.from_zarr(group, depth=0)
+    group_spec_in = pzc.read_group_shallow_v2(group)
     attributes = attrs_cls.model_validate(group_spec_in.attributes)
 
     members_tree_flat: dict[
@@ -81,7 +81,7 @@ def _from_zarr_v2(
     required_groups = attrs_cls.get_group_paths(attributes)
     for group_path in required_groups:
         check_group_path(group, group_path, expected_zarr_version=2)
-        group_flat = required_groups[group_path].from_zarr(group[group_path]).to_flat()  # type: ignore[arg-type]
+        group_flat = required_groups[group_path].from_zarr(group[group_path]).to_flat()  # type: ignore[arg-type, unused-ignore]
         for path in group_flat:
             members_tree_flat["/" + group_path + path] = group_flat[path]
 
@@ -92,7 +92,7 @@ def _from_zarr_v2(
             check_group_path(group, group_path, expected_zarr_version=2)
         except FileNotFoundError:
             continue
-        group_flat = optional_groups[group_path].from_zarr(group[group_path]).to_flat()  # type: ignore[arg-type]
+        group_flat = optional_groups[group_path].from_zarr(group[group_path]).to_flat()  # type: ignore[arg-type, unused-ignore]
         for path in group_flat:
             members_tree_flat["/" + group_path + path] = group_flat[path]
 
@@ -128,8 +128,7 @@ def _from_zarr_v3(
         Attributes class.
     """
     # on unlistable storage backends, the members of this group will be {}
-    group_spec_in: pydantic_zarr.v3.AnyGroupSpec
-    group_spec_in = pydantic_zarr.v3.GroupSpec.from_zarr(group, depth=0)
+    group_spec_in = pzc.read_group_shallow_v3(group)
     attrs_dict = group.attrs.asdict()
     if "ome" not in attrs_dict:
         raise ValueError("Zarr group attributes does not contain an 'ome' key")
@@ -156,7 +155,7 @@ def _from_zarr_v3(
     required_groups = attrs_cls.get_group_paths(ome_attributes)
     for group_path in required_groups:
         check_group_path(group, group_path, expected_zarr_version=3)
-        group_flat = required_groups[group_path].from_zarr(group[group_path]).to_flat()  # type: ignore[arg-type]
+        group_flat = required_groups[group_path].from_zarr(group[group_path]).to_flat()  # type: ignore[arg-type, unused-ignore]
         for path in group_flat:
             members_tree_flat["/" + group_path + path] = group_flat[path]
 
@@ -167,7 +166,7 @@ def _from_zarr_v3(
             check_group_path(group, group_path, expected_zarr_version=3)
         except FileNotFoundError:
             continue
-        group_flat = optional_groups[group_path].from_zarr(group[group_path]).to_flat()  # type: ignore[arg-type]
+        group_flat = optional_groups[group_path].from_zarr(group[group_path]).to_flat()  # type: ignore[arg-type, unused-ignore]
         for path in group_flat:
             members_tree_flat["/" + group_path + path] = group_flat[path]
 

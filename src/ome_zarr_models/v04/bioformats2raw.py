@@ -4,6 +4,7 @@ import pydantic_zarr.v2
 import zarr
 from pydantic import Field, JsonValue
 
+import ome_zarr_models._pydantic_zarr_compat as pzc
 from ome_zarr_models._utils import check_group_path  # type: ignore[attr-defined]
 from ome_zarr_models.base import BaseAttrsv2
 from ome_zarr_models.v04.base import BaseGroupv04
@@ -45,7 +46,7 @@ class BioFormats2Raw(BaseGroupv04[BioFormats2RawAttrs]):
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
+    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override, unused-ignore]
         """
         Create an OME-Zarr BioFormats2Raw model from a `zarr.Group`.
 
@@ -55,8 +56,7 @@ class BioFormats2Raw(BaseGroupv04[BioFormats2RawAttrs]):
             A Zarr group that has valid OME-Zarr bioformats2raw metadata.
         """
         # on unlistable storage backends, the members of this group will be {}
-        group_spec_in: pydantic_zarr.v2.AnyGroupSpec
-        group_spec_in = pydantic_zarr.v2.GroupSpec.from_zarr(group, depth=0)
+        group_spec_in = pzc.read_group_shallow_v2(group)
         attributes = BioFormats2RawAttrs.model_validate(group_spec_in.attributes)
 
         members_tree_flat: dict[
@@ -111,6 +111,6 @@ class BioFormats2Raw(BaseGroupv04[BioFormats2RawAttrs]):
             Mapping from image path to Image object.
         """
         return {
-            path: Image.model_validate(self.members[path].model_dump())  # type: ignore[index]
+            path: Image.model_validate(self.members[path].model_dump())  # type: ignore[index, unused-ignore]
             for path in self.image_paths
         }

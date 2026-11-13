@@ -32,7 +32,7 @@ class BaseSceneAttrs(BaseOMEAttrs):
 
     scene: SceneAttrs
 
-    def get_group_paths(self) -> dict[str, type[Image]]:  # type: ignore[override]
+    def get_group_paths(self) -> dict[str, type[Image]]:  # type: ignore[override, unused-ignore]
         paths = {}
         for transform in self.scene.coordinateTransformations:
             for coordinate_system in (transform.input, transform.output):
@@ -53,7 +53,7 @@ class Scene(BaseGroupv06[BaseSceneAttrs]):
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
+    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override, unused-ignore]
         """
         Create an OME-Zarr scene from a `zarr.Group`.
 
@@ -118,7 +118,7 @@ class Scene(BaseGroupv06[BaseSceneAttrs]):
         Mapping from path to image.
         """
         if self.members is None:
-            return {}
+            return {}  # type: ignore[unreachable, unused-ignore]
 
         images = {}
         for member_name, member in self.members.items():

@@ -26,7 +26,7 @@ class HCSAttrs(BaseOMEAttrs):
 
     plate: Plate
 
-    def get_optional_group_paths(self) -> dict[str, type[Well]]:  # type: ignore[override]
+    def get_optional_group_paths(self) -> dict[str, type[Well]]:  # type: ignore[override, unused-ignore]
         return {well.path: Well for well in self.plate.wells}
 
 
@@ -36,7 +36,7 @@ class HCS(BaseGroupv06[HCSAttrs]):
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
+    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override, unused-ignore]
         """
         Create an OME-Zarr image model from a `zarr.Group`.
 
@@ -136,7 +136,7 @@ class HCS(BaseGroupv06[HCSAttrs]):
             )
         if (
             not isinstance(row_group := self.members[row], GroupSpec)
-            or not isinstance(row_group.members, Mapping)
+            or not isinstance(row_group.members, Mapping)  # type: ignore[redundant-expr, unused-ignore]
             or col not in row_group.members
         ):
             raise WellGroupNotFoundError(

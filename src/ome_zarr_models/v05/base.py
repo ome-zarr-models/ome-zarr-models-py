@@ -6,6 +6,7 @@ import pydantic_zarr
 import pydantic_zarr.v3
 from pydantic import BaseModel
 
+import ome_zarr_models._pydantic_zarr_compat as pzc
 from ome_zarr_models.base import BaseAttrsv3, BaseGroup
 
 if TYPE_CHECKING:
@@ -35,7 +36,7 @@ class BaseGroupv05(
     BaseGroup,
     pydantic_zarr.v3.GroupSpec[
         BaseZarrAttrs[T],
-        Union["pydantic_zarr.v3.GroupSpec", "pydantic_zarr.v3.ArraySpec"],  # type: ignore[type-arg]
+        Union["pydantic_zarr.v3.GroupSpec", "pydantic_zarr.v3.ArraySpec"],  # type: ignore[type-arg, unused-ignore]
     ],
     Generic[T],
 ):
@@ -44,7 +45,7 @@ class BaseGroupv05(
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
+    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override, unused-ignore]
         """
         Create an OME-Zarr model from a `zarr.Group`.
 
@@ -53,7 +54,7 @@ class BaseGroupv05(
         group : zarr.Group
             A Zarr group that has valid OME-Zarr image metadata.
         """
-        return super().from_zarr(group)
+        return pzc.read_group_v3(cls, group)
 
     @property
     def ome_zarr_version(self) -> Literal["0.5"]:

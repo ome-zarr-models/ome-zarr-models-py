@@ -7,8 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "numpy",
     "pydantic >= 2.11.5",
-    "pydantic-zarr >= 0.8.2",
-    "pydantic-zarr >= 0.10.0; python_version >= '3.14'",
+    "pydantic-zarr >= 0.10.0",
     "zarr>= 3.1.1",
 ]
 maintainers = [{ name = "David Stansby" }]
@@ -145,7 +144,13 @@ addopts = [
     "--cov-report=xml",
     "-vv",
 ]
-filterwarnings = ["error"]
+filterwarnings = [
+    "error",
+    # pydantic-zarr >= 0.11 deprecates GroupSpec.to_zarr, which ome-zarr-models
+    # groups inherit as their public writing API. Remove once this package
+    # provides its own to_zarr.
+    "ignore:`GroupSpec.to_zarr` is deprecated:DeprecationWarning",
+]
 
 [tool.typos.default.extend-words]
 ome = "ome"

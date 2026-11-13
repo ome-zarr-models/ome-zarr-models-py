@@ -46,7 +46,7 @@ def _check_valid_dtypes(labels: "Labels") -> "Labels":
     for label_path in labels.attributes.ome.labels:
         if label_path not in labels.members:
             raise ValueError(f"Label path '{label_path}' not found in zarr group")
-        label_spec = check_group_spec(labels, label_path)  # type: ignore[arg-type]
+        label_spec = check_group_spec(labels, label_path)  # type: ignore[arg-type, unused-ignore]
         try:
             image_spec = ImageLabel(
                 attributes=label_spec.attributes, members=label_spec.members
@@ -59,7 +59,7 @@ def _check_valid_dtypes(labels: "Labels") -> "Labels":
 
         for multiscale in image_spec.attributes.ome.multiscales:
             for dataset in multiscale.datasets:
-                arr_spec = check_array_spec(image_spec, dataset.path)  # type: ignore[arg-type]
+                arr_spec = check_array_spec(image_spec, dataset.path)  # type: ignore[arg-type, unused-ignore]
                 if (
                     not isinstance(arr_spec.data_type, str)
                     or np.dtype(arr_spec.data_type) not in VALID_DTYPES
@@ -93,7 +93,7 @@ class Labels(
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
+    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override, unused-ignore]
         """
         Create an OME-Zarr labels model from a `zarr.Group`.
 

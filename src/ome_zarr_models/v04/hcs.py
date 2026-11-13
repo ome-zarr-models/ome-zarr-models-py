@@ -32,7 +32,7 @@ class HCS(BaseGroupv04[HCSAttrs]):
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
+    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override, unused-ignore]
         """
         Create an OME-Zarr image model from a `zarr.Group`.
 
@@ -132,7 +132,7 @@ class HCS(BaseGroupv04[HCSAttrs]):
             )
         if (
             not isinstance(row_group := self.members[row], GroupSpec)
-            or not isinstance(row_group.members, Mapping)
+            or not isinstance(row_group.members, Mapping)  # type: ignore[redundant-expr, unused-ignore]
             or col not in row_group.members
         ):
             raise WellGroupNotFoundError(

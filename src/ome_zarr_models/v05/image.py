@@ -8,6 +8,7 @@ import zarr.errors
 from pydantic import Field, JsonValue, model_validator
 from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
 
+import ome_zarr_models._pydantic_zarr_compat as pzc
 from ome_zarr_models._utils import _from_zarr_v3
 from ome_zarr_models.common.coordinate_transformations import _build_transforms
 from ome_zarr_models.v05.axes import Axis
@@ -39,7 +40,7 @@ class ImageAttrs(BaseOMEAttrs):
                 paths.append(dataset.path)
         return paths
 
-    def get_optional_group_paths(self) -> dict[str, type[Labels]]:  # type: ignore[override]
+    def get_optional_group_paths(self) -> dict[str, type[Labels]]:  # type: ignore[override, unused-ignore]
         return {"labels": Labels}
 
     def to_version(
@@ -109,7 +110,7 @@ class Image(BaseGroupv05[ImageAttrs]):
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
+    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override, unused-ignore]
         """
         Create an OME-Zarr image model from a `zarr.Group`.
 
@@ -253,7 +254,7 @@ class Image(BaseGroupv05[ImageAttrs]):
                     )
                     raise ValueError(msg) from e
 
-                if isinstance(maybe_arr, GroupSpec):
+                if pzc.is_group_spec(maybe_arr):
                     msg = f"The node at {dataset.path} is a group, not an array."
                     raise ValueError(msg)
 
@@ -330,7 +331,7 @@ class Image(BaseGroupv05[ImageAttrs]):
 
         Returns None if no labels are present.
         """
-        if self.members is None or "labels" not in self.members:
+        if self.members is None or "labels" not in self.members:  # type: ignore[redundant-expr, unused-ignore]
             return None
 
         labels_group = self.members["labels"]

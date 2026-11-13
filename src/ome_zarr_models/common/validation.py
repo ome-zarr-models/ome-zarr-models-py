@@ -6,19 +6,27 @@ from typing import TYPE_CHECKING, Literal, TypeVar, overload
 import zarr
 import zarr.errors
 from pydantic import StringConstraints
-from pydantic_zarr.v2 import AnyArraySpec as AnyArraySpecv2
-from pydantic_zarr.v2 import AnyGroupSpec as AnyGroupSpecv2
 from pydantic_zarr.v2 import ArraySpec as ArraySpecv2
 from pydantic_zarr.v2 import GroupSpec as GroupSpecv2
-from pydantic_zarr.v3 import AnyArraySpec as AnyArraySpecv3
-from pydantic_zarr.v3 import AnyGroupSpec as AnyGroupSpecv3
 from pydantic_zarr.v3 import ArraySpec as ArraySpecv3
 from pydantic_zarr.v3 import GroupSpec as GroupSpecv3
 
+import ome_zarr_models._pydantic_zarr_compat as pzc
 from ome_zarr_models.common.coordinate_transformations import VectorScale
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+    from typing import Any
+
+    from pydantic_zarr.v2 import BaseGroupSpec as BaseGroupSpecv2
+    from pydantic_zarr.v3 import BaseGroupSpec as BaseGroupSpecv3
+
+    # Spelled out rather than imported: from pydantic-zarr 0.11, mypy resolves
+    # pydantic-zarr's own AnyArraySpec / AnyGroupSpec aliases to Any.
+    type AnyArraySpecv2 = ArraySpecv2[Any]
+    type AnyArraySpecv3 = ArraySpecv3[Any]
+    type AnyGroupSpecv2 = GroupSpecv2[Any, Any]
+    type AnyGroupSpecv3 = GroupSpecv3[Any, Any]
 
 
 __all__ = [
@@ -136,11 +144,11 @@ def check_array_path(
     if array.metadata.zarr_format == 2:
         if expected_zarr_version == 3:
             raise ValueError("Expected Zarr v3 array, but got v2 array")
-        array_spec = ArraySpecv2.from_zarr(array)
+        array_spec = pzc.read_array_v2(array)
     else:
         if expected_zarr_version == 2:
             raise ValueError("Expected Zarr v2 array, but got v3 array")
-        array_spec = ArraySpecv3.from_zarr(array)
+        array_spec = pzc.read_array_v3(array)
 
     return array_spec
 
@@ -151,7 +159,7 @@ def check_group_path(
     group_path: str,
     *,
     expected_zarr_version: Literal[2],
-) -> AnyGroupSpecv2: ...
+) -> BaseGroupSpecv2[Any]: ...
 
 
 @overload
@@ -160,7 +168,7 @@ def check_group_path(
     group_path: str,
     *,
     expected_zarr_version: Literal[3],
-) -> AnyGroupSpecv3: ...
+) -> BaseGroupSpecv3[Any]: ...
 
 
 def check_group_path(
@@ -168,7 +176,7 @@ def check_group_path(
     group_path: str,
     *,
     expected_zarr_version: Literal[2, 3],
-) -> AnyGroupSpecv2 | AnyGroupSpecv3:
+) -> BaseGroupSpecv2[Any] | BaseGroupSpecv3[Any]:
     """
     Check if a group exists at a given path in a group.
 
@@ -201,15 +209,15 @@ def check_group_path(
         )
         raise zarr.errors.ContainsArrayError(msg) from e
 
-    group_spec: AnyGroupSpecv2 | AnyGroupSpecv3
+    group_spec: BaseGroupSpecv2[Any] | BaseGroupSpecv3[Any]
     if group.metadata.zarr_format == 2:
         if expected_zarr_version == 3:
             raise ValueError("Expected Zarr v3 array, but got v2 array")
-        group_spec = GroupSpecv2.from_zarr(group, depth=0)
+        group_spec = pzc.read_group_shallow_v2(group)
     else:
         if expected_zarr_version == 2:
             raise ValueError("Expected Zarr v2 array, but got v3 array")
-        group_spec = GroupSpecv3.from_zarr(group, depth=0)
+        group_spec = pzc.read_group_shallow_v3(group)
 
     return group_spec
 

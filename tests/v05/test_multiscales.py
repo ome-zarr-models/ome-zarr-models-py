@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pytest
-import zarr
 from pydantic import ValidationError
 from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, ArraySpec, GroupSpec
 
@@ -427,8 +426,8 @@ def test_multiscale_group_missing_arrays() -> None:
     Test that creating a multiscale group fails when an expected Zarr array is missing
     """
     arrays = (
-        zarr.zeros((10, 10)),
-        zarr.zeros((5, 5)),
+        np.zeros((10, 10)),
+        np.zeros((5, 5)),
     )
     array_names = ("s0", "s1")
     array_specs: list[AnyArraySpec] = [
@@ -461,8 +460,8 @@ def test_multiscale_group_ectopic_group() -> None:
     is actually a group
     """
     arrays = (
-        zarr.zeros((10, 10)),
-        zarr.zeros((5, 5)),
+        np.zeros((10, 10)),
+        np.zeros((5, 5)),
     )
     array_names = ("s0", "s1")
     group_model = Image.new(
