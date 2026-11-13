@@ -7,8 +7,10 @@ requires-python = ">=3.12"
 dependencies = [
     "numpy",
     "pydantic >= 2.11.5",
-    "pydantic-zarr >= 0.8.2",
-    "pydantic-zarr >= 0.10.0; python_version >= '3.14'",
+    # < 0.11: pydantic-zarr 0.11 removed GroupSpec.from_zarr(depth=...), which
+    # this package uses to read groups on unlistable stores.
+    "pydantic-zarr >= 0.8.2, < 0.11",
+    "pydantic-zarr >= 0.10.0, < 0.11; python_version >= '3.14'",
     "zarr>= 3.1.1",
 ]
 maintainers = [{ name = "David Stansby" }]
