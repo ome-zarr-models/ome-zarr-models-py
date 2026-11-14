@@ -6,8 +6,12 @@ from typing import TYPE_CHECKING, Literal, TypeVar, overload
 import zarr
 import zarr.errors
 from pydantic import StringConstraints
+from pydantic_zarr.v2 import AnyArraySpec as AnyArraySpecv2
+from pydantic_zarr.v2 import AnyGroupSpec as AnyGroupSpecv2
 from pydantic_zarr.v2 import ArraySpec as ArraySpecv2
 from pydantic_zarr.v2 import GroupSpec as GroupSpecv2
+from pydantic_zarr.v3 import AnyArraySpec as AnyArraySpecv3
+from pydantic_zarr.v3 import AnyGroupSpec as AnyGroupSpecv3
 from pydantic_zarr.v3 import ArraySpec as ArraySpecv3
 from pydantic_zarr.v3 import GroupSpec as GroupSpecv3
 
@@ -20,13 +24,6 @@ if TYPE_CHECKING:
 
     from pydantic_zarr.v2 import BaseGroupSpec as BaseGroupSpecv2
     from pydantic_zarr.v3 import BaseGroupSpec as BaseGroupSpecv3
-
-    # Spelled out rather than imported: from pydantic-zarr 0.11, mypy resolves
-    # pydantic-zarr's own AnyArraySpec / AnyGroupSpec aliases to Any.
-    type AnyArraySpecv2 = ArraySpecv2[Any]
-    type AnyArraySpecv3 = ArraySpecv3[Any]
-    type AnyGroupSpecv2 = GroupSpecv2[Any, Any]
-    type AnyGroupSpecv3 = GroupSpecv3[Any, Any]
 
 
 __all__ = [

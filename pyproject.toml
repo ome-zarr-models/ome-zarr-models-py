@@ -65,7 +65,7 @@ exclude = [
 [dependency-groups]
 docs = ["ome-zarr-models[docs]"]
 dev = [
-    "mypy==1.18.2",
+    "mypy==2.4.1",
     "ruff==0.13.2",
     "pre-commit==4.3.0",
     "build==1.5.0",

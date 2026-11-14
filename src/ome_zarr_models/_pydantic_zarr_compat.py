@@ -20,8 +20,11 @@ can be deleted and this module inlined.
 Type checking runs against pydantic-zarr >= 0.11 (see .pre-commit-config.yaml).
 A ``# type: ignore[..., unused-ignore]`` elsewhere in the package marks an
 error that only one of the supported versions raises; drop the comment along
-with the legacy branches. One such source: from 0.11, mypy resolves
-pydantic-zarr's ``AnyArraySpec`` / ``AnyGroupSpec`` aliases to ``Any``.
+with the legacy branches.
+
+Type checking needs mypy >= 2.2: older mypy cannot resolve the recursive type
+variable defaults pydantic-zarr 0.11 declares, and silently reads
+``AnyGroupSpec`` (and the group half of ``GroupSpec.members``) as ``Any``.
 """
 
 from __future__ import annotations
@@ -39,13 +42,14 @@ if TYPE_CHECKING:
     import zarr
     from typing_extensions import TypeIs
 
-    # Bound by the classes, not the ``AnyGroupSpec`` aliases: under mypy the
-    # aliases resolve to ``Any`` from pydantic-zarr 0.11.
-    TGroupv2 = TypeVar("TGroupv2", bound=pydantic_zarr.v2.GroupSpec[Any, Any])
-    TGroupv3 = TypeVar("TGroupv3", bound=pydantic_zarr.v3.GroupSpec[Any, Any])
+    TGroupv2 = TypeVar("TGroupv2", bound=pydantic_zarr.v2.AnyGroupSpec)
+    TGroupv3 = TypeVar("TGroupv3", bound=pydantic_zarr.v3.AnyGroupSpec)
+
 
 __all__ = [
     "HAS_STORED_METADATA_API",
+    "FlatNodev2",
+    "FlatNodev3",
     "is_group_spec",
     "read_array_v2",
     "read_array_v3",
@@ -54,6 +58,13 @@ __all__ = [
     "read_group_v2",
     "read_group_v3",
 ]
+
+# A value of a flat hierarchy, as ``to_flat`` returns and ``from_flat`` takes:
+# from pydantic-zarr 0.11, the groups in one are ``BaseGroupSpec``. The values
+# of ``type`` aliases are evaluated lazily, so these import on pydantic-zarr
+# 0.10, which has no ``AnyBaseGroupSpec``, as long as nothing evaluates them.
+type FlatNodev2 = pydantic_zarr.v2.AnyArraySpec | pydantic_zarr.v2.AnyBaseGroupSpec
+type FlatNodev3 = pydantic_zarr.v3.AnyArraySpec | pydantic_zarr.v3.AnyBaseGroupSpec
 
 #: True for pydantic-zarr >= 0.11, which has ``BaseGroupSpec`` and the
 #: ``{from,to}_stored_metadata_json`` API, and has dropped ``from_zarr(depth=...)``.

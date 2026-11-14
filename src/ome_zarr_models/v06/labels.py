@@ -7,12 +7,13 @@ import pydantic_zarr  # noqa: F401
 import zarr
 import zarr.errors
 from pydantic import Field, ValidationError, model_validator
-from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
+from pydantic_zarr.v3 import AnyGroupSpec, GroupSpec
 
 from ome_zarr_models.common.validation import check_array_spec, check_group_spec
 from ome_zarr_models.v06.base import BaseGroupv06, BaseOMEAttrs
 
 if TYPE_CHECKING:
+    import ome_zarr_models._pydantic_zarr_compat as pzc
     from ome_zarr_models.v06.image_label import ImageLabel
 
 
@@ -108,7 +109,7 @@ class Labels(
         label_attrs = LabelsAttrs.model_validate(group.attrs.asdict()["ome"])
 
         # Extract Zarr Image paths from multiscale metadata
-        members_tree_flat: dict[str, AnyGroupSpec | AnyArraySpec] = {}
+        members_tree_flat: dict[str, pzc.FlatNodev3] = {}
         for label_path in label_attrs.labels:
             try:
                 image_group = zarr.open_group(

@@ -325,12 +325,10 @@ def test_scene_new() -> None:
     assert isinstance(image_b_member.members["0"], ArraySpec)
 
     # Verify array specs have correct shapes
-    assert isinstance(scene.members["image_a"], GroupSpec)
-    assert scene.members["image_a"].members is not None
-    assert scene.members["image_a"].members["0"].shape == (256, 256)
-    assert isinstance(scene.members["image_b"], GroupSpec)
-    assert scene.members["image_b"].members is not None
-    assert scene.members["image_b"].members["0"].shape == (256, 256)
+    for image_member in (image_a_member, image_b_member):
+        array_member = image_member.members["0"]
+        assert isinstance(array_member, ArraySpec)
+        assert array_member.shape == (256, 256)
 
     # Verify coordinate transformations
     assert len(scene.ome_attributes.scene.coordinateTransformations) == 2
@@ -341,14 +339,14 @@ def test_scene_new() -> None:
     assert coord_transform_0.output is not None
     assert coord_transform_0.input.name == "image_a"
     assert coord_transform_0.output.name == "world"
-    assert coord_transform_0.translation == (0, 0)
+    assert coord_transform_0.translation == (0.0, 0.0)
     coord_transform_1 = scene.ome_attributes.scene.coordinateTransformations[1]
     assert isinstance(coord_transform_1, Translation)
     assert coord_transform_1.input is not None
     assert coord_transform_1.output is not None
     assert coord_transform_1.input.name == "image_b"
     assert coord_transform_1.output.name == "world"
-    assert coord_transform_1.translation == (0, 256)
+    assert coord_transform_1.translation == (0.0, 256.0)
 
     # Verify coordinate systems
     assert scene.ome_attributes.scene.coordinateSystems is not None

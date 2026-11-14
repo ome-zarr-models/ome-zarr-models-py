@@ -59,9 +59,7 @@ class BioFormats2Raw(BaseGroupv04[BioFormats2RawAttrs]):
         group_spec_in = pzc.read_group_shallow_v2(group)
         attributes = BioFormats2RawAttrs.model_validate(group_spec_in.attributes)
 
-        members_tree_flat: dict[
-            str, pydantic_zarr.v2.AnyGroupSpec | pydantic_zarr.v2.AnyArraySpec
-        ] = {}
+        members_tree_flat: dict[str, pzc.FlatNodev2] = {}
 
         # Possible image paths
         image_index = 0

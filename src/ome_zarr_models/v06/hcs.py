@@ -143,4 +143,8 @@ class HCS(BaseGroupv06[HCSAttrs]):
                 f"Column '{col}' not found in row group members: {self.members[row]}"
             )
         group = row_group.members[col]
+        if not isinstance(group, GroupSpec):
+            raise WellGroupNotFoundError(
+                f"The node at '{row}/{col}' is an array, not a well group"
+            )
         return Well(attributes=group.attributes, members=group.members)

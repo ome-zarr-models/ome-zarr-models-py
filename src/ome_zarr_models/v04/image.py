@@ -180,7 +180,7 @@ class Image(BaseGroupv04[ImageAttrs]):
             multiscale_ndim = len(multiscale.axes)
             for dataset in multiscale.datasets:
                 try:
-                    maybe_arr: AnyArraySpec | AnyGroupSpec = flat_self[
+                    maybe_arr: pzc.FlatNodev2 = flat_self[
                         "/" + dataset.path.lstrip("/")
                     ]
                     if pzc.is_group_spec(maybe_arr):

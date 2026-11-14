@@ -59,9 +59,7 @@ class BioFormats2Raw(
         # on unlistable storage backends, the members of this group will be {}
         group_spec_in = pzc.read_group_shallow_v3(group)
 
-        members_tree_flat: dict[
-            str, pydantic_zarr.v3.AnyGroupSpec | pydantic_zarr.v3.AnyArraySpec
-        ] = {}
+        members_tree_flat: dict[str, pzc.FlatNodev3] = {}
 
         # Possible image paths
         image_index = 0

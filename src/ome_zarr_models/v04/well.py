@@ -6,7 +6,7 @@ from collections.abc import Generator
 from typing import Self
 
 import zarr
-from pydantic_zarr.v2 import AnyGroupSpec
+from pydantic_zarr.v2 import AnyGroupSpec, GroupSpec
 
 from ome_zarr_models._utils import _from_zarr_v2
 from ome_zarr_models.base import BaseAttrsv2
@@ -56,7 +56,10 @@ class Well(BaseGroupv04[WellAttrs]):
         for part in image_path_parts:
             if group.members is None:
                 raise RuntimeError(f"{group.members=}")
-            group = group.members[part]
+            member = group.members[part]
+            if not isinstance(member, GroupSpec):
+                raise RuntimeError(f"The node at '{image_path}' is not a group")
+            group = member
 
         return Image(attributes=group.attributes, members=group.members)
 

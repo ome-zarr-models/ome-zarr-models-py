@@ -5,7 +5,7 @@ from typing import Self
 import pydantic_zarr  # noqa: F401
 import zarr
 from pydantic import Field, JsonValue, model_validator
-from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
+from pydantic_zarr.v3 import AnyArraySpec, GroupSpec
 
 import ome_zarr_models._pydantic_zarr_compat as pzc
 from ome_zarr_models._utils import _from_zarr_v3
@@ -181,7 +181,7 @@ class Image(BaseGroupv06[ImageAttrs]):
             multiscale_ndim = multiscale.ndim
             for dataset in multiscale.datasets:
                 try:
-                    maybe_arr: AnyArraySpec | AnyGroupSpec = flat_self[
+                    maybe_arr: pzc.FlatNodev3 = flat_self[
                         "/" + dataset.path.lstrip("/")
                     ]
                 except KeyError as e:

@@ -60,9 +60,7 @@ def _from_zarr_v2(
     group_spec_in = pzc.read_group_shallow_v2(group)
     attributes = attrs_cls.model_validate(group_spec_in.attributes)
 
-    members_tree_flat: dict[
-        str, pydantic_zarr.v2.AnyGroupSpec | pydantic_zarr.v2.AnyArraySpec
-    ] = {}
+    members_tree_flat: dict[str, pzc.FlatNodev2] = {}
 
     # Required array paths
     for array_path in attrs_cls.get_array_paths(attributes):
@@ -134,9 +132,7 @@ def _from_zarr_v3(
         raise ValueError("Zarr group attributes does not contain an 'ome' key")
     ome_attributes = attrs_cls.model_validate(attrs_dict["ome"])
 
-    members_tree_flat: dict[
-        str, pydantic_zarr.v3.AnyGroupSpec | pydantic_zarr.v3.AnyArraySpec
-    ] = {}
+    members_tree_flat: dict[str, pzc.FlatNodev3] = {}
 
     # Required array paths
     for array_path in attrs_cls.get_array_paths(ome_attributes):
@@ -172,7 +168,7 @@ def _from_zarr_v3(
 
     members_normalized: pydantic_zarr.v3.AnyGroupSpec
     members_normalized = pydantic_zarr.v3.GroupSpec.from_flat(members_tree_flat)
-    return group_cls(  # type: ignore[return-value]
+    return group_cls(
         members=members_normalized.members, attributes=group_spec_in.attributes
     )
 
