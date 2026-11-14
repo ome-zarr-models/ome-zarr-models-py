@@ -199,7 +199,7 @@ def test_image_new() -> None:
             name="default", configuration={"separator": "/"}
         ),
         fill_value=0,
-        codecs=[NamedConfig(name="bytes")],
+        codecs=[NamedConfig(name="bytes", configuration={"endian": "little"})],
         dimension_names=["y", "x"],
         attributes={},
     )
@@ -235,7 +235,7 @@ def test_image_new() -> None:
             chunk_grid={"name": "regular", "configuration": {"chunk_shape": (32, 32)}},
             chunk_key_encoding={"name": "default", "configuration": {"separator": "/"}},
             fill_value=0,
-            codecs=({"name": "bytes"},),
+            codecs=({"name": "bytes", "configuration": {"endian": "little"}},),
             storage_transformers=(),
             dimension_names=("y", "x"),
         ),
@@ -248,7 +248,7 @@ def test_image_new() -> None:
             chunk_grid={"name": "regular", "configuration": {"chunk_shape": (32, 32)}},
             chunk_key_encoding={"name": "default", "configuration": {"separator": "/"}},
             fill_value=0,
-            codecs=({"name": "bytes"},),
+            codecs=({"name": "bytes", "configuration": {"endian": "little"}},),
             storage_transformers=(),
             dimension_names=("y", "x"),
         ),

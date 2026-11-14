@@ -1,0 +1,49 @@
+name: Upstream tests
+
+# Runs the test suite against the development version of pydantic-zarr, to
+# catch breaking changes before they are released. The job is non-blocking:
+# upstream churn should not stop unrelated pull requests from merging, but a
+# failure here means the next pydantic-zarr release will break this package.
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main", "rfc*"]
+  schedule:
+    # Weekly, Monday 06:00 UTC
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+jobs:
+  test-pydantic-zarr-main:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          submodules: true
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6.8.0
+
+      - name: Set up Python
+        run: uv python install 3.13
+
+      - name: Install dependencies
+        run: uv sync --python 3.13
+
+      - name: Install pydantic-zarr from main
+        run: uv pip install "pydantic-zarr @ git+https://github.com/zarr-developers/pydantic-zarr@main"
+
+      - name: Show pydantic-zarr version
+        run: uv run --no-sync python -c "import importlib.metadata as m; print(m.version('pydantic-zarr'))"
+
+      # --no-sync keeps uv from reinstalling the released pydantic-zarr
+      - name: Run tests
+        run: uv run --no-sync pytest --record-mode=none

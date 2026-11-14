@@ -19,7 +19,7 @@ class WellAttrs(BaseOMEAttrs):
 
     well: WellMeta
 
-    def get_optional_group_paths(self) -> dict[str, type[Image]]:  # type: ignore[override]
+    def get_optional_group_paths(self) -> dict[str, type[Image]]:  # type: ignore[override, unused-ignore]
         return {im.path: Image for im in self.well.images}
 
 
@@ -29,7 +29,7 @@ class Well(BaseGroupv05[WellAttrs]):
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
+    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override, unused-ignore]
         """
         Create an OME-Zarr well model from a `zarr.Group`.
 

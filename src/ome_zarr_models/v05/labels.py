@@ -7,12 +7,13 @@ import pydantic_zarr  # noqa: F401
 import zarr
 import zarr.errors
 from pydantic import Field, ValidationError, model_validator
-from pydantic_zarr.v3 import AnyArraySpec, AnyGroupSpec, GroupSpec
+from pydantic_zarr.v3 import AnyGroupSpec, GroupSpec
 
 from ome_zarr_models.common.validation import check_array_spec, check_group_spec
 from ome_zarr_models.v05.base import BaseGroupv05, BaseOMEAttrs
 
 if TYPE_CHECKING:
+    import ome_zarr_models._pydantic_zarr_compat as pzc
     from ome_zarr_models.v05.image_label import ImageLabel
 
 
@@ -46,7 +47,7 @@ def _check_valid_dtypes(labels: "Labels") -> "Labels":
     for label_path in labels.attributes.ome.labels:
         if label_path not in labels.members:
             raise ValueError(f"Label path '{label_path}' not found in zarr group")
-        label_spec = check_group_spec(labels, label_path)  # type: ignore[arg-type]
+        label_spec = check_group_spec(labels, label_path)  # type: ignore[arg-type, unused-ignore]
         try:
             image_spec = ImageLabel(
                 attributes=label_spec.attributes, members=label_spec.members
@@ -59,7 +60,7 @@ def _check_valid_dtypes(labels: "Labels") -> "Labels":
 
         for multiscale in image_spec.attributes.ome.multiscales:
             for dataset in multiscale.datasets:
-                arr_spec = check_array_spec(image_spec, dataset.path)  # type: ignore[arg-type]
+                arr_spec = check_array_spec(image_spec, dataset.path)  # type: ignore[arg-type, unused-ignore]
                 if (
                     not isinstance(arr_spec.data_type, str)
                     or np.dtype(arr_spec.data_type) not in VALID_DTYPES
@@ -93,7 +94,7 @@ class Labels(
     """
 
     @classmethod
-    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override]
+    def from_zarr(cls, group: zarr.Group) -> Self:  # type: ignore[override, unused-ignore]
         """
         Create an OME-Zarr labels model from a `zarr.Group`.
 
@@ -108,7 +109,7 @@ class Labels(
         label_attrs = LabelsAttrs.model_validate(group.attrs.asdict()["ome"])
 
         # Extract Zarr Image paths from multiscale metadata
-        members_tree_flat: dict[str, AnyGroupSpec | AnyArraySpec] = {}
+        members_tree_flat: dict[str, pzc.FlatNodev3] = {}
         for label_path in label_attrs.labels:
             try:
                 image_group = zarr.open_group(
