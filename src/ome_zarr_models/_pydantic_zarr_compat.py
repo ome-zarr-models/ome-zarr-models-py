@@ -109,7 +109,7 @@ def _own_documents(node: zarr.Array[Any] | zarr.Group) -> dict[str, Any]:
         if key == _V2_CONSOLIDATED_KEY:
             continue
         document = json.loads(buffer.to_bytes())
-        if isinstance(document, dict):
+        if key == "zarr.json" and isinstance(document, dict):
             document.pop("consolidated_metadata", None)
         documents[key] = document
     return documents
